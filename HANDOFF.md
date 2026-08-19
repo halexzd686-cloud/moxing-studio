@@ -2,9 +2,9 @@
 
 > Updated: 2026-08-19
 >
-> Branch: `v2-design`
+> Branch: `v2.0.1-hardening`
 >
-> Status: v2 renderer, 24 public chart contracts, motion gallery, fonts, export, and QA implemented
+> Status: v2 renderer, 24 public chart contracts, install/use docs, examples, CI, Pages workflow, fonts, export, and QA implemented
 >
 > Visual review: approved on 2026-08-19
 
@@ -36,8 +36,12 @@ scripts/
 ├── export.py
 ├── export-motion.mjs
 ├── subset_fonts.py
+├── export_examples.py
+├── validate_skill.py
 ├── test_boundaries.py
 └── validate.mjs
+examples/data/       generated C1–C24 copyable JSON inputs
+.github/workflows/   CI and GitHub Pages deployment
 ```
 
 ## Build and test
@@ -66,6 +70,6 @@ The reusable data contracts, numerical formatting, boundary cases, browser detec
 
 ## Next release steps
 
-1. Run the QA commands after any visual change.
-2. Merge `v2-design` to `main` when the local release commit is confirmed.
-3. Tag the release as `v2.0.0` and attach large video demos to GitHub Releases rather than Git history.
+1. Review README installation and usage commands on a clean machine.
+2. Merge `v2.0.1-hardening` after CI and Pages pass remotely.
+3. Publish `v2.0.1` after the live Gallery URL is confirmed.

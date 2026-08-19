@@ -1,0 +1,33 @@
+name: Chart contract proposal
+description: 提议一个现有 C1–C24 无法覆盖的行业图表契约
+title: "[Chart]: "
+labels: [enhancement, chart-contract]
+body:
+  - type: textarea
+    id: decision
+    attributes:
+      label: 需要支持的行业决策问题
+      description: 请说明谁在什么场景下，用它做什么判断。
+    validations:
+      required: true
+  - type: textarea
+    id: usage
+    attributes:
+      label: 现实使用证据
+      description: 请给出行业、工具、报告或公开资料中的实际使用方式。
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 为什么现有契约不够
+      description: 至少比较两个现有 C1–C24 契约或 preset。
+    validations:
+      required: true
+  - type: textarea
+    id: shape
+    attributes:
+      label: 最小数据形状
+      description: 提供不含敏感信息的 JSON 示例。
+    validations:
+      required: true

@@ -1,0 +1,14 @@
+{
+  "name": "moxing-studio",
+  "version": "2.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "python scripts/build_templates.py && python scripts/build_gallery.py",
+    "test": "python scripts/test_boundaries.py && node scripts/validate.mjs .",
+    "test:browser": "node scripts/validate.mjs ."
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}

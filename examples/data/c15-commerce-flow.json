@@ -1,0 +1,56 @@
+{
+  "nodes": [
+    {
+      "id": "search",
+      "label": "搜索",
+      "level": 0,
+      "value": 5200
+    },
+    {
+      "id": "social",
+      "label": "内容",
+      "level": 0,
+      "value": 3900
+    },
+    {
+      "id": "detail",
+      "label": "商品详情",
+      "level": 1,
+      "value": 6100
+    },
+    {
+      "id": "cart",
+      "label": "加购",
+      "level": 2,
+      "value": 2840
+    },
+    {
+      "id": "buy",
+      "label": "成交",
+      "level": 3,
+      "value": 1710
+    }
+  ],
+  "links": [
+    {
+      "source": "search",
+      "target": "detail",
+      "value": 3600
+    },
+    {
+      "source": "social",
+      "target": "detail",
+      "value": 2500
+    },
+    {
+      "source": "detail",
+      "target": "cart",
+      "value": 2840
+    },
+    {
+      "source": "cart",
+      "target": "buy",
+      "value": 1710
+    }
+  ]
+}
