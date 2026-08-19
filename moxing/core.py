@@ -4,7 +4,7 @@ import base64
 import html
 import json
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -84,11 +84,32 @@ def attrs(**values: Any) -> str:
     return " ".join(rendered)
 
 
-def motion(kind: str, delay: int, *, dx: int = 0, dy: int = 0, duration: int | None = None) -> str:
+def motion(
+    kind: str,
+    delay: int,
+    *,
+    dx: int = 0,
+    dy: int = 0,
+    duration: int | None = None,
+    brief: int | None = None,
+    story: int | None = None,
+    duration_brief: int | None = None,
+    duration_story: int | None = None,
+    choreo: str | None = None,
+) -> str:
     style = [f"--delay:{delay}ms", f"--dx:{dx}px", f"--dy:{dy}px"]
     if duration is not None:
         style.append(f"--duration:{duration}ms")
-    return f'data-motion="{kind}" style="{";".join(style)}"'
+    if brief is not None:
+        style.append(f"--delay-brief:{brief}ms")
+    if story is not None:
+        style.append(f"--delay-story:{story}ms")
+    if duration_brief is not None:
+        style.append(f"--duration-brief:{duration_brief}ms")
+    if duration_story is not None:
+        style.append(f"--duration-story:{duration_story}ms")
+    choreography = f' data-choreo="{esc(choreo)}"' if choreo else ""
+    return f'data-motion="{kind}"{choreography} style="{";".join(style)}"'
 
 
 def text(
@@ -168,6 +189,9 @@ def evidence_plate(
     *,
     delay: int = 1250,
     width: float = 220,
+    brief: int | None = None,
+    story: int | None = None,
+    choreo: str | None = None,
 ) -> str:
     children = [
         path(cut_rect_path(x, y, width, 94, 8), cls="panel-stroke"),
@@ -176,7 +200,7 @@ def evidence_plate(
         text(x + 14, y + 55, value, cls="value", size=28, weight=650),
         text(x + 14, y + 77, note, cls="muted", size=13),
     ]
-    return group(children, cls="evidence-plate", extra=motion("lock", delay, dx=-8))
+    return group(children, cls="evidence-plate", extra=motion("lock", delay, dx=-8, brief=brief, story=story, choreo=choreo))
 
 
 def no_data(message: str = "暂无可用数据") -> str:
@@ -201,6 +225,8 @@ class ChartPage:
     svg: str
     data: Any
     total_ms: int = 1800
+    profile_totals: dict[str, int] = field(default_factory=dict)
+    choreography: str = "structural"
     surface: str = "light"
     mode: str = "editorial"
 
@@ -300,16 +326,27 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   @keyframes mx-dock {{ from {{ opacity:0; transform:translate(var(--dx),var(--dy)); }} to {{ opacity:1; transform:translate(0,0); }} }}
   @keyframes mx-route {{ from {{ opacity:.25; stroke-dashoffset:1; }} to {{ opacity:1; stroke-dashoffset:0; }} }}
   @keyframes mx-lock {{ 0% {{ opacity:0; transform:scale(.92); }} 68% {{ opacity:1; transform:scale(1.025); }} 100% {{ opacity:1; transform:scale(1); }} }}
-  .motion-enabled.is-playing [data-motion=\"align\"] {{ stroke-dasharray:1; animation:mx-align var(--duration,{motion_tokens['align']}ms) linear var(--delay,0ms) both; }}
-  .motion-enabled.is-playing [data-motion=\"dock\"] {{ animation:mx-dock var(--duration,{motion_tokens['dock']}ms) {motion_tokens['ease']} var(--delay,0ms) both; }}
-  .motion-enabled.is-playing [data-motion=\"route\"] {{ stroke-dasharray:1; animation:mx-route var(--duration,{motion_tokens['route']}ms) {motion_tokens['ease']} var(--delay,0ms) both; }}
-  .motion-enabled.is-playing [data-motion=\"lock\"] {{ animation:mx-lock var(--duration,{motion_tokens['lock']}ms) {motion_tokens['ease']} var(--delay,0ms) both; }}
+  @keyframes mx-rail-rise {{ from {{ opacity:0; transform:translateY(var(--dy)) scaleY(.16); }} to {{ opacity:1; transform:translateY(0) scaleY(1); }} }}
+  @keyframes mx-pin {{ from {{ opacity:0; transform:translateY(var(--dy)) scale(.35); }} to {{ opacity:1; transform:translateY(0) scale(1); }} }}
+  @keyframes mx-interlock {{ from {{ opacity:0; transform:translateX(var(--dx)) scaleX(.82); }} to {{ opacity:1; transform:translateX(0) scaleX(1); }} }}
+  @keyframes mx-readout {{ from {{ opacity:0; clip-path:inset(0 100% 0 0); transform:translateY(6px); }} to {{ opacity:1; clip-path:inset(0 0 0 0); transform:translateY(0); }} }}
+  @keyframes mx-alarm {{ from {{ opacity:0; transform:translateX(-8px); }} to {{ opacity:1; transform:translateX(0); }} }}
+  .motion-enabled.is-playing [data-motion=\"align\"] {{ stroke-dasharray:1; animation:mx-align var(--active-duration,var(--duration,{motion_tokens['align']}ms)) linear var(--active-delay,var(--delay,0ms)) both; }}
+  .motion-enabled.is-playing [data-motion=\"dock\"] {{ animation:mx-dock var(--active-duration,var(--duration,{motion_tokens['dock']}ms)) {motion_tokens['ease']} var(--active-delay,var(--delay,0ms)) both; }}
+  .motion-enabled.is-playing [data-motion=\"route\"] {{ stroke-dasharray:1; animation:mx-route var(--active-duration,var(--duration,{motion_tokens['route']}ms)) {motion_tokens['ease']} var(--active-delay,var(--delay,0ms)) both; }}
+  .motion-enabled.is-playing [data-motion=\"lock\"] {{ animation:mx-lock var(--active-duration,var(--duration,{motion_tokens['lock']}ms)) {motion_tokens['ease']} var(--active-delay,var(--delay,0ms)) both; }}
+  .motion-enabled.is-playing [data-choreo=\"rail-rise\"] {{ animation-name:mx-rail-rise; transform-origin:center bottom; }}
+  .motion-enabled.is-playing [data-choreo=\"trace\"] {{ animation-timing-function:linear; }}
+  .motion-enabled.is-playing [data-choreo=\"pin\"] {{ animation-name:mx-pin; }}
+  .motion-enabled.is-playing [data-choreo=\"interlock\"] {{ animation-name:mx-interlock; }}
+  .motion-enabled.is-playing [data-choreo=\"readout\"] {{ animation-name:mx-readout; transform-origin:left center; }}
+  .motion-enabled.is-playing [data-choreo=\"alarm\"] {{ animation-name:mx-alarm; }}
   .motion-enabled.is-paused [data-motion] {{ animation-play-state:paused!important; }}
   @media (prefers-reduced-motion:reduce) {{ .motion-enabled.is-playing [data-motion] {{ animation:none!important; }} }}
 </style>
 </head>
 <body>
-<main class=\"chart-container\" id=\"moxing-chart\" data-total=\"{page.total_ms}\" data-mode=\"{esc(page.mode)}\">
+<main class=\"chart-container\" id=\"moxing-chart\" data-total=\"{page.total_ms}\" data-total-brief=\"{page.profile_totals.get('brief', round(page.total_ms * .68))}\" data-total-standard=\"{page.profile_totals.get('standard', page.total_ms)}\" data-total-story=\"{page.profile_totals.get('story', round(page.total_ms * 1.8))}\" data-mode=\"{esc(page.mode)}\" data-choreography=\"{esc(page.choreography)}\">
   <header class=\"chart-header\">
     <div class=\"chart-code\">{esc(page.chart_id)} / {esc(page.public_name.upper())}</div>
     <div><h1 class=\"chart-title\">{esc(page.title)}</h1><div class=\"chart-subtitle\">{esc(page.subtitle)}</div></div>
@@ -324,16 +361,20 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   const root=document.getElementById('moxing-chart');
   const params=new URLSearchParams(location.search);
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches||params.get('motion')==='off';
-  const profile=params.get('motion')||'standard';
-  const scales={{brief:.72,standard:1,story:1.8}};
+  const requestedProfile=params.get('motion')||'standard';
+  const profile=['brief','standard','story'].includes(requestedProfile)?requestedProfile:'standard';
+  const scales={{brief:{motion_tokens['profiles']['brief']['fallbackScale']},standard:{motion_tokens['profiles']['standard']['fallbackScale']},story:{motion_tokens['profiles']['story']['fallbackScale']}}};
   const scale=scales[profile]||1;
-  const total=Math.round(Number(root.dataset.total||1800)*scale);
+  const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);
+  const total=Number(root.dataset[profileKey]||root.dataset.total||1800);
   const baseDuration={{align:{motion_tokens['align']},dock:{motion_tokens['dock']},route:{motion_tokens['route']},lock:{motion_tokens['lock']}}};
   root.querySelectorAll('[data-motion]').forEach(el=>{{
     const rawDelay=parseFloat(el.style.getPropertyValue('--delay'))||0;
     const rawDuration=parseFloat(el.style.getPropertyValue('--duration'))||baseDuration[el.dataset.motion]||300;
-    el.style.setProperty('--delay',Math.round(rawDelay*scale)+'ms');
-    el.style.setProperty('--duration',Math.round(rawDuration*scale)+'ms');
+    const profileDelay=parseFloat(el.style.getPropertyValue('--delay-'+profile));
+    const profileDuration=parseFloat(el.style.getPropertyValue('--duration-'+profile));
+    el.style.setProperty('--active-delay',Math.round(Number.isFinite(profileDelay)?profileDelay:rawDelay*scale)+'ms');
+    el.style.setProperty('--active-duration',Math.round(Number.isFinite(profileDuration)?profileDuration:rawDuration*scale)+'ms');
   }});
   let timer=0;
   const settle=()=>{{ clearTimeout(timer); root.classList.remove('is-playing','is-paused'); root.classList.add('is-complete'); }};
@@ -348,7 +389,7 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   root.querySelector('[data-action=pause]').addEventListener('click',pause);
   root.querySelector('[data-action=surface]').addEventListener('click',()=>{{ const html=document.documentElement; html.dataset.surface=html.dataset.surface==='dark'?'light':'dark'; }});
   if(params.get('theme')==='dark') document.documentElement.dataset.surface='dark';
-  window.Moxing={{replay,settle,setSurface:(v)=>document.documentElement.dataset.surface=v,ready:Promise.resolve()}};
+  window.Moxing={{replay,settle,setSurface:(v)=>document.documentElement.dataset.surface=v,profile,duration:total,ready:Promise.resolve()}};
   if(reduce) settle();
   else if('IntersectionObserver'in window){{ const io=new IntersectionObserver(e=>{{if(e[0].isIntersecting){{io.disconnect();replay();}}}},{{threshold:.35}});io.observe(root); }}
   else replay();

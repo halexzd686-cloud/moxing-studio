@@ -69,37 +69,48 @@
   @keyframes mx-dock { from { opacity:0; transform:translate(var(--dx),var(--dy)); } to { opacity:1; transform:translate(0,0); } }
   @keyframes mx-route { from { opacity:.25; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
   @keyframes mx-lock { 0% { opacity:0; transform:scale(.92); } 68% { opacity:1; transform:scale(1.025); } 100% { opacity:1; transform:scale(1); } }
-  .motion-enabled.is-playing [data-motion="align"] { stroke-dasharray:1; animation:mx-align var(--duration,220ms) linear var(--delay,0ms) both; }
-  .motion-enabled.is-playing [data-motion="dock"] { animation:mx-dock var(--duration,620ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
-  .motion-enabled.is-playing [data-motion="route"] { stroke-dasharray:1; animation:mx-route var(--duration,520ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
-  .motion-enabled.is-playing [data-motion="lock"] { animation:mx-lock var(--duration,280ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
+  @keyframes mx-rail-rise { from { opacity:0; transform:translateY(var(--dy)) scaleY(.16); } to { opacity:1; transform:translateY(0) scaleY(1); } }
+  @keyframes mx-pin { from { opacity:0; transform:translateY(var(--dy)) scale(.35); } to { opacity:1; transform:translateY(0) scale(1); } }
+  @keyframes mx-interlock { from { opacity:0; transform:translateX(var(--dx)) scaleX(.82); } to { opacity:1; transform:translateX(0) scaleX(1); } }
+  @keyframes mx-readout { from { opacity:0; clip-path:inset(0 100% 0 0); transform:translateY(6px); } to { opacity:1; clip-path:inset(0 0 0 0); transform:translateY(0); } }
+  @keyframes mx-alarm { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:translateX(0); } }
+  .motion-enabled.is-playing [data-motion="align"] { stroke-dasharray:1; animation:mx-align var(--active-duration,var(--duration,220ms)) linear var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="dock"] { animation:mx-dock var(--active-duration,var(--duration,620ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="route"] { stroke-dasharray:1; animation:mx-route var(--active-duration,var(--duration,520ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="lock"] { animation:mx-lock var(--active-duration,var(--duration,280ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-choreo="rail-rise"] { animation-name:mx-rail-rise; transform-origin:center bottom; }
+  .motion-enabled.is-playing [data-choreo="trace"] { animation-timing-function:linear; }
+  .motion-enabled.is-playing [data-choreo="pin"] { animation-name:mx-pin; }
+  .motion-enabled.is-playing [data-choreo="interlock"] { animation-name:mx-interlock; }
+  .motion-enabled.is-playing [data-choreo="readout"] { animation-name:mx-readout; transform-origin:left center; }
+  .motion-enabled.is-playing [data-choreo="alarm"] { animation-name:mx-alarm; }
   .motion-enabled.is-paused [data-motion] { animation-play-state:paused!important; }
   @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing [data-motion] { animation:none!important; } }
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1900" data-mode="editorial">
+<main class="chart-container" id="moxing-chart" data-total="1900" data-total-brief="1200" data-total-standard="1900" data-total-story="3200" data-mode="editorial" data-choreography="path-trace">
   <header class="chart-header">
     <div class="chart-code">C3 / SIGNAL TREND</div>
     <div><h1 class="chart-title">增长在下半年加速，年末达到新高</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div></div>
   </header>
   <section class="chart-body"><svg viewBox="0 0 1172 500" role="img" aria-label="增长在下半年加速，年末达到新高"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >03 / PATH ROUTING</text>
-<g class="evidence-plate" data-motion="lock" style="--delay:1420ms;--dx:-8px;--dy:0px">
+<g class="evidence-plate" data-motion="lock" data-choreo="readout" style="--delay:1540ms;--dx:-8px;--dy:0px;--delay-brief:1020ms;--delay-story:2820ms">
 <path d="M 0 74 H 222 L 230 82 V 168 H 8 L 0 160 Z" class="panel-stroke" />
 <text x="14" y="95" class="index muted" text-anchor="start" font-size="12" >T-01</text>
 <text x="216" y="95" class="index signal-text" text-anchor="end" font-size="12" >LATEST</text>
 <text x="14" y="129" class="value" text-anchor="start" font-size="28" font-weight="650" >1,750</text>
 <text x="14" y="151" class="muted" text-anchor="start" font-size="13" >2025 / 12月</text>
 </g>
-<line x1="292" y1="74" x2="1126" y2="74" class="grid" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px"/>
+<line x1="292" y1="74" x2="1126" y2="74" class="grid" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--delay-brief:40ms;--delay-story:120ms"/>
 <text x="278" y="78" class="muted index" text-anchor="end" font-size="12" >1,930.8</text>
-<line x1="292" y1="160.5" x2="1126" y2="160.5" class="grid" pathLength="1" data-motion="align" style="--delay:105ms;--dx:0px;--dy:0px"/>
+<line x1="292" y1="160.5" x2="1126" y2="160.5" class="grid" pathLength="1" data-motion="align" style="--delay:105ms;--dx:0px;--dy:0px;--delay-brief:58ms;--delay-story:175ms"/>
 <text x="278" y="164.5" class="muted index" text-anchor="end" font-size="12" >1,557.9</text>
-<line x1="292" y1="247" x2="1126" y2="247" class="grid" pathLength="1" data-motion="align" style="--delay:140ms;--dx:0px;--dy:0px"/>
+<line x1="292" y1="247" x2="1126" y2="247" class="grid" pathLength="1" data-motion="align" style="--delay:140ms;--dx:0px;--dy:0px;--delay-brief:76ms;--delay-story:230ms"/>
 <text x="278" y="251" class="muted index" text-anchor="end" font-size="12" >1,185</text>
-<line x1="292" y1="333.5" x2="1126" y2="333.5" class="grid" pathLength="1" data-motion="align" style="--delay:175ms;--dx:0px;--dy:0px"/>
+<line x1="292" y1="333.5" x2="1126" y2="333.5" class="grid" pathLength="1" data-motion="align" style="--delay:175ms;--dx:0px;--dy:0px;--delay-brief:94ms;--delay-story:285ms"/>
 <text x="278" y="337.5" class="muted index" text-anchor="end" font-size="12" >812.1</text>
-<line x1="292" y1="420" x2="1126" y2="420" class="grid" pathLength="1" data-motion="align" style="--delay:210ms;--dx:0px;--dy:0px"/>
+<line x1="292" y1="420" x2="1126" y2="420" class="grid" pathLength="1" data-motion="align" style="--delay:210ms;--dx:0px;--dy:0px;--delay-brief:112ms;--delay-story:340ms"/>
 <text x="278" y="424" class="muted index" text-anchor="end" font-size="12" >439.2</text>
 <text x="292" y="452" class="muted" text-anchor="middle" font-size="12" >1月</text>
 <text x="443.64" y="452" class="muted" text-anchor="middle" font-size="12" >3月</text>
@@ -107,19 +118,19 @@
 <text x="746.91" y="452" class="muted" text-anchor="middle" font-size="12" >7月</text>
 <text x="898.55" y="452" class="muted" text-anchor="middle" font-size="12" >9月</text>
 <text x="1050.18" y="452" class="muted" text-anchor="middle" font-size="12" >11月</text>
-<path d="M 292.00 331.67 L 367.82 305.69 L 443.64 312.88 L 519.45 305.22 L 595.27 222.64 L 671.09 213.36 L 746.91 215.68 L 822.73 185.53 L 898.55 201.77 L 974.36 169.29 L 1050.18 148.41 L 1126.00 115.94" class="signal-stroke" pathLength="1" data-motion="route" style="--delay:300ms;--dx:0px;--dy:0px;--duration:720ms"/>
-<circle cx="292" cy="331.67" r="4.5" class="hollow" data-motion="dock" style="--delay:650ms;--dx:0px;--dy:10px"/>
-<circle cx="443.64" cy="312.88" r="4.5" class="hollow" data-motion="dock" style="--delay:720ms;--dx:0px;--dy:10px"/>
-<circle cx="595.27" cy="222.64" r="4.5" class="hollow" data-motion="dock" style="--delay:790ms;--dx:0px;--dy:10px"/>
-<circle cx="746.91" cy="215.68" r="4.5" class="hollow" data-motion="dock" style="--delay:860ms;--dx:0px;--dy:10px"/>
-<circle cx="898.55" cy="201.77" r="4.5" class="hollow" data-motion="dock" style="--delay:930ms;--dx:0px;--dy:10px"/>
-<circle cx="1050.18" cy="148.41" r="4.5" class="hollow" data-motion="dock" style="--delay:1000ms;--dx:0px;--dy:10px"/>
-<circle cx="1126" cy="115.94" r="4.5" class="signal-fill" data-motion="dock" style="--delay:1035ms;--dx:0px;--dy:10px"/>
-<path d="M 292.00 378.06 L 367.82 357.18 L 443.64 364.14 L 519.45 354.86 L 595.27 315.43 L 671.09 303.83 L 746.91 310.79 L 822.73 285.27 L 898.55 294.55 L 974.36 271.36 L 1050.18 255.12 L 1126.00 234.24" class="secondary-stroke" pathLength="1" data-motion="route" style="--delay:420ms;--dx:0px;--dy:0px;--duration:720ms"/>
-<circle cx="292" cy="378.06" r="3.5" class="hollow" data-motion="dock" style="--delay:650ms;--dx:0px;--dy:10px"/>
-<circle cx="1126" cy="234.24" r="3.5" class="hollow" data-motion="dock" style="--delay:1035ms;--dx:0px;--dy:10px"/>
-<line x1="1126" y1="103.94" x2="1126" y2="74" class="rail" pathLength="1" data-motion="align" style="--delay:1100ms;--dx:0px;--dy:0px"/>
-<text x="1126" y="64" class="index signal-text" text-anchor="middle" font-size="12" data-motion="lock" style="--delay:1280ms;--dx:0px;--dy:0px">PEAK / 12月</text></svg></section>
+<path d="M 292.00 331.67 L 367.82 305.69 L 443.64 312.88 L 519.45 305.22 L 595.27 222.64 L 671.09 213.36 L 746.91 215.68 L 822.73 185.53 L 898.55 201.77 L 974.36 169.29 L 1050.18 148.41 L 1126.00 115.94" class="signal-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:360ms;--dx:0px;--dy:0px;--duration:800ms;--delay-brief:180ms;--delay-story:650ms;--duration-brief:600ms;--duration-story:1250ms"/>
+<circle cx="292" cy="331.67" r="4.5" class="hollow" data-motion="dock" data-choreo="pin" style="--delay:360ms;--dx:0px;--dy:10px;--duration:220ms;--delay-brief:180ms;--delay-story:650ms;--duration-brief:150ms;--duration-story:260ms"/>
+<circle cx="443.64" cy="312.88" r="4.5" class="hollow" data-motion="dock" data-choreo="pin" style="--delay:505ms;--dx:0px;--dy:10px;--duration:220ms;--delay-brief:289ms;--delay-story:877ms;--duration-brief:150ms;--duration-story:260ms"/>
+<circle cx="595.27" cy="222.64" r="4.5" class="hollow" data-motion="dock" data-choreo="pin" style="--delay:651ms;--dx:0px;--dy:10px;--duration:220ms;--delay-brief:398ms;--delay-story:1105ms;--duration-brief:150ms;--duration-story:260ms"/>
+<circle cx="746.91" cy="215.68" r="4.5" class="hollow" data-motion="dock" data-choreo="pin" style="--delay:796ms;--dx:0px;--dy:10px;--duration:220ms;--delay-brief:507ms;--delay-story:1332ms;--duration-brief:150ms;--duration-story:260ms"/>
+<circle cx="898.55" cy="201.77" r="4.5" class="hollow" data-motion="dock" data-choreo="pin" style="--delay:942ms;--dx:0px;--dy:10px;--duration:220ms;--delay-brief:616ms;--delay-story:1559ms;--duration-brief:150ms;--duration-story:260ms"/>
+<circle cx="1050.18" cy="148.41" r="4.5" class="hollow" data-motion="dock" data-choreo="pin" style="--delay:1087ms;--dx:0px;--dy:10px;--duration:220ms;--delay-brief:725ms;--delay-story:1786ms;--duration-brief:150ms;--duration-story:260ms"/>
+<circle cx="1126" cy="115.94" r="4.5" class="signal-fill" data-motion="dock" data-choreo="pin" style="--delay:1160ms;--dx:0px;--dy:10px;--duration:220ms;--delay-brief:780ms;--delay-story:1900ms;--duration-brief:150ms;--duration-story:260ms"/>
+<path d="M 292.00 378.06 L 367.82 357.18 L 443.64 364.14 L 519.45 354.86 L 595.27 315.43 L 671.09 303.83 L 746.91 310.79 L 822.73 285.27 L 898.55 294.55 L 974.36 271.36 L 1050.18 255.12 L 1126.00 234.24" class="secondary-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:480ms;--dx:0px;--dy:0px;--duration:800ms;--delay-brief:260ms;--delay-story:830ms;--duration-brief:600ms;--duration-story:1250ms"/>
+<circle cx="292" cy="378.06" r="3.5" class="hollow" data-motion="dock" data-choreo="pin" style="--delay:480ms;--dx:0px;--dy:10px;--duration:220ms;--delay-brief:260ms;--delay-story:830ms;--duration-brief:150ms;--duration-story:260ms"/>
+<circle cx="1126" cy="234.24" r="3.5" class="hollow" data-motion="dock" data-choreo="pin" style="--delay:1280ms;--dx:0px;--dy:10px;--duration:220ms;--delay-brief:860ms;--delay-story:2080ms;--duration-brief:150ms;--duration-story:260ms"/>
+<line x1="1126" y1="103.94" x2="1126" y2="74" class="rail" pathLength="1" data-motion="align" style="--delay:1220ms;--dx:0px;--dy:0px;--delay-brief:820ms;--delay-story:2140ms"/>
+<text x="1126" y="64" class="index signal-text" text-anchor="middle" font-size="12" data-motion="lock" data-choreo="alarm" style="--delay:1400ms;--dx:0px;--dy:0px;--delay-brief:950ms;--delay-story:2480ms">PEAK / 12月</text></svg></section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" title="重播">↻</button><button type="button" data-action="pause" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" title="切换明暗">◐</button></nav>
 </main>
@@ -129,16 +140,20 @@
   const root=document.getElementById('moxing-chart');
   const params=new URLSearchParams(location.search);
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches||params.get('motion')==='off';
-  const profile=params.get('motion')||'standard';
-  const scales={brief:.72,standard:1,story:1.8};
+  const requestedProfile=params.get('motion')||'standard';
+  const profile=['brief','standard','story'].includes(requestedProfile)?requestedProfile:'standard';
+  const scales={brief:0.72,standard:1.0,story:1.8};
   const scale=scales[profile]||1;
-  const total=Math.round(Number(root.dataset.total||1800)*scale);
+  const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);
+  const total=Number(root.dataset[profileKey]||root.dataset.total||1800);
   const baseDuration={align:220,dock:620,route:520,lock:280};
   root.querySelectorAll('[data-motion]').forEach(el=>{
     const rawDelay=parseFloat(el.style.getPropertyValue('--delay'))||0;
     const rawDuration=parseFloat(el.style.getPropertyValue('--duration'))||baseDuration[el.dataset.motion]||300;
-    el.style.setProperty('--delay',Math.round(rawDelay*scale)+'ms');
-    el.style.setProperty('--duration',Math.round(rawDuration*scale)+'ms');
+    const profileDelay=parseFloat(el.style.getPropertyValue('--delay-'+profile));
+    const profileDuration=parseFloat(el.style.getPropertyValue('--duration-'+profile));
+    el.style.setProperty('--active-delay',Math.round(Number.isFinite(profileDelay)?profileDelay:rawDelay*scale)+'ms');
+    el.style.setProperty('--active-duration',Math.round(Number.isFinite(profileDuration)?profileDuration:rawDuration*scale)+'ms');
   });
   let timer=0;
   const settle=()=>{ clearTimeout(timer); root.classList.remove('is-playing','is-paused'); root.classList.add('is-complete'); };
@@ -153,7 +168,7 @@
   root.querySelector('[data-action=pause]').addEventListener('click',pause);
   root.querySelector('[data-action=surface]').addEventListener('click',()=>{ const html=document.documentElement; html.dataset.surface=html.dataset.surface==='dark'?'light':'dark'; });
   if(params.get('theme')==='dark') document.documentElement.dataset.surface='dark';
-  window.Moxing={replay,settle,setSurface:(v)=>document.documentElement.dataset.surface=v,ready:Promise.resolve()};
+  window.Moxing={replay,settle,setSurface:(v)=>document.documentElement.dataset.surface=v,profile,duration:total,ready:Promise.resolve()};
   if(reduce) settle();
   else if('IntersectionObserver'in window){ const io=new IntersectionObserver(e=>{if(e[0].isIntersecting){io.disconnect();replay();}},{threshold:.35});io.observe(root); }
   else replay();

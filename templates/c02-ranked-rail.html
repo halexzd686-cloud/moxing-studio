@@ -69,16 +69,27 @@
   @keyframes mx-dock { from { opacity:0; transform:translate(var(--dx),var(--dy)); } to { opacity:1; transform:translate(0,0); } }
   @keyframes mx-route { from { opacity:.25; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
   @keyframes mx-lock { 0% { opacity:0; transform:scale(.92); } 68% { opacity:1; transform:scale(1.025); } 100% { opacity:1; transform:scale(1); } }
-  .motion-enabled.is-playing [data-motion="align"] { stroke-dasharray:1; animation:mx-align var(--duration,220ms) linear var(--delay,0ms) both; }
-  .motion-enabled.is-playing [data-motion="dock"] { animation:mx-dock var(--duration,620ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
-  .motion-enabled.is-playing [data-motion="route"] { stroke-dasharray:1; animation:mx-route var(--duration,520ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
-  .motion-enabled.is-playing [data-motion="lock"] { animation:mx-lock var(--duration,280ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
+  @keyframes mx-rail-rise { from { opacity:0; transform:translateY(var(--dy)) scaleY(.16); } to { opacity:1; transform:translateY(0) scaleY(1); } }
+  @keyframes mx-pin { from { opacity:0; transform:translateY(var(--dy)) scale(.35); } to { opacity:1; transform:translateY(0) scale(1); } }
+  @keyframes mx-interlock { from { opacity:0; transform:translateX(var(--dx)) scaleX(.82); } to { opacity:1; transform:translateX(0) scaleX(1); } }
+  @keyframes mx-readout { from { opacity:0; clip-path:inset(0 100% 0 0); transform:translateY(6px); } to { opacity:1; clip-path:inset(0 0 0 0); transform:translateY(0); } }
+  @keyframes mx-alarm { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:translateX(0); } }
+  .motion-enabled.is-playing [data-motion="align"] { stroke-dasharray:1; animation:mx-align var(--active-duration,var(--duration,220ms)) linear var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="dock"] { animation:mx-dock var(--active-duration,var(--duration,620ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="route"] { stroke-dasharray:1; animation:mx-route var(--active-duration,var(--duration,520ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="lock"] { animation:mx-lock var(--active-duration,var(--duration,280ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-choreo="rail-rise"] { animation-name:mx-rail-rise; transform-origin:center bottom; }
+  .motion-enabled.is-playing [data-choreo="trace"] { animation-timing-function:linear; }
+  .motion-enabled.is-playing [data-choreo="pin"] { animation-name:mx-pin; }
+  .motion-enabled.is-playing [data-choreo="interlock"] { animation-name:mx-interlock; }
+  .motion-enabled.is-playing [data-choreo="readout"] { animation-name:mx-readout; transform-origin:left center; }
+  .motion-enabled.is-playing [data-choreo="alarm"] { animation-name:mx-alarm; }
   .motion-enabled.is-paused [data-motion] { animation-play-state:paused!important; }
   @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing [data-motion] { animation:none!important; } }
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1750" data-mode="editorial">
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1190" data-total-standard="1750" data-total-story="3150" data-mode="editorial" data-choreography="structural">
   <header class="chart-header">
     <div class="chart-code">C2 / RANKED RAIL</div>
     <div><h1 class="chart-title">华东服务评分居首，区域差距仍可控</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div></div>
@@ -136,16 +147,20 @@
   const root=document.getElementById('moxing-chart');
   const params=new URLSearchParams(location.search);
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches||params.get('motion')==='off';
-  const profile=params.get('motion')||'standard';
-  const scales={brief:.72,standard:1,story:1.8};
+  const requestedProfile=params.get('motion')||'standard';
+  const profile=['brief','standard','story'].includes(requestedProfile)?requestedProfile:'standard';
+  const scales={brief:0.72,standard:1.0,story:1.8};
   const scale=scales[profile]||1;
-  const total=Math.round(Number(root.dataset.total||1800)*scale);
+  const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);
+  const total=Number(root.dataset[profileKey]||root.dataset.total||1800);
   const baseDuration={align:220,dock:620,route:520,lock:280};
   root.querySelectorAll('[data-motion]').forEach(el=>{
     const rawDelay=parseFloat(el.style.getPropertyValue('--delay'))||0;
     const rawDuration=parseFloat(el.style.getPropertyValue('--duration'))||baseDuration[el.dataset.motion]||300;
-    el.style.setProperty('--delay',Math.round(rawDelay*scale)+'ms');
-    el.style.setProperty('--duration',Math.round(rawDuration*scale)+'ms');
+    const profileDelay=parseFloat(el.style.getPropertyValue('--delay-'+profile));
+    const profileDuration=parseFloat(el.style.getPropertyValue('--duration-'+profile));
+    el.style.setProperty('--active-delay',Math.round(Number.isFinite(profileDelay)?profileDelay:rawDelay*scale)+'ms');
+    el.style.setProperty('--active-duration',Math.round(Number.isFinite(profileDuration)?profileDuration:rawDuration*scale)+'ms');
   });
   let timer=0;
   const settle=()=>{ clearTimeout(timer); root.classList.remove('is-playing','is-paused'); root.classList.add('is-complete'); };
@@ -160,7 +175,7 @@
   root.querySelector('[data-action=pause]').addEventListener('click',pause);
   root.querySelector('[data-action=surface]').addEventListener('click',()=>{ const html=document.documentElement; html.dataset.surface=html.dataset.surface==='dark'?'light':'dark'; });
   if(params.get('theme')==='dark') document.documentElement.dataset.surface='dark';
-  window.Moxing={replay,settle,setSurface:(v)=>document.documentElement.dataset.surface=v,ready:Promise.resolve()};
+  window.Moxing={replay,settle,setSurface:(v)=>document.documentElement.dataset.surface=v,profile,duration:total,ready:Promise.resolve()};
   if(reduce) settle();
   else if('IntersectionObserver'in window){ const io=new IntersectionObserver(e=>{if(e[0].isIntersecting){io.disconnect();replay();}},{threshold:.35});io.observe(root); }
   else replay();

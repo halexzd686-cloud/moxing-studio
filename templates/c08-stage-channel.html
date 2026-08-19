@@ -69,57 +69,78 @@
   @keyframes mx-dock { from { opacity:0; transform:translate(var(--dx),var(--dy)); } to { opacity:1; transform:translate(0,0); } }
   @keyframes mx-route { from { opacity:.25; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
   @keyframes mx-lock { 0% { opacity:0; transform:scale(.92); } 68% { opacity:1; transform:scale(1.025); } 100% { opacity:1; transform:scale(1); } }
-  .motion-enabled.is-playing [data-motion="align"] { stroke-dasharray:1; animation:mx-align var(--duration,220ms) linear var(--delay,0ms) both; }
-  .motion-enabled.is-playing [data-motion="dock"] { animation:mx-dock var(--duration,620ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
-  .motion-enabled.is-playing [data-motion="route"] { stroke-dasharray:1; animation:mx-route var(--duration,520ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
-  .motion-enabled.is-playing [data-motion="lock"] { animation:mx-lock var(--duration,280ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
+  @keyframes mx-rail-rise { from { opacity:0; transform:translateY(var(--dy)) scaleY(.16); } to { opacity:1; transform:translateY(0) scaleY(1); } }
+  @keyframes mx-pin { from { opacity:0; transform:translateY(var(--dy)) scale(.35); } to { opacity:1; transform:translateY(0) scale(1); } }
+  @keyframes mx-interlock { from { opacity:0; transform:translateX(var(--dx)) scaleX(.82); } to { opacity:1; transform:translateX(0) scaleX(1); } }
+  @keyframes mx-readout { from { opacity:0; clip-path:inset(0 100% 0 0); transform:translateY(6px); } to { opacity:1; clip-path:inset(0 0 0 0); transform:translateY(0); } }
+  @keyframes mx-alarm { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:translateX(0); } }
+  .motion-enabled.is-playing [data-motion="align"] { stroke-dasharray:1; animation:mx-align var(--active-duration,var(--duration,220ms)) linear var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="dock"] { animation:mx-dock var(--active-duration,var(--duration,620ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="route"] { stroke-dasharray:1; animation:mx-route var(--active-duration,var(--duration,520ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="lock"] { animation:mx-lock var(--active-duration,var(--duration,280ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-choreo="rail-rise"] { animation-name:mx-rail-rise; transform-origin:center bottom; }
+  .motion-enabled.is-playing [data-choreo="trace"] { animation-timing-function:linear; }
+  .motion-enabled.is-playing [data-choreo="pin"] { animation-name:mx-pin; }
+  .motion-enabled.is-playing [data-choreo="interlock"] { animation-name:mx-interlock; }
+  .motion-enabled.is-playing [data-choreo="readout"] { animation-name:mx-readout; transform-origin:left center; }
+  .motion-enabled.is-playing [data-choreo="alarm"] { animation-name:mx-alarm; }
   .motion-enabled.is-paused [data-motion] { animation-play-state:paused!important; }
   @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing [data-motion] { animation:none!important; } }
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1900" data-mode="editorial">
+<main class="chart-container" id="moxing-chart" data-total="1900" data-total-brief="1200" data-total-standard="2100" data-total-story="3500" data-mode="editorial" data-choreography="stage-interlock">
   <header class="chart-header">
     <div class="chart-code">C8 / STAGE CHANNEL</div>
     <div><h1 class="chart-title">付费转化是主瓶颈，续约质量相对稳定</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div></div>
   </header>
   <section class="chart-body"><svg viewBox="0 0 1172 500" role="img" aria-label="付费转化是主瓶颈，续约质量相对稳定"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >08 / STAGE INTERLOCK</text>
-<g class="evidence-plate" data-motion="lock" style="--delay:1520ms;--dx:-8px;--dy:0px">
+<g class="evidence-plate" data-motion="lock" data-choreo="readout" style="--delay:1600ms;--dx:-8px;--dy:0px;--delay-brief:960ms;--delay-story:3040ms">
 <path d="M 0 74 H 222 L 230 82 V 168 H 8 L 0 160 Z" class="panel-stroke" />
 <text x="14" y="95" class="index muted" text-anchor="start" font-size="12" >S-01</text>
 <text x="216" y="95" class="index signal-text" text-anchor="end" font-size="12" >RETENTION</text>
 <text x="14" y="129" class="value" text-anchor="start" font-size="28" font-weight="650" >11.8%</text>
 <text x="14" y="151" class="muted" text-anchor="start" font-size="13" >首阶段至末阶段</text>
 </g>
-<path d="M 332.8 108 H 428.8 L 436.8 116 V 392 H 340.8 L 332.8 384 Z" class="data-fill" data-motion="dock" style="--delay:300ms;--dx:-28px;--dy:0px"/>
-<line x1="384.8" y1="94" x2="384.8" y2="406" class="rail" data-motion="align" style="--delay:180ms;--dx:0px;--dy:0px"/>
+<g class="stage-module" data-motion="dock" data-choreo="interlock" style="--delay:220ms;--dx:-34px;--dy:0px;--duration:320ms;--delay-brief:90ms;--delay-story:360ms;--duration-brief:220ms;--duration-story:540ms">
+<path d="M 332.8 108 H 428.8 L 436.8 116 V 392 H 340.8 L 332.8 384 Z" class="data-fill" />
 <text x="384.8" y="84" class="label" text-anchor="middle" font-size="14" font-weight="650" >访问</text>
 <text x="384.8" y="256" class="value" text-anchor="middle" font-size="16" font-weight="650" >1.2万</text>
-<path d="M 498.4 150 H 594.4 L 602.4 158 V 350 H 506.4 L 498.4 342 Z" class="cat-1" data-motion="dock" style="--delay:420ms;--dx:-28px;--dy:0px"/>
-<line x1="550.4" y1="136" x2="550.4" y2="364" class="rail" data-motion="align" style="--delay:240ms;--dx:0px;--dy:0px"/>
+</g>
+<line x1="384.8" y1="94" x2="384.8" y2="406" class="rail" data-motion="align" style="--delay:130ms;--dx:0px;--dy:0px;--delay-brief:45ms;--delay-story:160ms"/>
+<g class="stage-module" data-motion="dock" data-choreo="interlock" style="--delay:560ms;--dx:-34px;--dy:0px;--duration:320ms;--delay-brief:340ms;--delay-story:1080ms;--duration-brief:220ms;--duration-story:540ms">
+<path d="M 498.4 150 H 594.4 L 602.4 158 V 350 H 506.4 L 498.4 342 Z" class="cat-1" />
 <text x="550.4" y="126" class="label" text-anchor="middle" font-size="14" font-weight="650" >试用</text>
 <text x="550.4" y="256" class="value" text-anchor="middle" font-size="16" font-weight="650" >7,200</text>
-<line x1="436.8" y1="250" x2="498.4" y2="250" class="rail" pathLength="1" data-motion="route" style="--delay:790ms;--dx:0px;--dy:0px"/>
-<text x="467.6" y="234" class="muted index" text-anchor="middle" font-size="12" data-motion="lock" style="--delay:1095ms;--dx:0px;--dy:0px">−40%</text>
-<path d="M 664 174.68 H 760 L 768 182.68 V 325.33 H 672 L 664 317.33 Z" class="cat-1" data-motion="dock" style="--delay:540ms;--dx:-28px;--dy:0px"/>
-<line x1="716" y1="160.68" x2="716" y2="339.33" class="rail" data-motion="align" style="--delay:300ms;--dx:0px;--dy:0px"/>
+</g>
+<line x1="550.4" y1="136" x2="550.4" y2="364" class="rail" data-motion="align" style="--delay:180ms;--dx:0px;--dy:0px;--delay-brief:69ms;--delay-story:255ms"/>
+<line x1="436.8" y1="250" x2="498.4" y2="250" class="rail" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:440ms;--dx:0px;--dy:0px;--duration:180ms;--delay-brief:240ms;--delay-story:780ms;--duration-brief:140ms;--duration-story:360ms"/>
+<text x="467.6" y="234" class="muted index" text-anchor="middle" font-size="12" data-motion="lock" data-choreo="readout" style="--delay:630ms;--dx:0px;--dy:0px;--delay-brief:375ms;--delay-story:1160ms">−40%</text>
+<g class="stage-module" data-motion="dock" data-choreo="interlock" style="--delay:750ms;--dx:-34px;--dy:0px;--duration:320ms;--delay-brief:450ms;--delay-story:1480ms;--duration-brief:220ms;--duration-story:540ms">
+<path d="M 664 174.68 H 760 L 768 182.68 V 325.33 H 672 L 664 317.33 Z" class="cat-1" />
 <text x="716" y="150.68" class="label" text-anchor="middle" font-size="14" font-weight="650" >激活</text>
 <text x="716" y="256" class="value" text-anchor="middle" font-size="16" font-weight="650" >4,380</text>
-<line x1="602.4" y1="250" x2="664" y2="250" class="rail" pathLength="1" data-motion="route" style="--delay:900ms;--dx:0px;--dy:0px"/>
-<text x="633.2" y="234" class="muted index" text-anchor="middle" font-size="12" data-motion="lock" style="--delay:1150ms;--dx:0px;--dy:0px">−39%</text>
-<path d="M 829.6 196.72 H 925.6 L 933.6 204.72 V 303.27 H 837.6 L 829.6 295.27 Z" class="signal-fill" data-motion="dock" style="--delay:660ms;--dx:-28px;--dy:0px"/>
-<line x1="881.6" y1="182.72" x2="881.6" y2="317.27" class="rail" data-motion="align" style="--delay:360ms;--dx:0px;--dy:0px"/>
+</g>
+<line x1="716" y1="160.68" x2="716" y2="339.33" class="rail" data-motion="align" style="--delay:230ms;--dx:0px;--dy:0px;--delay-brief:93ms;--delay-story:350ms"/>
+<line x1="602.4" y1="250" x2="664" y2="250" class="rail" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:630ms;--dx:0px;--dy:0px;--duration:180ms;--delay-brief:350ms;--delay-story:1180ms;--duration-brief:140ms;--duration-story:360ms"/>
+<text x="633.2" y="234" class="muted index" text-anchor="middle" font-size="12" data-motion="lock" data-choreo="readout" style="--delay:820ms;--dx:0px;--dy:0px;--delay-brief:485ms;--delay-story:1560ms">−39%</text>
+<g class="stage-module" data-motion="dock" data-choreo="interlock" style="--delay:940ms;--dx:-34px;--dy:0px;--duration:320ms;--delay-brief:560ms;--delay-story:1880ms;--duration-brief:220ms;--duration-story:540ms">
+<path d="M 829.6 196.72 H 925.6 L 933.6 204.72 V 303.27 H 837.6 L 829.6 295.27 Z" class="signal-fill" />
 <text x="881.6" y="172.72" class="label" text-anchor="middle" font-size="14" font-weight="650" >付费</text>
 <text x="881.6" y="256" class="value" text-anchor="middle" font-size="16" font-weight="650" >1,860</text>
-<line x1="768" y1="250" x2="829.6" y2="250" class="signal-stroke" pathLength="1" data-motion="route" style="--delay:1010ms;--dx:0px;--dy:0px"/>
-<text x="798.8" y="234" class="signal-text index" text-anchor="middle" font-size="12" data-motion="lock" style="--delay:1205ms;--dx:0px;--dy:0px">−58%</text>
-<path d="M 995.2 200.57 H 1091.2 L 1099.2 208.57 V 299.42 H 1003.2 L 995.2 291.42 Z" class="cat-1" data-motion="dock" style="--delay:780ms;--dx:-28px;--dy:0px"/>
-<line x1="1047.2" y1="186.57" x2="1047.2" y2="313.42" class="rail" data-motion="align" style="--delay:420ms;--dx:0px;--dy:0px"/>
+</g>
+<line x1="881.6" y1="182.72" x2="881.6" y2="317.27" class="rail" data-motion="align" style="--delay:280ms;--dx:0px;--dy:0px;--delay-brief:117ms;--delay-story:445ms"/>
+<line x1="768" y1="250" x2="829.6" y2="250" class="signal-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:820ms;--dx:0px;--dy:0px;--duration:180ms;--delay-brief:460ms;--delay-story:1580ms;--duration-brief:140ms;--duration-story:360ms"/>
+<text x="798.8" y="234" class="signal-text index" text-anchor="middle" font-size="12" data-motion="lock" data-choreo="alarm" style="--delay:1010ms;--dx:0px;--dy:0px;--delay-brief:595ms;--delay-story:1960ms">−58%</text>
+<g class="stage-module" data-motion="dock" data-choreo="interlock" style="--delay:1130ms;--dx:-34px;--dy:0px;--duration:320ms;--delay-brief:670ms;--delay-story:2280ms;--duration-brief:220ms;--duration-story:540ms">
+<path d="M 995.2 200.57 H 1091.2 L 1099.2 208.57 V 299.42 H 1003.2 L 995.2 291.42 Z" class="cat-1" />
 <text x="1047.2" y="176.57" class="label" text-anchor="middle" font-size="14" font-weight="650" >续约</text>
 <text x="1047.2" y="256" class="value" text-anchor="middle" font-size="16" font-weight="650" >1,420</text>
-<line x1="933.6" y1="250" x2="995.2" y2="250" class="rail" pathLength="1" data-motion="route" style="--delay:1120ms;--dx:0px;--dy:0px"/>
-<text x="964.4" y="234" class="muted index" text-anchor="middle" font-size="12" data-motion="lock" style="--delay:1260ms;--dx:0px;--dy:0px">−24%</text>
-<line x1="302" y1="420" x2="1130" y2="420" class="rail-strong" pathLength="1" data-motion="align" style="--delay:90ms;--dx:0px;--dy:0px"/></svg></section>
+</g>
+<line x1="1047.2" y1="186.57" x2="1047.2" y2="313.42" class="rail" data-motion="align" style="--delay:330ms;--dx:0px;--dy:0px;--delay-brief:141ms;--delay-story:540ms"/>
+<line x1="933.6" y1="250" x2="995.2" y2="250" class="rail" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:1010ms;--dx:0px;--dy:0px;--duration:180ms;--delay-brief:570ms;--delay-story:1980ms;--duration-brief:140ms;--duration-story:360ms"/>
+<text x="964.4" y="234" class="muted index" text-anchor="middle" font-size="12" data-motion="lock" data-choreo="readout" style="--delay:1200ms;--dx:0px;--dy:0px;--delay-brief:705ms;--delay-story:2360ms">−24%</text>
+<line x1="302" y1="420" x2="1130" y2="420" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--duration:240ms;--delay-brief:30ms;--delay-story:100ms;--duration-brief:150ms;--duration-story:320ms"/></svg></section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" title="重播">↻</button><button type="button" data-action="pause" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" title="切换明暗">◐</button></nav>
 </main>
@@ -129,16 +150,20 @@
   const root=document.getElementById('moxing-chart');
   const params=new URLSearchParams(location.search);
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches||params.get('motion')==='off';
-  const profile=params.get('motion')||'standard';
-  const scales={brief:.72,standard:1,story:1.8};
+  const requestedProfile=params.get('motion')||'standard';
+  const profile=['brief','standard','story'].includes(requestedProfile)?requestedProfile:'standard';
+  const scales={brief:0.72,standard:1.0,story:1.8};
   const scale=scales[profile]||1;
-  const total=Math.round(Number(root.dataset.total||1800)*scale);
+  const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);
+  const total=Number(root.dataset[profileKey]||root.dataset.total||1800);
   const baseDuration={align:220,dock:620,route:520,lock:280};
   root.querySelectorAll('[data-motion]').forEach(el=>{
     const rawDelay=parseFloat(el.style.getPropertyValue('--delay'))||0;
     const rawDuration=parseFloat(el.style.getPropertyValue('--duration'))||baseDuration[el.dataset.motion]||300;
-    el.style.setProperty('--delay',Math.round(rawDelay*scale)+'ms');
-    el.style.setProperty('--duration',Math.round(rawDuration*scale)+'ms');
+    const profileDelay=parseFloat(el.style.getPropertyValue('--delay-'+profile));
+    const profileDuration=parseFloat(el.style.getPropertyValue('--duration-'+profile));
+    el.style.setProperty('--active-delay',Math.round(Number.isFinite(profileDelay)?profileDelay:rawDelay*scale)+'ms');
+    el.style.setProperty('--active-duration',Math.round(Number.isFinite(profileDuration)?profileDuration:rawDuration*scale)+'ms');
   });
   let timer=0;
   const settle=()=>{ clearTimeout(timer); root.classList.remove('is-playing','is-paused'); root.classList.add('is-complete'); };
@@ -153,7 +178,7 @@
   root.querySelector('[data-action=pause]').addEventListener('click',pause);
   root.querySelector('[data-action=surface]').addEventListener('click',()=>{ const html=document.documentElement; html.dataset.surface=html.dataset.surface==='dark'?'light':'dark'; });
   if(params.get('theme')==='dark') document.documentElement.dataset.surface='dark';
-  window.Moxing={replay,settle,setSurface:(v)=>document.documentElement.dataset.surface=v,ready:Promise.resolve()};
+  window.Moxing={replay,settle,setSurface:(v)=>document.documentElement.dataset.surface=v,profile,duration:total,ready:Promise.resolve()};
   if(reduce) settle();
   else if('IntersectionObserver'in window){ const io=new IntersectionObserver(e=>{if(e[0].isIntersecting){io.disconnect();replay();}},{threshold:.35});io.observe(root); }
   else replay();

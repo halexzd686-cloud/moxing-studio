@@ -13,6 +13,12 @@ const chartFiles = [
   "c07-milestone-lanes.html", "c08-stage-channel.html", "c09-metric-lockup.html",
   "c10-decision-interface.html",
 ];
+const exemplars = {
+  "c01-structural-rank.html": { family: "rail-rise", cue: "rail-rise", animation: "mx-rail-rise" },
+  "c03-signal-trend.html": { family: "path-trace", cue: "trace", animation: "mx-route" },
+  "c08-stage-channel.html": { family: "stage-interlock", cue: "interlock", animation: "mx-interlock" },
+  "c10-decision-interface.html": { family: "decision-readout", cue: "readout", animation: "mx-readout" },
+};
 const failures = [];
 const checks = [];
 const fail = (scope, message) => failures.push({ scope, message });
@@ -52,12 +58,23 @@ for (const file of chartFiles) {
   if (!source.includes("--matrix-strong:") || !source.includes("--matrix-quiet:")) fail(scope, "missing matrix contrast tokens");
   if (/class="[^"]*index[^"]*"[^>]*font-size="11"/.test(source)) fail(scope, "dot-matrix text below 12px");
   if (!source.includes('data-motion="align"') || !source.includes('data-motion="dock"') || !source.includes('data-motion="lock"')) fail(scope, "missing motion primitives");
+  if (!source.includes('data-total-brief="') || !source.includes('data-total-standard="') || !source.includes('data-total-story="')) fail(scope, "missing profile totals");
   if (!source.includes("prefers-reduced-motion") || !source.includes("window.Moxing")) fail(scope, "missing motion accessibility/runtime API");
   if (/<canvas\b/i.test(source)) fail(scope, "canvas is not allowed");
   if (/(?:src|href)\s*=\s*["']https?:\/\//i.test(source) || /url\(\s*["']?https?:\/\//i.test(source)) fail(scope, "external runtime URL");
   if (/paper|boardroom|mori|dawn/i.test(source)) fail(scope, "legacy theme residue");
   if (!/<h1\b[^>]*class="chart-title"[^>]*>[^<]+<\/h1>/i.test(source)) fail(scope, "missing conclusion title");
   if (!failures.some((item) => item.scope === scope)) pass(scope, "v2 static contract");
+}
+
+for (const [file, expected] of Object.entries(exemplars)) {
+  const source = fs.readFileSync(path.join(templatesDir, file), "utf8");
+  const scope = `choreography:${file}`;
+  if (!source.includes(`data-choreography="${expected.family}"`)) fail(scope, `missing ${expected.family} family`);
+  if (!source.includes(`data-choreo="${expected.cue}"`)) fail(scope, `missing ${expected.cue} cue`);
+  const explicit = source.match(new RegExp(`data-choreo="${expected.cue}"[^>]*style="([^"]+)"`))?.[1] || "";
+  if (!explicit.includes("--delay-brief:") || !explicit.includes("--delay-story:")) fail(scope, "cue lacks independent profile timing");
+  if (!failures.some((item) => item.scope === scope)) pass(scope, `${expected.family} with independent profile timing`);
 }
 
 let playwright;
@@ -127,6 +144,49 @@ const darkSurface = await motionPage.evaluate(() => document.documentElement.dat
 if (darkSurface !== "dark") fail("motion", "dark surface toggle failed");
 else pass("motion", "dark surface toggle");
 await motionContext.close();
+
+const profileRanges = {
+  brief: [900, 1200],
+  standard: [1400, 2200],
+  story: [2500, 5000],
+};
+for (const [file, expected] of Object.entries(exemplars)) {
+  const context = await browser.newContext({ viewport: { width: 1280, height: 720 }, reducedMotion: "no-preference" });
+  const page = await context.newPage();
+  const observed = {};
+  for (const profile of ["brief", "standard", "story"]) {
+    await page.goto(`${pathToFileURL(path.join(templatesDir, file)).href}?motion=${profile}`, { waitUntil: "load" });
+    await page.evaluate(() => window.Moxing.replay());
+    observed[profile] = await page.evaluate((cue) => {
+      const element = document.querySelector(`[data-choreo="${cue}"]`);
+      const lock = document.querySelector('[data-choreo="alarm"]');
+      const style = element ? getComputedStyle(element) : null;
+      return {
+        profile: window.Moxing?.profile,
+        duration: window.Moxing?.duration,
+        delay: element ? Number.parseFloat(element.style.getPropertyValue("--active-delay")) : null,
+        lockDelay: lock ? Number.parseFloat(lock.style.getPropertyValue("--active-delay")) : null,
+        animation: style?.animationName,
+        running: document.getAnimations().filter((item) => item.playState === "running").length,
+      };
+    }, expected.cue);
+    await page.evaluate(() => window.Moxing.settle());
+  }
+  const scope = `profiles:${file}`;
+  for (const [profile, state] of Object.entries(observed)) {
+    const [minimum, maximum] = profileRanges[profile];
+    if (state.profile !== profile) fail(scope, `${profile} runtime reported ${state.profile}`);
+    if (state.duration < minimum || state.duration > maximum) fail(scope, `${profile} duration ${state.duration}`);
+    if (state.animation !== expected.animation) fail(scope, `${profile} animation ${state.animation}`);
+    if (state.running < 3) fail(scope, `${profile} only ${state.running} active animations`);
+  }
+  const briefRatio = observed.brief.delay / observed.standard.delay;
+  const storyRatio = observed.story.delay / observed.standard.delay;
+  if (Math.abs(briefRatio - 0.72) < 0.01 && Math.abs(storyRatio - 1.8) < 0.01) fail(scope, "profiles are uniform speed multipliers");
+  if (!(observed.standard.delay < observed.standard.lockDelay)) fail(scope, `primary cue ${observed.standard.delay} does not precede lock ${observed.standard.lockDelay}`);
+  if (!failures.some((item) => item.scope === scope)) pass(scope, `${expected.family} brief/standard/story choreography`);
+  await context.close();
+}
 
 const reducedContext = await browser.newContext({ viewport: { width: 1280, height: 720 }, reducedMotion: "reduce" });
 const reducedPage = await reducedContext.newPage();

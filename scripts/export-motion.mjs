@@ -35,9 +35,8 @@ await page.goto(`${pathToFileURL(input).href}?motion=${profile}`, { waitUntil: "
 await page.evaluate(() => document.fonts?.ready || Promise.resolve());
 const video = page.video();
 await page.evaluate(() => window.Moxing.replay());
-const total = await page.locator(".chart-container").getAttribute("data-total");
-const scale = { brief: 0.72, standard: 1, story: 1.8 }[profile];
-await page.waitForTimeout(Math.round(Number(total || 1800) * scale) + 500);
+const duration = await page.evaluate(() => window.Moxing?.duration || Number(document.querySelector(".chart-container")?.dataset.total || 1800));
+await page.waitForTimeout(duration + 500);
 await page.close();
 await context.close();
 await video.saveAs(rawVideo);

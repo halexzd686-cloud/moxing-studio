@@ -19,7 +19,18 @@ Typical total duration is 1.4–1.8 seconds. Motion explains structure; it must 
 | `standard` | 1.4–1.8 s | default HTML and gallery |
 | `story` | 2.5–5 s | editorial narrative |
 
-Profiles alter timing and pauses, not shape or visual identity.
+Profiles use independent timelines rather than uniform playback speed. `brief` compresses reading furniture, `standard` preserves the full structural explanation, and `story` adds a deliberate pause before the conclusion. Shape and final visual identity remain unchanged.
+
+## Choreography families
+
+The primitives stay shared, but the data relationship selects the movement family:
+
+- `rail-rise` — C1 establishes the datum, seats columns upward from the rail, then locks the leader.
+- `path-trace` — C3 calibrates the field, draws the series in time order, pins observed points, then locks the peak/latest reading.
+- `stage-interlock` — C8 alternates connector routing and stage docking so the conversion chain is assembled in causal order; the largest loss locks last.
+- `decision-readout` — C10 establishes the hero decision first, assembles comparisons second, then exposes the risk plate.
+
+Do not apply a family because its movement looks attractive. Select it from the encoded relationship. Additional charts may reuse a family only when their reading order is genuinely equivalent.
 
 ## Runtime contract
 
@@ -39,4 +50,3 @@ Profiles alter timing and pauses, not shape or visual identity.
 - `LOCK`: 4–8% scale settle plus signal reveal; 180–340 ms.
 
 Only elements with real semantic relationships should route or pulse. Decorative scanning is not a default primitive.
-

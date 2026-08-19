@@ -10,7 +10,7 @@ description: 生成具有结构装配动画和静态降级能力的中文数据�
 ## Workflow
 
 1. 按数据形状、标签长度和阅读速度选择 C1–C10。读取 [references/chart-contracts.md](references/chart-contracts.md) 获取契约与选型边界。
-2. 选择 `brief` 或 `editorial`。汇报默认 `brief`；文章、网页或需要解释证据时使用 `editorial`。
+2. 选择 `brief` 或 `editorial`。汇报默认 `brief`；文章、网页或需要解释证据时使用 `editorial`。需要动画时再选 `brief`、`standard` 或 `story` 时间轴，三者不是简单倍速。
 3. 默认使用冷白画布。用户明确要求深色、发布展示或仪器感时使用 `dark`。
 4. 标题写判断，不写图型名。单位、时间范围、口径和来源进入副标题或底行。
 5. 用 `scripts/render.py` 生成独立 HTML；需要图片或视频时再调用导出脚本。

@@ -69,48 +69,67 @@
   @keyframes mx-dock { from { opacity:0; transform:translate(var(--dx),var(--dy)); } to { opacity:1; transform:translate(0,0); } }
   @keyframes mx-route { from { opacity:.25; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
   @keyframes mx-lock { 0% { opacity:0; transform:scale(.92); } 68% { opacity:1; transform:scale(1.025); } 100% { opacity:1; transform:scale(1); } }
-  .motion-enabled.is-playing [data-motion="align"] { stroke-dasharray:1; animation:mx-align var(--duration,220ms) linear var(--delay,0ms) both; }
-  .motion-enabled.is-playing [data-motion="dock"] { animation:mx-dock var(--duration,620ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
-  .motion-enabled.is-playing [data-motion="route"] { stroke-dasharray:1; animation:mx-route var(--duration,520ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
-  .motion-enabled.is-playing [data-motion="lock"] { animation:mx-lock var(--duration,280ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
+  @keyframes mx-rail-rise { from { opacity:0; transform:translateY(var(--dy)) scaleY(.16); } to { opacity:1; transform:translateY(0) scaleY(1); } }
+  @keyframes mx-pin { from { opacity:0; transform:translateY(var(--dy)) scale(.35); } to { opacity:1; transform:translateY(0) scale(1); } }
+  @keyframes mx-interlock { from { opacity:0; transform:translateX(var(--dx)) scaleX(.82); } to { opacity:1; transform:translateX(0) scaleX(1); } }
+  @keyframes mx-readout { from { opacity:0; clip-path:inset(0 100% 0 0); transform:translateY(6px); } to { opacity:1; clip-path:inset(0 0 0 0); transform:translateY(0); } }
+  @keyframes mx-alarm { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:translateX(0); } }
+  .motion-enabled.is-playing [data-motion="align"] { stroke-dasharray:1; animation:mx-align var(--active-duration,var(--duration,220ms)) linear var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="dock"] { animation:mx-dock var(--active-duration,var(--duration,620ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="route"] { stroke-dasharray:1; animation:mx-route var(--active-duration,var(--duration,520ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="lock"] { animation:mx-lock var(--active-duration,var(--duration,280ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-choreo="rail-rise"] { animation-name:mx-rail-rise; transform-origin:center bottom; }
+  .motion-enabled.is-playing [data-choreo="trace"] { animation-timing-function:linear; }
+  .motion-enabled.is-playing [data-choreo="pin"] { animation-name:mx-pin; }
+  .motion-enabled.is-playing [data-choreo="interlock"] { animation-name:mx-interlock; }
+  .motion-enabled.is-playing [data-choreo="readout"] { animation-name:mx-readout; transform-origin:left center; }
+  .motion-enabled.is-playing [data-choreo="alarm"] { animation-name:mx-alarm; }
   .motion-enabled.is-paused [data-motion] { animation-play-state:paused!important; }
   @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing [data-motion] { animation:none!important; } }
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1750" data-mode="editorial">
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1100" data-total-standard="1800" data-total-story="3200" data-mode="editorial" data-choreography="decision-readout">
   <header class="chart-header">
     <div class="chart-code">C10 / DECISION INTERFACE</div>
     <div><h1 class="chart-title">华东营收领先，华南是唯一同比下滑区域</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div></div>
   </header>
   <section class="chart-body"><svg viewBox="0 0 1172 500" role="img" aria-label="华东营收领先，华南是唯一同比下滑区域"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >10 / DECISION INTERFACE</text>
-<path d="M 0 66 H 506 L 520 80 V 422 H 14 L 0 408 Z" class="panel-stroke" data-motion="dock" style="--delay:260ms;--dx:-20px;--dy:0px"/>
+<path d="M 0 66 H 506 L 520 80 V 422 H 14 L 0 408 Z" class="panel-stroke" data-motion="dock" data-choreo="interlock" style="--delay:200ms;--dx:-24px;--dy:0px;--duration:460ms;--delay-brief:80ms;--delay-story:260ms;--duration-brief:300ms;--duration-story:620ms"/>
+<g class="decision-hero-meta" data-motion="lock" data-choreo="readout" style="--delay:420ms;--dx:0px;--dy:0px;--delay-brief:210ms;--delay-story:620ms">
 <text x="36" y="114" class="index muted" text-anchor="start" font-size="12" >LEADING REGION</text>
 <text x="36" y="158" class="title-font" text-anchor="start" font-size="30" font-weight="700" >华东</text>
-<text x="36" y="265" class="value title-font" text-anchor="start" font-size="74" font-weight="700" data-motion="lock" style="--delay:940ms;--dx:0px;--dy:0px">1.5万</text>
 <text x="40" y="300" class="muted" text-anchor="start" font-size="16" >万元</text>
-<line x1="36" y1="340" x2="474" y2="340" class="rail-strong" pathLength="1" data-motion="align" style="--delay:120ms;--dx:0px;--dy:0px"/>
-<text x="36" y="382" class="index signal-text" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" style="--delay:1160ms;--dx:0px;--dy:0px">YOY +18.7%</text>
-<path d="M 24 78 V 56 H 46" class="signal-stroke" pathLength="1" data-motion="lock" style="--delay:1080ms;--dx:0px;--dy:0px"/>
+</g>
+<text x="36" y="265" class="value title-font" text-anchor="start" font-size="74" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:660ms;--dx:0px;--dy:0px;--duration:320ms;--delay-brief:320ms;--delay-story:850ms;--duration-brief:220ms;--duration-story:440ms">1.5万</text>
+<line x1="36" y1="340" x2="474" y2="340" class="rail-strong" pathLength="1" data-motion="align" style="--delay:120ms;--dx:0px;--dy:0px;--delay-brief:45ms;--delay-story:180ms"/>
+<text x="36" y="382" class="index signal-text" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:930ms;--dx:0px;--dy:0px;--delay-brief:520ms;--delay-story:1320ms">YOY +18.7%</text>
+<path d="M 24 78 V 56 H 46" class="signal-stroke" pathLength="1" data-motion="lock" data-choreo="readout" style="--delay:850ms;--dx:0px;--dy:0px;--delay-brief:460ms;--delay-story:1200ms"/>
+<g class="decision-row-heading" data-motion="lock" data-choreo="readout" style="--delay:520ms;--dx:0px;--dy:0px;--delay-brief:300ms;--delay-story:1450ms">
 <text x="586" y="78" class="index muted" text-anchor="start" font-size="12" >01</text>
 <text x="628" y="78" class="label" text-anchor="start" font-size="16" font-weight="650" >华北</text>
 <text x="1130" y="78" class="value" text-anchor="end" font-size="18" font-weight="650" >1.3万</text>
-<line x1="628" y1="108" x2="1130" y2="108" class="grid" pathLength="1" data-motion="align" style="--delay:180ms;--dx:0px;--dy:0px"/>
-<path d="M 628 97 H 1055.64 L 1060.64 102 V 119 H 633 L 628 114 Z" class="data-fill" data-motion="dock" style="--delay:430ms;--dx:-24px;--dy:0px"/>
-<text x="1130" y="139" class="muted index" text-anchor="end" font-size="12" data-motion="lock" style="--delay:950ms;--dx:0px;--dy:0px">YOY +23.5%</text>
+</g>
+<line x1="628" y1="108" x2="1130" y2="108" class="grid" pathLength="1" data-motion="align" style="--delay:520ms;--dx:0px;--dy:0px;--delay-brief:300ms;--delay-story:1450ms"/>
+<path d="M 628 97 H 1055.64 L 1060.64 102 V 119 H 633 L 628 114 Z" class="data-fill" data-motion="dock" data-choreo="interlock" style="--delay:760ms;--dx:-28px;--dy:0px;--duration:440ms;--delay-brief:450ms;--delay-story:1650ms;--duration-brief:280ms;--duration-story:620ms"/>
+<text x="1130" y="139" class="muted index" text-anchor="end" font-size="12" data-motion="lock" data-choreo="readout" style="--delay:1080ms;--dx:0px;--dy:0px;--delay-brief:700ms;--delay-story:2320ms">YOY +23.5%</text>
+<g class="decision-row-heading" data-motion="lock" data-choreo="readout" style="--delay:610ms;--dx:0px;--dy:0px;--delay-brief:345ms;--delay-story:1670ms">
 <text x="586" y="190" class="index muted" text-anchor="start" font-size="12" >02</text>
 <text x="628" y="190" class="label" text-anchor="start" font-size="16" font-weight="650" >华南</text>
 <text x="1130" y="190" class="value" text-anchor="end" font-size="18" font-weight="650" >9,856</text>
-<line x1="628" y1="220" x2="1130" y2="220" class="grid" pathLength="1" data-motion="align" style="--delay:240ms;--dx:0px;--dy:0px"/>
-<path d="M 628 209 H 948.51 L 953.51 214 V 231 H 633 L 628 226 Z" class="signal-fill" data-motion="dock" style="--delay:560ms;--dx:-24px;--dy:0px"/>
-<text x="1130" y="251" class="signal-text index" text-anchor="end" font-size="12" data-motion="lock" style="--delay:1030ms;--dx:0px;--dy:0px">YOY -5.2%</text>
+</g>
+<line x1="628" y1="220" x2="1130" y2="220" class="grid" pathLength="1" data-motion="align" style="--delay:610ms;--dx:0px;--dy:0px;--delay-brief:345ms;--delay-story:1670ms"/>
+<path d="M 628 209 H 948.51 L 953.51 214 V 231 H 633 L 628 226 Z" class="signal-fill" data-motion="dock" data-choreo="interlock" style="--delay:950ms;--dx:-28px;--dy:0px;--duration:440ms;--delay-brief:550ms;--delay-story:1970ms;--duration-brief:280ms;--duration-story:620ms"/>
+<text x="1130" y="251" class="signal-text index" text-anchor="end" font-size="12" data-motion="lock" data-choreo="alarm" style="--delay:1215ms;--dx:0px;--dy:0px;--delay-brief:770ms;--delay-story:2590ms">YOY -5.2%</text>
+<g class="decision-row-heading" data-motion="lock" data-choreo="readout" style="--delay:700ms;--dx:0px;--dy:0px;--delay-brief:390ms;--delay-story:1890ms">
 <text x="586" y="302" class="index muted" text-anchor="start" font-size="12" >03</text>
 <text x="628" y="302" class="label" text-anchor="start" font-size="16" font-weight="650" >西南</text>
 <text x="1130" y="302" class="value" text-anchor="end" font-size="18" font-weight="650" >7,421</text>
-<line x1="628" y1="332" x2="1130" y2="332" class="grid" pathLength="1" data-motion="align" style="--delay:300ms;--dx:0px;--dy:0px"/>
-<path d="M 628 321 H 868.09 L 873.09 326 V 343 H 633 L 628 338 Z" class="data-fill" data-motion="dock" style="--delay:690ms;--dx:-24px;--dy:0px"/>
-<text x="1130" y="363" class="muted index" text-anchor="end" font-size="12" data-motion="lock" style="--delay:1110ms;--dx:0px;--dy:0px">YOY +31.8%</text>
-<g class="evidence-plate" data-motion="lock" style="--delay:1420ms;--dx:-8px;--dy:0px">
+</g>
+<line x1="628" y1="332" x2="1130" y2="332" class="grid" pathLength="1" data-motion="align" style="--delay:700ms;--dx:0px;--dy:0px;--delay-brief:390ms;--delay-story:1890ms"/>
+<path d="M 628 321 H 868.09 L 873.09 326 V 343 H 633 L 628 338 Z" class="data-fill" data-motion="dock" data-choreo="interlock" style="--delay:1140ms;--dx:-28px;--dy:0px;--duration:440ms;--delay-brief:650ms;--delay-story:2290ms;--duration-brief:280ms;--duration-story:620ms"/>
+<text x="1130" y="363" class="muted index" text-anchor="end" font-size="12" data-motion="lock" data-choreo="readout" style="--delay:1350ms;--dx:0px;--dy:0px;--delay-brief:840ms;--delay-story:2860ms">YOY +31.8%</text>
+<g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1480ms;--dx:-8px;--dy:0px;--delay-brief:900ms;--delay-story:2860ms">
 <path d="M 586 374 H 822 L 830 382 V 468 H 594 L 586 460 Z" class="panel-stroke" />
 <text x="600" y="395" class="index muted" text-anchor="start" font-size="12" >D-01</text>
 <text x="816" y="395" class="index signal-text" text-anchor="end" font-size="12" >RISK</text>
@@ -126,16 +145,20 @@
   const root=document.getElementById('moxing-chart');
   const params=new URLSearchParams(location.search);
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches||params.get('motion')==='off';
-  const profile=params.get('motion')||'standard';
-  const scales={brief:.72,standard:1,story:1.8};
+  const requestedProfile=params.get('motion')||'standard';
+  const profile=['brief','standard','story'].includes(requestedProfile)?requestedProfile:'standard';
+  const scales={brief:0.72,standard:1.0,story:1.8};
   const scale=scales[profile]||1;
-  const total=Math.round(Number(root.dataset.total||1800)*scale);
+  const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);
+  const total=Number(root.dataset[profileKey]||root.dataset.total||1800);
   const baseDuration={align:220,dock:620,route:520,lock:280};
   root.querySelectorAll('[data-motion]').forEach(el=>{
     const rawDelay=parseFloat(el.style.getPropertyValue('--delay'))||0;
     const rawDuration=parseFloat(el.style.getPropertyValue('--duration'))||baseDuration[el.dataset.motion]||300;
-    el.style.setProperty('--delay',Math.round(rawDelay*scale)+'ms');
-    el.style.setProperty('--duration',Math.round(rawDuration*scale)+'ms');
+    const profileDelay=parseFloat(el.style.getPropertyValue('--delay-'+profile));
+    const profileDuration=parseFloat(el.style.getPropertyValue('--duration-'+profile));
+    el.style.setProperty('--active-delay',Math.round(Number.isFinite(profileDelay)?profileDelay:rawDelay*scale)+'ms');
+    el.style.setProperty('--active-duration',Math.round(Number.isFinite(profileDuration)?profileDuration:rawDuration*scale)+'ms');
   });
   let timer=0;
   const settle=()=>{ clearTimeout(timer); root.classList.remove('is-playing','is-paused'); root.classList.add('is-complete'); };
@@ -150,7 +173,7 @@
   root.querySelector('[data-action=pause]').addEventListener('click',pause);
   root.querySelector('[data-action=surface]').addEventListener('click',()=>{ const html=document.documentElement; html.dataset.surface=html.dataset.surface==='dark'?'light':'dark'; });
   if(params.get('theme')==='dark') document.documentElement.dataset.surface='dark';
-  window.Moxing={replay,settle,setSurface:(v)=>document.documentElement.dataset.surface=v,ready:Promise.resolve()};
+  window.Moxing={replay,settle,setSurface:(v)=>document.documentElement.dataset.surface=v,profile,duration:total,ready:Promise.resolve()};
   if(reduce) settle();
   else if('IntersectionObserver'in window){ const io=new IntersectionObserver(e=>{if(e[0].isIntersecting){io.disconnect();replay();}},{threshold:.35});io.observe(root); }
   else replay();

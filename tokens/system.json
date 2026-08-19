@@ -46,9 +46,9 @@
   },
   "motion": {
     "profiles": {
-      "brief": {"scale": 0.72},
-      "standard": {"scale": 1.0},
-      "story": {"scale": 1.8}
+      "brief": {"fallbackScale": 0.72, "totalRange": [900, 1200]},
+      "standard": {"fallbackScale": 1.0, "totalRange": [1400, 2200]},
+      "story": {"fallbackScale": 1.8, "totalRange": [2500, 5000]}
     },
     "align": 220,
     "dock": 620,

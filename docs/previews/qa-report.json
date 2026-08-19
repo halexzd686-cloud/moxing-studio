@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-19T10:59:45.179Z",
+  "generatedAt": "2026-08-19T11:14:45.581Z",
   "status": "passed",
   "checks": [
     {
@@ -73,6 +73,22 @@
     {
       "scope": "static:c10-decision-interface.html",
       "message": "v2 static contract"
+    },
+    {
+      "scope": "choreography:c01-structural-rank.html",
+      "message": "rail-rise with independent profile timing"
+    },
+    {
+      "scope": "choreography:c03-signal-trend.html",
+      "message": "path-trace with independent profile timing"
+    },
+    {
+      "scope": "choreography:c08-stage-channel.html",
+      "message": "stage-interlock with independent profile timing"
+    },
+    {
+      "scope": "choreography:c10-decision-interface.html",
+      "message": "decision-readout with independent profile timing"
     },
     {
       "scope": "c01-structural-rank.html:js",
@@ -161,6 +177,22 @@
     {
       "scope": "motion",
       "message": "dark surface toggle"
+    },
+    {
+      "scope": "profiles:c01-structural-rank.html",
+      "message": "rail-rise brief/standard/story choreography"
+    },
+    {
+      "scope": "profiles:c03-signal-trend.html",
+      "message": "path-trace brief/standard/story choreography"
+    },
+    {
+      "scope": "profiles:c08-stage-channel.html",
+      "message": "stage-interlock brief/standard/story choreography"
+    },
+    {
+      "scope": "profiles:c10-decision-interface.html",
+      "message": "decision-readout brief/standard/story choreography"
     },
     {
       "scope": "reduced-motion",
