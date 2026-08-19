@@ -1,0 +1,163 @@
+{
+  "generatedAt": "2026-08-19T08:31:25.362Z",
+  "status": "passed",
+  "checks": [
+    {
+      "scope": "paper",
+      "message": "TXT/BG 对比度 14.51"
+    },
+    {
+      "scope": "paper",
+      "message": "MUT/BG 对比度 3.11"
+    },
+    {
+      "scope": "ink",
+      "message": "TXT/BG 对比度 14.91"
+    },
+    {
+      "scope": "ink",
+      "message": "MUT/BG 对比度 3.90"
+    },
+    {
+      "scope": "boardroom",
+      "message": "TXT/BG 对比度 15.11"
+    },
+    {
+      "scope": "boardroom",
+      "message": "MUT/BG 对比度 3.71"
+    },
+    {
+      "scope": "tech",
+      "message": "TXT/BG 对比度 14.76"
+    },
+    {
+      "scope": "tech",
+      "message": "MUT/BG 对比度 5.63"
+    },
+    {
+      "scope": "mori",
+      "message": "TXT/BG 对比度 10.01"
+    },
+    {
+      "scope": "mori",
+      "message": "MUT/BG 对比度 3.06"
+    },
+    {
+      "scope": "dawn",
+      "message": "TXT/BG 对比度 14.65"
+    },
+    {
+      "scope": "dawn",
+      "message": "MUT/BG 对比度 5.75"
+    },
+    {
+      "scope": "c01-bar.html:js",
+      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+    },
+    {
+      "scope": "c01-bar.html:no-js",
+      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+    },
+    {
+      "scope": "c02-hbar.html:js",
+      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+    },
+    {
+      "scope": "c02-hbar.html:no-js",
+      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+    },
+    {
+      "scope": "c03-line.html:js",
+      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+    },
+    {
+      "scope": "c03-line.html:no-js",
+      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+    },
+    {
+      "scope": "c04-donut.html:js",
+      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+    },
+    {
+      "scope": "c04-donut.html:no-js",
+      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+    },
+    {
+      "scope": "c05-stacked.html:js",
+      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+    },
+    {
+      "scope": "c05-stacked.html:no-js",
+      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+    },
+    {
+      "scope": "c06-waterfall.html:js",
+      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+    },
+    {
+      "scope": "c06-waterfall.html:no-js",
+      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+    },
+    {
+      "scope": "c07-gantt.html:js",
+      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+    },
+    {
+      "scope": "c07-gantt.html:no-js",
+      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+    },
+    {
+      "scope": "c08-funnel.html:js",
+      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+    },
+    {
+      "scope": "c08-funnel.html:no-js",
+      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+    },
+    {
+      "scope": "c09-kpi.html:js",
+      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+    },
+    {
+      "scope": "c09-kpi.html:no-js",
+      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+    },
+    {
+      "scope": "c10-compare.html:js",
+      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+    },
+    {
+      "scope": "c10-compare.html:no-js",
+      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+    },
+    {
+      "scope": "gallery:paper",
+      "message": "10 个图型可见并已导出 C10 主题样张"
+    },
+    {
+      "scope": "gallery:ink",
+      "message": "10 个图型可见并已导出 C10 主题样张"
+    },
+    {
+      "scope": "gallery:boardroom",
+      "message": "10 个图型可见并已导出 C10 主题样张"
+    },
+    {
+      "scope": "gallery:tech",
+      "message": "10 个图型可见并已导出 C10 主题样张"
+    },
+    {
+      "scope": "gallery:mori",
+      "message": "10 个图型可见并已导出 C10 主题样张"
+    },
+    {
+      "scope": "gallery:dawn",
+      "message": "10 个图型可见并已导出 C10 主题样张"
+    },
+    {
+      "scope": "gallery:no-js",
+      "message": "禁用 JS 时 paper 主题 10 个图型完整可见"
+    }
+  ],
+  "failures": []
+}

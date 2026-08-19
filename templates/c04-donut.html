@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<!--
+  C4 环形图
+  - 数据契约：占比构成，≤6 扇区硬规则；>6 合并长尾为'其他'，仍超→降级 C2
+  - ≤4 类用 CAT 色，>4 类降级 RAMP 明度梯
+  - 主角（最大值）用 HERO 色，全图唯一
+  - 中心显示总计数值，标签显示类目名+百分比
+  - 数值格式化：≥1e8 → X.XX亿；≥1e4 → X.X万；其余千分位
+  本文件由 scripts/build_templates.py 生成，SVG 坐标已全部静态写死；
+  如需改动请修改脚本后重新生成，勿手改坐标。
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>华东区贡献近半营收</title>
+<style>
+  :root {
+    /* __CSS_THEME_START__ */
+    --c-bg: #FAFAF7;
+    --c-txt: #23262B;
+    --c-mut: #8A8F98;
+    --c-grid: #E4E3DE;
+    --c-radius: 12px;
+    --c-font: 'Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+    /* __CSS_THEME_END__ */
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1280px; height: 720px;
+    background: var(--c-bg);
+    font-family: var(--c-font);
+    display: flex; justify-content: center; align-items: center;
+    overflow: hidden;
+  }
+  .chart-container {
+    width: 1280px; height: 720px;
+    padding: 40px 48px 32px 48px;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .chart-header { margin-bottom: 8px; flex-shrink: 0; }
+  .chart-title {
+    font-size: 24px; font-weight: 700; color: var(--c-txt);
+    line-height: 1.3; letter-spacing: 0.5px;
+  }
+  .chart-subtitle {
+    font-size: 14px; color: var(--c-mut); margin-top: 4px; line-height: 1.4;
+  }
+  .chart-body {
+    flex: 1; min-height: 0; display: flex; justify-content: center; align-items: center;
+  }
+  .chart-footer {
+    font-size: 11px; color: var(--c-mut); flex-shrink: 0;
+    margin-top: 8px; line-height: 1.4;
+  }
+  svg { display: block; width: 100%; height: 100%; }
+  .tooltip {
+    position: absolute; pointer-events: none; opacity: 0;
+    background: var(--c-txt); color: var(--c-bg);
+    font-size: 12px; padding: 6px 10px; border-radius: var(--c-radius);
+    white-space: nowrap; transition: opacity 0.15s;
+    z-index: 10;
+  }
+</style>
+</head>
+<body>
+<div class="chart-container">
+  <div class="chart-header">
+    <div class="chart-title">华东区贡献近半营收</div>
+    <div class="chart-subtitle">单位：万元 | 2025 年 Q3 营收构成</div>
+  </div>
+  <div class="chart-body">
+    <svg id="chart" viewBox="0 0 1184 578" preserveAspectRatio="xMidYMid meet">
+    <path d="M 592 197.27 L 592 114.04 A 184.96 184.96 0 0 1 767.24 358.18 L 688.38 331.55 A 101.73 101.73 0 0 0 592 197.27 Z" fill="#C46A4A" data-tip="华东区: 4,280 (30.2%)"/>
+    <text x="761.76" y="177.15" text-anchor="start" font-size="14" font-weight="600" fill="#23262B" font-family="'Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif">华东区 30.2%</text>
+    <path d="M 688.38 331.55 L 767.24 358.18 A 184.96 184.96 0 0 1 524.74 471.3 L 555 393.76 A 101.73 101.73 0 0 0 688.38 331.55 Z" fill="#2F6B4F" data-tip="华南区: 3,650 (25.7%)"/>
+    <text x="680.33" y="488.37" text-anchor="start" font-size="14" font-weight="600" fill="#23262B" font-family="'Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif">华南区 25.7%</text>
+    <path d="M 555 393.76 L 524.74 471.3 A 184.96 184.96 0 0 1 408.41 276.52 L 491.03 286.63 A 101.73 101.73 0 0 0 555 393.76 Z" fill="#D9A441" data-tip="华北区: 2,980 (21.0%)"/>
+    <text x="412.6" y="406.14" text-anchor="end" font-size="14" font-weight="600" fill="#23262B" font-family="'Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif">华北区 21.0%</text>
+    <path d="M 491.03 286.63 L 408.41 276.52 A 184.96 184.96 0 0 1 592 114.04 L 592 197.27 A 101.73 101.73 0 0 0 491.03 286.63 Z" fill="#4A6FA5" data-tip="其他区: 3,270 (23.1%)"/>
+    <text x="453.51" y="142.52" text-anchor="end" font-size="14" font-weight="600" fill="#23262B" font-family="'Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif">其他区 23.1%</text>
+    <text x="592" y="291" text-anchor="middle" font-size="28" font-weight="700" fill="#23262B" font-family="'Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif">1.4万</text>
+    <text x="592" y="315" text-anchor="middle" font-size="14" fill="#8A8F98" font-family="'Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif">总计</text>
+    </svg>
+  </div>
+  <div class="chart-footer">数据来源：内部 CRM 系统 | 口径：含税收入</div>
+  <div class="tooltip" id="tooltip"></div>
+</div>
+
+<script>
+// ===== 主题 token（静态 SVG 模式下仅为元数据，供 gallery.html 替换引擎识别） =====
+// __JS_THEME_START__
+// BG: #FAFAF7, TXT: #23262B, MUT: #8A8F98, GRID: #E4E3DE
+// DATA: #2F6B4F
+// RAMP: ["#2F6B4F", "#5E9478", "#93BCA4", "#C5DBCF"]
+// CAT: ["#2F6B4F", "#C46A4A", "#4A6FA5", "#D9A441"]
+// HERO: #C46A4A
+// FONT: 'Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif
+// LINE_WIDTH: 2, RADIUS: 12, DARK: false
+// __JS_THEME_END__
+
+// ===== 数据（同上，仅为元数据） =====
+// __DATA_START__
+// [{"label":"华东区","value":4280},{"label":"华南区","value":3650},{"label":"华北区","value":2980},{"label":"其他区","value":3270}]
+// __DATA_END__
+
+// hover tooltip 增强（删除此 script 图表仍完整）
+(function(){
+  var tip = document.getElementById('tooltip');
+  document.querySelectorAll('[data-tip]').forEach(function(el){
+    el.addEventListener('mouseenter', function(){
+      tip.textContent = el.getAttribute('data-tip');
+      tip.style.opacity = 1;
+      var r = el.getBoundingClientRect();
+      var c = document.querySelector('.chart-container').getBoundingClientRect();
+      tip.style.left = (r.left - c.left + r.width/2 - tip.offsetWidth/2) + 'px';
+      tip.style.top = (r.top - c.top - 36) + 'px';
+    });
+    el.addEventListener('mouseleave', function(){ tip.style.opacity = 0; });
+  });
+})();
+</script>
+</body>
+</html>

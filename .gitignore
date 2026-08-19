@@ -1,0 +1,6 @@
+__pycache__/
+*.py[cod]
+.context-snapshot.md
+moxing-studio-handoff.md
+.moxing-export-*/
+output.png
