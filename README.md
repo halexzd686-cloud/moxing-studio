@@ -2,7 +2,7 @@
 
 Moxing Studio 把中文商业、金融和分析数据生成具有结构装配动画的离线 HTML/SVG 图表。它不是一组 PPT 主题，而是一套统一的 **Structural Interface / 结构接口**：数据先对齐基准、装配构件、接通关系，最后锁定结论。
 
-[在线查看 24 款动态图表](https://halexzd686-cloud.github.io/moxing-studio/) · [下载 v2.0.1](https://github.com/halexzd686-cloud/moxing-studio/releases/tag/v2.0.1) · [图表数据契约](references/chart-contracts.md)
+[在线查看 24 款动态图表](https://halexzd686-cloud.github.io/moxing-studio/) · [下载 v2.0.2](https://github.com/halexzd686-cloud/moxing-studio/releases/tag/v2.0.2) · [图表数据契约](references/chart-contracts.md)
 
 [![C11 Sector Lock preview](docs/previews/v2-c11.png)](https://halexzd686-cloud.github.io/moxing-studio/)
 
@@ -39,7 +39,7 @@ $skillHome = if ($env:CODEX_HOME) {
 }
 
 New-Item -ItemType Directory -Force -Path $skillHome | Out-Null
-git clone --branch v2.0.1 --depth 1 `
+git clone --branch v2.0.2 --depth 1 `
   https://github.com/halexzd686-cloud/moxing-studio.git `
   (Join-Path $skillHome "moxing-studio")
 ```

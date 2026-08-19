@@ -4,7 +4,7 @@
 >
 > Branch: `v2.0.2-layout-safety`
 >
-> Status: v2.0.1 released; v2.0.2 layout-safety candidate reserves an evidence lane and prevents plate/plot collisions
+> Status: v2.0.2 release candidate; evidence-lane layout and plate/plot collision safeguards implemented
 >
 > Visual review: approved on 2026-08-19
 
