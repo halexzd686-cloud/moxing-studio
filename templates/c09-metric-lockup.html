@@ -42,6 +42,7 @@
   svg .index.muted { fill:var(--matrix-quiet); font-weight:560; font-variation-settings:'ROND' 0,'wght' 560; letter-spacing:.04em; }
   svg .signal-text { fill:var(--signal); }
   svg .index.signal-text { fill:var(--signal); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; }
+  svg .on-fill { fill:var(--bg); font-weight:700; }
   svg .value { fill:var(--ink); font-variant-numeric:tabular-nums; }
   svg .grid { stroke:var(--grid); stroke-width:1; fill:none; vector-effect:non-scaling-stroke; }
   svg .rail { stroke:var(--rail); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
@@ -70,6 +71,9 @@
   @keyframes mx-route { from { opacity:.25; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
   @keyframes mx-lock { 0% { opacity:0; transform:scale(.92); } 68% { opacity:1; transform:scale(1.025); } 100% { opacity:1; transform:scale(1); } }
   @keyframes mx-rail-rise { from { opacity:0; transform:translateY(var(--dy)) scaleY(.16); } to { opacity:1; transform:translateY(0) scaleY(1); } }
+  @keyframes mx-rail-slide { from { opacity:0; transform:translateX(var(--dx)) scaleX(.18); } to { opacity:1; transform:translateX(0) scaleX(1); } }
+  @keyframes mx-field-seat { from { opacity:0; transform:translateY(var(--dy)) scale(.72); } to { opacity:1; transform:translateY(0) scale(1); } }
+  @keyframes mx-band-fill { from { opacity:0; transform:scaleX(.06); } to { opacity:1; transform:scaleX(1); } }
   @keyframes mx-pin { from { opacity:0; transform:translateY(var(--dy)) scale(.35); } to { opacity:1; transform:translateY(0) scale(1); } }
   @keyframes mx-interlock { from { opacity:0; transform:translateX(var(--dx)) scaleX(.82); } to { opacity:1; transform:translateX(0) scaleX(1); } }
   @keyframes mx-readout { from { opacity:0; clip-path:inset(0 100% 0 0); transform:translateY(6px); } to { opacity:1; clip-path:inset(0 0 0 0); transform:translateY(0); } }
@@ -79,6 +83,9 @@
   .motion-enabled.is-playing [data-motion="route"] { stroke-dasharray:1; animation:mx-route var(--active-duration,var(--duration,520ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
   .motion-enabled.is-playing [data-motion="lock"] { animation:mx-lock var(--active-duration,var(--duration,280ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
   .motion-enabled.is-playing [data-choreo="rail-rise"] { animation-name:mx-rail-rise; transform-origin:center bottom; }
+  .motion-enabled.is-playing [data-choreo="rail-slide"] { animation-name:mx-rail-slide; transform-origin:left center; }
+  .motion-enabled.is-playing [data-choreo="field-seat"] { animation-name:mx-field-seat; }
+  .motion-enabled.is-playing [data-choreo="band-fill"] { animation-name:mx-band-fill; transform-origin:left center; }
   .motion-enabled.is-playing [data-choreo="trace"] { animation-timing-function:linear; }
   .motion-enabled.is-playing [data-choreo="pin"] { animation-name:mx-pin; }
   .motion-enabled.is-playing [data-choreo="interlock"] { animation-name:mx-interlock; }
@@ -89,35 +96,37 @@
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1190" data-total-standard="1750" data-total-story="3150" data-mode="editorial" data-choreography="structural">
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1100" data-total-standard="1800" data-total-story="3000" data-mode="editorial" data-choreography="metric-readout">
   <header class="chart-header">
     <div class="chart-code">C9 / METRIC LOCKUP</div>
     <div><h1 class="chart-title">经常性收入同比增长 23.8%，完成目标 85.7%</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div></div>
   </header>
   <section class="chart-body"><svg viewBox="0 0 1172 500" role="img" aria-label="经常性收入同比增长 23.8%，完成目标 85.7%"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >09 / METRIC LOCKUP</text>
-<path d="M 0 74 H 666 L 680 88 V 410 H 14 L 0 396 Z" class="panel-stroke" data-motion="dock" style="--delay:280ms;--dx:0px;--dy:22px"/>
+<path d="M 0 74 H 666 L 680 88 V 410 H 14 L 0 396 Z" class="panel-stroke" data-motion="dock" data-choreo="interlock" style="--delay:180ms;--dx:-22px;--dy:0px;--duration:460ms;--delay-brief:70ms;--delay-story:250ms;--duration-brief:300ms;--duration-story:620ms"/>
+<g class="metric-meta" data-motion="lock" data-choreo="readout" style="--delay:400ms;--dx:0px;--dy:0px;--delay-brief:200ms;--delay-story:600ms">
 <text x="34" y="122" class="muted" text-anchor="start" font-size="16" >年度经常性收入</text>
-<text x="34" y="235" class="value title-font" text-anchor="start" font-size="84" font-weight="700" data-motion="lock" style="--delay:920ms;--dx:0px;--dy:0px">1.29亿</text>
 <text x="38" y="275" class="muted" text-anchor="start" font-size="18" >元</text>
-<line x1="38" y1="326" x2="622" y2="326" class="rail-strong" pathLength="1" data-motion="align" style="--delay:120ms;--dx:0px;--dy:0px"/>
-<line x1="38" y1="326" x2="538.68" y2="326" class="signal-stroke" pathLength="1" data-motion="route" style="--delay:650ms;--dx:0px;--dy:0px;--duration:680ms"/>
-<line x1="538.68" y1="313" x2="538.68" y2="339" class="signal-stroke" data-motion="lock" style="--delay:1240ms;--dx:0px;--dy:0px"/>
+</g>
+<text x="34" y="235" class="value title-font" text-anchor="start" font-size="84" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:650ms;--dx:0px;--dy:0px;--duration:320ms;--delay-brief:330ms;--delay-story:900ms;--duration-brief:220ms;--duration-story:440ms">1.29亿</text>
+<line x1="38" y1="326" x2="622" y2="326" class="rail-strong" pathLength="1" data-motion="align" style="--delay:120ms;--dx:0px;--dy:0px;--delay-brief:45ms;--delay-story:170ms"/>
+<line x1="38" y1="326" x2="538.68" y2="326" class="signal-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:820ms;--dx:0px;--dy:0px;--duration:620ms;--delay-brief:480ms;--delay-story:1450ms;--duration-brief:420ms;--duration-story:900ms"/>
+<line x1="538.68" y1="313" x2="538.68" y2="339" class="signal-stroke" data-motion="lock" data-choreo="readout" style="--delay:1240ms;--dx:0px;--dy:0px;--delay-brief:850ms;--delay-story:2380ms"/>
 <text x="622" y="355" class="index muted" text-anchor="end" font-size="12" >TARGET 1.5亿</text>
-<g class="evidence-plate" data-motion="lock" style="--delay:1150ms;--dx:-8px;--dy:0px">
+<g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1100ms;--dx:-8px;--dy:0px;--delay-brief:650ms;--delay-story:2050ms">
 <path d="M 732 74 H 914 L 922 82 V 168 H 740 L 732 160 Z" class="panel-stroke" />
 <text x="746" y="95" class="index muted" text-anchor="start" font-size="12" >K-01</text>
 <text x="908" y="95" class="index signal-text" text-anchor="end" font-size="12" >YOY</text>
 <text x="746" y="129" class="value" text-anchor="start" font-size="28" font-weight="650" >+23.8%</text>
 <text x="746" y="151" class="muted" text-anchor="start" font-size="13" >同比变化</text>
 </g>
-<g class="evidence-plate" data-motion="lock" style="--delay:1280ms;--dx:-8px;--dy:0px">
+<g class="evidence-plate" data-motion="lock" data-choreo="readout" style="--delay:1280ms;--dx:-8px;--dy:0px;--delay-brief:760ms;--delay-story:2450ms">
 <path d="M 940 74 H 1122 L 1130 82 V 168 H 948 L 940 160 Z" class="panel-stroke" />
 <text x="954" y="95" class="index muted" text-anchor="start" font-size="12" >K-02</text>
 <text x="1116" y="95" class="index signal-text" text-anchor="end" font-size="12" >TARGET</text>
 <text x="954" y="129" class="value" text-anchor="start" font-size="28" font-weight="650" >85.7%</text>
 <text x="954" y="151" class="muted" text-anchor="start" font-size="13" >目标完成度</text>
 </g>
-<g class="evidence-plate" data-motion="lock" style="--delay:1380ms;--dx:-8px;--dy:0px">
+<g class="evidence-plate" data-motion="lock" data-choreo="readout" style="--delay:1430ms;--dx:-8px;--dy:0px;--delay-brief:850ms;--delay-story:2750ms">
 <path d="M 732 192 H 914 L 922 200 V 286 H 740 L 732 278 Z" class="panel-stroke" />
 <text x="746" y="213" class="index muted" text-anchor="start" font-size="12" >K-03</text>
 <text x="908" y="213" class="index signal-text" text-anchor="end" font-size="12" >MOM</text>

@@ -100,15 +100,27 @@ CHARTS = {
 
 CHOREOGRAPHIES = {
     "C1": "rail-rise",
+    "C2": "ranked-rail",
     "C3": "path-trace",
+    "C4": "field-aggregation",
+    "C5": "band-routing",
+    "C6": "ledger-interlock",
+    "C7": "milestone-routing",
     "C8": "stage-interlock",
+    "C9": "metric-readout",
     "C10": "decision-readout",
 }
 
 PROFILE_TOTALS = {
     "C1": {"brief": 1100, "standard": 1750, "story": 3000},
+    "C2": {"brief": 1100, "standard": 1800, "story": 3400},
     "C3": {"brief": 1200, "standard": 1900, "story": 3200},
+    "C4": {"brief": 1100, "standard": 1900, "story": 3600},
+    "C5": {"brief": 1200, "standard": 2200, "story": 4000},
+    "C6": {"brief": 1200, "standard": 2200, "story": 4000},
+    "C7": {"brief": 1200, "standard": 2100, "story": 4000},
     "C8": {"brief": 1200, "standard": 2100, "story": 3500},
+    "C9": {"brief": 1100, "standard": 1800, "story": 3000},
     "C10": {"brief": 1100, "standard": 1800, "story": 3200},
 }
 
@@ -157,19 +169,29 @@ def build_c2(data: Any) -> str:
     if not items:
         return no_data()
     maximum = max(max(item["value"], 0) for item in items) or 1
-    x0, x1, y0 = 330, 1116, 70
-    row = min(64, 378 / max(1, len(items)))
-    parts = [text(0, 28, "02 / RANKED DATUM", cls="index muted", size=13), evidence_plate(0, 74, "R-01", "TOP", format_num(items[0]["value"]), items[0]["label"][:12], delay=1300, width=242)]
+    x0, x1, y0 = 330, 1116, 120
+    row = min(58, 306 / max(1, len(items) - 1))
+    parts = [text(0, 28, "02 / RANKED DATUM", cls="index muted", size=13), evidence_plate(874, 0, "R-01", "TOP", format_num(items[0]["value"]), items[0]["label"][:12], delay=1500, width=242, brief=900, story=2960, choreo="alarm")]
     for index, item in enumerate(items):
         y = y0 + index * row
         end = x0 + (x1 - x0) * max(0, item["value"]) / maximum
+        heading = group(
+            [
+                text(0, y + 18, f"{index + 1:02d}", cls="index muted", size=12),
+                text(44, y + 18, item["label"], cls="label", size=14, weight=600 if index == 0 else None),
+            ],
+            cls="rank-heading",
+            extra=motion("lock", 120 + index * 45, brief=60 + index * 25, story=200 + index * 90, choreo="readout"),
+        )
+        bar_standard = 280 + index * 75
+        bar_brief = 150 + index * 40
+        bar_story = 500 + index * 150
         parts += [
-            text(0, y + 18, f"{index + 1:02d}", cls="index muted", size=12),
-            text(44, y + 18, item["label"], cls="label", size=14, weight=600 if index == 0 else None),
-            line(x0, y + 12, x1, y + 12, cls="grid", extra=f'pathLength="1" {motion("align", 80 + index * 35)}'),
-            path(cut_rect_path(x0, y, max(4, end - x0), 24, 5), cls="signal-fill" if index == 0 else "data-fill", extra=motion("dock", 280 + index * 70, dx=-28)),
-            line(end, y - 5, end, y + 30, cls="rail", extra=motion("align", 680 + index * 55)),
-            text(min(x1 - 2, end + 12), y + 18, format_num(item["value"]), cls="value", size=14, weight=650, extra=motion("lock", 900 + index * 40)),
+            heading,
+            line(x0, y + 12, x1, y + 12, cls="grid", extra=f'pathLength="1" {motion("align", 80 + index * 35, brief=35 + index * 18, story=120 + index * 65)}'),
+            path(cut_rect_path(x0, y, max(4, end - x0), 24, 5), cls="signal-fill" if index == 0 else "data-fill", extra=motion("dock", bar_standard, dx=-32, brief=bar_brief, story=bar_story, duration=420, duration_brief=280, duration_story=620, choreo="rail-slide")),
+            line(end, y - 5, end, y + 30, cls="rail", extra=motion("align", bar_standard + 350, brief=bar_brief + 230, story=bar_story + 540)),
+            text(min(x1 - 2, end + 12), y + 18, format_num(item["value"]), cls="value", size=14, weight=650, extra=motion("lock", bar_standard + 360, brief=bar_brief + 235, story=bar_story + 550, choreo="readout")),
         ]
     return "\n".join(parts)
 
@@ -231,7 +253,7 @@ def build_c4(data: Any) -> str:
     for index in sorted(range(len(items)), key=lambda i: raw[i] - counts[i], reverse=True)[: units - sum(counts)]:
         counts[index] += 1
     largest = max(range(len(items)), key=lambda i: items[i]["value"])
-    parts = [text(0, 28, "04 / COMPOSITION BAY", cls="index muted", size=13), evidence_plate(0, 74, "F-01", "SHARE", f"{shares[largest]*100:.0f}%", items[largest]["label"], delay=1480, width=230)]
+    parts = [text(0, 28, "04 / COMPOSITION BAY", cls="index muted", size=13), evidence_plate(0, 74, "F-01", "SHARE", f"{shares[largest]*100:.0f}%", items[largest]["label"], delay=1500, width=230, brief=900, story=3060, choreo="alarm")]
     start_x, start_y, cell_w, cell_h, gap = 310, 116, 34, 48, 6
     cumulative = []
     for idx, count in enumerate(counts):
@@ -241,14 +263,19 @@ def build_c4(data: Any) -> str:
         x, y = start_x + col * (cell_w + gap), start_y + row * (cell_h + gap)
         category = cumulative[index]
         cls = "signal-fill" if category == largest else f"cat-{category % 4 + 1}"
-        parts.append(path(cut_rect_path(x, y, cell_w, cell_h, 5), cls=cls, extra=motion("dock", 260 + index * 22, dy=18)))
-        parts.append(line(x + cell_w / 2, y + cell_h, x + cell_w / 2, y + cell_h + 5, cls="grid", extra=motion("align", 440 + index * 10)))
+        parts.append(path(cut_rect_path(x, y, cell_w, cell_h, 5), cls=cls, extra=motion("dock", 240 + index * 18, dy=18, brief=120 + index * 10, story=400 + index * 35, duration=360, duration_brief=240, duration_story=520, choreo="field-seat")))
+        parts.append(line(x + cell_w / 2, y + cell_h, x + cell_w / 2, y + cell_h + 5, cls="grid", extra=motion("align", 500 + index * 10, brief=300 + index * 5, story=850 + index * 20)))
     legend_x = 770
     for index, item in enumerate(items):
         y = 108 + index * 58
         cls = "signal-fill" if index == largest else f"cat-{index % 4 + 1}"
-        parts += [rect(legend_x, y, 12, 24, cls=cls, extra=motion("dock", 660 + index * 60, dx=-10)), text(legend_x + 28, y + 15, item["label"], size=14), text(1118, y + 15, f"{shares[index]*100:.1f}%", cls="value index", anchor="end", size=14, weight=650)]
-    parts += [line(start_x, 382, start_x + 394, 382, cls="rail-strong", extra=f'pathLength="1" {motion("align", 100)}'), text(start_x, 410, "40 MODULES / EACH = 2.5%", cls="index muted", size=12)]
+        legend = group(
+            [rect(legend_x, y, 12, 24, cls=cls), text(legend_x + 28, y + 15, item["label"], size=14), text(1118, y + 15, f"{shares[index]*100:.1f}%", cls="value index", anchor="end", size=14, weight=650)],
+            cls="field-legend",
+            extra=motion("lock", 980 + index * 80, brief=600 + index * 45, story=2080 + index * 150, choreo="readout"),
+        )
+        parts.append(legend)
+    parts += [line(start_x, 382, start_x + 394, 382, cls="rail-strong", extra=f'pathLength="1" {motion("align", 100, brief=45, story=140)}'), text(start_x, 410, "40 MODULES / EACH = 2.5%", cls="index muted", size=12)]
     return "\n".join(parts)
 
 
@@ -261,24 +288,37 @@ def build_c5(data: Any) -> str:
     totals = [sum(item["values"][i] for item in series) for i in range(len(categories))]
     if not any(totals):
         return no_data()
-    parts = [text(0, 28, "05 / BAND AGGREGATION", cls="index muted", size=13), evidence_plate(0, 74, "B-01", "MIX", f"{series[0]['values'][-1]/max(1, totals[-1])*100:.0f}%", f"{series[0].get('name','主系列')} / 最新", delay=1450, width=230)]
+    category_span = max(1, len(categories) - 1)
+    standard_step = min(130, 900 / category_span)
+    brief_step = min(70, 450 / category_span)
+    story_step = min(240, 1600 / category_span)
+    last_standard = 280 + standard_step * (len(categories) - 1) + 70 * (len(series) - 1)
+    last_brief = 150 + brief_step * (len(categories) - 1) + 40 * (len(series) - 1)
+    last_story = 700 + story_step * (len(categories) - 1) + 120 * (len(series) - 1)
+    parts = [text(0, 28, "05 / BAND AGGREGATION", cls="index muted", size=13), evidence_plate(0, 74, "B-01", "MIX", f"{series[0]['values'][-1]/max(1, totals[-1])*100:.0f}%", f"{series[0].get('name','主系列')} / 最新", delay=round(max(1450, last_standard + 440)), width=230, brief=round(max(900, last_brief + 300)), story=round(max(3000, last_story + 650)), choreo="alarm")]
     x0, x1, y0 = 318, 1122, 95
     row = min(78, 320 / max(1, len(categories)))
     for cat_index, category in enumerate(categories):
         y = y0 + cat_index * row
         total = totals[cat_index] or 1
-        parts += [text(x0 - 20, y + 23, category, cls="muted", anchor="end", size=13), line(x0, y + 31, x1, y + 31, cls="grid", extra=f'pathLength="1" {motion("align", 80 + cat_index * 40)}')]
+        row_standard = round(120 + cat_index * standard_step * .55)
+        row_brief = round(55 + cat_index * brief_step * .45)
+        row_story = round(180 + cat_index * story_step * .55)
+        parts += [text(x0 - 20, y + 23, category, cls="muted", anchor="end", size=13, extra=motion("lock", row_standard, brief=row_brief, story=row_story, choreo="readout")), line(x0, y + 31, x1, y + 31, cls="grid", extra=f'pathLength="1" {motion("align", row_standard, brief=row_brief, story=row_story)}')]
         cursor = x0
         for series_index, item in enumerate(series):
             width = (x1 - x0) * item["values"][cat_index] / total
             cls = "signal-fill" if series_index == 0 else f"cat-{series_index + 1}"
-            parts.append(path(cut_rect_path(cursor, y, max(1, width - 4), 42, 5), cls=cls, extra=motion("dock", 320 + cat_index * 85 + series_index * 55, dx=-18)))
+            segment_standard = round(280 + cat_index * standard_step + series_index * 70)
+            segment_brief = round(150 + cat_index * brief_step + series_index * 40)
+            segment_story = round(700 + cat_index * story_step + series_index * 120)
+            parts.append(path(cut_rect_path(cursor, y, max(1, width - 4), 42, 5), cls=cls, extra=motion("dock", segment_standard, dx=-18, brief=segment_brief, story=segment_story, duration=420, duration_brief=280, duration_story=620, choreo="band-fill")))
             if width > 74:
-                parts.append(text(cursor + width / 2, y + 26, f"{item['values'][cat_index]/total*100:.0f}%", cls="index", anchor="middle", size=12, weight=650))
+                parts.append(text(cursor + width / 2, y + 26, f"{item['values'][cat_index]/total*100:.0f}%", cls="index on-fill", anchor="middle", size=12, weight=700, extra=motion("lock", segment_standard + 300, brief=segment_brief + 190, story=segment_story + 470, choreo="readout")))
             cursor += width
     for index, item in enumerate(series):
         x = x0 + index * 190
-        parts += [rect(x, 442, 12, 12, cls="signal-fill" if index == 0 else f"cat-{index+1}"), text(x + 22, 453, item.get("name", f"系列{index+1}"), cls="muted", size=12)]
+        parts.append(group([rect(x, 442, 12, 12, cls="signal-fill" if index == 0 else f"cat-{index+1}"), text(x + 22, 453, item.get("name", f"系列{index+1}"), cls="muted", size=12)], cls="band-legend", extra=motion("lock", 1180 + index * 70, brief=700 + index * 40, story=2500 + index * 140, choreo="readout")))
     return "\n".join(parts)
 
 
@@ -310,7 +350,8 @@ def build_c6(data: Any) -> str:
     band = (x1 - x0) / len(items)
     width = min(76, band * .58)
     final_delta = levels[-1][1] - levels[0][1]
-    parts = [text(0, 28, "06 / LEDGER INTERLOCK", cls="index muted", size=13), evidence_plate(0, 74, "L-01", "NET", f"{final_delta:+,.0f}", "期初至期末", delay=1500, width=230), line(x0, y(0), x1, y(0), cls="rail-strong", extra=f'pathLength="1" {motion("align", 80)}')]
+    extra_steps = max(0, len(items) - 6)
+    parts = [text(0, 28, "06 / LEDGER INTERLOCK", cls="index muted", size=13), evidence_plate(0, 74, "L-01", "NET", f"{final_delta:+,.0f}", "期初至期末", delay=1750 + extra_steps * 50, width=230, brief=950 + extra_steps * 25, story=3300 + extra_steps * 100, choreo="alarm"), line(x0, y(0), x1, y(0), cls="rail-strong", extra=f'pathLength="1" {motion("align", 80, brief=35, story=120)}')]
     for index, (item, pair) in enumerate(zip(items, levels)):
         start, end = pair
         top, bottom = min(y(start), y(end)), max(y(start), y(end))
@@ -318,10 +359,13 @@ def build_c6(data: Any) -> str:
         x = x0 + band * index + (band - width) / 2
         kind = item.get("type", "increase")
         cls = "signal-fill" if kind == "decrease" else ("data-fill" if kind in {"start", "end"} else "cat-1")
-        parts += [path(cut_rect_path(x, top, width, height, 6), cls=cls, extra=motion("dock", 300 + index * 95, dy=26)), text(x + width / 2, top - 12, format_num(item["value"]), cls="value", anchor="middle", size=14, weight=650, extra=motion("lock", 900 + index * 45)), text(x + width / 2, y1 + 34, item["label"], cls="muted", anchor="middle", size=12)]
+        stage_standard = 220 if index == 0 else 620 + (index - 1) * 150
+        stage_brief = 90 if index == 0 else 350 + (index - 1) * 80
+        stage_story = 360 if index == 0 else 1100 + (index - 1) * 300
+        parts += [path(cut_rect_path(x, top, width, height, 6), cls=cls, extra=motion("dock", stage_standard, dy=26, brief=stage_brief, story=stage_story, duration=320, duration_brief=220, duration_story=540, choreo="field-seat")), text(x + width / 2, top - 12, format_num(item["value"]), cls="value", anchor="middle", size=14, weight=650, extra=motion("lock", stage_standard + 260, brief=stage_brief + 170, story=stage_story + 430, choreo="readout")), text(x + width / 2, y1 + 34, item["label"], cls="muted", anchor="middle", size=12, extra=motion("lock", stage_standard, brief=stage_brief, story=stage_story, choreo="readout"))]
         if index < len(items) - 1:
             next_x = x0 + band * (index + 1) + (band - width) / 2
-            parts.append(line(x + width, y(end), next_x, y(end), cls="rail", extra=f'pathLength="1" {motion("route", 620 + index * 90)}'))
+            parts.append(line(x + width, y(end), next_x, y(end), cls="rail", extra=f'pathLength="1" {motion("route", 450 + index * 150, brief=240 + index * 80, story=780 + index * 300, duration=190, duration_brief=140, duration_story=360, choreo="trace")}'))
     return "\n".join(parts)
 
 
@@ -352,18 +396,23 @@ def build_c7(data: Any) -> str:
     minimum = min(item["_start"] for item in items)
     maximum = max(item["_end"] for item in items)
     span = max(1, (maximum - minimum).days)
-    x0, x1, y0 = 330, 1128, 72
-    row = min(68, 340 / len(items))
+    x0, x1, y0 = 330, 1128, 136
+    row = min(62, 300 / max(1, len(items) - 1))
     pos = lambda dt: x0 + (x1 - x0) * (dt - minimum).days / span
-    parts = [text(0, 28, "07 / MILESTONE LANES", cls="index muted", size=13), evidence_plate(0, 74, "M-01", "ACTIVE", f"{sum(0 < item['progress'] < 100 for item in items)}", "进行中的任务", delay=1450, width=230), line(x0, 50, x1, 50, cls="rail-strong", extra=f'pathLength="1" {motion("align", 80)}')]
+    extra_rows = max(0, len(items) - 5)
+    parts = [text(0, 28, "07 / MILESTONE LANES", cls="index muted", size=13), evidence_plate(0, 38, "M-01", "ACTIVE", f"{sum(0 < item['progress'] < 100 for item in items)}", "进行中的任务", delay=1650 + extra_rows * 40, width=230, brief=950 + extra_rows * 26, story=3200 + extra_rows * 80, choreo="alarm"), line(x0, 110, x1, 110, cls="rail-strong", extra=f'pathLength="1" {motion("align", 80, brief=35, story=120)}')]
     for tick in range(6):
         x = x0 + (x1 - x0) * tick / 5
-        parts += [line(x, 43, x, 420, cls="grid", extra=f'pathLength="1" {motion("align", 100 + tick * 35)}'), text(x, 35, f"D+{round(span* tick/5)}", cls="index muted", anchor="middle", size=12)]
+        parts += [line(x, 103, x, 460, cls="grid", extra=f'pathLength="1" {motion("align", 100 + tick * 35, brief=45 + tick * 18, story=160 + tick * 55)}'), text(x, 95, f"D+{round(span* tick/5)}", cls="index muted", anchor="middle", size=12)]
     for index, item in enumerate(items):
         y = y0 + index * row
         start, end = pos(item["_start"]), pos(item["_end"])
         width = max(8, end - start)
-        parts += [text(0, y + 19, f"{index+1:02d}", cls="index muted", size=12), text(42, y + 19, item.get("task", "任务"), size=14), line(x0, y + 12, x1, y + 12, cls="grid", extra=motion("align", 140 + index * 35)), path(cut_rect_path(start, y, width, 26, 5), cls="panel-stroke", extra=motion("dock", 320 + index * 90, dx=-24)), rect(start, y, width * item["progress"] / 100, 26, cls="signal-fill" if 0 < item["progress"] < 100 else "data-fill", extra=motion("route", 680 + index * 70)), line(end, y - 5, end, y + 34, cls="rail", extra=motion("lock", 920 + index * 55)), text(x1, y + 19, f"{item['progress']:.0f}%", cls="index muted", anchor="end", size=12)]
+        task_standard = 360 + index * 100
+        task_brief = 180 + index * 55
+        task_story = 700 + index * 210
+        heading = group([text(0, y + 19, f"{index+1:02d}", cls="index muted", size=12), text(42, y + 19, item.get("task", "任务"), size=14), text(x1, y + 19, f"{item['progress']:.0f}%", cls="index muted", anchor="end", size=12)], cls="milestone-heading", extra=motion("lock", 240 + index * 50, brief=120 + index * 25, story=420 + index * 95, choreo="readout"))
+        parts += [heading, line(x0, y + 12, x1, y + 12, cls="grid", extra=motion("align", 140 + index * 35, brief=70 + index * 18, story=220 + index * 70)), path(cut_rect_path(start, y, width, 26, 5), cls="panel-stroke", extra=motion("dock", task_standard, dx=-24, brief=task_brief, story=task_story, duration=350, duration_brief=220, duration_story=540, choreo="interlock")), rect(start, y, width * item["progress"] / 100, 26, cls="signal-fill" if 0 < item["progress"] < 100 else "data-fill", extra=motion("route", task_standard + 250, brief=task_brief + 150, story=task_story + 390, duration=320, duration_brief=220, duration_story=600, choreo="band-fill")), line(end, y - 5, end, y + 34, cls="rail", extra=motion("lock", task_standard + 500, brief=task_brief + 300, story=task_story + 780, choreo="readout"))]
     return "\n".join(parts)
 
 
@@ -420,19 +469,19 @@ def build_c9(data: Any) -> str:
     value, target = data["value"], data.get("target") if is_number(data.get("target")) and data.get("target") > 0 else None
     completion = value / target * 100 if target else None
     yoy = data.get("yoy")
+    metric_meta = group([text(34, 122, data.get("label", "核心指标"), cls="muted", size=16), text(38, 275, data.get("unit", ""), cls="muted", size=18)], cls="metric-meta", extra=motion("lock", 400, brief=200, story=600, choreo="readout"))
     parts = [
         text(0, 28, "09 / METRIC LOCKUP", cls="index muted", size=13),
-        path(cut_rect_path(0, 74, 680, 336, 14), cls="panel-stroke", extra=motion("dock", 280, dy=22)),
-        text(34, 122, data.get("label", "核心指标"), cls="muted", size=16),
-        text(34, 235, format_num(value), cls="value title-font", size=84, weight=700, extra=motion("lock", 920)),
-        text(38, 275, data.get("unit", ""), cls="muted", size=18),
-        line(38, 326, 622, 326, cls="rail-strong", extra=f'pathLength="1" {motion("align", 120)}'),
+        path(cut_rect_path(0, 74, 680, 336, 14), cls="panel-stroke", extra=motion("dock", 180, dx=-22, brief=70, story=250, duration=460, duration_brief=300, duration_story=620, choreo="interlock")),
+        metric_meta,
+        text(34, 235, format_num(value), cls="value title-font", size=84, weight=700, extra=motion("lock", 650, brief=330, story=900, duration=320, duration_brief=220, duration_story=440, choreo="readout")),
+        line(38, 326, 622, 326, cls="rail-strong", extra=f'pathLength="1" {motion("align", 120, brief=45, story=170)}'),
     ]
     if target:
         ratio = min(1, max(0, value / target))
         x = 38 + 584 * ratio
-        parts += [line(38, 326, x, 326, cls="signal-stroke", extra=f'pathLength="1" {motion("route", 650, duration=680)}'), line(x, 313, x, 339, cls="signal-stroke", extra=motion("lock", 1240)), text(622, 355, f"TARGET {format_num(target)}", cls="index muted", anchor="end", size=12)]
-    parts += [evidence_plate(732, 74, "K-01", "YOY", f"{yoy:+.1f}%" if is_number(yoy) else "—", "同比变化", delay=1150, width=190), evidence_plate(940, 74, "K-02", "TARGET", f"{completion:.1f}%" if completion is not None else "—", "目标完成度", delay=1280, width=190), evidence_plate(732, 192, "K-03", "MOM", f"{data.get('mom'):+.1f}%" if is_number(data.get("mom")) else "—", "环比变化", delay=1380, width=190)]
+        parts += [line(38, 326, x, 326, cls="signal-stroke", extra=f'pathLength="1" {motion("route", 820, duration=620, brief=480, story=1450, duration_brief=420, duration_story=900, choreo="trace")}'), line(x, 313, x, 339, cls="signal-stroke", extra=motion("lock", 1240, brief=850, story=2380, choreo="readout")), text(622, 355, f"TARGET {format_num(target)}", cls="index muted", anchor="end", size=12)]
+    parts += [evidence_plate(732, 74, "K-01", "YOY", f"{yoy:+.1f}%" if is_number(yoy) else "—", "同比变化", delay=1100, width=190, brief=650, story=2050, choreo="alarm"), evidence_plate(940, 74, "K-02", "TARGET", f"{completion:.1f}%" if completion is not None else "—", "目标完成度", delay=1280, width=190, brief=760, story=2450, choreo="readout"), evidence_plate(732, 192, "K-03", "MOM", f"{data.get('mom'):+.1f}%" if is_number(data.get("mom")) else "—", "环比变化", delay=1430, width=190, brief=850, story=2750, choreo="readout")]
     return "\n".join(parts)
 
 

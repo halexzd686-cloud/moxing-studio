@@ -42,6 +42,7 @@
   svg .index.muted { fill:var(--matrix-quiet); font-weight:560; font-variation-settings:'ROND' 0,'wght' 560; letter-spacing:.04em; }
   svg .signal-text { fill:var(--signal); }
   svg .index.signal-text { fill:var(--signal); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; }
+  svg .on-fill { fill:var(--bg); font-weight:700; }
   svg .value { fill:var(--ink); font-variant-numeric:tabular-nums; }
   svg .grid { stroke:var(--grid); stroke-width:1; fill:none; vector-effect:non-scaling-stroke; }
   svg .rail { stroke:var(--rail); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
@@ -70,6 +71,9 @@
   @keyframes mx-route { from { opacity:.25; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
   @keyframes mx-lock { 0% { opacity:0; transform:scale(.92); } 68% { opacity:1; transform:scale(1.025); } 100% { opacity:1; transform:scale(1); } }
   @keyframes mx-rail-rise { from { opacity:0; transform:translateY(var(--dy)) scaleY(.16); } to { opacity:1; transform:translateY(0) scaleY(1); } }
+  @keyframes mx-rail-slide { from { opacity:0; transform:translateX(var(--dx)) scaleX(.18); } to { opacity:1; transform:translateX(0) scaleX(1); } }
+  @keyframes mx-field-seat { from { opacity:0; transform:translateY(var(--dy)) scale(.72); } to { opacity:1; transform:translateY(0) scale(1); } }
+  @keyframes mx-band-fill { from { opacity:0; transform:scaleX(.06); } to { opacity:1; transform:scaleX(1); } }
   @keyframes mx-pin { from { opacity:0; transform:translateY(var(--dy)) scale(.35); } to { opacity:1; transform:translateY(0) scale(1); } }
   @keyframes mx-interlock { from { opacity:0; transform:translateX(var(--dx)) scaleX(.82); } to { opacity:1; transform:translateX(0) scaleX(1); } }
   @keyframes mx-readout { from { opacity:0; clip-path:inset(0 100% 0 0); transform:translateY(6px); } to { opacity:1; clip-path:inset(0 0 0 0); transform:translateY(0); } }
@@ -79,6 +83,9 @@
   .motion-enabled.is-playing [data-motion="route"] { stroke-dasharray:1; animation:mx-route var(--active-duration,var(--duration,520ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
   .motion-enabled.is-playing [data-motion="lock"] { animation:mx-lock var(--active-duration,var(--duration,280ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
   .motion-enabled.is-playing [data-choreo="rail-rise"] { animation-name:mx-rail-rise; transform-origin:center bottom; }
+  .motion-enabled.is-playing [data-choreo="rail-slide"] { animation-name:mx-rail-slide; transform-origin:left center; }
+  .motion-enabled.is-playing [data-choreo="field-seat"] { animation-name:mx-field-seat; }
+  .motion-enabled.is-playing [data-choreo="band-fill"] { animation-name:mx-band-fill; transform-origin:left center; }
   .motion-enabled.is-playing [data-choreo="trace"] { animation-timing-function:linear; }
   .motion-enabled.is-playing [data-choreo="pin"] { animation-name:mx-pin; }
   .motion-enabled.is-playing [data-choreo="interlock"] { animation-name:mx-interlock; }
@@ -89,67 +96,77 @@
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1900" data-total-brief="1292" data-total-standard="1900" data-total-story="3420" data-mode="editorial" data-choreography="structural">
+<main class="chart-container" id="moxing-chart" data-total="1900" data-total-brief="1200" data-total-standard="2100" data-total-story="4000" data-mode="editorial" data-choreography="milestone-routing">
   <header class="chart-header">
     <div class="chart-code">C7 / MILESTONE LANES</div>
     <div><h1 class="chart-title">核心开发进入中段，测试窗口即将开启</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div></div>
   </header>
   <section class="chart-body"><svg viewBox="0 0 1172 500" role="img" aria-label="核心开发进入中段，测试窗口即将开启"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >07 / MILESTONE LANES</text>
-<g class="evidence-plate" data-motion="lock" style="--delay:1450ms;--dx:-8px;--dy:0px">
-<path d="M 0 74 H 222 L 230 82 V 168 H 8 L 0 160 Z" class="panel-stroke" />
-<text x="14" y="95" class="index muted" text-anchor="start" font-size="12" >M-01</text>
-<text x="216" y="95" class="index signal-text" text-anchor="end" font-size="12" >ACTIVE</text>
-<text x="14" y="129" class="value" text-anchor="start" font-size="28" font-weight="650" >3</text>
-<text x="14" y="151" class="muted" text-anchor="start" font-size="13" >进行中的任务</text>
+<g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1650ms;--dx:-8px;--dy:0px;--delay-brief:950ms;--delay-story:3200ms">
+<path d="M 0 38 H 222 L 230 46 V 132 H 8 L 0 124 Z" class="panel-stroke" />
+<text x="14" y="59" class="index muted" text-anchor="start" font-size="12" >M-01</text>
+<text x="216" y="59" class="index signal-text" text-anchor="end" font-size="12" >ACTIVE</text>
+<text x="14" y="93" class="value" text-anchor="start" font-size="28" font-weight="650" >3</text>
+<text x="14" y="115" class="muted" text-anchor="start" font-size="13" >进行中的任务</text>
 </g>
-<line x1="330" y1="50" x2="1128" y2="50" class="rail-strong" pathLength="1" data-motion="align" style="--delay:80ms;--dx:0px;--dy:0px"/>
-<line x1="330" y1="43" x2="330" y2="420" class="grid" pathLength="1" data-motion="align" style="--delay:100ms;--dx:0px;--dy:0px"/>
-<text x="330" y="35" class="index muted" text-anchor="middle" font-size="12" >D+0</text>
-<line x1="489.6" y1="43" x2="489.6" y2="420" class="grid" pathLength="1" data-motion="align" style="--delay:135ms;--dx:0px;--dy:0px"/>
-<text x="489.6" y="35" class="index muted" text-anchor="middle" font-size="12" >D+8</text>
-<line x1="649.2" y1="43" x2="649.2" y2="420" class="grid" pathLength="1" data-motion="align" style="--delay:170ms;--dx:0px;--dy:0px"/>
-<text x="649.2" y="35" class="index muted" text-anchor="middle" font-size="12" >D+15</text>
-<line x1="808.8" y1="43" x2="808.8" y2="420" class="grid" pathLength="1" data-motion="align" style="--delay:205ms;--dx:0px;--dy:0px"/>
-<text x="808.8" y="35" class="index muted" text-anchor="middle" font-size="12" >D+23</text>
-<line x1="968.4" y1="43" x2="968.4" y2="420" class="grid" pathLength="1" data-motion="align" style="--delay:240ms;--dx:0px;--dy:0px"/>
-<text x="968.4" y="35" class="index muted" text-anchor="middle" font-size="12" >D+30</text>
-<line x1="1128" y1="43" x2="1128" y2="420" class="grid" pathLength="1" data-motion="align" style="--delay:275ms;--dx:0px;--dy:0px"/>
-<text x="1128" y="35" class="index muted" text-anchor="middle" font-size="12" >D+38</text>
-<text x="0" y="91" class="index muted" text-anchor="start" font-size="12" >01</text>
-<text x="42" y="91" class="label" text-anchor="start" font-size="14" >洞察与定义</text>
-<line x1="330" y1="84" x2="1128" y2="84" class="grid" data-motion="align" style="--delay:140ms;--dx:0px;--dy:0px"/>
-<path d="M 330 72 H 472 L 477 77 V 98 H 335 L 330 93 Z" class="panel-stroke" data-motion="dock" style="--delay:320ms;--dx:-24px;--dy:0px"/>
-<rect x="330" y="72" width="147" height="26" rx="0" class="data-fill" data-motion="route" style="--delay:680ms;--dx:0px;--dy:0px"/>
-<line x1="477" y1="67" x2="477" y2="106" class="rail" data-motion="lock" style="--delay:920ms;--dx:0px;--dy:0px"/>
-<text x="1128" y="91" class="index muted" text-anchor="end" font-size="12" >100%</text>
-<text x="0" y="159" class="index muted" text-anchor="start" font-size="12" >02</text>
-<text x="42" y="159" class="label" text-anchor="start" font-size="14" >视觉系统</text>
-<line x1="330" y1="152" x2="1128" y2="152" class="grid" data-motion="align" style="--delay:175ms;--dx:0px;--dy:0px"/>
-<path d="M 414 140 H 640 L 645 145 V 166 H 419 L 414 161 Z" class="panel-stroke" data-motion="dock" style="--delay:410ms;--dx:-24px;--dy:0px"/>
-<rect x="414" y="140" width="189.42" height="26" rx="0" class="signal-fill" data-motion="route" style="--delay:750ms;--dx:0px;--dy:0px"/>
-<line x1="645" y1="135" x2="645" y2="174" class="rail" data-motion="lock" style="--delay:975ms;--dx:0px;--dy:0px"/>
-<text x="1128" y="159" class="index muted" text-anchor="end" font-size="12" >82%</text>
-<text x="0" y="227" class="index muted" text-anchor="start" font-size="12" >03</text>
-<text x="42" y="227" class="label" text-anchor="start" font-size="14" >核心开发</text>
-<line x1="330" y1="220" x2="1128" y2="220" class="grid" data-motion="align" style="--delay:210ms;--dx:0px;--dy:0px"/>
-<path d="M 561 208 H 892 L 897 213 V 234 H 566 L 561 229 Z" class="panel-stroke" data-motion="dock" style="--delay:500ms;--dx:-24px;--dy:0px"/>
-<rect x="561" y="208" width="188.16" height="26" rx="0" class="signal-fill" data-motion="route" style="--delay:820ms;--dx:0px;--dy:0px"/>
-<line x1="897" y1="203" x2="897" y2="242" class="rail" data-motion="lock" style="--delay:1030ms;--dx:0px;--dy:0px"/>
-<text x="1128" y="227" class="index muted" text-anchor="end" font-size="12" >56%</text>
-<text x="0" y="295" class="index muted" text-anchor="start" font-size="12" >04</text>
-<text x="42" y="295" class="label" text-anchor="start" font-size="14" >测试验收</text>
-<line x1="330" y1="288" x2="1128" y2="288" class="grid" data-motion="align" style="--delay:245ms;--dx:0px;--dy:0px"/>
-<path d="M 834 276 H 1060 L 1065 281 V 302 H 839 L 834 297 Z" class="panel-stroke" data-motion="dock" style="--delay:590ms;--dx:-24px;--dy:0px"/>
-<rect x="834" y="276" width="41.58" height="26" rx="0" class="signal-fill" data-motion="route" style="--delay:890ms;--dx:0px;--dy:0px"/>
-<line x1="1065" y1="271" x2="1065" y2="310" class="rail" data-motion="lock" style="--delay:1085ms;--dx:0px;--dy:0px"/>
-<text x="1128" y="295" class="index muted" text-anchor="end" font-size="12" >18%</text>
-<text x="0" y="363" class="index muted" text-anchor="start" font-size="12" >05</text>
-<text x="42" y="363" class="label" text-anchor="start" font-size="14" >公开发布</text>
-<line x1="330" y1="356" x2="1128" y2="356" class="grid" data-motion="align" style="--delay:280ms;--dx:0px;--dy:0px"/>
-<path d="M 1044 344 H 1123 L 1128 349 V 370 H 1049 L 1044 365 Z" class="panel-stroke" data-motion="dock" style="--delay:680ms;--dx:-24px;--dy:0px"/>
-<rect x="1044" y="344" width="0" height="26" rx="0" class="data-fill" data-motion="route" style="--delay:960ms;--dx:0px;--dy:0px"/>
-<line x1="1128" y1="339" x2="1128" y2="378" class="rail" data-motion="lock" style="--delay:1140ms;--dx:0px;--dy:0px"/>
-<text x="1128" y="363" class="index muted" text-anchor="end" font-size="12" >0%</text></svg></section>
+<line x1="330" y1="110" x2="1128" y2="110" class="rail-strong" pathLength="1" data-motion="align" style="--delay:80ms;--dx:0px;--dy:0px;--delay-brief:35ms;--delay-story:120ms"/>
+<line x1="330" y1="103" x2="330" y2="460" class="grid" pathLength="1" data-motion="align" style="--delay:100ms;--dx:0px;--dy:0px;--delay-brief:45ms;--delay-story:160ms"/>
+<text x="330" y="95" class="index muted" text-anchor="middle" font-size="12" >D+0</text>
+<line x1="489.6" y1="103" x2="489.6" y2="460" class="grid" pathLength="1" data-motion="align" style="--delay:135ms;--dx:0px;--dy:0px;--delay-brief:63ms;--delay-story:215ms"/>
+<text x="489.6" y="95" class="index muted" text-anchor="middle" font-size="12" >D+8</text>
+<line x1="649.2" y1="103" x2="649.2" y2="460" class="grid" pathLength="1" data-motion="align" style="--delay:170ms;--dx:0px;--dy:0px;--delay-brief:81ms;--delay-story:270ms"/>
+<text x="649.2" y="95" class="index muted" text-anchor="middle" font-size="12" >D+15</text>
+<line x1="808.8" y1="103" x2="808.8" y2="460" class="grid" pathLength="1" data-motion="align" style="--delay:205ms;--dx:0px;--dy:0px;--delay-brief:99ms;--delay-story:325ms"/>
+<text x="808.8" y="95" class="index muted" text-anchor="middle" font-size="12" >D+23</text>
+<line x1="968.4" y1="103" x2="968.4" y2="460" class="grid" pathLength="1" data-motion="align" style="--delay:240ms;--dx:0px;--dy:0px;--delay-brief:117ms;--delay-story:380ms"/>
+<text x="968.4" y="95" class="index muted" text-anchor="middle" font-size="12" >D+30</text>
+<line x1="1128" y1="103" x2="1128" y2="460" class="grid" pathLength="1" data-motion="align" style="--delay:275ms;--dx:0px;--dy:0px;--delay-brief:135ms;--delay-story:435ms"/>
+<text x="1128" y="95" class="index muted" text-anchor="middle" font-size="12" >D+38</text>
+<g class="milestone-heading" data-motion="lock" data-choreo="readout" style="--delay:240ms;--dx:0px;--dy:0px;--delay-brief:120ms;--delay-story:420ms">
+<text x="0" y="155" class="index muted" text-anchor="start" font-size="12" >01</text>
+<text x="42" y="155" class="label" text-anchor="start" font-size="14" >洞察与定义</text>
+<text x="1128" y="155" class="index muted" text-anchor="end" font-size="12" >100%</text>
+</g>
+<line x1="330" y1="148" x2="1128" y2="148" class="grid" data-motion="align" style="--delay:140ms;--dx:0px;--dy:0px;--delay-brief:70ms;--delay-story:220ms"/>
+<path d="M 330 136 H 472 L 477 141 V 162 H 335 L 330 157 Z" class="panel-stroke" data-motion="dock" data-choreo="interlock" style="--delay:360ms;--dx:-24px;--dy:0px;--duration:350ms;--delay-brief:180ms;--delay-story:700ms;--duration-brief:220ms;--duration-story:540ms"/>
+<rect x="330" y="136" width="147" height="26" rx="0" class="data-fill" data-motion="route" data-choreo="band-fill" style="--delay:610ms;--dx:0px;--dy:0px;--duration:320ms;--delay-brief:330ms;--delay-story:1090ms;--duration-brief:220ms;--duration-story:600ms"/>
+<line x1="477" y1="131" x2="477" y2="170" class="rail" data-motion="lock" data-choreo="readout" style="--delay:860ms;--dx:0px;--dy:0px;--delay-brief:480ms;--delay-story:1480ms"/>
+<g class="milestone-heading" data-motion="lock" data-choreo="readout" style="--delay:290ms;--dx:0px;--dy:0px;--delay-brief:145ms;--delay-story:515ms">
+<text x="0" y="217" class="index muted" text-anchor="start" font-size="12" >02</text>
+<text x="42" y="217" class="label" text-anchor="start" font-size="14" >视觉系统</text>
+<text x="1128" y="217" class="index muted" text-anchor="end" font-size="12" >82%</text>
+</g>
+<line x1="330" y1="210" x2="1128" y2="210" class="grid" data-motion="align" style="--delay:175ms;--dx:0px;--dy:0px;--delay-brief:88ms;--delay-story:290ms"/>
+<path d="M 414 198 H 640 L 645 203 V 224 H 419 L 414 219 Z" class="panel-stroke" data-motion="dock" data-choreo="interlock" style="--delay:460ms;--dx:-24px;--dy:0px;--duration:350ms;--delay-brief:235ms;--delay-story:910ms;--duration-brief:220ms;--duration-story:540ms"/>
+<rect x="414" y="198" width="189.42" height="26" rx="0" class="signal-fill" data-motion="route" data-choreo="band-fill" style="--delay:710ms;--dx:0px;--dy:0px;--duration:320ms;--delay-brief:385ms;--delay-story:1300ms;--duration-brief:220ms;--duration-story:600ms"/>
+<line x1="645" y1="193" x2="645" y2="232" class="rail" data-motion="lock" data-choreo="readout" style="--delay:960ms;--dx:0px;--dy:0px;--delay-brief:535ms;--delay-story:1690ms"/>
+<g class="milestone-heading" data-motion="lock" data-choreo="readout" style="--delay:340ms;--dx:0px;--dy:0px;--delay-brief:170ms;--delay-story:610ms">
+<text x="0" y="279" class="index muted" text-anchor="start" font-size="12" >03</text>
+<text x="42" y="279" class="label" text-anchor="start" font-size="14" >核心开发</text>
+<text x="1128" y="279" class="index muted" text-anchor="end" font-size="12" >56%</text>
+</g>
+<line x1="330" y1="272" x2="1128" y2="272" class="grid" data-motion="align" style="--delay:210ms;--dx:0px;--dy:0px;--delay-brief:106ms;--delay-story:360ms"/>
+<path d="M 561 260 H 892 L 897 265 V 286 H 566 L 561 281 Z" class="panel-stroke" data-motion="dock" data-choreo="interlock" style="--delay:560ms;--dx:-24px;--dy:0px;--duration:350ms;--delay-brief:290ms;--delay-story:1120ms;--duration-brief:220ms;--duration-story:540ms"/>
+<rect x="561" y="260" width="188.16" height="26" rx="0" class="signal-fill" data-motion="route" data-choreo="band-fill" style="--delay:810ms;--dx:0px;--dy:0px;--duration:320ms;--delay-brief:440ms;--delay-story:1510ms;--duration-brief:220ms;--duration-story:600ms"/>
+<line x1="897" y1="255" x2="897" y2="294" class="rail" data-motion="lock" data-choreo="readout" style="--delay:1060ms;--dx:0px;--dy:0px;--delay-brief:590ms;--delay-story:1900ms"/>
+<g class="milestone-heading" data-motion="lock" data-choreo="readout" style="--delay:390ms;--dx:0px;--dy:0px;--delay-brief:195ms;--delay-story:705ms">
+<text x="0" y="341" class="index muted" text-anchor="start" font-size="12" >04</text>
+<text x="42" y="341" class="label" text-anchor="start" font-size="14" >测试验收</text>
+<text x="1128" y="341" class="index muted" text-anchor="end" font-size="12" >18%</text>
+</g>
+<line x1="330" y1="334" x2="1128" y2="334" class="grid" data-motion="align" style="--delay:245ms;--dx:0px;--dy:0px;--delay-brief:124ms;--delay-story:430ms"/>
+<path d="M 834 322 H 1060 L 1065 327 V 348 H 839 L 834 343 Z" class="panel-stroke" data-motion="dock" data-choreo="interlock" style="--delay:660ms;--dx:-24px;--dy:0px;--duration:350ms;--delay-brief:345ms;--delay-story:1330ms;--duration-brief:220ms;--duration-story:540ms"/>
+<rect x="834" y="322" width="41.58" height="26" rx="0" class="signal-fill" data-motion="route" data-choreo="band-fill" style="--delay:910ms;--dx:0px;--dy:0px;--duration:320ms;--delay-brief:495ms;--delay-story:1720ms;--duration-brief:220ms;--duration-story:600ms"/>
+<line x1="1065" y1="317" x2="1065" y2="356" class="rail" data-motion="lock" data-choreo="readout" style="--delay:1160ms;--dx:0px;--dy:0px;--delay-brief:645ms;--delay-story:2110ms"/>
+<g class="milestone-heading" data-motion="lock" data-choreo="readout" style="--delay:440ms;--dx:0px;--dy:0px;--delay-brief:220ms;--delay-story:800ms">
+<text x="0" y="403" class="index muted" text-anchor="start" font-size="12" >05</text>
+<text x="42" y="403" class="label" text-anchor="start" font-size="14" >公开发布</text>
+<text x="1128" y="403" class="index muted" text-anchor="end" font-size="12" >0%</text>
+</g>
+<line x1="330" y1="396" x2="1128" y2="396" class="grid" data-motion="align" style="--delay:280ms;--dx:0px;--dy:0px;--delay-brief:142ms;--delay-story:500ms"/>
+<path d="M 1044 384 H 1123 L 1128 389 V 410 H 1049 L 1044 405 Z" class="panel-stroke" data-motion="dock" data-choreo="interlock" style="--delay:760ms;--dx:-24px;--dy:0px;--duration:350ms;--delay-brief:400ms;--delay-story:1540ms;--duration-brief:220ms;--duration-story:540ms"/>
+<rect x="1044" y="384" width="0" height="26" rx="0" class="data-fill" data-motion="route" data-choreo="band-fill" style="--delay:1010ms;--dx:0px;--dy:0px;--duration:320ms;--delay-brief:550ms;--delay-story:1930ms;--duration-brief:220ms;--duration-story:600ms"/>
+<line x1="1128" y1="379" x2="1128" y2="418" class="rail" data-motion="lock" data-choreo="readout" style="--delay:1260ms;--dx:0px;--dy:0px;--delay-brief:700ms;--delay-story:2320ms"/></svg></section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" title="重播">↻</button><button type="button" data-action="pause" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" title="切换明暗">◐</button></nav>
 </main>

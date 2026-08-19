@@ -9,14 +9,14 @@ Every chart composes four primitives in this order:
 3. `ROUTE` — reveal relationships along time, dependency, or flow.
 4. `LOCK` — attach the conclusion and leave the signal mark in its final position.
 
-Typical total duration is 1.4–1.8 seconds. Motion explains structure; it must not delay access to the result.
+Typical total duration is 1.4–1.8 seconds; dense band, ledger, and milestone views may extend to 2.2 seconds. Motion explains structure; it must not delay access to the result.
 
 ## Profiles
 
 | Profile | Total | Use |
 |---|---:|---|
 | `brief` | 0.9–1.2 s | presentation, repeated slides |
-| `standard` | 1.4–1.8 s | default HTML and gallery |
+| `standard` | 1.4–2.2 s | default HTML and gallery |
 | `story` | 2.5–5 s | editorial narrative |
 
 Profiles use independent timelines rather than uniform playback speed. `brief` compresses reading furniture, `standard` preserves the full structural explanation, and `story` adds a deliberate pause before the conclusion. Shape and final visual identity remain unchanged.
@@ -26,8 +26,14 @@ Profiles use independent timelines rather than uniform playback speed. `brief` c
 The primitives stay shared, but the data relationship selects the movement family:
 
 - `rail-rise` — C1 establishes the datum, seats columns upward from the rail, then locks the leader.
+- `ranked-rail` — C2 reveals ranked labels, loads horizontal rails in order, then locks the top evidence.
 - `path-trace` — C3 calibrates the field, draws the series in time order, pins observed points, then locks the peak/latest reading.
+- `field-aggregation` — C4 seats discrete units into a field before the legend and dominant share lock.
+- `band-routing` — C5 fills each composition row from left to right while preserving segment order, then locks the latest mix.
+- `ledger-interlock` — C6 alternates contribution docking and balance connectors so the running ledger is causal.
+- `milestone-routing` — C7 calibrates time lanes, docks task windows, routes progress, then locks the active-work count.
 - `stage-interlock` — C8 alternates connector routing and stage docking so the conversion chain is assembled in causal order; the largest loss locks last.
+- `metric-readout` — C9 establishes the KPI, routes progress toward the target, then exposes context plates.
 - `decision-readout` — C10 establishes the hero decision first, assembles comparisons second, then exposes the risk plate.
 
 Do not apply a family because its movement looks attractive. Select it from the encoded relationship. Additional charts may reuse a family only when their reading order is genuinely equivalent.

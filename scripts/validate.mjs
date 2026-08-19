@@ -15,8 +15,14 @@ const chartFiles = [
 ];
 const exemplars = {
   "c01-structural-rank.html": { family: "rail-rise", cue: "rail-rise", animation: "mx-rail-rise" },
+  "c02-ranked-rail.html": { family: "ranked-rail", cue: "rail-slide", animation: "mx-rail-slide" },
   "c03-signal-trend.html": { family: "path-trace", cue: "trace", animation: "mx-route" },
+  "c04-composition-field.html": { family: "field-aggregation", cue: "field-seat", animation: "mx-field-seat" },
+  "c05-composition-bands.html": { family: "band-routing", cue: "band-fill", animation: "mx-band-fill" },
+  "c06-ledger-steps.html": { family: "ledger-interlock", cue: "field-seat", animation: "mx-field-seat" },
+  "c07-milestone-lanes.html": { family: "milestone-routing", cue: "interlock", animation: "mx-interlock" },
   "c08-stage-channel.html": { family: "stage-interlock", cue: "interlock", animation: "mx-interlock" },
+  "c09-metric-lockup.html": { family: "metric-readout", cue: "readout", animation: "mx-readout" },
   "c10-decision-interface.html": { family: "decision-readout", cue: "readout", animation: "mx-readout" },
 };
 const failures = [];
@@ -187,6 +193,34 @@ for (const [file, expected] of Object.entries(exemplars)) {
   if (!failures.some((item) => item.scope === scope)) pass(scope, `${expected.family} brief/standard/story choreography`);
   await context.close();
 }
+
+for (const [file, headingSelector] of Object.entries({
+  "c02-ranked-rail.html": ".rank-heading text",
+  "c07-milestone-lanes.html": ".milestone-heading text",
+})) {
+  const context = await browser.newContext({ viewport: { width: 1280, height: 720 } });
+  const page = await context.newPage();
+  await page.goto(`${pathToFileURL(path.join(templatesDir, file)).href}?motion=off`, { waitUntil: "load" });
+  const overlap = await page.evaluate((selector) => {
+    const plate = document.querySelector(".evidence-plate")?.getBBox();
+    if (!plate) return true;
+    return [...document.querySelectorAll(selector)].some((element) => {
+      const box = element.getBBox();
+      return plate.x < box.x + box.width && plate.x + plate.width > box.x && plate.y < box.y + box.height && plate.y + plate.height > box.y;
+    });
+  }, headingSelector);
+  if (overlap) fail(`layout:${file}`, "evidence plate overlaps row heading");
+  else pass(`layout:${file}`, "evidence plate clears row headings");
+  await context.close();
+}
+
+const fillContext = await browser.newContext({ viewport: { width: 1280, height: 720 } });
+const fillPage = await fillContext.newPage();
+await fillPage.goto(`${pathToFileURL(path.join(templatesDir, "c05-composition-bands.html")).href}?motion=off`, { waitUntil: "load" });
+const onFillLabels = await fillPage.locator("svg text.on-fill").count();
+if (!onFillLabels) fail("layout:c05-composition-bands.html", "missing adaptive on-fill labels");
+else pass("layout:c05-composition-bands.html", `${onFillLabels} adaptive on-fill labels`);
+await fillContext.close();
 
 const reducedContext = await browser.newContext({ viewport: { width: 1280, height: 720 }, reducedMotion: "reduce" });
 const reducedPage = await reducedContext.newPage();

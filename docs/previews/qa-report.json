@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-19T11:14:45.581Z",
+  "generatedAt": "2026-08-19T11:38:57.835Z",
   "status": "passed",
   "checks": [
     {
@@ -79,12 +79,36 @@
       "message": "rail-rise with independent profile timing"
     },
     {
+      "scope": "choreography:c02-ranked-rail.html",
+      "message": "ranked-rail with independent profile timing"
+    },
+    {
       "scope": "choreography:c03-signal-trend.html",
       "message": "path-trace with independent profile timing"
     },
     {
+      "scope": "choreography:c04-composition-field.html",
+      "message": "field-aggregation with independent profile timing"
+    },
+    {
+      "scope": "choreography:c05-composition-bands.html",
+      "message": "band-routing with independent profile timing"
+    },
+    {
+      "scope": "choreography:c06-ledger-steps.html",
+      "message": "ledger-interlock with independent profile timing"
+    },
+    {
+      "scope": "choreography:c07-milestone-lanes.html",
+      "message": "milestone-routing with independent profile timing"
+    },
+    {
       "scope": "choreography:c08-stage-channel.html",
       "message": "stage-interlock with independent profile timing"
+    },
+    {
+      "scope": "choreography:c09-metric-lockup.html",
+      "message": "metric-readout with independent profile timing"
     },
     {
       "scope": "choreography:c10-decision-interface.html",
@@ -183,16 +207,52 @@
       "message": "rail-rise brief/standard/story choreography"
     },
     {
+      "scope": "profiles:c02-ranked-rail.html",
+      "message": "ranked-rail brief/standard/story choreography"
+    },
+    {
       "scope": "profiles:c03-signal-trend.html",
       "message": "path-trace brief/standard/story choreography"
+    },
+    {
+      "scope": "profiles:c04-composition-field.html",
+      "message": "field-aggregation brief/standard/story choreography"
+    },
+    {
+      "scope": "profiles:c05-composition-bands.html",
+      "message": "band-routing brief/standard/story choreography"
+    },
+    {
+      "scope": "profiles:c06-ledger-steps.html",
+      "message": "ledger-interlock brief/standard/story choreography"
+    },
+    {
+      "scope": "profiles:c07-milestone-lanes.html",
+      "message": "milestone-routing brief/standard/story choreography"
     },
     {
       "scope": "profiles:c08-stage-channel.html",
       "message": "stage-interlock brief/standard/story choreography"
     },
     {
+      "scope": "profiles:c09-metric-lockup.html",
+      "message": "metric-readout brief/standard/story choreography"
+    },
+    {
       "scope": "profiles:c10-decision-interface.html",
       "message": "decision-readout brief/standard/story choreography"
+    },
+    {
+      "scope": "layout:c02-ranked-rail.html",
+      "message": "evidence plate clears row headings"
+    },
+    {
+      "scope": "layout:c07-milestone-lanes.html",
+      "message": "evidence plate clears row headings"
+    },
+    {
+      "scope": "layout:c05-composition-bands.html",
+      "message": "12 adaptive on-fill labels"
     },
     {
       "scope": "reduced-motion",

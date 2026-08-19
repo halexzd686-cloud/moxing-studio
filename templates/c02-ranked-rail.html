@@ -42,6 +42,7 @@
   svg .index.muted { fill:var(--matrix-quiet); font-weight:560; font-variation-settings:'ROND' 0,'wght' 560; letter-spacing:.04em; }
   svg .signal-text { fill:var(--signal); }
   svg .index.signal-text { fill:var(--signal); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; }
+  svg .on-fill { fill:var(--bg); font-weight:700; }
   svg .value { fill:var(--ink); font-variant-numeric:tabular-nums; }
   svg .grid { stroke:var(--grid); stroke-width:1; fill:none; vector-effect:non-scaling-stroke; }
   svg .rail { stroke:var(--rail); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
@@ -70,6 +71,9 @@
   @keyframes mx-route { from { opacity:.25; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
   @keyframes mx-lock { 0% { opacity:0; transform:scale(.92); } 68% { opacity:1; transform:scale(1.025); } 100% { opacity:1; transform:scale(1); } }
   @keyframes mx-rail-rise { from { opacity:0; transform:translateY(var(--dy)) scaleY(.16); } to { opacity:1; transform:translateY(0) scaleY(1); } }
+  @keyframes mx-rail-slide { from { opacity:0; transform:translateX(var(--dx)) scaleX(.18); } to { opacity:1; transform:translateX(0) scaleX(1); } }
+  @keyframes mx-field-seat { from { opacity:0; transform:translateY(var(--dy)) scale(.72); } to { opacity:1; transform:translateY(0) scale(1); } }
+  @keyframes mx-band-fill { from { opacity:0; transform:scaleX(.06); } to { opacity:1; transform:scaleX(1); } }
   @keyframes mx-pin { from { opacity:0; transform:translateY(var(--dy)) scale(.35); } to { opacity:1; transform:translateY(0) scale(1); } }
   @keyframes mx-interlock { from { opacity:0; transform:translateX(var(--dx)) scaleX(.82); } to { opacity:1; transform:translateX(0) scaleX(1); } }
   @keyframes mx-readout { from { opacity:0; clip-path:inset(0 100% 0 0); transform:translateY(6px); } to { opacity:1; clip-path:inset(0 0 0 0); transform:translateY(0); } }
@@ -79,6 +83,9 @@
   .motion-enabled.is-playing [data-motion="route"] { stroke-dasharray:1; animation:mx-route var(--active-duration,var(--duration,520ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
   .motion-enabled.is-playing [data-motion="lock"] { animation:mx-lock var(--active-duration,var(--duration,280ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
   .motion-enabled.is-playing [data-choreo="rail-rise"] { animation-name:mx-rail-rise; transform-origin:center bottom; }
+  .motion-enabled.is-playing [data-choreo="rail-slide"] { animation-name:mx-rail-slide; transform-origin:left center; }
+  .motion-enabled.is-playing [data-choreo="field-seat"] { animation-name:mx-field-seat; }
+  .motion-enabled.is-playing [data-choreo="band-fill"] { animation-name:mx-band-fill; transform-origin:left center; }
   .motion-enabled.is-playing [data-choreo="trace"] { animation-timing-function:linear; }
   .motion-enabled.is-playing [data-choreo="pin"] { animation-name:mx-pin; }
   .motion-enabled.is-playing [data-choreo="interlock"] { animation-name:mx-interlock; }
@@ -89,55 +96,67 @@
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1190" data-total-standard="1750" data-total-story="3150" data-mode="editorial" data-choreography="structural">
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1100" data-total-standard="1800" data-total-story="3400" data-mode="editorial" data-choreography="ranked-rail">
   <header class="chart-header">
     <div class="chart-code">C2 / RANKED RAIL</div>
     <div><h1 class="chart-title">华东服务评分居首，区域差距仍可控</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div></div>
   </header>
   <section class="chart-body"><svg viewBox="0 0 1172 500" role="img" aria-label="华东服务评分居首，区域差距仍可控"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >02 / RANKED DATUM</text>
-<g class="evidence-plate" data-motion="lock" style="--delay:1300ms;--dx:-8px;--dy:0px">
-<path d="M 0 74 H 234 L 242 82 V 168 H 8 L 0 160 Z" class="panel-stroke" />
-<text x="14" y="95" class="index muted" text-anchor="start" font-size="12" >R-01</text>
-<text x="228" y="95" class="index signal-text" text-anchor="end" font-size="12" >TOP</text>
-<text x="14" y="129" class="value" text-anchor="start" font-size="28" font-weight="650" >94</text>
-<text x="14" y="151" class="muted" text-anchor="start" font-size="13" >华东客户服务中心</text>
+<g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1500ms;--dx:-8px;--dy:0px;--delay-brief:900ms;--delay-story:2960ms">
+<path d="M 874 0 H 1108 L 1116 8 V 94 H 882 L 874 86 Z" class="panel-stroke" />
+<text x="888" y="21" class="index muted" text-anchor="start" font-size="12" >R-01</text>
+<text x="1102" y="21" class="index signal-text" text-anchor="end" font-size="12" >TOP</text>
+<text x="888" y="55" class="value" text-anchor="start" font-size="28" font-weight="650" >94</text>
+<text x="888" y="77" class="muted" text-anchor="start" font-size="13" >华东客户服务中心</text>
 </g>
-<text x="0" y="88" class="index muted" text-anchor="start" font-size="12" >01</text>
-<text x="44" y="88" class="label" text-anchor="start" font-size="14" font-weight="600" >华东客户服务中心</text>
-<line x1="330" y1="82" x2="1116" y2="82" class="grid" pathLength="1" data-motion="align" style="--delay:80ms;--dx:0px;--dy:0px"/>
-<path d="M 330 70 H 1111 L 1116 75 V 94 H 335 L 330 89 Z" class="signal-fill" data-motion="dock" style="--delay:280ms;--dx:-28px;--dy:0px"/>
-<line x1="1116" y1="65" x2="1116" y2="100" class="rail" data-motion="align" style="--delay:680ms;--dx:0px;--dy:0px"/>
-<text x="1114" y="88" class="value" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" style="--delay:900ms;--dx:0px;--dy:0px">94</text>
-<text x="0" y="151" class="index muted" text-anchor="start" font-size="12" >02</text>
-<text x="44" y="151" class="label" text-anchor="start" font-size="14" >华南客户服务中心</text>
-<line x1="330" y1="145" x2="1116" y2="145" class="grid" pathLength="1" data-motion="align" style="--delay:115ms;--dx:0px;--dy:0px"/>
-<path d="M 330 133 H 1052.47 L 1057.47 138 V 157 H 335 L 330 152 Z" class="data-fill" data-motion="dock" style="--delay:350ms;--dx:-28px;--dy:0px"/>
-<line x1="1057.47" y1="128" x2="1057.47" y2="163" class="rail" data-motion="align" style="--delay:735ms;--dx:0px;--dy:0px"/>
-<text x="1069.47" y="151" class="value" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" style="--delay:940ms;--dx:0px;--dy:0px">87</text>
-<text x="0" y="214" class="index muted" text-anchor="start" font-size="12" >03</text>
-<text x="44" y="214" class="label" text-anchor="start" font-size="14" >华北客户服务中心</text>
-<line x1="330" y1="208" x2="1116" y2="208" class="grid" pathLength="1" data-motion="align" style="--delay:150ms;--dx:0px;--dy:0px"/>
-<path d="M 330 196 H 1010.66 L 1015.66 201 V 220 H 335 L 330 215 Z" class="data-fill" data-motion="dock" style="--delay:420ms;--dx:-28px;--dy:0px"/>
-<line x1="1015.66" y1="191" x2="1015.66" y2="226" class="rail" data-motion="align" style="--delay:790ms;--dx:0px;--dy:0px"/>
-<text x="1027.66" y="214" class="value" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" style="--delay:980ms;--dx:0px;--dy:0px">82</text>
-<text x="0" y="277" class="index muted" text-anchor="start" font-size="12" >04</text>
-<text x="44" y="277" class="label" text-anchor="start" font-size="14" >西南客户服务中心</text>
-<line x1="330" y1="271" x2="1116" y2="271" class="grid" pathLength="1" data-motion="align" style="--delay:185ms;--dx:0px;--dy:0px"/>
-<path d="M 330 259 H 960.49 L 965.49 264 V 283 H 335 L 330 278 Z" class="data-fill" data-motion="dock" style="--delay:490ms;--dx:-28px;--dy:0px"/>
-<line x1="965.49" y1="254" x2="965.49" y2="289" class="rail" data-motion="align" style="--delay:845ms;--dx:0px;--dy:0px"/>
-<text x="977.49" y="277" class="value" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" style="--delay:1020ms;--dx:0px;--dy:0px">76</text>
-<text x="0" y="340" class="index muted" text-anchor="start" font-size="12" >05</text>
-<text x="44" y="340" class="label" text-anchor="start" font-size="14" >华中客户服务中心</text>
-<line x1="330" y1="334" x2="1116" y2="334" class="grid" pathLength="1" data-motion="align" style="--delay:220ms;--dx:0px;--dy:0px"/>
-<path d="M 330 322 H 918.68 L 923.68 327 V 346 H 335 L 330 341 Z" class="data-fill" data-motion="dock" style="--delay:560ms;--dx:-28px;--dy:0px"/>
-<line x1="923.68" y1="317" x2="923.68" y2="352" class="rail" data-motion="align" style="--delay:900ms;--dx:0px;--dy:0px"/>
-<text x="935.68" y="340" class="value" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" style="--delay:1060ms;--dx:0px;--dy:0px">71</text>
-<text x="0" y="403" class="index muted" text-anchor="start" font-size="12" >06</text>
-<text x="44" y="403" class="label" text-anchor="start" font-size="14" >西北客户服务中心</text>
-<line x1="330" y1="397" x2="1116" y2="397" class="grid" pathLength="1" data-motion="align" style="--delay:255ms;--dx:0px;--dy:0px"/>
-<path d="M 330 385 H 868.51 L 873.51 390 V 409 H 335 L 330 404 Z" class="data-fill" data-motion="dock" style="--delay:630ms;--dx:-28px;--dy:0px"/>
-<line x1="873.51" y1="380" x2="873.51" y2="415" class="rail" data-motion="align" style="--delay:955ms;--dx:0px;--dy:0px"/>
-<text x="885.51" y="403" class="value" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" style="--delay:1100ms;--dx:0px;--dy:0px">65</text></svg></section>
+<g class="rank-heading" data-motion="lock" data-choreo="readout" style="--delay:120ms;--dx:0px;--dy:0px;--delay-brief:60ms;--delay-story:200ms">
+<text x="0" y="138" class="index muted" text-anchor="start" font-size="12" >01</text>
+<text x="44" y="138" class="label" text-anchor="start" font-size="14" font-weight="600" >华东客户服务中心</text>
+</g>
+<line x1="330" y1="132" x2="1116" y2="132" class="grid" pathLength="1" data-motion="align" style="--delay:80ms;--dx:0px;--dy:0px;--delay-brief:35ms;--delay-story:120ms"/>
+<path d="M 330 120 H 1111 L 1116 125 V 144 H 335 L 330 139 Z" class="signal-fill" data-motion="dock" data-choreo="rail-slide" style="--delay:280ms;--dx:-32px;--dy:0px;--duration:420ms;--delay-brief:150ms;--delay-story:500ms;--duration-brief:280ms;--duration-story:620ms"/>
+<line x1="1116" y1="115" x2="1116" y2="150" class="rail" data-motion="align" style="--delay:630ms;--dx:0px;--dy:0px;--delay-brief:380ms;--delay-story:1040ms"/>
+<text x="1114" y="138" class="value" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:640ms;--dx:0px;--dy:0px;--delay-brief:385ms;--delay-story:1050ms">94</text>
+<g class="rank-heading" data-motion="lock" data-choreo="readout" style="--delay:165ms;--dx:0px;--dy:0px;--delay-brief:85ms;--delay-story:290ms">
+<text x="0" y="196" class="index muted" text-anchor="start" font-size="12" >02</text>
+<text x="44" y="196" class="label" text-anchor="start" font-size="14" >华南客户服务中心</text>
+</g>
+<line x1="330" y1="190" x2="1116" y2="190" class="grid" pathLength="1" data-motion="align" style="--delay:115ms;--dx:0px;--dy:0px;--delay-brief:53ms;--delay-story:185ms"/>
+<path d="M 330 178 H 1052.47 L 1057.47 183 V 202 H 335 L 330 197 Z" class="data-fill" data-motion="dock" data-choreo="rail-slide" style="--delay:355ms;--dx:-32px;--dy:0px;--duration:420ms;--delay-brief:190ms;--delay-story:650ms;--duration-brief:280ms;--duration-story:620ms"/>
+<line x1="1057.47" y1="173" x2="1057.47" y2="208" class="rail" data-motion="align" style="--delay:705ms;--dx:0px;--dy:0px;--delay-brief:420ms;--delay-story:1190ms"/>
+<text x="1069.47" y="196" class="value" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:715ms;--dx:0px;--dy:0px;--delay-brief:425ms;--delay-story:1200ms">87</text>
+<g class="rank-heading" data-motion="lock" data-choreo="readout" style="--delay:210ms;--dx:0px;--dy:0px;--delay-brief:110ms;--delay-story:380ms">
+<text x="0" y="254" class="index muted" text-anchor="start" font-size="12" >03</text>
+<text x="44" y="254" class="label" text-anchor="start" font-size="14" >华北客户服务中心</text>
+</g>
+<line x1="330" y1="248" x2="1116" y2="248" class="grid" pathLength="1" data-motion="align" style="--delay:150ms;--dx:0px;--dy:0px;--delay-brief:71ms;--delay-story:250ms"/>
+<path d="M 330 236 H 1010.66 L 1015.66 241 V 260 H 335 L 330 255 Z" class="data-fill" data-motion="dock" data-choreo="rail-slide" style="--delay:430ms;--dx:-32px;--dy:0px;--duration:420ms;--delay-brief:230ms;--delay-story:800ms;--duration-brief:280ms;--duration-story:620ms"/>
+<line x1="1015.66" y1="231" x2="1015.66" y2="266" class="rail" data-motion="align" style="--delay:780ms;--dx:0px;--dy:0px;--delay-brief:460ms;--delay-story:1340ms"/>
+<text x="1027.66" y="254" class="value" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:790ms;--dx:0px;--dy:0px;--delay-brief:465ms;--delay-story:1350ms">82</text>
+<g class="rank-heading" data-motion="lock" data-choreo="readout" style="--delay:255ms;--dx:0px;--dy:0px;--delay-brief:135ms;--delay-story:470ms">
+<text x="0" y="312" class="index muted" text-anchor="start" font-size="12" >04</text>
+<text x="44" y="312" class="label" text-anchor="start" font-size="14" >西南客户服务中心</text>
+</g>
+<line x1="330" y1="306" x2="1116" y2="306" class="grid" pathLength="1" data-motion="align" style="--delay:185ms;--dx:0px;--dy:0px;--delay-brief:89ms;--delay-story:315ms"/>
+<path d="M 330 294 H 960.49 L 965.49 299 V 318 H 335 L 330 313 Z" class="data-fill" data-motion="dock" data-choreo="rail-slide" style="--delay:505ms;--dx:-32px;--dy:0px;--duration:420ms;--delay-brief:270ms;--delay-story:950ms;--duration-brief:280ms;--duration-story:620ms"/>
+<line x1="965.49" y1="289" x2="965.49" y2="324" class="rail" data-motion="align" style="--delay:855ms;--dx:0px;--dy:0px;--delay-brief:500ms;--delay-story:1490ms"/>
+<text x="977.49" y="312" class="value" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:865ms;--dx:0px;--dy:0px;--delay-brief:505ms;--delay-story:1500ms">76</text>
+<g class="rank-heading" data-motion="lock" data-choreo="readout" style="--delay:300ms;--dx:0px;--dy:0px;--delay-brief:160ms;--delay-story:560ms">
+<text x="0" y="370" class="index muted" text-anchor="start" font-size="12" >05</text>
+<text x="44" y="370" class="label" text-anchor="start" font-size="14" >华中客户服务中心</text>
+</g>
+<line x1="330" y1="364" x2="1116" y2="364" class="grid" pathLength="1" data-motion="align" style="--delay:220ms;--dx:0px;--dy:0px;--delay-brief:107ms;--delay-story:380ms"/>
+<path d="M 330 352 H 918.68 L 923.68 357 V 376 H 335 L 330 371 Z" class="data-fill" data-motion="dock" data-choreo="rail-slide" style="--delay:580ms;--dx:-32px;--dy:0px;--duration:420ms;--delay-brief:310ms;--delay-story:1100ms;--duration-brief:280ms;--duration-story:620ms"/>
+<line x1="923.68" y1="347" x2="923.68" y2="382" class="rail" data-motion="align" style="--delay:930ms;--dx:0px;--dy:0px;--delay-brief:540ms;--delay-story:1640ms"/>
+<text x="935.68" y="370" class="value" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:940ms;--dx:0px;--dy:0px;--delay-brief:545ms;--delay-story:1650ms">71</text>
+<g class="rank-heading" data-motion="lock" data-choreo="readout" style="--delay:345ms;--dx:0px;--dy:0px;--delay-brief:185ms;--delay-story:650ms">
+<text x="0" y="428" class="index muted" text-anchor="start" font-size="12" >06</text>
+<text x="44" y="428" class="label" text-anchor="start" font-size="14" >西北客户服务中心</text>
+</g>
+<line x1="330" y1="422" x2="1116" y2="422" class="grid" pathLength="1" data-motion="align" style="--delay:255ms;--dx:0px;--dy:0px;--delay-brief:125ms;--delay-story:445ms"/>
+<path d="M 330 410 H 868.51 L 873.51 415 V 434 H 335 L 330 429 Z" class="data-fill" data-motion="dock" data-choreo="rail-slide" style="--delay:655ms;--dx:-32px;--dy:0px;--duration:420ms;--delay-brief:350ms;--delay-story:1250ms;--duration-brief:280ms;--duration-story:620ms"/>
+<line x1="873.51" y1="405" x2="873.51" y2="440" class="rail" data-motion="align" style="--delay:1005ms;--dx:0px;--dy:0px;--delay-brief:580ms;--delay-story:1790ms"/>
+<text x="885.51" y="428" class="value" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:1015ms;--dx:0px;--dy:0px;--delay-brief:585ms;--delay-story:1800ms">65</text></svg></section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" title="重播">↻</button><button type="button" data-action="pause" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" title="切换明暗">◐</button></nav>
 </main>

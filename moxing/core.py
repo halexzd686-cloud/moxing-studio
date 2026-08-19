@@ -299,6 +299,7 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   svg .index.muted {{ fill:var(--matrix-quiet); font-weight:560; font-variation-settings:'ROND' 0,'wght' 560; letter-spacing:.04em; }}
   svg .signal-text {{ fill:var(--signal); }}
   svg .index.signal-text {{ fill:var(--signal); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; }}
+  svg .on-fill {{ fill:var(--bg); font-weight:700; }}
   svg .value {{ fill:var(--ink); font-variant-numeric:tabular-nums; }}
   svg .grid {{ stroke:var(--grid); stroke-width:1; fill:none; vector-effect:non-scaling-stroke; }}
   svg .rail {{ stroke:var(--rail); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }}
@@ -327,6 +328,9 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   @keyframes mx-route {{ from {{ opacity:.25; stroke-dashoffset:1; }} to {{ opacity:1; stroke-dashoffset:0; }} }}
   @keyframes mx-lock {{ 0% {{ opacity:0; transform:scale(.92); }} 68% {{ opacity:1; transform:scale(1.025); }} 100% {{ opacity:1; transform:scale(1); }} }}
   @keyframes mx-rail-rise {{ from {{ opacity:0; transform:translateY(var(--dy)) scaleY(.16); }} to {{ opacity:1; transform:translateY(0) scaleY(1); }} }}
+  @keyframes mx-rail-slide {{ from {{ opacity:0; transform:translateX(var(--dx)) scaleX(.18); }} to {{ opacity:1; transform:translateX(0) scaleX(1); }} }}
+  @keyframes mx-field-seat {{ from {{ opacity:0; transform:translateY(var(--dy)) scale(.72); }} to {{ opacity:1; transform:translateY(0) scale(1); }} }}
+  @keyframes mx-band-fill {{ from {{ opacity:0; transform:scaleX(.06); }} to {{ opacity:1; transform:scaleX(1); }} }}
   @keyframes mx-pin {{ from {{ opacity:0; transform:translateY(var(--dy)) scale(.35); }} to {{ opacity:1; transform:translateY(0) scale(1); }} }}
   @keyframes mx-interlock {{ from {{ opacity:0; transform:translateX(var(--dx)) scaleX(.82); }} to {{ opacity:1; transform:translateX(0) scaleX(1); }} }}
   @keyframes mx-readout {{ from {{ opacity:0; clip-path:inset(0 100% 0 0); transform:translateY(6px); }} to {{ opacity:1; clip-path:inset(0 0 0 0); transform:translateY(0); }} }}
@@ -336,6 +340,9 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   .motion-enabled.is-playing [data-motion=\"route\"] {{ stroke-dasharray:1; animation:mx-route var(--active-duration,var(--duration,{motion_tokens['route']}ms)) {motion_tokens['ease']} var(--active-delay,var(--delay,0ms)) both; }}
   .motion-enabled.is-playing [data-motion=\"lock\"] {{ animation:mx-lock var(--active-duration,var(--duration,{motion_tokens['lock']}ms)) {motion_tokens['ease']} var(--active-delay,var(--delay,0ms)) both; }}
   .motion-enabled.is-playing [data-choreo=\"rail-rise\"] {{ animation-name:mx-rail-rise; transform-origin:center bottom; }}
+  .motion-enabled.is-playing [data-choreo=\"rail-slide\"] {{ animation-name:mx-rail-slide; transform-origin:left center; }}
+  .motion-enabled.is-playing [data-choreo=\"field-seat\"] {{ animation-name:mx-field-seat; }}
+  .motion-enabled.is-playing [data-choreo=\"band-fill\"] {{ animation-name:mx-band-fill; transform-origin:left center; }}
   .motion-enabled.is-playing [data-choreo=\"trace\"] {{ animation-timing-function:linear; }}
   .motion-enabled.is-playing [data-choreo=\"pin\"] {{ animation-name:mx-pin; }}
   .motion-enabled.is-playing [data-choreo=\"interlock\"] {{ animation-name:mx-interlock; }}
