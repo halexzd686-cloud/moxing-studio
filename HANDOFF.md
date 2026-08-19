@@ -4,7 +4,9 @@
 >
 > Branch: `v2-design`
 >
-> Status: v2 renderer, ten chart families, motion gallery, fonts, export, and QA implemented
+> Status: v2 renderer, 24 public chart contracts, motion gallery, fonts, export, and QA implemented
+>
+> Visual review: approved on 2026-08-19
 
 ## Product contract
 
@@ -20,7 +22,7 @@
 ```text
 moxing/
 ├── core.py          SVG primitives, tokens, HTML shell, runtime
-└── charts.py        C1–C10 contracts and renderers
+└── charts.py        C1–C24 contracts and shared-family renderers
 references/
 ├── visual-charter.md
 ├── motion-system.md
@@ -51,12 +53,12 @@ If Playwright is installed outside the project, set `MOXING_PLAYWRIGHT_PATH`. Se
 
 ## Current QA
 
-- 57 boundary render cases pass.
-- 42 browser/static/motion checks pass.
-- All ten templates render with and without JavaScript.
+- 103 boundary render cases pass.
+- 143 browser/static/motion checks pass; see `docs/previews/qa-report.json`.
+- All 24 templates render with and without JavaScript.
 - Reduced-motion mode settles immediately.
 - No external runtime requests.
-- Four locked-frame previews are generated for C1, C3, C8, and C10.
+- Signature locked-frame previews cover foundation, commerce, finance, and analysis contracts.
 
 ## v1 migration
 
@@ -64,7 +66,6 @@ The reusable data contracts, numerical formatting, boundary cases, browser detec
 
 ## Next release steps
 
-1. Review the four signature previews and live motion gallery.
-2. Run the QA commands after any visual change.
-3. Merge `v2-design` to `main` only after approval.
-4. Tag the release as `v2.0.0` and attach large video demos to GitHub Releases rather than Git history.
+1. Run the QA commands after any visual change.
+2. Merge `v2-design` to `main` when the local release commit is confirmed.
+3. Tag the release as `v2.0.0` and attach large video demos to GitHub Releases rather than Git history.

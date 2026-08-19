@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+import math
 from typing import Any, Callable
 
 from .core import (
@@ -82,6 +83,98 @@ DEFAULTS: dict[str, Any] = {
         {"label": "华南", "value": 9856, "unit": "万元", "yoy": -5.2},
         {"label": "西南", "value": 7421, "unit": "万元", "yoy": 31.8},
     ],
+    "C11": [
+        {"label": "服饰", "value": 38}, {"label": "美妆", "value": 27},
+        {"label": "家居", "value": 19}, {"label": "其他", "value": 16},
+    ],
+    "C12": {
+        "labels": ["1月", "2月", "3月", "4月", "5月", "6月"],
+        "series": [
+            {"name": "GMV", "unit": "万元", "values": [820, 910, 880, 1120, 1260, 1480]},
+            {"name": "订单", "unit": "单", "values": [4200, 4480, 4390, 5160, 5620, 6310]},
+            {"name": "客单价", "unit": "元", "values": [195, 203, 200, 217, 224, 235]},
+            {"name": "退款率", "unit": "%", "values": [8.4, 7.9, 8.1, 7.2, 6.8, 6.3]},
+        ],
+    },
+    "C13": [
+        {"label": "SKU-01", "value": 286}, {"label": "SKU-02", "value": 214},
+        {"label": "SKU-03", "value": 156}, {"label": "SKU-04", "value": 102},
+        {"label": "SKU-05", "value": 74}, {"label": "SKU-06", "value": 48},
+    ],
+    "C14": {
+        "columns": ["首月", "M+1", "M+2", "M+3", "M+4", "M+5"],
+        "rows": [
+            {"label": "2026-01", "values": [100, 42, 31, 26, 22, 19]},
+            {"label": "2026-02", "values": [100, 46, 34, 28, 24]},
+            {"label": "2026-03", "values": [100, 44, 35, 30]},
+            {"label": "2026-04", "values": [100, 49, 38]},
+            {"label": "2026-05", "values": [100, 52]},
+        ],
+    },
+    "C15": {
+        "nodes": [
+            {"id": "search", "label": "搜索", "level": 0, "value": 5200},
+            {"id": "social", "label": "内容", "level": 0, "value": 3900},
+            {"id": "detail", "label": "商品详情", "level": 1, "value": 6100},
+            {"id": "cart", "label": "加购", "level": 2, "value": 2840},
+            {"id": "buy", "label": "成交", "level": 3, "value": 1710},
+        ],
+        "links": [
+            {"source": "search", "target": "detail", "value": 3600},
+            {"source": "social", "target": "detail", "value": 2500},
+            {"source": "detail", "target": "cart", "value": 2840},
+            {"source": "cart", "target": "buy", "value": 1710},
+        ],
+    },
+    "C16": [
+        {"label": "爆款 A", "x": 82, "y": 6.8, "size": 920},
+        {"label": "潜力 B", "x": 61, "y": 7.6, "size": 520},
+        {"label": "引流 C", "x": 88, "y": 3.1, "size": 680},
+        {"label": "观察 D", "x": 43, "y": 4.2, "size": 310},
+        {"label": "长尾 E", "x": 27, "y": 2.4, "size": 180},
+    ],
+    "C17": [
+        {"date": "08-12", "open": 102, "high": 108, "low": 99, "close": 106, "volume": 38},
+        {"date": "08-13", "open": 106, "high": 110, "low": 103, "close": 104, "volume": 44},
+        {"date": "08-14", "open": 104, "high": 112, "low": 103, "close": 111, "volume": 62},
+        {"date": "08-15", "open": 111, "high": 115, "low": 108, "close": 113, "volume": 51},
+        {"date": "08-16", "open": 113, "high": 114, "low": 106, "close": 108, "volume": 70},
+        {"date": "08-17", "open": 108, "high": 117, "low": 107, "close": 116, "volume": 83},
+        {"date": "08-18", "open": 116, "high": 121, "low": 114, "close": 119, "volume": 76},
+    ],
+    "C18": {
+        "labels": ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月"],
+        "values": [100, 106, 111, 104, 108, 116, 113, 121, 127, 132],
+    },
+    "C19": {
+        "maturities": ["1M", "3M", "6M", "1Y", "2Y", "5Y", "10Y", "30Y"],
+        "series": [
+            {"name": "当前", "values": [1.58, 1.62, 1.70, 1.82, 2.01, 2.28, 2.46, 2.61]},
+            {"name": "一月前", "values": [1.66, 1.69, 1.73, 1.78, 1.91, 2.15, 2.34, 2.52]},
+        ],
+    },
+    "C20": {
+        "rows": ["毛利率 32%", "毛利率 34%", "毛利率 36%", "毛利率 38%", "毛利率 40%"],
+        "columns": ["增长 4%", "增长 6%", "增长 8%", "增长 10%", "增长 12%"],
+        "values": [[72, 78, 85, 93, 102], [79, 86, 94, 103, 113], [87, 95, 104, 114, 125], [96, 105, 115, 126, 138], [106, 116, 127, 139, 152]],
+    },
+    "C21": [12, 14, 15, 15, 16, 17, 18, 18, 19, 19, 20, 21, 22, 22, 23, 24, 25, 27, 29, 34, 41],
+    "C22": {
+        "labels": ["营收", "毛利", "投放", "客单", "复购"],
+        "values": [[1, .84, .62, .48, .55], [.84, 1, .41, .57, .63], [.62, .41, 1, -.18, -.24], [.48, .57, -.18, 1, .36], [.55, .63, -.24, .36, 1]],
+    },
+    "C23": {
+        "labels": ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月"],
+        "actual": [82, 88, 91, 96, 103, 109],
+        "forecast": [109, 116, 123, 131, 138],
+        "lower": [109, 109, 111, 114, 116],
+        "upper": [109, 123, 136, 149, 162],
+    },
+    "C24": {
+        "labels": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
+        "values": [51, 48, 53, 49, 52, 55, 47, 54, 58, 50, 52, 63],
+        "center": 52, "ucl": 60, "lcl": 44,
+    },
 }
 
 
@@ -96,6 +189,20 @@ CHARTS = {
     "C8": {"slug": "stage-channel", "name": "Stage Channel", "title": "付费转化是主瓶颈，续约质量相对稳定"},
     "C9": {"slug": "metric-lockup", "name": "Metric Lockup", "title": "经常性收入同比增长 23.8%，完成目标 85.7%"},
     "C10": {"slug": "decision-interface", "name": "Decision Interface", "title": "华东营收领先，华南是唯一同比下滑区域"},
+    "C11": {"slug": "sector-lock", "name": "Sector Lock", "title": "服饰贡献近四成，是当前结构的核心支点"},
+    "C12": {"slug": "metric-small-multiples", "name": "Metric Small Multiples", "title": "增长质量同步改善，规模提升并未推高退款率"},
+    "C13": {"slug": "pareto-contribution", "name": "Pareto Contribution", "title": "前三款商品贡献近四分之三，应优先保障供给"},
+    "C14": {"slug": "cohort-matrix", "name": "Cohort Matrix", "title": "新客次月复购持续改善，五月队列达到 52%"},
+    "C15": {"slug": "commerce-flow", "name": "Commerce Flow", "title": "商品详情到加购流失最大，是成交链路首要修复点"},
+    "C16": {"slug": "decision-bubble-matrix", "name": "Decision Bubble Matrix", "title": "爆款 A 兼具高流量与高转化，应扩大资源投入"},
+    "C17": {"slug": "market-candles", "name": "Market Candles", "title": "价格放量突破前高，短期趋势转强"},
+    "C18": {"slug": "performance-drawdown", "name": "Performance Drawdown", "title": "累计收益创新高，最大回撤控制在 6.3%"},
+    "C19": {"slug": "yield-curve", "name": "Yield Curve", "title": "曲线整体上移且保持陡峭，期限溢价继续扩张"},
+    "C20": {"slug": "sensitivity-matrix", "name": "Sensitivity Matrix", "title": "增长与毛利率同时改善时，估值弹性显著放大"},
+    "C21": {"slug": "distribution-profile", "name": "Distribution Profile", "title": "数据主体集中在 15–25，右侧长尾需要单独核查"},
+    "C22": {"slug": "correlation-matrix", "name": "Correlation Matrix", "title": "营收与毛利高度同向，投放与复购呈弱负相关"},
+    "C23": {"slug": "forecast-fan", "name": "Forecast Fan", "title": "基准预测继续增长，远期区间明显扩大"},
+    "C24": {"slug": "control-chart", "name": "Control Chart", "title": "第十二期突破控制上限，应立即排查特殊原因"},
 }
 
 CHOREOGRAPHIES = {
@@ -109,6 +216,10 @@ CHOREOGRAPHIES = {
     "C8": "stage-interlock",
     "C9": "metric-readout",
     "C10": "decision-readout",
+    "C11": "sector-lock", "C12": "metric-pulse", "C13": "pareto-routing", "C14": "cohort-seating",
+    "C15": "flow-routing", "C16": "quadrant-lock", "C17": "market-build", "C18": "drawdown-routing",
+    "C19": "curve-routing", "C20": "matrix-seating", "C21": "distribution-build", "C22": "matrix-seating",
+    "C23": "forecast-routing", "C24": "control-lock",
 }
 
 PROFILE_TOTALS = {
@@ -122,6 +233,20 @@ PROFILE_TOTALS = {
     "C8": {"brief": 1200, "standard": 2100, "story": 3500},
     "C9": {"brief": 1100, "standard": 1800, "story": 3000},
     "C10": {"brief": 1100, "standard": 1800, "story": 3200},
+    "C11": {"brief": 1100, "standard": 1850, "story": 3300},
+    "C12": {"brief": 1200, "standard": 2100, "story": 3800},
+    "C13": {"brief": 1200, "standard": 2100, "story": 3900},
+    "C14": {"brief": 1200, "standard": 2200, "story": 4100},
+    "C15": {"brief": 1200, "standard": 2200, "story": 4100},
+    "C16": {"brief": 1100, "standard": 1900, "story": 3500},
+    "C17": {"brief": 1200, "standard": 2100, "story": 3900},
+    "C18": {"brief": 1200, "standard": 2100, "story": 3900},
+    "C19": {"brief": 1100, "standard": 1900, "story": 3500},
+    "C20": {"brief": 1200, "standard": 2200, "story": 4100},
+    "C21": {"brief": 1100, "standard": 1900, "story": 3500},
+    "C22": {"brief": 1200, "standard": 2200, "story": 4100},
+    "C23": {"brief": 1200, "standard": 2100, "story": 3900},
+    "C24": {"brief": 1100, "standard": 1900, "story": 3500},
 }
 
 
@@ -529,9 +654,515 @@ def build_c10(data: Any) -> str:
     return "\n".join(parts)
 
 
+def _polyline(points: list[tuple[float, float]]) -> str:
+    if not points:
+        return ""
+    return "M " + " L ".join(f"{x:.2f} {y:.2f}" for x, y in points)
+
+
+def _scale(value: float, low: float, high: float, start: float, end: float) -> float:
+    if high == low:
+        return (start + end) / 2
+    return start + (value - low) / (high - low) * (end - start)
+
+
+def _arc_band(cx: float, cy: float, inner: float, outer: float, start: float, end: float) -> str:
+    end = min(end, start + math.tau - .0001)
+    large = 1 if end - start > math.pi else 0
+    p1 = (cx + outer * math.cos(start), cy + outer * math.sin(start))
+    p2 = (cx + outer * math.cos(end), cy + outer * math.sin(end))
+    if inner <= 0:
+        return f"M {cx:.2f} {cy:.2f} L {p1[0]:.2f} {p1[1]:.2f} A {outer} {outer} 0 {large} 1 {p2[0]:.2f} {p2[1]:.2f} Z"
+    p3 = (cx + inner * math.cos(end), cy + inner * math.sin(end))
+    p4 = (cx + inner * math.cos(start), cy + inner * math.sin(start))
+    return (
+        f"M {p1[0]:.2f} {p1[1]:.2f} A {outer} {outer} 0 {large} 1 {p2[0]:.2f} {p2[1]:.2f} "
+        f"L {p3[0]:.2f} {p3[1]:.2f} A {inner} {inner} 0 {large} 0 {p4[0]:.2f} {p4[1]:.2f} Z"
+    )
+
+
+def build_c11(data: Any) -> str:
+    variant = str(data.get("variant", "donut")).lower() if isinstance(data, dict) else "donut"
+    source = data.get("items", []) if isinstance(data, dict) else data
+    items = [item for item in _valid_series(source) if item["value"] > 0][:6]
+    if not items:
+        return no_data()
+    total = sum(item["value"] for item in items)
+    leader = max(range(len(items)), key=lambda index: items[index]["value"])
+    cx, cy, inner, outer = 360, 252, 0 if variant == "pie" else 108, 184
+    parts = [
+        text(0, 28, "11 / SECTOR LOCK", cls="index muted", size=13),
+        circle(cx, cy, outer + 18, cls="hollow", extra=motion("align", 70, brief=30, story=110, duration=260)),
+    ]
+    if inner:
+        parts.append(circle(cx, cy, inner - 14, cls="panel-stroke", extra=motion("dock", 180, brief=80, story=260, choreo="field-seat")))
+    angle = -math.pi / 2
+    classes = ["data-fill", "cat-1", "cat-2", "cat-3", "secondary-fill", "cat-4"]
+    for index, item in enumerate(items):
+        sweep = math.tau * item["value"] / total
+        gap = min(.025, sweep * .08)
+        segment = path(
+            _arc_band(cx, cy, inner, outer, angle + gap, angle + sweep - gap),
+            cls="signal-fill" if index == leader else classes[index],
+            extra=motion("dock", 260 + index * 95, brief=130 + index * 50, story=480 + index * 170, duration=430, duration_brief=280, duration_story=650, choreo="field-seat"),
+        )
+        parts.append(segment)
+        angle += sweep
+    share = items[leader]["value"] / total * 100
+    parts.append(line(650, 80, 1118, 80, cls="rail-strong", extra=f'pathLength="1" {motion("align", 90, brief=35, story=140)}'))
+    if inner:
+        parts += [text(cx, cy - 8, f"{share:.1f}%", cls="value title-font", anchor="middle", size=48, weight=700, extra=motion("lock", 1050, brief=610, story=1950, choreo="readout")), text(cx, cy + 28, items[leader]["label"], cls="muted", anchor="middle", size=15)]
+    for index, item in enumerate(items):
+        y = 118 + index * 54
+        parts += [
+            rect(650, y, 18, 18, cls="signal-fill" if index == leader else classes[index], extra=motion("dock", 440 + index * 70, dx=-16, brief=230 + index * 35, story=820 + index * 120, choreo="interlock")),
+            text(686, y + 15, item["label"], size=15, weight=650 if index == leader else None),
+            text(1118, y + 15, f"{item['value'] / total * 100:.1f}%", cls="value index", anchor="end", size=14),
+            line(686, y + 28, 1118, y + 28, cls="grid"),
+        ]
+    parts.append(evidence_plate(888, 390, "S-11", "LEADER", f"{share:.1f}%", "最大构成占比", delay=1480, width=230, brief=860, story=2820, choreo="alarm"))
+    return "\n".join(parts)
+
+
+def build_c12(data: Any) -> str:
+    labels = data.get("labels", []) if isinstance(data, dict) else []
+    raw = data.get("series", []) if isinstance(data, dict) else []
+    series = []
+    for item in raw[:4]:
+        values = item.get("values", []) if isinstance(item, dict) else []
+        if labels and len(values) == len(labels) and all(is_number(value) for value in values):
+            series.append(item)
+    if not labels or not series:
+        return no_data()
+    parts = [text(0, 28, "12 / METRIC SMALL MULTIPLES", cls="index muted", size=13)]
+    panel_w, panel_h = 548, 188
+    for index, item in enumerate(series):
+        col, row_i = index % 2, index // 2
+        x, y = col * 584, 62 + row_i * 216
+        values = item["values"]
+        low, high = min(values), max(values)
+        pad = max((high - low) * .15, abs(high) * .03, 1)
+        px0, px1, py0, py1 = x + 24, x + panel_w - 24, y + 54, y + panel_h - 28
+        points = [(_scale(i, 0, max(1, len(values) - 1), px0, px1), _scale(value, low - pad, high + pad, py1, py0)) for i, value in enumerate(values)]
+        delta = values[-1] - values[0]
+        panel_delay = 150 + index * 120
+        parts += [
+            path(cut_rect_path(x, y, panel_w, panel_h, 10), cls="panel-stroke", extra=motion("dock", panel_delay, dy=18, brief=70 + index * 55, story=260 + index * 240, choreo="field-seat")),
+            text(x + 22, y + 30, f"{index + 1:02d} / {item.get('name', '指标')}", cls="index muted", size=12),
+            text(x + panel_w - 22, y + 31, f"{delta:+.1f} {item.get('unit', '')}", cls="index signal-text" if delta >= 0 else "index muted", anchor="end", size=12, extra=motion("lock", 1380 + index * 80, brief=800 + index * 45, story=2640 + index * 160, choreo="alarm" if index == 0 else "readout")),
+            line(px0, py1, px1, py1, cls="grid", extra=f'pathLength="1" {motion("align", panel_delay + 80, brief=panel_delay // 2, story=panel_delay * 2)}'),
+            path(_polyline(points), cls="signal-stroke" if index == 0 else "data-stroke", extra=f'pathLength="1" {motion("route", panel_delay + 260, brief=160 + index * 80, story=620 + index * 300, choreo="trace")}'),
+            text(px0, py1 + 18, labels[0], cls="index muted", size=12),
+            text(px1, py1 + 18, labels[-1], cls="index muted", anchor="end", size=12),
+            text(px1, points[-1][1] - 10, format_num(values[-1]), cls="value", anchor="end", size=16, weight=650, extra=motion("lock", panel_delay + 680, brief=460 + index * 70, story=1320 + index * 340, choreo="readout")),
+        ]
+    return "\n".join(parts)
+
+
+def build_c13(data: Any) -> str:
+    items = sorted([item for item in _valid_series(data) if item["value"] >= 0], key=lambda item: item["value"], reverse=True)[:10]
+    if not items or sum(item["value"] for item in items) <= 0:
+        return no_data()
+    total = sum(item["value"] for item in items)
+    cumulative, threshold = [], len(items) - 1
+    running = 0.0
+    for index, item in enumerate(items):
+        running += item["value"]
+        cumulative.append(running / total * 100)
+        if cumulative[-1] >= 80 and threshold == len(items) - 1:
+            threshold = index
+    x0, x1, y0, y1 = 120, 1126, 80, 410
+    band = (x1 - x0) / len(items)
+    maximum = max(item["value"] for item in items)
+    parts = [text(0, 28, "13 / PARETO CONTRIBUTION", cls="index muted", size=13), line(x0, y1, x1, y1, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
+    curve = []
+    for index, item in enumerate(items):
+        width = band * .52
+        height = item["value"] / maximum * 258
+        x = x0 + band * index + (band - width) / 2
+        y = y1 - height
+        curve.append((x + width / 2, _scale(cumulative[index], 0, 100, y1, y0)))
+        parts += [
+            path(cut_rect_path(x, y, width, height, 6), cls="signal-fill" if index <= threshold else "data-fill", extra=motion("dock", 220 + index * 75, dy=24, brief=110 + index * 38, story=420 + index * 135, choreo="rail-rise")),
+            text(x + width / 2, y - 10, format_num(item["value"]), cls="value", anchor="middle", size=13, extra=motion("lock", 700 + index * 50, brief=400 + index * 28, story=1320 + index * 100, choreo="readout")),
+            text(x + width / 2, y1 + 26, item["label"], cls="index muted", anchor="middle", size=12),
+        ]
+    y80 = _scale(80, 0, 100, y1, y0)
+    parts += [
+        line(x0, y80, x1, y80, cls="rail", extra=f'pathLength="1" {motion("align", 180, brief=80, story=280)}'),
+        text(x1, y80 - 8, "80%", cls="index signal-text", anchor="end", size=12),
+        path(_polyline(curve), cls="signal-stroke", extra=f'pathLength="1" {motion("route", 720, brief=420, story=1420, duration=620, duration_brief=420, duration_story=980, choreo="trace")}'),
+        evidence_plate(0, 76, "P-13", "CORE", f"TOP {threshold + 1}", f"贡献 {cumulative[threshold]:.1f}%", delay=1510, width=190, brief=900, story=2920, choreo="alarm"),
+    ]
+    return "\n".join(parts)
+
+
+def build_c14(data: Any) -> str:
+    columns = data.get("columns", []) if isinstance(data, dict) else []
+    rows = data.get("rows", []) if isinstance(data, dict) else []
+    valid = [row for row in rows[:8] if isinstance(row, dict) and str(row.get("label", "")).strip() and isinstance(row.get("values"), list)]
+    if not columns or not valid:
+        return no_data()
+    columns = columns[:8]
+    x0, y0 = 260, 86
+    cell_w = 850 / len(columns)
+    cell_h = min(58, 320 / len(valid))
+    parts = [text(0, 28, "14 / COHORT MATRIX", cls="index muted", size=13), line(x0, 62, x0 + cell_w * len(columns), 62, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
+    for col, label in enumerate(columns):
+        parts.append(text(x0 + cell_w * (col + .5), 52, label, cls="index muted", anchor="middle", size=12))
+    best = (0.0, "—", "—")
+    for row_i, row in enumerate(valid):
+        y = y0 + row_i * cell_h
+        parts.append(text(0, y + cell_h * .62, row["label"], cls="index muted", size=12))
+        for col, value in enumerate(row["values"][:len(columns)]):
+            if not is_number(value):
+                continue
+            x = x0 + col * cell_w
+            cls = "signal-fill" if value >= 50 and col > 0 else ("data-fill" if value >= 75 else "cat-1" if value >= 40 else "panel-stroke")
+            delay = 220 + row_i * 90 + col * 45
+            parts += [
+                rect(x + 3, y + 3, cell_w - 6, cell_h - 6, cls=cls, extra=motion("dock", delay, dy=12, brief=100 + row_i * 40 + col * 20, story=420 + row_i * 160 + col * 90, choreo="field-seat")),
+                text(x + cell_w / 2, y + cell_h * .62, f"{value:.0f}%", cls="on-fill" if value >= 40 else "value", anchor="middle", size=13, weight=650, extra=motion("lock", delay + 250, brief=delay // 2 + 160, story=delay * 2 + 320, choreo="readout")),
+            ]
+            if col > 0 and value > best[0]:
+                best = (value, row["label"], columns[col])
+    parts.append(evidence_plate(0, 350, "C-14", "BEST", f"{best[0]:.0f}%", f"{best[1]} / {best[2]}", delay=1740, width=220, brief=980, story=3280, choreo="alarm"))
+    return "\n".join(parts)
+
+
+def build_c15(data: Any) -> str:
+    nodes = data.get("nodes", []) if isinstance(data, dict) else []
+    links = data.get("links", []) if isinstance(data, dict) else []
+    nodes = [node for node in nodes[:12] if isinstance(node, dict) and str(node.get("id", "")).strip() and is_number(node.get("level")) and is_number(node.get("value")) and node["value"] >= 0]
+    if len(nodes) < 2:
+        return no_data()
+    by_level: dict[int, list[dict[str, Any]]] = {}
+    for node in nodes:
+        by_level.setdefault(int(node["level"]), []).append(node)
+    levels = sorted(by_level)
+    positions: dict[str, tuple[float, float, float, float]] = {}
+    maximum = max(node["value"] for node in nodes) or 1
+    for level_i, level in enumerate(levels):
+        group_nodes = by_level[level]
+        x = _scale(level_i, 0, max(1, len(levels) - 1), 90, 1040)
+        for row_i, node in enumerate(group_nodes):
+            y = 120 + (row_i + .5) * 300 / len(group_nodes)
+            height = 42 + 74 * math.sqrt(node["value"] / maximum)
+            positions[str(node["id"])] = (x, y - height / 2, 112, height)
+    valid_links = [item for item in links[:18] if isinstance(item, dict) and str(item.get("source")) in positions and str(item.get("target")) in positions and is_number(item.get("value")) and item["value"] >= 0]
+    parts = [text(0, 28, "15 / COMMERCE FLOW", cls="index muted", size=13), line(42, 442, 1130, 442, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
+    link_max = max((item["value"] for item in valid_links), default=1) or 1
+    for index, item in enumerate(valid_links):
+        sx, sy, sw, sh = positions[str(item["source"])]
+        tx, ty, _tw, th = positions[str(item["target"])]
+        start, end = (sx + sw, sy + sh / 2), (tx, ty + th / 2)
+        bend = (start[0] + end[0]) / 2
+        d = f"M {start[0]} {start[1]} C {bend} {start[1]} {bend} {end[1]} {end[0]} {end[1]}"
+        width = 2 + 12 * math.sqrt(item["value"] / link_max)
+        parts.append(path(d, cls="secondary-stroke", extra=f'stroke-width="{width:.1f}" pathLength="1" {motion("route", 320 + index * 120, brief=160 + index * 65, story=620 + index * 240, duration=480, duration_brief=300, duration_story=760, choreo="trace")}'))
+    for index, node in enumerate(nodes):
+        x, y, width, height = positions[str(node["id"])]
+        parts += [
+            path(cut_rect_path(x, y, width, height, 8), cls="signal-fill" if node["level"] == max(levels) else "data-fill", extra=motion("dock", 220 + index * 110, dx=-22, brief=100 + index * 55, story=420 + index * 210, choreo="interlock")),
+            text(x + width / 2, y + height / 2 - 2, node.get("label", node["id"]), cls="on-fill", anchor="middle", size=13, weight=650),
+            text(x + width / 2, y + height / 2 + 20, format_num(node["value"]), cls="on-fill index", anchor="middle", size=12),
+        ]
+    if valid_links:
+        weakest = min(valid_links, key=lambda item: item["value"])
+        parts.append(evidence_plate(0, 86, "F-15", "LEAK", format_num(weakest["value"]), "最小有效流量", delay=1740, width=200, brief=980, story=3300, choreo="alarm"))
+    return "\n".join(parts)
+
+
+def build_c16(data: Any) -> str:
+    items = [item for item in data[:12] if isinstance(item, dict) and str(item.get("label", "")).strip() and all(is_number(item.get(key)) for key in ("x", "y", "size")) and item["size"] >= 0] if isinstance(data, list) else []
+    if not items:
+        return no_data()
+    x_values, y_values = [item["x"] for item in items], [item["y"] for item in items]
+    x_low, x_high, y_low, y_high = min(x_values), max(x_values), min(y_values), max(y_values)
+    x_pad, y_pad = max((x_high - x_low) * .12, 1), max((y_high - y_low) * .15, 1)
+    x0, x1, y0, y1 = 160, 1118, 74, 420
+    mid_x, mid_y = (x_low + x_high) / 2, (y_low + y_high) / 2
+    x_mid, y_mid = _scale(mid_x, x_low - x_pad, x_high + x_pad, x0, x1), _scale(mid_y, y_low - y_pad, y_high + y_pad, y1, y0)
+    leader = max(range(len(items)), key=lambda i: items[i]["x"] * items[i]["y"])
+    max_size = max(item["size"] for item in items) or 1
+    parts = [
+        text(0, 28, "16 / DECISION BUBBLE MATRIX", cls="index muted", size=13),
+        line(x0, y1, x1, y1, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}'),
+        line(x0, y0, x0, y1, cls="rail-strong", extra=f'pathLength="1" {motion("align", 90, brief=40, story=140)}'),
+        line(x_mid, y0, x_mid, y1, cls="grid"), line(x0, y_mid, x1, y_mid, cls="grid"),
+        text(x1, y1 + 28, "X / 规模或收益 →", cls="index muted", anchor="end", size=12),
+        text(x0, y0 - 12, "Y / 效率或质量 ↑", cls="index muted", size=12),
+    ]
+    for index, item in enumerate(items):
+        x = _scale(item["x"], x_low - x_pad, x_high + x_pad, x0, x1)
+        y = _scale(item["y"], y_low - y_pad, y_high + y_pad, y1, y0)
+        radius = 12 + 28 * math.sqrt(item["size"] / max_size)
+        parts += [
+            circle(x, y, radius, cls="signal-fill" if index == leader else "cat-1", extra=motion("dock", 300 + index * 110, dy=18, brief=150 + index * 58, story=560 + index * 220, choreo="pin")),
+            text(x, y + 4, f"{index + 1:02d}", cls="on-fill index", anchor="middle", size=12),
+            text(x + radius + 8, y - radius - 4, item["label"], size=13, weight=650 if index == leader else None, extra=motion("lock", 720 + index * 70, brief=430 + index * 40, story=1380 + index * 150, choreo="readout")),
+        ]
+    parts.append(evidence_plate(0, 82, "D-16", "PRIORITY", items[leader]["label"], "综合位置最优", delay=1580, width=220, brief=900, story=3020, choreo="alarm"))
+    return "\n".join(parts)
+
+
+def build_c17(data: Any) -> str:
+    items = [item for item in data[:20] if isinstance(item, dict) and str(item.get("date", "")).strip() and all(is_number(item.get(key)) for key in ("open", "high", "low", "close", "volume")) and item["high"] >= max(item["open"], item["close"], item["low"])] if isinstance(data, list) else []
+    if not items:
+        return no_data()
+    low, high = min(item["low"] for item in items), max(item["high"] for item in items)
+    volume_max = max(item["volume"] for item in items) or 1
+    x0, x1, price_top, price_bottom, volume_bottom = 150, 1118, 64, 338, 432
+    band = (x1 - x0) / len(items)
+    y = lambda value: _scale(value, low, high, price_bottom, price_top)
+    parts = [text(0, 28, "17 / MARKET CANDLES", cls="index muted", size=13), line(x0, price_bottom, x1, price_bottom, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}'), line(x0, volume_bottom, x1, volume_bottom, cls="rail")]
+    for tick in range(5):
+        value = low + (high - low) * tick / 4
+        yy = y(value)
+        parts += [line(x0, yy, x1, yy, cls="grid"), text(x0 - 18, yy + 4, f"{value:.1f}", cls="index muted", anchor="end", size=12)]
+    for index, item in enumerate(items):
+        cx = x0 + band * (index + .5)
+        up = item["close"] >= item["open"]
+        body_top, body_bottom = min(y(item["open"]), y(item["close"])), max(y(item["open"]), y(item["close"]))
+        cls = "signal-fill" if up else "data-fill"
+        delay = 220 + index * 105
+        parts += [
+            line(cx, y(item["high"]), cx, y(item["low"]), cls="signal-stroke" if up else "data-stroke", extra=motion("align", delay, brief=110 + index * 50, story=420 + index * 210)),
+            rect(cx - min(19, band * .24), body_top, min(38, band * .48), max(3, body_bottom - body_top), cls=cls, extra=motion("dock", delay + 120, dy=16, brief=delay // 2 + 80, story=delay * 2 + 180, choreo="field-seat")),
+            rect(cx - min(15, band * .20), volume_bottom - 70 * item["volume"] / volume_max, min(30, band * .40), 70 * item["volume"] / volume_max, cls="secondary-fill", extra=motion("dock", delay + 80, dy=12, brief=delay // 2, story=delay * 2, choreo="rail-rise")),
+            text(cx, volume_bottom + 22, item["date"], cls="index muted", anchor="middle", size=12),
+        ]
+    change = (items[-1]["close"] / items[0]["open"] - 1) * 100 if items[0]["open"] else 0
+    parts.append(evidence_plate(0, 78, "M-17", "CHANGE", f"{change:+.1f}%", "区间开盘至收盘", delay=1680, width=220, brief=960, story=3220, choreo="alarm"))
+    return "\n".join(parts)
+
+
+def build_c18(data: Any) -> str:
+    labels = data.get("labels", []) if isinstance(data, dict) else []
+    values = data.get("values", []) if isinstance(data, dict) else []
+    if not labels or len(labels) != len(values) or not all(is_number(value) and value > 0 for value in values):
+        return no_data()
+    peak, drawdowns, max_dd = values[0], [], 0.0
+    for value in values:
+        peak = max(peak, value)
+        dd = value / peak - 1
+        drawdowns.append(dd)
+        max_dd = min(max_dd, dd)
+    x0, x1, top, split, bottom = 150, 1118, 66, 294, 430
+    xs = [_scale(i, 0, max(1, len(values) - 1), x0, x1) for i in range(len(values))]
+    perf = [(x, _scale(value, min(values), max(values), split - 24, top)) for x, value in zip(xs, values)]
+    under = [(x, _scale(dd, max_dd if max_dd < 0 else -1, 0, bottom, split + 28)) for x, dd in zip(xs, drawdowns)]
+    area = [(x0, split + 28)] + under + [(x1, split + 28)]
+    parts = [
+        text(0, 28, "18 / PERFORMANCE DRAWDOWN", cls="index muted", size=13),
+        line(x0, split, x1, split, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}'),
+        path(_polyline(perf), cls="data-stroke", extra=f'pathLength="1" {motion("route", 260, brief=130, story=500, duration=720, duration_brief=460, duration_story=1100, choreo="trace")}'),
+        polygon(area, cls="cat-1", extra=motion("dock", 740, dy=12, brief=420, story=1480, choreo="band-fill")),
+        path(_polyline(under), cls="signal-stroke", extra=f'pathLength="1" {motion("route", 820, brief=480, story=1640, duration=620, duration_brief=420, duration_story=980, choreo="trace")}'),
+        text(x0, top - 10, "累计净值", cls="index muted", size=12), text(x0, split + 48, "回撤区间", cls="index muted", size=12),
+        text(x0, bottom + 22, labels[0], cls="index muted", size=12), text(x1, bottom + 22, labels[-1], cls="index muted", anchor="end", size=12),
+        evidence_plate(0, 80, "R-18", "MAX DD", f"{max_dd * 100:.1f}%", "历史最大回撤", delay=1540, width=210, brief=880, story=2940, choreo="alarm"),
+    ]
+    return "\n".join(parts)
+
+
+def build_c19(data: Any) -> str:
+    labels = data.get("maturities", []) if isinstance(data, dict) else []
+    raw = data.get("series", []) if isinstance(data, dict) else []
+    series = [item for item in raw[:3] if isinstance(item, dict) and isinstance(item.get("values"), list) and len(item["values"]) == len(labels) and all(is_number(value) for value in item["values"])]
+    if len(labels) < 2 or not series:
+        return no_data()
+    all_values = [value for item in series for value in item["values"]]
+    low, high = min(all_values), max(all_values)
+    pad = max((high - low) * .18, .1)
+    x0, x1, y0, y1 = 150, 1118, 76, 408
+    parts = [text(0, 28, "19 / YIELD CURVE", cls="index muted", size=13), line(x0, y1, x1, y1, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
+    for tick in range(5):
+        yy = y1 - (y1 - y0) * tick / 4
+        value = low - pad + (high - low + 2 * pad) * tick / 4
+        parts += [line(x0, yy, x1, yy, cls="grid"), text(x0 - 18, yy + 4, f"{value:.2f}%", cls="index muted", anchor="end", size=12)]
+    for index, item in enumerate(series):
+        points = [(_scale(i, 0, len(labels) - 1, x0, x1), _scale(value, low - pad, high + pad, y1, y0)) for i, value in enumerate(item["values"])]
+        parts += [path(_polyline(points), cls="signal-stroke" if index == 0 else "secondary-stroke", extra=f'pathLength="1" {motion("route", 280 + index * 180, brief=140 + index * 100, story=520 + index * 420, duration=650, duration_brief=420, duration_story=980, choreo="trace")}'), text(x1, points[-1][1] - 10 - index * 18, item.get("name", f"系列{index + 1}"), cls="index signal-text" if index == 0 else "index muted", anchor="end", size=12, extra=motion("lock", 980 + index * 180, brief=580 + index * 100, story=1920 + index * 360, choreo="readout"))]
+        for point in points:
+            parts.append(circle(point[0], point[1], 4 if index == 0 else 3, cls="signal-fill" if index == 0 else "data-fill", extra=motion("dock", 520 + index * 120, brief=290 + index * 70, story=980 + index * 280, choreo="pin")))
+    for index, label in enumerate(labels):
+        parts.append(text(_scale(index, 0, len(labels) - 1, x0, x1), y1 + 28, label, cls="index muted", anchor="middle", size=12))
+    slope = series[0]["values"][-1] - series[0]["values"][0]
+    parts.append(evidence_plate(0, 82, "Y-19", "SLOPE", f"{slope:+.2f}pp", "长端减短端", delay=1480, width=210, brief=850, story=2820, choreo="alarm"))
+    return "\n".join(parts)
+
+
+def _matrix_data(data: Any, row_key: str = "rows") -> tuple[list[str], list[str], list[list[float]]]:
+    if not isinstance(data, dict):
+        return [], [], []
+    rows, columns, values = data.get(row_key, []), data.get("columns", data.get("labels", [])), data.get("values", [])
+    if not rows or not columns or len(values) != len(rows):
+        return [], [], []
+    clean = []
+    for row in values:
+        if not isinstance(row, list) or len(row) != len(columns) or not all(is_number(value) for value in row):
+            return [], [], []
+        clean.append(row)
+    return [str(value) for value in rows], [str(value) for value in columns], clean
+
+
+def build_c20(data: Any) -> str:
+    rows, columns, values = _matrix_data(data)
+    if not rows or len(rows) > 8 or len(columns) > 8:
+        return no_data()
+    flat = [value for row in values for value in row]
+    low, high = min(flat), max(flat)
+    best = max((value, row_i, col_i) for row_i, row in enumerate(values) for col_i, value in enumerate(row))
+    x0, y0 = 270, 80
+    cell_w, cell_h = 840 / len(columns), min(62, 330 / len(rows))
+    parts = [text(0, 28, "20 / SENSITIVITY MATRIX", cls="index muted", size=13), line(x0, 58, x0 + cell_w * len(columns), 58, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
+    for col, label in enumerate(columns):
+        parts.append(text(x0 + cell_w * (col + .5), 48, label, cls="index muted", anchor="middle", size=12))
+    for row_i, label in enumerate(rows):
+        y = y0 + row_i * cell_h
+        parts.append(text(0, y + cell_h * .62, label, cls="index muted", size=12))
+        for col_i, value in enumerate(values[row_i]):
+            x = x0 + col_i * cell_w
+            ratio = (value - low) / (high - low or 1)
+            cls = "signal-fill" if (value, row_i, col_i) == best else ("data-fill" if ratio > .72 else "cat-1" if ratio > .38 else "panel-stroke")
+            delay = 220 + row_i * 80 + col_i * 55
+            parts += [rect(x + 3, y + 3, cell_w - 6, cell_h - 6, cls=cls, extra=motion("dock", delay, dy=12, brief=100 + row_i * 35 + col_i * 24, story=420 + row_i * 150 + col_i * 100, choreo="field-seat")), text(x + cell_w / 2, y + cell_h * .62, format_num(value), cls="on-fill" if ratio > .38 or (value, row_i, col_i) == best else "value", anchor="middle", size=14, weight=650, extra=motion("lock", delay + 240, brief=delay // 2 + 150, story=delay * 2 + 300, choreo="readout"))]
+    parts.append(evidence_plate(0, 348, "S-20", "UPSIDE", format_num(best[0]), f"{rows[best[1]]} / {columns[best[2]]}", delay=1780, width=246, brief=1020, story=3400, choreo="alarm"))
+    return "\n".join(parts)
+
+
+def _percentile(values: list[float], ratio: float) -> float:
+    position = (len(values) - 1) * ratio
+    low, high = math.floor(position), math.ceil(position)
+    if low == high:
+        return values[low]
+    return values[low] + (values[high] - values[low]) * (position - low)
+
+
+def build_c21(data: Any) -> str:
+    values = sorted(value for value in data if is_number(value)) if isinstance(data, list) else []
+    if len(values) < 2:
+        return no_data()
+    low, high = values[0], values[-1]
+    bins = min(10, max(5, round(math.sqrt(len(values)))))
+    counts = [0] * bins
+    for value in values:
+        index = min(bins - 1, int((value - low) / (high - low or 1) * bins))
+        counts[index] += 1
+    x0, x1, top, base = 150, 1118, 84, 336
+    band = (x1 - x0) / bins
+    maximum = max(counts)
+    parts = [text(0, 28, "21 / DISTRIBUTION PROFILE", cls="index muted", size=13), line(x0, base, x1, base, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
+    for index, count in enumerate(counts):
+        height = count / maximum * (base - top)
+        x = x0 + index * band + 3
+        parts += [rect(x, base - height, band - 6, height, cls="signal-fill" if count == maximum else "data-fill", extra=motion("dock", 240 + index * 80, dy=24, brief=120 + index * 42, story=440 + index * 150, choreo="rail-rise")), text(x + (band - 6) / 2, base - height - 10, count, cls="index muted", anchor="middle", size=12)]
+    q1, median, q3 = _percentile(values, .25), _percentile(values, .5), _percentile(values, .75)
+    pos = lambda value: _scale(value, low, high, x0, x1)
+    box_y = 394
+    parts += [
+        line(pos(low), box_y, pos(high), box_y, cls="rail", extra=f'pathLength="1" {motion("align", 650, brief=380, story=1280)}'),
+        rect(pos(q1), box_y - 22, max(4, pos(q3) - pos(q1)), 44, cls="panel-stroke", extra=motion("dock", 820, dx=-16, brief=480, story=1580, choreo="interlock")),
+        line(pos(median), box_y - 28, pos(median), box_y + 28, cls="signal-stroke", extra=motion("lock", 1120, brief=650, story=2180, choreo="alarm")),
+        text(x0, 446, format_num(low), cls="index muted", size=12), text(x1, 446, format_num(high), cls="index muted", anchor="end", size=12),
+        evidence_plate(0, 82, "D-21", "MEDIAN", format_num(median), f"IQR {format_num(q3 - q1)}", delay=1480, width=200, brief=850, story=2840, choreo="readout"),
+    ]
+    return "\n".join(parts)
+
+
+def build_c22(data: Any) -> str:
+    labels = data.get("labels", []) if isinstance(data, dict) else []
+    values = data.get("values", []) if isinstance(data, dict) else []
+    if not labels or len(labels) > 8 or len(values) != len(labels) or any(not isinstance(row, list) or len(row) != len(labels) or not all(is_number(value) and -1 <= value <= 1 for value in row) for row in values):
+        return no_data()
+    x0, y0 = 300, 70
+    size = min(72, 350 / len(labels))
+    strongest = max(((abs(value), value, row, col) for row, line_values in enumerate(values) for col, value in enumerate(line_values) if row != col), default=(0, 0, 0, 0))
+    parts = [text(0, 28, "22 / CORRELATION MATRIX", cls="index muted", size=13), line(x0, 52, x0 + size * len(labels), 52, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
+    for index, label in enumerate(labels):
+        parts += [text(x0 + size * (index + .5), 42, label, cls="index muted", anchor="middle", size=12), text(0, y0 + size * (index + .62), label, cls="index muted", size=12)]
+    for row, line_values in enumerate(values):
+        for col, value in enumerate(line_values):
+            x, y = x0 + col * size, y0 + row * size
+            is_focus = row != col and abs(value) == strongest[0]
+            cls = "signal-fill" if is_focus else ("data-fill" if value >= .65 else "cat-1" if value >= 0 else "secondary-fill")
+            delay = 200 + row * 70 + col * 45
+            parts += [rect(x + 3, y + 3, size - 6, size - 6, cls=cls, extra=motion("dock", delay, dy=10, brief=90 + row * 32 + col * 20, story=380 + row * 140 + col * 85, choreo="field-seat")), text(x + size / 2, y + size * .61, f"{value:+.2f}" if value != 1 else "1.00", cls="on-fill", anchor="middle", size=12, weight=650, extra=motion("lock", delay + 230, brief=delay // 2 + 140, story=delay * 2 + 290, choreo="readout"))]
+    parts.append(evidence_plate(0, 346, "C-22", "STRONG", f"{strongest[1]:+.2f}", f"{labels[strongest[2]]} × {labels[strongest[3]]}", delay=1820, width=230, brief=1030, story=3480, choreo="alarm"))
+    return "\n".join(parts)
+
+
+def build_c23(data: Any) -> str:
+    if not isinstance(data, dict):
+        return no_data()
+    labels, actual, forecast, lower, upper = (data.get(key, []) for key in ("labels", "actual", "forecast", "lower", "upper"))
+    if len(labels) < 3 or len(actual) < 2 or len(forecast) < 2 or not (len(forecast) == len(lower) == len(upper)) or len(actual) + len(forecast) - 1 != len(labels) or not all(is_number(value) for seq in (actual, forecast, lower, upper) for value in seq) or any(lo > mid or mid > hi for lo, mid, hi in zip(lower, forecast, upper)):
+        return no_data()
+    all_values = actual + lower + upper
+    low, high = min(all_values), max(all_values)
+    pad = max((high - low) * .12, 1)
+    x0, x1, y0, y1 = 150, 1118, 72, 414
+    xs = [_scale(index, 0, len(labels) - 1, x0, x1) for index in range(len(labels))]
+    y = lambda value: _scale(value, low - pad, high + pad, y1, y0)
+    split = len(actual) - 1
+    actual_points = [(xs[index], y(value)) for index, value in enumerate(actual)]
+    forecast_points = [(xs[split + index], y(value)) for index, value in enumerate(forecast)]
+    upper_points = [(xs[split + index], y(value)) for index, value in enumerate(upper)]
+    lower_points = [(xs[split + index], y(value)) for index, value in enumerate(lower)]
+    band = upper_points + list(reversed(lower_points))
+    parts = [
+        text(0, 28, "23 / FORECAST FAN", cls="index muted", size=13),
+        line(x0, y1, x1, y1, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}'),
+        line(xs[split], y0, xs[split], y1, cls="rail", extra=motion("align", 160, brief=70, story=250)),
+        text(xs[split], y0 - 10, "FORECAST →", cls="index signal-text", size=12),
+        polygon(band, cls="cat-1", extra=motion("dock", 520, dx=-20, brief=300, story=1020, choreo="band-fill")),
+        path(_polyline(actual_points), cls="data-stroke", extra=f'pathLength="1" {motion("route", 240, brief=120, story=460, duration=600, duration_brief=380, duration_story=900, choreo="trace")}'),
+        path(_polyline(forecast_points), cls="signal-stroke", extra=f'pathLength="1" {motion("route", 760, brief=440, story=1480, duration=650, duration_brief=420, duration_story=980, choreo="trace")}'),
+    ]
+    for index, label in enumerate(labels):
+        if index in {0, split, len(labels) - 1}:
+            parts.append(text(xs[index], y1 + 28, label, cls="index muted", anchor="middle", size=12))
+    uncertainty = upper[-1] - lower[-1]
+    parts.append(evidence_plate(0, 82, "F-23", "RANGE", format_num(uncertainty), "末期预测区间宽度", delay=1580, width=226, brief=900, story=3040, choreo="alarm"))
+    return "\n".join(parts)
+
+
+def build_c24(data: Any) -> str:
+    if not isinstance(data, dict):
+        return no_data()
+    labels, values = data.get("labels", []), data.get("values", [])
+    center, ucl, lcl = data.get("center"), data.get("ucl"), data.get("lcl")
+    if not labels or len(labels) != len(values) or not all(is_number(value) for value in values) or not all(is_number(value) for value in (center, ucl, lcl)) or not lcl < center < ucl:
+        return no_data()
+    low, high = min(min(values), lcl), max(max(values), ucl)
+    pad = max((high - low) * .15, 1)
+    x0, x1, y0, y1 = 150, 1118, 72, 414
+    xs = [_scale(index, 0, max(1, len(values) - 1), x0, x1) for index in range(len(values))]
+    y = lambda value: _scale(value, low - pad, high + pad, y1, y0)
+    points = [(x, y(value)) for x, value in zip(xs, values)]
+    breaches = [index for index, value in enumerate(values) if value > ucl or value < lcl]
+    parts = [text(0, 28, "24 / CONTROL CHART", cls="index muted", size=13), line(x0, y1, x1, y1, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
+    for label, value, cls in (("UCL", ucl, "signal-stroke"), ("CENTER", center, "rail"), ("LCL", lcl, "signal-stroke")):
+        yy = y(value)
+        parts += [line(x0, yy, x1, yy, cls=cls, extra=f'pathLength="1" {motion("align", 150, brief=70, story=240)}'), text(x1, yy - 7, f"{label} {format_num(value)}", cls="index signal-text" if label != "CENTER" else "index muted", anchor="end", size=12)]
+    parts.append(path(_polyline(points), cls="data-stroke", extra=f'pathLength="1" {motion("route", 360, brief=190, story=700, duration=680, duration_brief=440, duration_story=1040, choreo="trace")}'))
+    for index, ((x, yy), value) in enumerate(zip(points, values)):
+        alarm = index in breaches
+        parts += [circle(x, yy, 7 if alarm else 4, cls="signal-fill" if alarm else "data-fill", extra=motion("dock", 620 + index * 55, dy=14, brief=350 + index * 28, story=1220 + index * 110, choreo="pin")), text(x, y1 + 27, labels[index], cls="index muted", anchor="middle", size=12)]
+        if alarm:
+            parts.append(path(f"M {x-13} {yy-13} V {yy-27} H {x+3}", cls="signal-stroke", extra=f'pathLength="1" {motion("lock", 1250 + index * 35, brief=740 + index * 18, story=2380 + index * 70, choreo="alarm")}'))
+    parts.append(evidence_plate(0, 82, "Q-24", "ALARM", str(len(breaches)), "超出控制界限", delay=1580, width=210, brief=900, story=3020, choreo="alarm"))
+    return "\n".join(parts)
+
+
 BUILDERS: dict[str, Callable[[Any], str]] = {
     "C1": build_c1, "C2": build_c2, "C3": build_c3, "C4": build_c4, "C5": build_c5,
     "C6": build_c6, "C7": build_c7, "C8": build_c8, "C9": build_c9, "C10": build_c10,
+    "C11": build_c11, "C12": build_c12, "C13": build_c13, "C14": build_c14,
+    "C15": build_c15, "C16": build_c16, "C17": build_c17, "C18": build_c18,
+    "C19": build_c19, "C20": build_c20, "C21": build_c21, "C22": build_c22,
+    "C23": build_c23, "C24": build_c24,
 }
 
 

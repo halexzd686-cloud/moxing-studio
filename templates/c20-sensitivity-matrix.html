@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-surface="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>增长与毛利率同时改善时，估值弹性显著放大</title>
+<style>
+  @font-face{font-family:'Noto Sans SC';src:url('../assets/fonts/NotoSansSC-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Noto Serif SC';src:url('../assets/fonts/NotoSerifSC-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Doto';src:url('../assets/fonts/Doto-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+
+  [data-surface="light"] {
+    --bg:#F2F3EF; --ink:#171916; --muted:#6F746C;
+    --matrix-strong:#4E544D; --matrix-quiet:#777C75;
+    --faint:#A9AEA5; --grid:#D8DBD4; --rail:#9DA39A;
+    --secondary:#BFC3BB; --signal:#D85A36; --panel:#E9EBE5;
+    --cat-1:#536A72; --cat-2:#6D7562; --cat-3:#887665; --cat-4:#7B6874;
+  }
+
+  [data-surface="dark"] {
+    --bg:#151714; --ink:#F0F1EB; --muted:#989D94;
+    --matrix-strong:#C3C7BF; --matrix-quiet:#8D938A;
+    --faint:#62675F; --grid:#30332E; --rail:#5E645B;
+    --secondary:#737970; --signal:#E56B47; --panel:#1E211D;
+    --cat-1:#8DA5AD; --cat-2:#A1AA91; --cat-3:#B39A86; --cat-4:#A18C9D;
+  }
+  * { box-sizing:border-box; }
+  html,body { width:1280px; height:720px; margin:0; overflow:hidden; background:var(--bg); color:var(--ink); }
+  body { font-family:'Noto Sans SC','Microsoft YaHei',sans-serif; -webkit-font-smoothing:antialiased; }
+  .chart-container { width:1280px; height:720px; padding:38px 54px 28px; display:grid; grid-template-rows:124px 1fr 28px; position:relative; background:var(--bg); }
+  .chart-header { display:grid; grid-template-columns:170px minmax(0,1fr); align-items:start; border-top:1.5px solid var(--ink); padding:12px 122px 0 0; }
+  .chart-code { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; font-size:14px; font-weight:650; font-variation-settings:'ROND' 0,'wght' 650; letter-spacing:.055em; color:var(--matrix-strong); }
+  .chart-title { margin:0; font-family:'Noto Serif SC','Songti SC',serif; font-size:34px; line-height:1.18; font-weight:700; letter-spacing:.01em; }
+  .chart-subtitle { margin-top:8px; color:var(--muted); font-size:14px; }
+  .chart-body { min-height:0; }
+  svg { display:block; width:100%; height:100%; overflow:visible; }
+  svg text { font-family:'Noto Sans SC','Microsoft YaHei',sans-serif; fill:var(--ink); }
+  svg .title-font { font-family:'Noto Serif SC','Songti SC',serif; }
+  svg .index { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; font-weight:650; font-variation-settings:'ROND' 0,'wght' 650; letter-spacing:.055em; fill:var(--matrix-strong); }
+  svg .muted { fill:var(--muted); }
+  svg .faint { fill:var(--faint); }
+  svg .index.muted { fill:var(--matrix-quiet); font-weight:560; font-variation-settings:'ROND' 0,'wght' 560; letter-spacing:.04em; }
+  svg .signal-text { fill:var(--signal); }
+  svg .index.signal-text { fill:var(--signal); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; }
+  svg .on-fill { fill:var(--bg); font-weight:700; }
+  svg .value { fill:var(--ink); font-variant-numeric:tabular-nums; }
+  svg .grid { stroke:var(--grid); stroke-width:1; fill:none; vector-effect:non-scaling-stroke; }
+  svg .rail { stroke:var(--rail); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .rail-strong { stroke:var(--ink); stroke-width:2.25; fill:none; vector-effect:non-scaling-stroke; }
+  svg .data-stroke { stroke:var(--ink); stroke-width:2.25; fill:none; vector-effect:non-scaling-stroke; }
+  svg .secondary-stroke { stroke:var(--secondary); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .signal-stroke { stroke:var(--signal); stroke-width:2.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .data-fill { fill:var(--ink); }
+  svg .secondary-fill { fill:var(--secondary); }
+  svg .panel-fill { fill:var(--panel); }
+  svg .panel-stroke { fill:var(--panel); stroke:var(--rail); stroke-width:1; vector-effect:non-scaling-stroke; }
+  svg .signal-fill { fill:var(--signal); }
+  svg .hollow { fill:var(--bg); stroke:var(--ink); stroke-width:1.5; vector-effect:non-scaling-stroke; }
+  svg .cat-1 { fill:var(--cat-1); } svg .cat-2 { fill:var(--cat-2); }
+  svg .cat-3 { fill:var(--cat-3); } svg .cat-4 { fill:var(--cat-4); }
+  .chart-footer { display:flex; justify-content:space-between; align-items:end; color:var(--muted); font-size:12px; letter-spacing:.02em; border-bottom:1px solid var(--grid); padding-bottom:7px; }
+  .chart-footer .mark { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; color:var(--matrix-quiet); font-weight:600; font-variation-settings:'ROND' 0,'wght' 600; letter-spacing:.07em; }
+  [data-mode="brief"] .evidence-plate { display:none; }
+  [data-mode="brief"] svg .grid { opacity:.62; }
+  .motion-controls { position:absolute; right:54px; top:48px; display:flex; gap:6px; z-index:5; }
+  .motion-controls button { width:30px; height:30px; border:1px solid var(--rail); background:var(--bg); color:var(--ink); font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; cursor:pointer; padding:0; }
+  .motion-controls button:hover { border-color:var(--signal); color:var(--signal); }
+  [data-motion] { transform-box:fill-box; transform-origin:center; }
+  @keyframes mx-align { from { opacity:0; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
+  @keyframes mx-dock { from { opacity:0; transform:translate(var(--dx),var(--dy)); } to { opacity:1; transform:translate(0,0); } }
+  @keyframes mx-route { from { opacity:.25; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
+  @keyframes mx-lock { 0% { opacity:0; transform:scale(.92); } 68% { opacity:1; transform:scale(1.025); } 100% { opacity:1; transform:scale(1); } }
+  @keyframes mx-rail-rise { from { opacity:0; transform:translateY(var(--dy)) scaleY(.16); } to { opacity:1; transform:translateY(0) scaleY(1); } }
+  @keyframes mx-rail-slide { from { opacity:0; transform:translateX(var(--dx)) scaleX(.18); } to { opacity:1; transform:translateX(0) scaleX(1); } }
+  @keyframes mx-field-seat { from { opacity:0; transform:translateY(var(--dy)) scale(.72); } to { opacity:1; transform:translateY(0) scale(1); } }
+  @keyframes mx-band-fill { from { opacity:0; transform:scaleX(.06); } to { opacity:1; transform:scaleX(1); } }
+  @keyframes mx-pin { from { opacity:0; transform:translateY(var(--dy)) scale(.35); } to { opacity:1; transform:translateY(0) scale(1); } }
+  @keyframes mx-interlock { from { opacity:0; transform:translateX(var(--dx)) scaleX(.82); } to { opacity:1; transform:translateX(0) scaleX(1); } }
+  @keyframes mx-readout { from { opacity:0; clip-path:inset(0 100% 0 0); transform:translateY(6px); } to { opacity:1; clip-path:inset(0 0 0 0); transform:translateY(0); } }
+  @keyframes mx-alarm { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:translateX(0); } }
+  .motion-enabled.is-playing [data-motion="align"] { stroke-dasharray:1; animation:mx-align var(--active-duration,var(--duration,220ms)) linear var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="dock"] { animation:mx-dock var(--active-duration,var(--duration,620ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="route"] { stroke-dasharray:1; animation:mx-route var(--active-duration,var(--duration,520ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="lock"] { animation:mx-lock var(--active-duration,var(--duration,280ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-choreo="rail-rise"] { animation-name:mx-rail-rise; transform-origin:center bottom; }
+  .motion-enabled.is-playing [data-choreo="rail-slide"] { animation-name:mx-rail-slide; transform-origin:left center; }
+  .motion-enabled.is-playing [data-choreo="field-seat"] { animation-name:mx-field-seat; }
+  .motion-enabled.is-playing [data-choreo="band-fill"] { animation-name:mx-band-fill; transform-origin:left center; }
+  .motion-enabled.is-playing [data-choreo="trace"] { animation-timing-function:linear; }
+  .motion-enabled.is-playing [data-choreo="pin"] { animation-name:mx-pin; }
+  .motion-enabled.is-playing [data-choreo="interlock"] { animation-name:mx-interlock; }
+  .motion-enabled.is-playing [data-choreo="readout"] { animation-name:mx-readout; transform-origin:left center; }
+  .motion-enabled.is-playing [data-choreo="alarm"] { animation-name:mx-alarm; }
+  .motion-enabled.is-paused [data-motion] { animation-play-state:paused!important; }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing [data-motion] { animation:none!important; } }
+</style>
+</head>
+<body>
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1200" data-total-standard="2200" data-total-story="4100" data-mode="editorial" data-choreography="matrix-seating">
+  <header class="chart-header">
+    <div class="chart-code">C20 / SENSITIVITY MATRIX</div>
+    <div><h1 class="chart-title">增长与毛利率同时改善时，估值弹性显著放大</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div></div>
+  </header>
+  <section class="chart-body"><svg viewBox="0 0 1172 500" role="img" aria-label="增长与毛利率同时改善时，估值弹性显著放大"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >20 / SENSITIVITY MATRIX</text>
+<line x1="270" y1="58" x2="1110" y2="58" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--delay-brief:30ms;--delay-story:110ms"/>
+<text x="354" y="48" class="index muted" text-anchor="middle" font-size="12" >增长 4%</text>
+<text x="522" y="48" class="index muted" text-anchor="middle" font-size="12" >增长 6%</text>
+<text x="690" y="48" class="index muted" text-anchor="middle" font-size="12" >增长 8%</text>
+<text x="858" y="48" class="index muted" text-anchor="middle" font-size="12" >增长 10%</text>
+<text x="1026" y="48" class="index muted" text-anchor="middle" font-size="12" >增长 12%</text>
+<text x="0" y="118.44" class="index muted" text-anchor="start" font-size="12" >毛利率 32%</text>
+<rect x="273" y="83" width="162" height="56" rx="0" class="panel-stroke" data-motion="dock" data-choreo="field-seat" style="--delay:220ms;--dx:0px;--dy:12px;--delay-brief:100ms;--delay-story:420ms"/>
+<text x="354" y="118.44" class="value" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:460ms;--dx:0px;--dy:0px;--delay-brief:260ms;--delay-story:740ms">72</text>
+<rect x="441" y="83" width="162" height="56" rx="0" class="panel-stroke" data-motion="dock" data-choreo="field-seat" style="--delay:275ms;--dx:0px;--dy:12px;--delay-brief:124ms;--delay-story:520ms"/>
+<text x="522" y="118.44" class="value" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:515ms;--dx:0px;--dy:0px;--delay-brief:287ms;--delay-story:850ms">78</text>
+<rect x="609" y="83" width="162" height="56" rx="0" class="panel-stroke" data-motion="dock" data-choreo="field-seat" style="--delay:330ms;--dx:0px;--dy:12px;--delay-brief:148ms;--delay-story:620ms"/>
+<text x="690" y="118.44" class="value" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:570ms;--dx:0px;--dy:0px;--delay-brief:315ms;--delay-story:960ms">85</text>
+<rect x="777" y="83" width="162" height="56" rx="0" class="panel-stroke" data-motion="dock" data-choreo="field-seat" style="--delay:385ms;--dx:0px;--dy:12px;--delay-brief:172ms;--delay-story:720ms"/>
+<text x="858" y="118.44" class="value" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:625ms;--dx:0px;--dy:0px;--delay-brief:342ms;--delay-story:1070ms">93</text>
+<rect x="945" y="83" width="162" height="56" rx="0" class="panel-stroke" data-motion="dock" data-choreo="field-seat" style="--delay:440ms;--dx:0px;--dy:12px;--delay-brief:196ms;--delay-story:820ms"/>
+<text x="1026" y="118.44" class="value" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:680ms;--dx:0px;--dy:0px;--delay-brief:370ms;--delay-story:1180ms">102</text>
+<text x="0" y="180.44" class="index muted" text-anchor="start" font-size="12" >毛利率 34%</text>
+<rect x="273" y="145" width="162" height="56" rx="0" class="panel-stroke" data-motion="dock" data-choreo="field-seat" style="--delay:300ms;--dx:0px;--dy:12px;--delay-brief:135ms;--delay-story:570ms"/>
+<text x="354" y="180.44" class="value" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:540ms;--dx:0px;--dy:0px;--delay-brief:300ms;--delay-story:900ms">79</text>
+<rect x="441" y="145" width="162" height="56" rx="0" class="panel-stroke" data-motion="dock" data-choreo="field-seat" style="--delay:355ms;--dx:0px;--dy:12px;--delay-brief:159ms;--delay-story:670ms"/>
+<text x="522" y="180.44" class="value" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:595ms;--dx:0px;--dy:0px;--delay-brief:327ms;--delay-story:1010ms">86</text>
+<rect x="609" y="145" width="162" height="56" rx="0" class="panel-stroke" data-motion="dock" data-choreo="field-seat" style="--delay:410ms;--dx:0px;--dy:12px;--delay-brief:183ms;--delay-story:770ms"/>
+<text x="690" y="180.44" class="value" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:650ms;--dx:0px;--dy:0px;--delay-brief:355ms;--delay-story:1120ms">94</text>
+<rect x="777" y="145" width="162" height="56" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:465ms;--dx:0px;--dy:12px;--delay-brief:207ms;--delay-story:870ms"/>
+<text x="858" y="180.44" class="on-fill" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:705ms;--dx:0px;--dy:0px;--delay-brief:382ms;--delay-story:1230ms">103</text>
+<rect x="945" y="145" width="162" height="56" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:520ms;--dx:0px;--dy:12px;--delay-brief:231ms;--delay-story:970ms"/>
+<text x="1026" y="180.44" class="on-fill" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:760ms;--dx:0px;--dy:0px;--delay-brief:410ms;--delay-story:1340ms">113</text>
+<text x="0" y="242.44" class="index muted" text-anchor="start" font-size="12" >毛利率 36%</text>
+<rect x="273" y="207" width="162" height="56" rx="0" class="panel-stroke" data-motion="dock" data-choreo="field-seat" style="--delay:380ms;--dx:0px;--dy:12px;--delay-brief:170ms;--delay-story:720ms"/>
+<text x="354" y="242.44" class="value" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:620ms;--dx:0px;--dy:0px;--delay-brief:340ms;--delay-story:1060ms">87</text>
+<rect x="441" y="207" width="162" height="56" rx="0" class="panel-stroke" data-motion="dock" data-choreo="field-seat" style="--delay:435ms;--dx:0px;--dy:12px;--delay-brief:194ms;--delay-story:820ms"/>
+<text x="522" y="242.44" class="value" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:675ms;--dx:0px;--dy:0px;--delay-brief:367ms;--delay-story:1170ms">95</text>
+<rect x="609" y="207" width="162" height="56" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:490ms;--dx:0px;--dy:12px;--delay-brief:218ms;--delay-story:920ms"/>
+<text x="690" y="242.44" class="on-fill" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:730ms;--dx:0px;--dy:0px;--delay-brief:395ms;--delay-story:1280ms">104</text>
+<rect x="777" y="207" width="162" height="56" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:545ms;--dx:0px;--dy:12px;--delay-brief:242ms;--delay-story:1020ms"/>
+<text x="858" y="242.44" class="on-fill" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:785ms;--dx:0px;--dy:0px;--delay-brief:422ms;--delay-story:1390ms">114</text>
+<rect x="945" y="207" width="162" height="56" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:600ms;--dx:0px;--dy:12px;--delay-brief:266ms;--delay-story:1120ms"/>
+<text x="1026" y="242.44" class="on-fill" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:840ms;--dx:0px;--dy:0px;--delay-brief:450ms;--delay-story:1500ms">125</text>
+<text x="0" y="304.44" class="index muted" text-anchor="start" font-size="12" >毛利率 38%</text>
+<rect x="273" y="269" width="162" height="56" rx="0" class="panel-stroke" data-motion="dock" data-choreo="field-seat" style="--delay:460ms;--dx:0px;--dy:12px;--delay-brief:205ms;--delay-story:870ms"/>
+<text x="354" y="304.44" class="value" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:700ms;--dx:0px;--dy:0px;--delay-brief:380ms;--delay-story:1220ms">96</text>
+<rect x="441" y="269" width="162" height="56" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:515ms;--dx:0px;--dy:12px;--delay-brief:229ms;--delay-story:970ms"/>
+<text x="522" y="304.44" class="on-fill" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:755ms;--dx:0px;--dy:0px;--delay-brief:407ms;--delay-story:1330ms">105</text>
+<rect x="609" y="269" width="162" height="56" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:570ms;--dx:0px;--dy:12px;--delay-brief:253ms;--delay-story:1070ms"/>
+<text x="690" y="304.44" class="on-fill" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:810ms;--dx:0px;--dy:0px;--delay-brief:435ms;--delay-story:1440ms">115</text>
+<rect x="777" y="269" width="162" height="56" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:625ms;--dx:0px;--dy:12px;--delay-brief:277ms;--delay-story:1170ms"/>
+<text x="858" y="304.44" class="on-fill" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:865ms;--dx:0px;--dy:0px;--delay-brief:462ms;--delay-story:1550ms">126</text>
+<rect x="945" y="269" width="162" height="56" rx="0" class="data-fill" data-motion="dock" data-choreo="field-seat" style="--delay:680ms;--dx:0px;--dy:12px;--delay-brief:301ms;--delay-story:1270ms"/>
+<text x="1026" y="304.44" class="on-fill" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:920ms;--dx:0px;--dy:0px;--delay-brief:490ms;--delay-story:1660ms">138</text>
+<text x="0" y="366.44" class="index muted" text-anchor="start" font-size="12" >毛利率 40%</text>
+<rect x="273" y="331" width="162" height="56" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:540ms;--dx:0px;--dy:12px;--delay-brief:240ms;--delay-story:1020ms"/>
+<text x="354" y="366.44" class="on-fill" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:780ms;--dx:0px;--dy:0px;--delay-brief:420ms;--delay-story:1380ms">106</text>
+<rect x="441" y="331" width="162" height="56" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:595ms;--dx:0px;--dy:12px;--delay-brief:264ms;--delay-story:1120ms"/>
+<text x="522" y="366.44" class="on-fill" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:835ms;--dx:0px;--dy:0px;--delay-brief:447ms;--delay-story:1490ms">116</text>
+<rect x="609" y="331" width="162" height="56" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:650ms;--dx:0px;--dy:12px;--delay-brief:288ms;--delay-story:1220ms"/>
+<text x="690" y="366.44" class="on-fill" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:890ms;--dx:0px;--dy:0px;--delay-brief:475ms;--delay-story:1600ms">127</text>
+<rect x="777" y="331" width="162" height="56" rx="0" class="data-fill" data-motion="dock" data-choreo="field-seat" style="--delay:705ms;--dx:0px;--dy:12px;--delay-brief:312ms;--delay-story:1320ms"/>
+<text x="858" y="366.44" class="on-fill" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:945ms;--dx:0px;--dy:0px;--delay-brief:502ms;--delay-story:1710ms">139</text>
+<rect x="945" y="331" width="162" height="56" rx="0" class="signal-fill" data-motion="dock" data-choreo="field-seat" style="--delay:760ms;--dx:0px;--dy:12px;--delay-brief:336ms;--delay-story:1420ms"/>
+<text x="1026" y="366.44" class="on-fill" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:1000ms;--dx:0px;--dy:0px;--delay-brief:530ms;--delay-story:1820ms">152</text>
+<g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1780ms;--dx:-8px;--dy:0px;--delay-brief:1020ms;--delay-story:3400ms">
+<path d="M 0 348 H 238 L 246 356 V 442 H 8 L 0 434 Z" class="panel-stroke" />
+<text x="14" y="369" class="index muted" text-anchor="start" font-size="12" >S-20</text>
+<text x="232" y="369" class="index signal-text" text-anchor="end" font-size="12" >UPSIDE</text>
+<text x="14" y="403" class="value" text-anchor="start" font-size="28" font-weight="650" >152</text>
+<text x="14" y="425" class="muted" text-anchor="start" font-size="13" >毛利率 40% / 增长 12%</text>
+</g></svg></section>
+  <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
+  <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" title="重播">↻</button><button type="button" data-action="pause" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" title="切换明暗">◐</button></nav>
+</main>
+<script type="application/json" id="moxing-data">{"rows":["毛利率 32%","毛利率 34%","毛利率 36%","毛利率 38%","毛利率 40%"],"columns":["增长 4%","增长 6%","增长 8%","增长 10%","增长 12%"],"values":[[72,78,85,93,102],[79,86,94,103,113],[87,95,104,114,125],[96,105,115,126,138],[106,116,127,139,152]]}</script>
+<script>
+(() => {
+  const root=document.getElementById('moxing-chart');
+  const params=new URLSearchParams(location.search);
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches||params.get('motion')==='off';
+  const requestedProfile=params.get('motion')||'standard';
+  const profile=['brief','standard','story'].includes(requestedProfile)?requestedProfile:'standard';
+  const scales={brief:0.72,standard:1.0,story:1.8};
+  const scale=scales[profile]||1;
+  const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);
+  const total=Number(root.dataset[profileKey]||root.dataset.total||1800);
+  const baseDuration={align:220,dock:620,route:520,lock:280};
+  root.querySelectorAll('[data-motion]').forEach(el=>{
+    const rawDelay=parseFloat(el.style.getPropertyValue('--delay'))||0;
+    const rawDuration=parseFloat(el.style.getPropertyValue('--duration'))||baseDuration[el.dataset.motion]||300;
+    const profileDelay=parseFloat(el.style.getPropertyValue('--delay-'+profile));
+    const profileDuration=parseFloat(el.style.getPropertyValue('--duration-'+profile));
+    el.style.setProperty('--active-delay',Math.round(Number.isFinite(profileDelay)?profileDelay:rawDelay*scale)+'ms');
+    el.style.setProperty('--active-duration',Math.round(Number.isFinite(profileDuration)?profileDuration:rawDuration*scale)+'ms');
+  });
+  let timer=0;
+  const settle=()=>{ clearTimeout(timer); root.classList.remove('is-playing','is-paused'); root.classList.add('is-complete'); };
+  const replay=()=>{
+    clearTimeout(timer); root.classList.remove('is-playing','is-complete','is-paused'); void root.offsetWidth;
+    if(reduce){settle();return;}
+    root.style.setProperty('--motion-scale',scale); root.classList.add('motion-enabled','is-playing');
+    timer=setTimeout(settle,total+120);
+  };
+  const pause=()=>{ root.classList.toggle('is-paused'); const b=root.querySelector('[data-action=pause]'); b.textContent=root.classList.contains('is-paused')?'▶':'Ⅱ'; };
+  root.querySelector('[data-action=replay]').addEventListener('click',replay);
+  root.querySelector('[data-action=pause]').addEventListener('click',pause);
+  root.querySelector('[data-action=surface]').addEventListener('click',()=>{ const html=document.documentElement; html.dataset.surface=html.dataset.surface==='dark'?'light':'dark'; });
+  if(params.get('theme')==='dark') document.documentElement.dataset.surface='dark';
+  window.Moxing={replay,settle,setSurface:(v)=>document.documentElement.dataset.surface=v,profile,duration:total,ready:Promise.resolve()};
+  if(reduce) settle();
+  else if('IntersectionObserver'in window){ const io=new IntersectionObserver(e=>{if(e[0].isIntersecting){io.disconnect();replay();}},{threshold:.35});io.observe(root); }
+  else replay();
+})();
+</script>
+</body>
+</html>

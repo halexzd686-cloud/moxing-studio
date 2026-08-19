@@ -7,12 +7,7 @@ import { pathToFileURL } from "node:url";
 const root = path.resolve(process.argv[2] || ".");
 const templatesDir = path.join(root, "templates");
 const previewDir = path.join(root, "docs", "previews");
-const chartFiles = [
-  "c01-structural-rank.html", "c02-ranked-rail.html", "c03-signal-trend.html",
-  "c04-composition-field.html", "c05-composition-bands.html", "c06-ledger-steps.html",
-  "c07-milestone-lanes.html", "c08-stage-channel.html", "c09-metric-lockup.html",
-  "c10-decision-interface.html",
-];
+const chartFiles = fs.readdirSync(templatesDir).filter((file) => /^c\d{2}-.*\.html$/.test(file)).sort();
 const exemplars = {
   "c01-structural-rank.html": { family: "rail-rise", cue: "rail-rise", animation: "mx-rail-rise" },
   "c02-ranked-rail.html": { family: "ranked-rail", cue: "rail-slide", animation: "mx-rail-slide" },
@@ -24,6 +19,20 @@ const exemplars = {
   "c08-stage-channel.html": { family: "stage-interlock", cue: "interlock", animation: "mx-interlock" },
   "c09-metric-lockup.html": { family: "metric-readout", cue: "readout", animation: "mx-readout" },
   "c10-decision-interface.html": { family: "decision-readout", cue: "readout", animation: "mx-readout" },
+  "c11-sector-lock.html": { family: "sector-lock", cue: "field-seat", animation: "mx-field-seat" },
+  "c12-metric-small-multiples.html": { family: "metric-pulse", cue: "trace", animation: "mx-route" },
+  "c13-pareto-contribution.html": { family: "pareto-routing", cue: "rail-rise", animation: "mx-rail-rise" },
+  "c14-cohort-matrix.html": { family: "cohort-seating", cue: "field-seat", animation: "mx-field-seat" },
+  "c15-commerce-flow.html": { family: "flow-routing", cue: "trace", animation: "mx-route" },
+  "c16-decision-bubble-matrix.html": { family: "quadrant-lock", cue: "pin", animation: "mx-pin" },
+  "c17-market-candles.html": { family: "market-build", cue: "field-seat", animation: "mx-field-seat" },
+  "c18-performance-drawdown.html": { family: "drawdown-routing", cue: "trace", animation: "mx-route" },
+  "c19-yield-curve.html": { family: "curve-routing", cue: "trace", animation: "mx-route" },
+  "c20-sensitivity-matrix.html": { family: "matrix-seating", cue: "field-seat", animation: "mx-field-seat" },
+  "c21-distribution-profile.html": { family: "distribution-build", cue: "rail-rise", animation: "mx-rail-rise" },
+  "c22-correlation-matrix.html": { family: "matrix-seating", cue: "field-seat", animation: "mx-field-seat" },
+  "c23-forecast-fan.html": { family: "forecast-routing", cue: "trace", animation: "mx-route" },
+  "c24-control-chart.html": { family: "control-lock", cue: "trace", animation: "mx-route" },
 };
 const failures = [];
 const checks = [];
@@ -120,12 +129,14 @@ async function inspect(file, javaScriptEnabled) {
       shapes: document.querySelectorAll("svg path,svg rect,svg circle,svg line,svg polygon").length,
       api: Boolean(window.Moxing),
       surface: document.documentElement.dataset.surface,
+      titleOverflow: (() => { const title = document.querySelector(".chart-title"); const header = document.querySelector(".chart-header"); if (!title || !header) return true; const range = document.createRange(); range.selectNodeContents(title); const textBox = range.getBoundingClientRect(); const titleBox = title.getBoundingClientRect(); const headerBox = header.getBoundingClientRect(); return textBox.right > titleBox.right + .5 || textBox.bottom > headerBox.bottom + .5; })(),
       overflow: document.body.scrollWidth > 1280 || document.body.scrollHeight > 720,
     };
   });
   if (state.width !== 1280 || state.height !== 720) fail(scope, `container ${state.width}x${state.height}`);
   if (state.svg !== 1 || state.text === 0 || state.shapes === 0) fail(scope, `svg=${state.svg} text=${state.text} shapes=${state.shapes}`);
   if (state.overflow) fail(scope, "page overflow");
+  if (state.titleOverflow) fail(scope, "conclusion title overflow");
   if (javaScriptEnabled && !state.api) fail(scope, "runtime API missing");
   if (consoleErrors.length || pageErrors.length || external.length) fail(scope, [...consoleErrors, ...pageErrors, ...external].join(" | "));
   if (!failures.some((item) => item.scope === scope)) pass(scope, javaScriptEnabled ? "runtime and locked frame" : "static fallback");
@@ -231,7 +242,7 @@ if (reducedState.running || !reducedState.complete) fail("reduced-motion", JSON.
 else pass("reduced-motion", "locked frame without motion");
 await reducedContext.close();
 
-for (const file of ["c01-structural-rank.html", "c03-signal-trend.html", "c08-stage-channel.html", "c10-decision-interface.html"]) {
+for (const file of ["c01-structural-rank.html", "c03-signal-trend.html", "c08-stage-channel.html", "c10-decision-interface.html", "c11-sector-lock.html", "c17-market-candles.html", "c20-sensitivity-matrix.html", "c23-forecast-fan.html"]) {
   const context = await browser.newContext({ viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1 });
   const page = await context.newPage();
   await page.goto(`${pathToFileURL(path.join(templatesDir, file)).href}?motion=off`, { waitUntil: "load" });
@@ -245,8 +256,8 @@ const galleryContext = await browser.newContext({ viewport: { width: 1440, heigh
 const galleryPage = await galleryContext.newPage();
 await galleryPage.goto(pathToFileURL(path.join(templatesDir, "gallery.html")).href, { waitUntil: "load" });
 const galleryCards = await galleryPage.locator(".card").count();
-if (galleryCards !== 10) fail("gallery", `${galleryCards} cards`);
-else pass("gallery", "10 compact v2 cards");
+if (galleryCards !== 24) fail("gallery", `${galleryCards} cards`);
+else pass("gallery", "24 compact v2 cards");
 await galleryContext.close();
 await browser.close();
 

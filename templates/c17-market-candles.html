@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-surface="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>价格放量突破前高，短期趋势转强</title>
+<style>
+  @font-face{font-family:'Noto Sans SC';src:url('../assets/fonts/NotoSansSC-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Noto Serif SC';src:url('../assets/fonts/NotoSerifSC-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Doto';src:url('../assets/fonts/Doto-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+
+  [data-surface="light"] {
+    --bg:#F2F3EF; --ink:#171916; --muted:#6F746C;
+    --matrix-strong:#4E544D; --matrix-quiet:#777C75;
+    --faint:#A9AEA5; --grid:#D8DBD4; --rail:#9DA39A;
+    --secondary:#BFC3BB; --signal:#D85A36; --panel:#E9EBE5;
+    --cat-1:#536A72; --cat-2:#6D7562; --cat-3:#887665; --cat-4:#7B6874;
+  }
+
+  [data-surface="dark"] {
+    --bg:#151714; --ink:#F0F1EB; --muted:#989D94;
+    --matrix-strong:#C3C7BF; --matrix-quiet:#8D938A;
+    --faint:#62675F; --grid:#30332E; --rail:#5E645B;
+    --secondary:#737970; --signal:#E56B47; --panel:#1E211D;
+    --cat-1:#8DA5AD; --cat-2:#A1AA91; --cat-3:#B39A86; --cat-4:#A18C9D;
+  }
+  * { box-sizing:border-box; }
+  html,body { width:1280px; height:720px; margin:0; overflow:hidden; background:var(--bg); color:var(--ink); }
+  body { font-family:'Noto Sans SC','Microsoft YaHei',sans-serif; -webkit-font-smoothing:antialiased; }
+  .chart-container { width:1280px; height:720px; padding:38px 54px 28px; display:grid; grid-template-rows:124px 1fr 28px; position:relative; background:var(--bg); }
+  .chart-header { display:grid; grid-template-columns:170px minmax(0,1fr); align-items:start; border-top:1.5px solid var(--ink); padding:12px 122px 0 0; }
+  .chart-code { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; font-size:14px; font-weight:650; font-variation-settings:'ROND' 0,'wght' 650; letter-spacing:.055em; color:var(--matrix-strong); }
+  .chart-title { margin:0; font-family:'Noto Serif SC','Songti SC',serif; font-size:34px; line-height:1.18; font-weight:700; letter-spacing:.01em; }
+  .chart-subtitle { margin-top:8px; color:var(--muted); font-size:14px; }
+  .chart-body { min-height:0; }
+  svg { display:block; width:100%; height:100%; overflow:visible; }
+  svg text { font-family:'Noto Sans SC','Microsoft YaHei',sans-serif; fill:var(--ink); }
+  svg .title-font { font-family:'Noto Serif SC','Songti SC',serif; }
+  svg .index { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; font-weight:650; font-variation-settings:'ROND' 0,'wght' 650; letter-spacing:.055em; fill:var(--matrix-strong); }
+  svg .muted { fill:var(--muted); }
+  svg .faint { fill:var(--faint); }
+  svg .index.muted { fill:var(--matrix-quiet); font-weight:560; font-variation-settings:'ROND' 0,'wght' 560; letter-spacing:.04em; }
+  svg .signal-text { fill:var(--signal); }
+  svg .index.signal-text { fill:var(--signal); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; }
+  svg .on-fill { fill:var(--bg); font-weight:700; }
+  svg .value { fill:var(--ink); font-variant-numeric:tabular-nums; }
+  svg .grid { stroke:var(--grid); stroke-width:1; fill:none; vector-effect:non-scaling-stroke; }
+  svg .rail { stroke:var(--rail); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .rail-strong { stroke:var(--ink); stroke-width:2.25; fill:none; vector-effect:non-scaling-stroke; }
+  svg .data-stroke { stroke:var(--ink); stroke-width:2.25; fill:none; vector-effect:non-scaling-stroke; }
+  svg .secondary-stroke { stroke:var(--secondary); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .signal-stroke { stroke:var(--signal); stroke-width:2.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .data-fill { fill:var(--ink); }
+  svg .secondary-fill { fill:var(--secondary); }
+  svg .panel-fill { fill:var(--panel); }
+  svg .panel-stroke { fill:var(--panel); stroke:var(--rail); stroke-width:1; vector-effect:non-scaling-stroke; }
+  svg .signal-fill { fill:var(--signal); }
+  svg .hollow { fill:var(--bg); stroke:var(--ink); stroke-width:1.5; vector-effect:non-scaling-stroke; }
+  svg .cat-1 { fill:var(--cat-1); } svg .cat-2 { fill:var(--cat-2); }
+  svg .cat-3 { fill:var(--cat-3); } svg .cat-4 { fill:var(--cat-4); }
+  .chart-footer { display:flex; justify-content:space-between; align-items:end; color:var(--muted); font-size:12px; letter-spacing:.02em; border-bottom:1px solid var(--grid); padding-bottom:7px; }
+  .chart-footer .mark { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; color:var(--matrix-quiet); font-weight:600; font-variation-settings:'ROND' 0,'wght' 600; letter-spacing:.07em; }
+  [data-mode="brief"] .evidence-plate { display:none; }
+  [data-mode="brief"] svg .grid { opacity:.62; }
+  .motion-controls { position:absolute; right:54px; top:48px; display:flex; gap:6px; z-index:5; }
+  .motion-controls button { width:30px; height:30px; border:1px solid var(--rail); background:var(--bg); color:var(--ink); font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; cursor:pointer; padding:0; }
+  .motion-controls button:hover { border-color:var(--signal); color:var(--signal); }
+  [data-motion] { transform-box:fill-box; transform-origin:center; }
+  @keyframes mx-align { from { opacity:0; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
+  @keyframes mx-dock { from { opacity:0; transform:translate(var(--dx),var(--dy)); } to { opacity:1; transform:translate(0,0); } }
+  @keyframes mx-route { from { opacity:.25; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
+  @keyframes mx-lock { 0% { opacity:0; transform:scale(.92); } 68% { opacity:1; transform:scale(1.025); } 100% { opacity:1; transform:scale(1); } }
+  @keyframes mx-rail-rise { from { opacity:0; transform:translateY(var(--dy)) scaleY(.16); } to { opacity:1; transform:translateY(0) scaleY(1); } }
+  @keyframes mx-rail-slide { from { opacity:0; transform:translateX(var(--dx)) scaleX(.18); } to { opacity:1; transform:translateX(0) scaleX(1); } }
+  @keyframes mx-field-seat { from { opacity:0; transform:translateY(var(--dy)) scale(.72); } to { opacity:1; transform:translateY(0) scale(1); } }
+  @keyframes mx-band-fill { from { opacity:0; transform:scaleX(.06); } to { opacity:1; transform:scaleX(1); } }
+  @keyframes mx-pin { from { opacity:0; transform:translateY(var(--dy)) scale(.35); } to { opacity:1; transform:translateY(0) scale(1); } }
+  @keyframes mx-interlock { from { opacity:0; transform:translateX(var(--dx)) scaleX(.82); } to { opacity:1; transform:translateX(0) scaleX(1); } }
+  @keyframes mx-readout { from { opacity:0; clip-path:inset(0 100% 0 0); transform:translateY(6px); } to { opacity:1; clip-path:inset(0 0 0 0); transform:translateY(0); } }
+  @keyframes mx-alarm { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:translateX(0); } }
+  .motion-enabled.is-playing [data-motion="align"] { stroke-dasharray:1; animation:mx-align var(--active-duration,var(--duration,220ms)) linear var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="dock"] { animation:mx-dock var(--active-duration,var(--duration,620ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="route"] { stroke-dasharray:1; animation:mx-route var(--active-duration,var(--duration,520ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="lock"] { animation:mx-lock var(--active-duration,var(--duration,280ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-choreo="rail-rise"] { animation-name:mx-rail-rise; transform-origin:center bottom; }
+  .motion-enabled.is-playing [data-choreo="rail-slide"] { animation-name:mx-rail-slide; transform-origin:left center; }
+  .motion-enabled.is-playing [data-choreo="field-seat"] { animation-name:mx-field-seat; }
+  .motion-enabled.is-playing [data-choreo="band-fill"] { animation-name:mx-band-fill; transform-origin:left center; }
+  .motion-enabled.is-playing [data-choreo="trace"] { animation-timing-function:linear; }
+  .motion-enabled.is-playing [data-choreo="pin"] { animation-name:mx-pin; }
+  .motion-enabled.is-playing [data-choreo="interlock"] { animation-name:mx-interlock; }
+  .motion-enabled.is-playing [data-choreo="readout"] { animation-name:mx-readout; transform-origin:left center; }
+  .motion-enabled.is-playing [data-choreo="alarm"] { animation-name:mx-alarm; }
+  .motion-enabled.is-paused [data-motion] { animation-play-state:paused!important; }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing [data-motion] { animation:none!important; } }
+</style>
+</head>
+<body>
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1200" data-total-standard="2100" data-total-story="3900" data-mode="editorial" data-choreography="market-build">
+  <header class="chart-header">
+    <div class="chart-code">C17 / MARKET CANDLES</div>
+    <div><h1 class="chart-title">价格放量突破前高，短期趋势转强</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div></div>
+  </header>
+  <section class="chart-body"><svg viewBox="0 0 1172 500" role="img" aria-label="价格放量突破前高，短期趋势转强"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >17 / MARKET CANDLES</text>
+<line x1="150" y1="338" x2="1118" y2="338" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--delay-brief:30ms;--delay-story:110ms"/>
+<line x1="150" y1="432" x2="1118" y2="432" class="rail" />
+<line x1="150" y1="338" x2="1118" y2="338" class="grid" />
+<text x="132" y="342" class="index muted" text-anchor="end" font-size="12" >99.0</text>
+<line x1="150" y1="269.5" x2="1118" y2="269.5" class="grid" />
+<text x="132" y="273.5" class="index muted" text-anchor="end" font-size="12" >104.5</text>
+<line x1="150" y1="201" x2="1118" y2="201" class="grid" />
+<text x="132" y="205" class="index muted" text-anchor="end" font-size="12" >110.0</text>
+<line x1="150" y1="132.5" x2="1118" y2="132.5" class="grid" />
+<text x="132" y="136.5" class="index muted" text-anchor="end" font-size="12" >115.5</text>
+<line x1="150" y1="64" x2="1118" y2="64" class="grid" />
+<text x="132" y="68" class="index muted" text-anchor="end" font-size="12" >121.0</text>
+<line x1="219.14" y1="225.91" x2="219.14" y2="338" class="signal-stroke" data-motion="align" style="--delay:220ms;--dx:0px;--dy:0px;--delay-brief:110ms;--delay-story:420ms"/>
+<rect x="200.14" y="250.82" width="38" height="49.82" rx="0" class="signal-fill" data-motion="dock" data-choreo="field-seat" style="--delay:340ms;--dx:0px;--dy:16px;--delay-brief:190ms;--delay-story:620ms"/>
+<rect x="204.14" y="399.95" width="30" height="32.05" rx="0" class="secondary-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:300ms;--dx:0px;--dy:12px;--delay-brief:110ms;--delay-story:440ms"/>
+<text x="219.14" y="454" class="index muted" text-anchor="middle" font-size="12" >08-12</text>
+<line x1="357.43" y1="201" x2="357.43" y2="288.18" class="data-stroke" data-motion="align" style="--delay:325ms;--dx:0px;--dy:0px;--delay-brief:160ms;--delay-story:630ms"/>
+<rect x="338.43" y="250.82" width="38" height="24.91" rx="0" class="data-fill" data-motion="dock" data-choreo="field-seat" style="--delay:445ms;--dx:0px;--dy:16px;--delay-brief:242ms;--delay-story:830ms"/>
+<rect x="342.43" y="394.89" width="30" height="37.11" rx="0" class="secondary-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:405ms;--dx:0px;--dy:12px;--delay-brief:162ms;--delay-story:650ms"/>
+<text x="357.43" y="454" class="index muted" text-anchor="middle" font-size="12" >08-13</text>
+<line x1="495.71" y1="176.09" x2="495.71" y2="288.18" class="signal-stroke" data-motion="align" style="--delay:430ms;--dx:0px;--dy:0px;--delay-brief:210ms;--delay-story:840ms"/>
+<rect x="476.71" y="188.55" width="38" height="87.18" rx="0" class="signal-fill" data-motion="dock" data-choreo="field-seat" style="--delay:550ms;--dx:0px;--dy:16px;--delay-brief:295ms;--delay-story:1040ms"/>
+<rect x="480.71" y="379.71" width="30" height="52.29" rx="0" class="secondary-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:510ms;--dx:0px;--dy:12px;--delay-brief:215ms;--delay-story:860ms"/>
+<text x="495.71" y="454" class="index muted" text-anchor="middle" font-size="12" >08-14</text>
+<line x1="634" y1="138.73" x2="634" y2="225.91" class="signal-stroke" data-motion="align" style="--delay:535ms;--dx:0px;--dy:0px;--delay-brief:260ms;--delay-story:1050ms"/>
+<rect x="615" y="163.64" width="38" height="24.91" rx="0" class="signal-fill" data-motion="dock" data-choreo="field-seat" style="--delay:655ms;--dx:0px;--dy:16px;--delay-brief:347ms;--delay-story:1250ms"/>
+<rect x="619" y="388.99" width="30" height="43.01" rx="0" class="secondary-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:615ms;--dx:0px;--dy:12px;--delay-brief:267ms;--delay-story:1070ms"/>
+<text x="634" y="454" class="index muted" text-anchor="middle" font-size="12" >08-15</text>
+<line x1="772.29" y1="151.18" x2="772.29" y2="250.82" class="data-stroke" data-motion="align" style="--delay:640ms;--dx:0px;--dy:0px;--delay-brief:310ms;--delay-story:1260ms"/>
+<rect x="753.29" y="163.64" width="38" height="62.27" rx="0" class="data-fill" data-motion="dock" data-choreo="field-seat" style="--delay:760ms;--dx:0px;--dy:16px;--delay-brief:400ms;--delay-story:1460ms"/>
+<rect x="757.29" y="372.96" width="30" height="59.04" rx="0" class="secondary-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:720ms;--dx:0px;--dy:12px;--delay-brief:320ms;--delay-story:1280ms"/>
+<text x="772.29" y="454" class="index muted" text-anchor="middle" font-size="12" >08-16</text>
+<line x1="910.57" y1="113.82" x2="910.57" y2="238.36" class="signal-stroke" data-motion="align" style="--delay:745ms;--dx:0px;--dy:0px;--delay-brief:360ms;--delay-story:1470ms"/>
+<rect x="891.57" y="126.27" width="38" height="99.64" rx="0" class="signal-fill" data-motion="dock" data-choreo="field-seat" style="--delay:865ms;--dx:0px;--dy:16px;--delay-brief:452ms;--delay-story:1670ms"/>
+<rect x="895.57" y="362" width="30" height="70" rx="0" class="secondary-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:825ms;--dx:0px;--dy:12px;--delay-brief:372ms;--delay-story:1490ms"/>
+<text x="910.57" y="454" class="index muted" text-anchor="middle" font-size="12" >08-17</text>
+<line x1="1048.86" y1="64" x2="1048.86" y2="151.18" class="signal-stroke" data-motion="align" style="--delay:850ms;--dx:0px;--dy:0px;--delay-brief:410ms;--delay-story:1680ms"/>
+<rect x="1029.86" y="88.91" width="38" height="37.36" rx="0" class="signal-fill" data-motion="dock" data-choreo="field-seat" style="--delay:970ms;--dx:0px;--dy:16px;--delay-brief:505ms;--delay-story:1880ms"/>
+<rect x="1033.86" y="367.9" width="30" height="64.1" rx="0" class="secondary-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:930ms;--dx:0px;--dy:12px;--delay-brief:425ms;--delay-story:1700ms"/>
+<text x="1048.86" y="454" class="index muted" text-anchor="middle" font-size="12" >08-18</text>
+<g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1680ms;--dx:-8px;--dy:0px;--delay-brief:960ms;--delay-story:3220ms">
+<path d="M 0 78 H 212 L 220 86 V 172 H 8 L 0 164 Z" class="panel-stroke" />
+<text x="14" y="99" class="index muted" text-anchor="start" font-size="12" >M-17</text>
+<text x="206" y="99" class="index signal-text" text-anchor="end" font-size="12" >CHANGE</text>
+<text x="14" y="133" class="value" text-anchor="start" font-size="28" font-weight="650" >+16.7%</text>
+<text x="14" y="155" class="muted" text-anchor="start" font-size="13" >区间开盘至收盘</text>
+</g></svg></section>
+  <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
+  <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" title="重播">↻</button><button type="button" data-action="pause" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" title="切换明暗">◐</button></nav>
+</main>
+<script type="application/json" id="moxing-data">[{"date":"08-12","open":102,"high":108,"low":99,"close":106,"volume":38},{"date":"08-13","open":106,"high":110,"low":103,"close":104,"volume":44},{"date":"08-14","open":104,"high":112,"low":103,"close":111,"volume":62},{"date":"08-15","open":111,"high":115,"low":108,"close":113,"volume":51},{"date":"08-16","open":113,"high":114,"low":106,"close":108,"volume":70},{"date":"08-17","open":108,"high":117,"low":107,"close":116,"volume":83},{"date":"08-18","open":116,"high":121,"low":114,"close":119,"volume":76}]</script>
+<script>
+(() => {
+  const root=document.getElementById('moxing-chart');
+  const params=new URLSearchParams(location.search);
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches||params.get('motion')==='off';
+  const requestedProfile=params.get('motion')||'standard';
+  const profile=['brief','standard','story'].includes(requestedProfile)?requestedProfile:'standard';
+  const scales={brief:0.72,standard:1.0,story:1.8};
+  const scale=scales[profile]||1;
+  const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);
+  const total=Number(root.dataset[profileKey]||root.dataset.total||1800);
+  const baseDuration={align:220,dock:620,route:520,lock:280};
+  root.querySelectorAll('[data-motion]').forEach(el=>{
+    const rawDelay=parseFloat(el.style.getPropertyValue('--delay'))||0;
+    const rawDuration=parseFloat(el.style.getPropertyValue('--duration'))||baseDuration[el.dataset.motion]||300;
+    const profileDelay=parseFloat(el.style.getPropertyValue('--delay-'+profile));
+    const profileDuration=parseFloat(el.style.getPropertyValue('--duration-'+profile));
+    el.style.setProperty('--active-delay',Math.round(Number.isFinite(profileDelay)?profileDelay:rawDelay*scale)+'ms');
+    el.style.setProperty('--active-duration',Math.round(Number.isFinite(profileDuration)?profileDuration:rawDuration*scale)+'ms');
+  });
+  let timer=0;
+  const settle=()=>{ clearTimeout(timer); root.classList.remove('is-playing','is-paused'); root.classList.add('is-complete'); };
+  const replay=()=>{
+    clearTimeout(timer); root.classList.remove('is-playing','is-complete','is-paused'); void root.offsetWidth;
+    if(reduce){settle();return;}
+    root.style.setProperty('--motion-scale',scale); root.classList.add('motion-enabled','is-playing');
+    timer=setTimeout(settle,total+120);
+  };
+  const pause=()=>{ root.classList.toggle('is-paused'); const b=root.querySelector('[data-action=pause]'); b.textContent=root.classList.contains('is-paused')?'▶':'Ⅱ'; };
+  root.querySelector('[data-action=replay]').addEventListener('click',replay);
+  root.querySelector('[data-action=pause]').addEventListener('click',pause);
+  root.querySelector('[data-action=surface]').addEventListener('click',()=>{ const html=document.documentElement; html.dataset.surface=html.dataset.surface==='dark'?'light':'dark'; });
+  if(params.get('theme')==='dark') document.documentElement.dataset.surface='dark';
+  window.Moxing={replay,settle,setSurface:(v)=>document.documentElement.dataset.surface=v,profile,duration:total,ready:Promise.resolve()};
+  if(reduce) settle();
+  else if('IntersectionObserver'in window){ const io=new IntersectionObserver(e=>{if(e[0].isIntersecting){io.disconnect();replay();}},{threshold:.35});io.observe(root); }
+  else replay();
+})();
+</script>
+</body>
+</html>

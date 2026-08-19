@@ -18,7 +18,7 @@ from moxing import render_chart  # noqa: E402
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Render a Moxing v2 animated SVG chart")
-    parser.add_argument("--chart", required=True, help="C1 through C10")
+    parser.add_argument("--chart", required=True, help="C1 through C24")
     source = parser.add_mutually_exclusive_group()
     source.add_argument("--data", type=Path, help="UTF-8 JSON data file")
     source.add_argument("--data-json", help="inline JSON data")

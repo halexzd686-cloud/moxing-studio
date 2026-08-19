@@ -1,6 +1,6 @@
 ---
 name: moxing-studio
-description: 生成具有结构装配动画和静态降级能力的中文数据图表。输入比较、趋势、构成、增减、排期、转化或 KPI 数据，输出离线 HTML/SVG，并可导出 PNG、WebM、MP4 或 GIF；适用于 PPT、路演、网页数据故事和 GitHub 展示。
+description: 生成具有结构装配动画和静态降级能力的中文商业、金融与分析图表。输入比较、趋势、构成、电商经营、市场、风险、预测或统计数据，输出离线 HTML/SVG，并可导出 PNG、WebM、MP4 或 GIF；适用于 PPT、路演、经营分析、投研和网页数据故事。
 ---
 
 # Moxing Studio v2
@@ -9,7 +9,7 @@ description: 生成具有结构装配动画和静态降级能力的中文数据�
 
 ## Workflow
 
-1. 按数据形状、标签长度和阅读速度选择 C1–C10。读取 [references/chart-contracts.md](references/chart-contracts.md) 获取契约与选型边界。
+1. 按数据形状、行业问题、标签长度和阅读速度选择 C1–C24。读取 [references/chart-contracts.md](references/chart-contracts.md) 获取契约、家族复用与选型边界。
 2. 选择 `brief` 或 `editorial`。汇报默认 `brief`；文章、网页或需要解释证据时使用 `editorial`。需要动画时再选 `brief`、`standard` 或 `story` 时间轴，三者不是简单倍速。
 3. 默认使用冷白画布。用户明确要求深色、发布展示或仪器感时使用 `dark`。
 4. 标题写判断，不写图型名。单位、时间范围、口径和来源进入副标题或底行。

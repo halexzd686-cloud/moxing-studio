@@ -35,6 +35,15 @@ The primitives stay shared, but the data relationship selects the movement famil
 - `stage-interlock` — C8 alternates connector routing and stage docking so the conversion chain is assembled in causal order; the largest loss locks last.
 - `metric-readout` — C9 establishes the KPI, routes progress toward the target, then exposes context plates.
 - `decision-readout` — C10 establishes the hero decision first, assembles comparisons second, then exposes the risk plate.
+- `sector-lock` — C11 seats sectors around a fixed centre, then locks the dominant share.
+- `metric-pulse` — C12 aligns repeated panels and routes each metric independently before exposing end states.
+- `pareto-routing` — C13 assembles ranked contribution bars, routes cumulative share, then locks the 80% boundary.
+- `cohort-seating` / `matrix-seating` — C14, C20, and C22 seat cells in reading order before locking the decisive cell.
+- `flow-routing` — C15 routes weighted links between levelled nodes and locks the weakest effective flow.
+- `quadrant-lock` — C16 calibrates axes, pins observations by area, then locks the priority point.
+- `market-build` / `curve-routing` — C17 and C19 construct market observations or maturity points before routing the price relationship.
+- `drawdown-routing` / `forecast-routing` / `control-lock` — C18, C23, and C24 establish time, route the evidence, then lock risk, uncertainty, or exception.
+- `distribution-build` — C21 assembles bins, interlocks the quartile box, then locks the median.
 
 Do not apply a family because its movement looks attractive. Select it from the encoded relationship. Additional charts may reuse a family only when their reading order is genuinely equivalent.
 

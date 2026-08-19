@@ -24,6 +24,20 @@ Moxing Studio 把中文商业数据生成具有结构装配动画的离线 HTML/
 | C8 | Stage Channel | 阶段转化 |
 | C9 | Metric Lockup | 单个 KPI |
 | C10 | Decision Interface | 2–4 个 KPI 对比 |
+| C11 | Sector Lock | 扇形/环形构成 |
+| C12 | Metric Small Multiples | 多指标联动趋势 |
+| C13 | Pareto Contribution | SKU/客户帕累托 |
+| C14 | Cohort Matrix | 留存与复购队列 |
+| C15 | Commerce Flow | 流量与成交路径 |
+| C16 | Decision Bubble Matrix | 商品决策/风险收益矩阵 |
+| C17 | Market Candles | OHLC 与成交量 |
+| C18 | Performance Drawdown | 净值与回撤 |
+| C19 | Yield Curve | 利率期限结构 |
+| C20 | Sensitivity Matrix | 双变量敏感性分析 |
+| C21 | Distribution Profile | 直方分布与箱线摘要 |
+| C22 | Correlation Matrix | 多变量相关关系 |
+| C23 | Forecast Fan | 预测与置信区间 |
+| C24 | Control Chart | 过程稳定性与异常监控 |
 
 ## Generate
 
@@ -43,7 +57,7 @@ python scripts/render.py --chart C3 --data data.json --output chart.html `
   --footer "数据来源：内部经营系统 · 口径：含税收入"
 ```
 
-打开 [templates/gallery.html](templates/gallery.html) 查看十种动画图表。
+打开 [templates/gallery.html](templates/gallery.html) 查看 24 种动画图表，并按基础、电商经营、金融和数据分析筛选。
 
 ## Export
 

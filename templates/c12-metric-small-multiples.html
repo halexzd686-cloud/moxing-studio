@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-surface="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>增长质量同步改善，规模提升并未推高退款率</title>
+<style>
+  @font-face{font-family:'Noto Sans SC';src:url('../assets/fonts/NotoSansSC-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Noto Serif SC';src:url('../assets/fonts/NotoSerifSC-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Doto';src:url('../assets/fonts/Doto-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+
+  [data-surface="light"] {
+    --bg:#F2F3EF; --ink:#171916; --muted:#6F746C;
+    --matrix-strong:#4E544D; --matrix-quiet:#777C75;
+    --faint:#A9AEA5; --grid:#D8DBD4; --rail:#9DA39A;
+    --secondary:#BFC3BB; --signal:#D85A36; --panel:#E9EBE5;
+    --cat-1:#536A72; --cat-2:#6D7562; --cat-3:#887665; --cat-4:#7B6874;
+  }
+
+  [data-surface="dark"] {
+    --bg:#151714; --ink:#F0F1EB; --muted:#989D94;
+    --matrix-strong:#C3C7BF; --matrix-quiet:#8D938A;
+    --faint:#62675F; --grid:#30332E; --rail:#5E645B;
+    --secondary:#737970; --signal:#E56B47; --panel:#1E211D;
+    --cat-1:#8DA5AD; --cat-2:#A1AA91; --cat-3:#B39A86; --cat-4:#A18C9D;
+  }
+  * { box-sizing:border-box; }
+  html,body { width:1280px; height:720px; margin:0; overflow:hidden; background:var(--bg); color:var(--ink); }
+  body { font-family:'Noto Sans SC','Microsoft YaHei',sans-serif; -webkit-font-smoothing:antialiased; }
+  .chart-container { width:1280px; height:720px; padding:38px 54px 28px; display:grid; grid-template-rows:124px 1fr 28px; position:relative; background:var(--bg); }
+  .chart-header { display:grid; grid-template-columns:170px minmax(0,1fr); align-items:start; border-top:1.5px solid var(--ink); padding:12px 122px 0 0; }
+  .chart-code { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; font-size:14px; font-weight:650; font-variation-settings:'ROND' 0,'wght' 650; letter-spacing:.055em; color:var(--matrix-strong); }
+  .chart-title { margin:0; font-family:'Noto Serif SC','Songti SC',serif; font-size:34px; line-height:1.18; font-weight:700; letter-spacing:.01em; }
+  .chart-subtitle { margin-top:8px; color:var(--muted); font-size:14px; }
+  .chart-body { min-height:0; }
+  svg { display:block; width:100%; height:100%; overflow:visible; }
+  svg text { font-family:'Noto Sans SC','Microsoft YaHei',sans-serif; fill:var(--ink); }
+  svg .title-font { font-family:'Noto Serif SC','Songti SC',serif; }
+  svg .index { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; font-weight:650; font-variation-settings:'ROND' 0,'wght' 650; letter-spacing:.055em; fill:var(--matrix-strong); }
+  svg .muted { fill:var(--muted); }
+  svg .faint { fill:var(--faint); }
+  svg .index.muted { fill:var(--matrix-quiet); font-weight:560; font-variation-settings:'ROND' 0,'wght' 560; letter-spacing:.04em; }
+  svg .signal-text { fill:var(--signal); }
+  svg .index.signal-text { fill:var(--signal); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; }
+  svg .on-fill { fill:var(--bg); font-weight:700; }
+  svg .value { fill:var(--ink); font-variant-numeric:tabular-nums; }
+  svg .grid { stroke:var(--grid); stroke-width:1; fill:none; vector-effect:non-scaling-stroke; }
+  svg .rail { stroke:var(--rail); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .rail-strong { stroke:var(--ink); stroke-width:2.25; fill:none; vector-effect:non-scaling-stroke; }
+  svg .data-stroke { stroke:var(--ink); stroke-width:2.25; fill:none; vector-effect:non-scaling-stroke; }
+  svg .secondary-stroke { stroke:var(--secondary); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .signal-stroke { stroke:var(--signal); stroke-width:2.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .data-fill { fill:var(--ink); }
+  svg .secondary-fill { fill:var(--secondary); }
+  svg .panel-fill { fill:var(--panel); }
+  svg .panel-stroke { fill:var(--panel); stroke:var(--rail); stroke-width:1; vector-effect:non-scaling-stroke; }
+  svg .signal-fill { fill:var(--signal); }
+  svg .hollow { fill:var(--bg); stroke:var(--ink); stroke-width:1.5; vector-effect:non-scaling-stroke; }
+  svg .cat-1 { fill:var(--cat-1); } svg .cat-2 { fill:var(--cat-2); }
+  svg .cat-3 { fill:var(--cat-3); } svg .cat-4 { fill:var(--cat-4); }
+  .chart-footer { display:flex; justify-content:space-between; align-items:end; color:var(--muted); font-size:12px; letter-spacing:.02em; border-bottom:1px solid var(--grid); padding-bottom:7px; }
+  .chart-footer .mark { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; color:var(--matrix-quiet); font-weight:600; font-variation-settings:'ROND' 0,'wght' 600; letter-spacing:.07em; }
+  [data-mode="brief"] .evidence-plate { display:none; }
+  [data-mode="brief"] svg .grid { opacity:.62; }
+  .motion-controls { position:absolute; right:54px; top:48px; display:flex; gap:6px; z-index:5; }
+  .motion-controls button { width:30px; height:30px; border:1px solid var(--rail); background:var(--bg); color:var(--ink); font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; cursor:pointer; padding:0; }
+  .motion-controls button:hover { border-color:var(--signal); color:var(--signal); }
+  [data-motion] { transform-box:fill-box; transform-origin:center; }
+  @keyframes mx-align { from { opacity:0; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
+  @keyframes mx-dock { from { opacity:0; transform:translate(var(--dx),var(--dy)); } to { opacity:1; transform:translate(0,0); } }
+  @keyframes mx-route { from { opacity:.25; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
+  @keyframes mx-lock { 0% { opacity:0; transform:scale(.92); } 68% { opacity:1; transform:scale(1.025); } 100% { opacity:1; transform:scale(1); } }
+  @keyframes mx-rail-rise { from { opacity:0; transform:translateY(var(--dy)) scaleY(.16); } to { opacity:1; transform:translateY(0) scaleY(1); } }
+  @keyframes mx-rail-slide { from { opacity:0; transform:translateX(var(--dx)) scaleX(.18); } to { opacity:1; transform:translateX(0) scaleX(1); } }
+  @keyframes mx-field-seat { from { opacity:0; transform:translateY(var(--dy)) scale(.72); } to { opacity:1; transform:translateY(0) scale(1); } }
+  @keyframes mx-band-fill { from { opacity:0; transform:scaleX(.06); } to { opacity:1; transform:scaleX(1); } }
+  @keyframes mx-pin { from { opacity:0; transform:translateY(var(--dy)) scale(.35); } to { opacity:1; transform:translateY(0) scale(1); } }
+  @keyframes mx-interlock { from { opacity:0; transform:translateX(var(--dx)) scaleX(.82); } to { opacity:1; transform:translateX(0) scaleX(1); } }
+  @keyframes mx-readout { from { opacity:0; clip-path:inset(0 100% 0 0); transform:translateY(6px); } to { opacity:1; clip-path:inset(0 0 0 0); transform:translateY(0); } }
+  @keyframes mx-alarm { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:translateX(0); } }
+  .motion-enabled.is-playing [data-motion="align"] { stroke-dasharray:1; animation:mx-align var(--active-duration,var(--duration,220ms)) linear var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="dock"] { animation:mx-dock var(--active-duration,var(--duration,620ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="route"] { stroke-dasharray:1; animation:mx-route var(--active-duration,var(--duration,520ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="lock"] { animation:mx-lock var(--active-duration,var(--duration,280ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-choreo="rail-rise"] { animation-name:mx-rail-rise; transform-origin:center bottom; }
+  .motion-enabled.is-playing [data-choreo="rail-slide"] { animation-name:mx-rail-slide; transform-origin:left center; }
+  .motion-enabled.is-playing [data-choreo="field-seat"] { animation-name:mx-field-seat; }
+  .motion-enabled.is-playing [data-choreo="band-fill"] { animation-name:mx-band-fill; transform-origin:left center; }
+  .motion-enabled.is-playing [data-choreo="trace"] { animation-timing-function:linear; }
+  .motion-enabled.is-playing [data-choreo="pin"] { animation-name:mx-pin; }
+  .motion-enabled.is-playing [data-choreo="interlock"] { animation-name:mx-interlock; }
+  .motion-enabled.is-playing [data-choreo="readout"] { animation-name:mx-readout; transform-origin:left center; }
+  .motion-enabled.is-playing [data-choreo="alarm"] { animation-name:mx-alarm; }
+  .motion-enabled.is-paused [data-motion] { animation-play-state:paused!important; }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing [data-motion] { animation:none!important; } }
+</style>
+</head>
+<body>
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1200" data-total-standard="2100" data-total-story="3800" data-mode="editorial" data-choreography="metric-pulse">
+  <header class="chart-header">
+    <div class="chart-code">C12 / METRIC SMALL MULTIPLES</div>
+    <div><h1 class="chart-title">增长质量同步改善，规模提升并未推高退款率</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div></div>
+  </header>
+  <section class="chart-body"><svg viewBox="0 0 1172 500" role="img" aria-label="增长质量同步改善，规模提升并未推高退款率"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >12 / METRIC SMALL MULTIPLES</text>
+<path d="M 0 62 H 538 L 548 72 V 250 H 10 L 0 240 Z" class="panel-stroke" data-motion="dock" data-choreo="field-seat" style="--delay:150ms;--dx:0px;--dy:18px;--delay-brief:70ms;--delay-story:260ms"/>
+<text x="22" y="92" class="index muted" text-anchor="start" font-size="12" >01 / GMV</text>
+<text x="526" y="93" class="index signal-text" text-anchor="end" font-size="12" data-motion="lock" data-choreo="alarm" style="--delay:1380ms;--dx:0px;--dy:0px;--delay-brief:800ms;--delay-story:2640ms">+660.0 万元</text>
+<line x1="24" y1="222" x2="524" y2="222" class="grid" pathLength="1" data-motion="align" style="--delay:230ms;--dx:0px;--dy:0px;--delay-brief:75ms;--delay-story:300ms"/>
+<path d="M 24.00 209.77 L 124.00 198.65 L 224.00 202.36 L 324.00 172.71 L 424.00 155.41 L 524.00 128.23" class="signal-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:410ms;--dx:0px;--dy:0px;--delay-brief:160ms;--delay-story:620ms"/>
+<text x="24" y="240" class="index muted" text-anchor="start" font-size="12" >1月</text>
+<text x="524" y="240" class="index muted" text-anchor="end" font-size="12" >6月</text>
+<text x="524" y="118.23" class="value" text-anchor="end" font-size="16" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:830ms;--dx:0px;--dy:0px;--delay-brief:460ms;--delay-story:1320ms">1,480</text>
+<path d="M 584 62 H 1122 L 1132 72 V 250 H 594 L 584 240 Z" class="panel-stroke" data-motion="dock" data-choreo="field-seat" style="--delay:270ms;--dx:0px;--dy:18px;--delay-brief:125ms;--delay-story:500ms"/>
+<text x="606" y="92" class="index muted" text-anchor="start" font-size="12" >02 / 订单</text>
+<text x="1110" y="93" class="index signal-text" text-anchor="end" font-size="12" data-motion="lock" data-choreo="readout" style="--delay:1460ms;--dx:0px;--dy:0px;--delay-brief:845ms;--delay-story:2800ms">+2110.0 单</text>
+<line x1="608" y1="222" x2="1108" y2="222" class="grid" pathLength="1" data-motion="align" style="--delay:350ms;--dx:0px;--dy:0px;--delay-brief:135ms;--delay-story:540ms"/>
+<path d="M 608.00 209.77 L 708.00 198.95 L 808.00 202.43 L 908.00 172.67 L 1008.00 154.90 L 1108.00 128.23" class="data-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:530ms;--dx:0px;--dy:0px;--delay-brief:240ms;--delay-story:920ms"/>
+<text x="608" y="240" class="index muted" text-anchor="start" font-size="12" >1月</text>
+<text x="1108" y="240" class="index muted" text-anchor="end" font-size="12" >6月</text>
+<text x="1108" y="118.23" class="value" text-anchor="end" font-size="16" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:950ms;--dx:0px;--dy:0px;--delay-brief:530ms;--delay-story:1660ms">6,310</text>
+<path d="M 0 278 H 538 L 548 288 V 466 H 10 L 0 456 Z" class="panel-stroke" data-motion="dock" data-choreo="field-seat" style="--delay:390ms;--dx:0px;--dy:18px;--delay-brief:180ms;--delay-story:740ms"/>
+<text x="22" y="308" class="index muted" text-anchor="start" font-size="12" >03 / 客单价</text>
+<text x="526" y="309" class="index signal-text" text-anchor="end" font-size="12" data-motion="lock" data-choreo="readout" style="--delay:1540ms;--dx:0px;--dy:0px;--delay-brief:890ms;--delay-story:2960ms">+40.0 元</text>
+<line x1="24" y1="438" x2="524" y2="438" class="grid" pathLength="1" data-motion="align" style="--delay:470ms;--dx:0px;--dy:0px;--delay-brief:195ms;--delay-story:780ms"/>
+<path d="M 24.00 424.19 L 124.00 408.51 L 224.00 414.39 L 324.00 381.08 L 424.00 367.37 L 524.00 345.81" class="data-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:650ms;--dx:0px;--dy:0px;--delay-brief:320ms;--delay-story:1220ms"/>
+<text x="24" y="456" class="index muted" text-anchor="start" font-size="12" >1月</text>
+<text x="524" y="456" class="index muted" text-anchor="end" font-size="12" >6月</text>
+<text x="524" y="335.81" class="value" text-anchor="end" font-size="16" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:1070ms;--dx:0px;--dy:0px;--delay-brief:600ms;--delay-story:2000ms">235</text>
+<path d="M 584 278 H 1122 L 1132 288 V 466 H 594 L 584 456 Z" class="panel-stroke" data-motion="dock" data-choreo="field-seat" style="--delay:510ms;--dx:0px;--dy:18px;--delay-brief:235ms;--delay-story:980ms"/>
+<text x="606" y="308" class="index muted" text-anchor="start" font-size="12" >04 / 退款率</text>
+<text x="1110" y="309" class="index muted" text-anchor="end" font-size="12" data-motion="lock" data-choreo="readout" style="--delay:1620ms;--dx:0px;--dy:0px;--delay-brief:935ms;--delay-story:3120ms">-2.1 %</text>
+<line x1="608" y1="438" x2="1108" y2="438" class="grid" pathLength="1" data-motion="align" style="--delay:590ms;--dx:0px;--dy:0px;--delay-brief:255ms;--delay-story:1020ms"/>
+<path d="M 608.00 357.85 L 708.00 370.78 L 808.00 365.61 L 908.00 388.88 L 1008.00 399.22 L 1108.00 412.15" class="data-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:770ms;--dx:0px;--dy:0px;--delay-brief:400ms;--delay-story:1520ms"/>
+<text x="608" y="456" class="index muted" text-anchor="start" font-size="12" >1月</text>
+<text x="1108" y="456" class="index muted" text-anchor="end" font-size="12" >6月</text>
+<text x="1108" y="402.15" class="value" text-anchor="end" font-size="16" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:1190ms;--dx:0px;--dy:0px;--delay-brief:670ms;--delay-story:2340ms">6.3</text></svg></section>
+  <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
+  <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" title="重播">↻</button><button type="button" data-action="pause" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" title="切换明暗">◐</button></nav>
+</main>
+<script type="application/json" id="moxing-data">{"labels":["1月","2月","3月","4月","5月","6月"],"series":[{"name":"GMV","unit":"万元","values":[820,910,880,1120,1260,1480]},{"name":"订单","unit":"单","values":[4200,4480,4390,5160,5620,6310]},{"name":"客单价","unit":"元","values":[195,203,200,217,224,235]},{"name":"退款率","unit":"%","values":[8.4,7.9,8.1,7.2,6.8,6.3]}]}</script>
+<script>
+(() => {
+  const root=document.getElementById('moxing-chart');
+  const params=new URLSearchParams(location.search);
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches||params.get('motion')==='off';
+  const requestedProfile=params.get('motion')||'standard';
+  const profile=['brief','standard','story'].includes(requestedProfile)?requestedProfile:'standard';
+  const scales={brief:0.72,standard:1.0,story:1.8};
+  const scale=scales[profile]||1;
+  const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);
+  const total=Number(root.dataset[profileKey]||root.dataset.total||1800);
+  const baseDuration={align:220,dock:620,route:520,lock:280};
+  root.querySelectorAll('[data-motion]').forEach(el=>{
+    const rawDelay=parseFloat(el.style.getPropertyValue('--delay'))||0;
+    const rawDuration=parseFloat(el.style.getPropertyValue('--duration'))||baseDuration[el.dataset.motion]||300;
+    const profileDelay=parseFloat(el.style.getPropertyValue('--delay-'+profile));
+    const profileDuration=parseFloat(el.style.getPropertyValue('--duration-'+profile));
+    el.style.setProperty('--active-delay',Math.round(Number.isFinite(profileDelay)?profileDelay:rawDelay*scale)+'ms');
+    el.style.setProperty('--active-duration',Math.round(Number.isFinite(profileDuration)?profileDuration:rawDuration*scale)+'ms');
+  });
+  let timer=0;
+  const settle=()=>{ clearTimeout(timer); root.classList.remove('is-playing','is-paused'); root.classList.add('is-complete'); };
+  const replay=()=>{
+    clearTimeout(timer); root.classList.remove('is-playing','is-complete','is-paused'); void root.offsetWidth;
+    if(reduce){settle();return;}
+    root.style.setProperty('--motion-scale',scale); root.classList.add('motion-enabled','is-playing');
+    timer=setTimeout(settle,total+120);
+  };
+  const pause=()=>{ root.classList.toggle('is-paused'); const b=root.querySelector('[data-action=pause]'); b.textContent=root.classList.contains('is-paused')?'▶':'Ⅱ'; };
+  root.querySelector('[data-action=replay]').addEventListener('click',replay);
+  root.querySelector('[data-action=pause]').addEventListener('click',pause);
+  root.querySelector('[data-action=surface]').addEventListener('click',()=>{ const html=document.documentElement; html.dataset.surface=html.dataset.surface==='dark'?'light':'dark'; });
+  if(params.get('theme')==='dark') document.documentElement.dataset.surface='dark';
+  window.Moxing={replay,settle,setSurface:(v)=>document.documentElement.dataset.surface=v,profile,duration:total,ready:Promise.resolve()};
+  if(reduce) settle();
+  else if('IntersectionObserver'in window){ const io=new IntersectionObserver(e=>{if(e[0].isIntersecting){io.disconnect();replay();}},{threshold:.35});io.observe(root); }
+  else replay();
+})();
+</script>
+</body>
+</html>

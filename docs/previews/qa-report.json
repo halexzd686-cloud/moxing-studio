@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-19T11:38:57.835Z",
+  "generatedAt": "2026-08-19T12:17:24.164Z",
   "status": "passed",
   "checks": [
     {
@@ -75,6 +75,62 @@
       "message": "v2 static contract"
     },
     {
+      "scope": "static:c11-sector-lock.html",
+      "message": "v2 static contract"
+    },
+    {
+      "scope": "static:c12-metric-small-multiples.html",
+      "message": "v2 static contract"
+    },
+    {
+      "scope": "static:c13-pareto-contribution.html",
+      "message": "v2 static contract"
+    },
+    {
+      "scope": "static:c14-cohort-matrix.html",
+      "message": "v2 static contract"
+    },
+    {
+      "scope": "static:c15-commerce-flow.html",
+      "message": "v2 static contract"
+    },
+    {
+      "scope": "static:c16-decision-bubble-matrix.html",
+      "message": "v2 static contract"
+    },
+    {
+      "scope": "static:c17-market-candles.html",
+      "message": "v2 static contract"
+    },
+    {
+      "scope": "static:c18-performance-drawdown.html",
+      "message": "v2 static contract"
+    },
+    {
+      "scope": "static:c19-yield-curve.html",
+      "message": "v2 static contract"
+    },
+    {
+      "scope": "static:c20-sensitivity-matrix.html",
+      "message": "v2 static contract"
+    },
+    {
+      "scope": "static:c21-distribution-profile.html",
+      "message": "v2 static contract"
+    },
+    {
+      "scope": "static:c22-correlation-matrix.html",
+      "message": "v2 static contract"
+    },
+    {
+      "scope": "static:c23-forecast-fan.html",
+      "message": "v2 static contract"
+    },
+    {
+      "scope": "static:c24-control-chart.html",
+      "message": "v2 static contract"
+    },
+    {
       "scope": "choreography:c01-structural-rank.html",
       "message": "rail-rise with independent profile timing"
     },
@@ -113,6 +169,62 @@
     {
       "scope": "choreography:c10-decision-interface.html",
       "message": "decision-readout with independent profile timing"
+    },
+    {
+      "scope": "choreography:c11-sector-lock.html",
+      "message": "sector-lock with independent profile timing"
+    },
+    {
+      "scope": "choreography:c12-metric-small-multiples.html",
+      "message": "metric-pulse with independent profile timing"
+    },
+    {
+      "scope": "choreography:c13-pareto-contribution.html",
+      "message": "pareto-routing with independent profile timing"
+    },
+    {
+      "scope": "choreography:c14-cohort-matrix.html",
+      "message": "cohort-seating with independent profile timing"
+    },
+    {
+      "scope": "choreography:c15-commerce-flow.html",
+      "message": "flow-routing with independent profile timing"
+    },
+    {
+      "scope": "choreography:c16-decision-bubble-matrix.html",
+      "message": "quadrant-lock with independent profile timing"
+    },
+    {
+      "scope": "choreography:c17-market-candles.html",
+      "message": "market-build with independent profile timing"
+    },
+    {
+      "scope": "choreography:c18-performance-drawdown.html",
+      "message": "drawdown-routing with independent profile timing"
+    },
+    {
+      "scope": "choreography:c19-yield-curve.html",
+      "message": "curve-routing with independent profile timing"
+    },
+    {
+      "scope": "choreography:c20-sensitivity-matrix.html",
+      "message": "matrix-seating with independent profile timing"
+    },
+    {
+      "scope": "choreography:c21-distribution-profile.html",
+      "message": "distribution-build with independent profile timing"
+    },
+    {
+      "scope": "choreography:c22-correlation-matrix.html",
+      "message": "matrix-seating with independent profile timing"
+    },
+    {
+      "scope": "choreography:c23-forecast-fan.html",
+      "message": "forecast-routing with independent profile timing"
+    },
+    {
+      "scope": "choreography:c24-control-chart.html",
+      "message": "control-lock with independent profile timing"
     },
     {
       "scope": "c01-structural-rank.html:js",
@@ -195,6 +307,118 @@
       "message": "static fallback"
     },
     {
+      "scope": "c11-sector-lock.html:js",
+      "message": "runtime and locked frame"
+    },
+    {
+      "scope": "c11-sector-lock.html:no-js",
+      "message": "static fallback"
+    },
+    {
+      "scope": "c12-metric-small-multiples.html:js",
+      "message": "runtime and locked frame"
+    },
+    {
+      "scope": "c12-metric-small-multiples.html:no-js",
+      "message": "static fallback"
+    },
+    {
+      "scope": "c13-pareto-contribution.html:js",
+      "message": "runtime and locked frame"
+    },
+    {
+      "scope": "c13-pareto-contribution.html:no-js",
+      "message": "static fallback"
+    },
+    {
+      "scope": "c14-cohort-matrix.html:js",
+      "message": "runtime and locked frame"
+    },
+    {
+      "scope": "c14-cohort-matrix.html:no-js",
+      "message": "static fallback"
+    },
+    {
+      "scope": "c15-commerce-flow.html:js",
+      "message": "runtime and locked frame"
+    },
+    {
+      "scope": "c15-commerce-flow.html:no-js",
+      "message": "static fallback"
+    },
+    {
+      "scope": "c16-decision-bubble-matrix.html:js",
+      "message": "runtime and locked frame"
+    },
+    {
+      "scope": "c16-decision-bubble-matrix.html:no-js",
+      "message": "static fallback"
+    },
+    {
+      "scope": "c17-market-candles.html:js",
+      "message": "runtime and locked frame"
+    },
+    {
+      "scope": "c17-market-candles.html:no-js",
+      "message": "static fallback"
+    },
+    {
+      "scope": "c18-performance-drawdown.html:js",
+      "message": "runtime and locked frame"
+    },
+    {
+      "scope": "c18-performance-drawdown.html:no-js",
+      "message": "static fallback"
+    },
+    {
+      "scope": "c19-yield-curve.html:js",
+      "message": "runtime and locked frame"
+    },
+    {
+      "scope": "c19-yield-curve.html:no-js",
+      "message": "static fallback"
+    },
+    {
+      "scope": "c20-sensitivity-matrix.html:js",
+      "message": "runtime and locked frame"
+    },
+    {
+      "scope": "c20-sensitivity-matrix.html:no-js",
+      "message": "static fallback"
+    },
+    {
+      "scope": "c21-distribution-profile.html:js",
+      "message": "runtime and locked frame"
+    },
+    {
+      "scope": "c21-distribution-profile.html:no-js",
+      "message": "static fallback"
+    },
+    {
+      "scope": "c22-correlation-matrix.html:js",
+      "message": "runtime and locked frame"
+    },
+    {
+      "scope": "c22-correlation-matrix.html:no-js",
+      "message": "static fallback"
+    },
+    {
+      "scope": "c23-forecast-fan.html:js",
+      "message": "runtime and locked frame"
+    },
+    {
+      "scope": "c23-forecast-fan.html:no-js",
+      "message": "static fallback"
+    },
+    {
+      "scope": "c24-control-chart.html:js",
+      "message": "runtime and locked frame"
+    },
+    {
+      "scope": "c24-control-chart.html:no-js",
+      "message": "static fallback"
+    },
+    {
       "scope": "motion",
       "message": "19 deterministic animations active"
     },
@@ -243,6 +467,62 @@
       "message": "decision-readout brief/standard/story choreography"
     },
     {
+      "scope": "profiles:c11-sector-lock.html",
+      "message": "sector-lock brief/standard/story choreography"
+    },
+    {
+      "scope": "profiles:c12-metric-small-multiples.html",
+      "message": "metric-pulse brief/standard/story choreography"
+    },
+    {
+      "scope": "profiles:c13-pareto-contribution.html",
+      "message": "pareto-routing brief/standard/story choreography"
+    },
+    {
+      "scope": "profiles:c14-cohort-matrix.html",
+      "message": "cohort-seating brief/standard/story choreography"
+    },
+    {
+      "scope": "profiles:c15-commerce-flow.html",
+      "message": "flow-routing brief/standard/story choreography"
+    },
+    {
+      "scope": "profiles:c16-decision-bubble-matrix.html",
+      "message": "quadrant-lock brief/standard/story choreography"
+    },
+    {
+      "scope": "profiles:c17-market-candles.html",
+      "message": "market-build brief/standard/story choreography"
+    },
+    {
+      "scope": "profiles:c18-performance-drawdown.html",
+      "message": "drawdown-routing brief/standard/story choreography"
+    },
+    {
+      "scope": "profiles:c19-yield-curve.html",
+      "message": "curve-routing brief/standard/story choreography"
+    },
+    {
+      "scope": "profiles:c20-sensitivity-matrix.html",
+      "message": "matrix-seating brief/standard/story choreography"
+    },
+    {
+      "scope": "profiles:c21-distribution-profile.html",
+      "message": "distribution-build brief/standard/story choreography"
+    },
+    {
+      "scope": "profiles:c22-correlation-matrix.html",
+      "message": "matrix-seating brief/standard/story choreography"
+    },
+    {
+      "scope": "profiles:c23-forecast-fan.html",
+      "message": "forecast-routing brief/standard/story choreography"
+    },
+    {
+      "scope": "profiles:c24-control-chart.html",
+      "message": "control-lock brief/standard/story choreography"
+    },
+    {
       "scope": "layout:c02-ranked-rail.html",
       "message": "evidence plate clears row headings"
     },
@@ -275,8 +555,24 @@
       "message": "locked preview exported"
     },
     {
+      "scope": "preview:c11-sector-lock.html",
+      "message": "locked preview exported"
+    },
+    {
+      "scope": "preview:c17-market-candles.html",
+      "message": "locked preview exported"
+    },
+    {
+      "scope": "preview:c20-sensitivity-matrix.html",
+      "message": "locked preview exported"
+    },
+    {
+      "scope": "preview:c23-forecast-fan.html",
+      "message": "locked preview exported"
+    },
+    {
       "scope": "gallery",
-      "message": "10 compact v2 cards"
+      "message": "24 compact v2 cards"
     }
   ],
   "failures": []

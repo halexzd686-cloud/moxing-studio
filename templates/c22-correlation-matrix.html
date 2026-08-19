@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-surface="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>营收与毛利高度同向，投放与复购呈弱负相关</title>
+<style>
+  @font-face{font-family:'Noto Sans SC';src:url('../assets/fonts/NotoSansSC-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Noto Serif SC';src:url('../assets/fonts/NotoSerifSC-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Doto';src:url('../assets/fonts/Doto-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+
+  [data-surface="light"] {
+    --bg:#F2F3EF; --ink:#171916; --muted:#6F746C;
+    --matrix-strong:#4E544D; --matrix-quiet:#777C75;
+    --faint:#A9AEA5; --grid:#D8DBD4; --rail:#9DA39A;
+    --secondary:#BFC3BB; --signal:#D85A36; --panel:#E9EBE5;
+    --cat-1:#536A72; --cat-2:#6D7562; --cat-3:#887665; --cat-4:#7B6874;
+  }
+
+  [data-surface="dark"] {
+    --bg:#151714; --ink:#F0F1EB; --muted:#989D94;
+    --matrix-strong:#C3C7BF; --matrix-quiet:#8D938A;
+    --faint:#62675F; --grid:#30332E; --rail:#5E645B;
+    --secondary:#737970; --signal:#E56B47; --panel:#1E211D;
+    --cat-1:#8DA5AD; --cat-2:#A1AA91; --cat-3:#B39A86; --cat-4:#A18C9D;
+  }
+  * { box-sizing:border-box; }
+  html,body { width:1280px; height:720px; margin:0; overflow:hidden; background:var(--bg); color:var(--ink); }
+  body { font-family:'Noto Sans SC','Microsoft YaHei',sans-serif; -webkit-font-smoothing:antialiased; }
+  .chart-container { width:1280px; height:720px; padding:38px 54px 28px; display:grid; grid-template-rows:124px 1fr 28px; position:relative; background:var(--bg); }
+  .chart-header { display:grid; grid-template-columns:170px minmax(0,1fr); align-items:start; border-top:1.5px solid var(--ink); padding:12px 122px 0 0; }
+  .chart-code { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; font-size:14px; font-weight:650; font-variation-settings:'ROND' 0,'wght' 650; letter-spacing:.055em; color:var(--matrix-strong); }
+  .chart-title { margin:0; font-family:'Noto Serif SC','Songti SC',serif; font-size:34px; line-height:1.18; font-weight:700; letter-spacing:.01em; }
+  .chart-subtitle { margin-top:8px; color:var(--muted); font-size:14px; }
+  .chart-body { min-height:0; }
+  svg { display:block; width:100%; height:100%; overflow:visible; }
+  svg text { font-family:'Noto Sans SC','Microsoft YaHei',sans-serif; fill:var(--ink); }
+  svg .title-font { font-family:'Noto Serif SC','Songti SC',serif; }
+  svg .index { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; font-weight:650; font-variation-settings:'ROND' 0,'wght' 650; letter-spacing:.055em; fill:var(--matrix-strong); }
+  svg .muted { fill:var(--muted); }
+  svg .faint { fill:var(--faint); }
+  svg .index.muted { fill:var(--matrix-quiet); font-weight:560; font-variation-settings:'ROND' 0,'wght' 560; letter-spacing:.04em; }
+  svg .signal-text { fill:var(--signal); }
+  svg .index.signal-text { fill:var(--signal); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; }
+  svg .on-fill { fill:var(--bg); font-weight:700; }
+  svg .value { fill:var(--ink); font-variant-numeric:tabular-nums; }
+  svg .grid { stroke:var(--grid); stroke-width:1; fill:none; vector-effect:non-scaling-stroke; }
+  svg .rail { stroke:var(--rail); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .rail-strong { stroke:var(--ink); stroke-width:2.25; fill:none; vector-effect:non-scaling-stroke; }
+  svg .data-stroke { stroke:var(--ink); stroke-width:2.25; fill:none; vector-effect:non-scaling-stroke; }
+  svg .secondary-stroke { stroke:var(--secondary); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .signal-stroke { stroke:var(--signal); stroke-width:2.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .data-fill { fill:var(--ink); }
+  svg .secondary-fill { fill:var(--secondary); }
+  svg .panel-fill { fill:var(--panel); }
+  svg .panel-stroke { fill:var(--panel); stroke:var(--rail); stroke-width:1; vector-effect:non-scaling-stroke; }
+  svg .signal-fill { fill:var(--signal); }
+  svg .hollow { fill:var(--bg); stroke:var(--ink); stroke-width:1.5; vector-effect:non-scaling-stroke; }
+  svg .cat-1 { fill:var(--cat-1); } svg .cat-2 { fill:var(--cat-2); }
+  svg .cat-3 { fill:var(--cat-3); } svg .cat-4 { fill:var(--cat-4); }
+  .chart-footer { display:flex; justify-content:space-between; align-items:end; color:var(--muted); font-size:12px; letter-spacing:.02em; border-bottom:1px solid var(--grid); padding-bottom:7px; }
+  .chart-footer .mark { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; color:var(--matrix-quiet); font-weight:600; font-variation-settings:'ROND' 0,'wght' 600; letter-spacing:.07em; }
+  [data-mode="brief"] .evidence-plate { display:none; }
+  [data-mode="brief"] svg .grid { opacity:.62; }
+  .motion-controls { position:absolute; right:54px; top:48px; display:flex; gap:6px; z-index:5; }
+  .motion-controls button { width:30px; height:30px; border:1px solid var(--rail); background:var(--bg); color:var(--ink); font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; cursor:pointer; padding:0; }
+  .motion-controls button:hover { border-color:var(--signal); color:var(--signal); }
+  [data-motion] { transform-box:fill-box; transform-origin:center; }
+  @keyframes mx-align { from { opacity:0; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
+  @keyframes mx-dock { from { opacity:0; transform:translate(var(--dx),var(--dy)); } to { opacity:1; transform:translate(0,0); } }
+  @keyframes mx-route { from { opacity:.25; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
+  @keyframes mx-lock { 0% { opacity:0; transform:scale(.92); } 68% { opacity:1; transform:scale(1.025); } 100% { opacity:1; transform:scale(1); } }
+  @keyframes mx-rail-rise { from { opacity:0; transform:translateY(var(--dy)) scaleY(.16); } to { opacity:1; transform:translateY(0) scaleY(1); } }
+  @keyframes mx-rail-slide { from { opacity:0; transform:translateX(var(--dx)) scaleX(.18); } to { opacity:1; transform:translateX(0) scaleX(1); } }
+  @keyframes mx-field-seat { from { opacity:0; transform:translateY(var(--dy)) scale(.72); } to { opacity:1; transform:translateY(0) scale(1); } }
+  @keyframes mx-band-fill { from { opacity:0; transform:scaleX(.06); } to { opacity:1; transform:scaleX(1); } }
+  @keyframes mx-pin { from { opacity:0; transform:translateY(var(--dy)) scale(.35); } to { opacity:1; transform:translateY(0) scale(1); } }
+  @keyframes mx-interlock { from { opacity:0; transform:translateX(var(--dx)) scaleX(.82); } to { opacity:1; transform:translateX(0) scaleX(1); } }
+  @keyframes mx-readout { from { opacity:0; clip-path:inset(0 100% 0 0); transform:translateY(6px); } to { opacity:1; clip-path:inset(0 0 0 0); transform:translateY(0); } }
+  @keyframes mx-alarm { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:translateX(0); } }
+  .motion-enabled.is-playing [data-motion="align"] { stroke-dasharray:1; animation:mx-align var(--active-duration,var(--duration,220ms)) linear var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="dock"] { animation:mx-dock var(--active-duration,var(--duration,620ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="route"] { stroke-dasharray:1; animation:mx-route var(--active-duration,var(--duration,520ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-motion="lock"] { animation:mx-lock var(--active-duration,var(--duration,280ms)) cubic-bezier(.22,.78,.22,1) var(--active-delay,var(--delay,0ms)) both; }
+  .motion-enabled.is-playing [data-choreo="rail-rise"] { animation-name:mx-rail-rise; transform-origin:center bottom; }
+  .motion-enabled.is-playing [data-choreo="rail-slide"] { animation-name:mx-rail-slide; transform-origin:left center; }
+  .motion-enabled.is-playing [data-choreo="field-seat"] { animation-name:mx-field-seat; }
+  .motion-enabled.is-playing [data-choreo="band-fill"] { animation-name:mx-band-fill; transform-origin:left center; }
+  .motion-enabled.is-playing [data-choreo="trace"] { animation-timing-function:linear; }
+  .motion-enabled.is-playing [data-choreo="pin"] { animation-name:mx-pin; }
+  .motion-enabled.is-playing [data-choreo="interlock"] { animation-name:mx-interlock; }
+  .motion-enabled.is-playing [data-choreo="readout"] { animation-name:mx-readout; transform-origin:left center; }
+  .motion-enabled.is-playing [data-choreo="alarm"] { animation-name:mx-alarm; }
+  .motion-enabled.is-paused [data-motion] { animation-play-state:paused!important; }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing [data-motion] { animation:none!important; } }
+</style>
+</head>
+<body>
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1200" data-total-standard="2200" data-total-story="4100" data-mode="editorial" data-choreography="matrix-seating">
+  <header class="chart-header">
+    <div class="chart-code">C22 / CORRELATION MATRIX</div>
+    <div><h1 class="chart-title">营收与毛利高度同向，投放与复购呈弱负相关</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div></div>
+  </header>
+  <section class="chart-body"><svg viewBox="0 0 1172 500" role="img" aria-label="营收与毛利高度同向，投放与复购呈弱负相关"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >22 / CORRELATION MATRIX</text>
+<line x1="300" y1="52" x2="650" y2="52" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--delay-brief:30ms;--delay-story:110ms"/>
+<text x="335" y="42" class="index muted" text-anchor="middle" font-size="12" >营收</text>
+<text x="0" y="113.4" class="index muted" text-anchor="start" font-size="12" >营收</text>
+<text x="405" y="42" class="index muted" text-anchor="middle" font-size="12" >毛利</text>
+<text x="0" y="183.4" class="index muted" text-anchor="start" font-size="12" >毛利</text>
+<text x="475" y="42" class="index muted" text-anchor="middle" font-size="12" >投放</text>
+<text x="0" y="253.4" class="index muted" text-anchor="start" font-size="12" >投放</text>
+<text x="545" y="42" class="index muted" text-anchor="middle" font-size="12" >客单</text>
+<text x="0" y="323.4" class="index muted" text-anchor="start" font-size="12" >客单</text>
+<text x="615" y="42" class="index muted" text-anchor="middle" font-size="12" >复购</text>
+<text x="0" y="393.4" class="index muted" text-anchor="start" font-size="12" >复购</text>
+<rect x="303" y="73" width="64" height="64" rx="0" class="data-fill" data-motion="dock" data-choreo="field-seat" style="--delay:200ms;--dx:0px;--dy:10px;--delay-brief:90ms;--delay-story:380ms"/>
+<text x="335" y="112.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:430ms;--dx:0px;--dy:0px;--delay-brief:240ms;--delay-story:690ms">1.00</text>
+<rect x="373" y="73" width="64" height="64" rx="0" class="signal-fill" data-motion="dock" data-choreo="field-seat" style="--delay:245ms;--dx:0px;--dy:10px;--delay-brief:110ms;--delay-story:465ms"/>
+<text x="405" y="112.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:475ms;--dx:0px;--dy:0px;--delay-brief:262ms;--delay-story:780ms">+0.84</text>
+<rect x="443" y="73" width="64" height="64" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:290ms;--dx:0px;--dy:10px;--delay-brief:130ms;--delay-story:550ms"/>
+<text x="475" y="112.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:520ms;--dx:0px;--dy:0px;--delay-brief:285ms;--delay-story:870ms">+0.62</text>
+<rect x="513" y="73" width="64" height="64" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:335ms;--dx:0px;--dy:10px;--delay-brief:150ms;--delay-story:635ms"/>
+<text x="545" y="112.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:565ms;--dx:0px;--dy:0px;--delay-brief:307ms;--delay-story:960ms">+0.48</text>
+<rect x="583" y="73" width="64" height="64" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:380ms;--dx:0px;--dy:10px;--delay-brief:170ms;--delay-story:720ms"/>
+<text x="615" y="112.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:610ms;--dx:0px;--dy:0px;--delay-brief:330ms;--delay-story:1050ms">+0.55</text>
+<rect x="303" y="143" width="64" height="64" rx="0" class="signal-fill" data-motion="dock" data-choreo="field-seat" style="--delay:270ms;--dx:0px;--dy:10px;--delay-brief:122ms;--delay-story:520ms"/>
+<text x="335" y="182.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:500ms;--dx:0px;--dy:0px;--delay-brief:275ms;--delay-story:830ms">+0.84</text>
+<rect x="373" y="143" width="64" height="64" rx="0" class="data-fill" data-motion="dock" data-choreo="field-seat" style="--delay:315ms;--dx:0px;--dy:10px;--delay-brief:142ms;--delay-story:605ms"/>
+<text x="405" y="182.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:545ms;--dx:0px;--dy:0px;--delay-brief:297ms;--delay-story:920ms">1.00</text>
+<rect x="443" y="143" width="64" height="64" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:360ms;--dx:0px;--dy:10px;--delay-brief:162ms;--delay-story:690ms"/>
+<text x="475" y="182.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:590ms;--dx:0px;--dy:0px;--delay-brief:320ms;--delay-story:1010ms">+0.41</text>
+<rect x="513" y="143" width="64" height="64" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:405ms;--dx:0px;--dy:10px;--delay-brief:182ms;--delay-story:775ms"/>
+<text x="545" y="182.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:635ms;--dx:0px;--dy:0px;--delay-brief:342ms;--delay-story:1100ms">+0.57</text>
+<rect x="583" y="143" width="64" height="64" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:450ms;--dx:0px;--dy:10px;--delay-brief:202ms;--delay-story:860ms"/>
+<text x="615" y="182.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:680ms;--dx:0px;--dy:0px;--delay-brief:365ms;--delay-story:1190ms">+0.63</text>
+<rect x="303" y="213" width="64" height="64" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:340ms;--dx:0px;--dy:10px;--delay-brief:154ms;--delay-story:660ms"/>
+<text x="335" y="252.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:570ms;--dx:0px;--dy:0px;--delay-brief:310ms;--delay-story:970ms">+0.62</text>
+<rect x="373" y="213" width="64" height="64" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:385ms;--dx:0px;--dy:10px;--delay-brief:174ms;--delay-story:745ms"/>
+<text x="405" y="252.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:615ms;--dx:0px;--dy:0px;--delay-brief:332ms;--delay-story:1060ms">+0.41</text>
+<rect x="443" y="213" width="64" height="64" rx="0" class="data-fill" data-motion="dock" data-choreo="field-seat" style="--delay:430ms;--dx:0px;--dy:10px;--delay-brief:194ms;--delay-story:830ms"/>
+<text x="475" y="252.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:660ms;--dx:0px;--dy:0px;--delay-brief:355ms;--delay-story:1150ms">1.00</text>
+<rect x="513" y="213" width="64" height="64" rx="0" class="secondary-fill" data-motion="dock" data-choreo="field-seat" style="--delay:475ms;--dx:0px;--dy:10px;--delay-brief:214ms;--delay-story:915ms"/>
+<text x="545" y="252.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:705ms;--dx:0px;--dy:0px;--delay-brief:377ms;--delay-story:1240ms">-0.18</text>
+<rect x="583" y="213" width="64" height="64" rx="0" class="secondary-fill" data-motion="dock" data-choreo="field-seat" style="--delay:520ms;--dx:0px;--dy:10px;--delay-brief:234ms;--delay-story:1000ms"/>
+<text x="615" y="252.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:750ms;--dx:0px;--dy:0px;--delay-brief:400ms;--delay-story:1330ms">-0.24</text>
+<rect x="303" y="283" width="64" height="64" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:410ms;--dx:0px;--dy:10px;--delay-brief:186ms;--delay-story:800ms"/>
+<text x="335" y="322.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:640ms;--dx:0px;--dy:0px;--delay-brief:345ms;--delay-story:1110ms">+0.48</text>
+<rect x="373" y="283" width="64" height="64" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:455ms;--dx:0px;--dy:10px;--delay-brief:206ms;--delay-story:885ms"/>
+<text x="405" y="322.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:685ms;--dx:0px;--dy:0px;--delay-brief:367ms;--delay-story:1200ms">+0.57</text>
+<rect x="443" y="283" width="64" height="64" rx="0" class="secondary-fill" data-motion="dock" data-choreo="field-seat" style="--delay:500ms;--dx:0px;--dy:10px;--delay-brief:226ms;--delay-story:970ms"/>
+<text x="475" y="322.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:730ms;--dx:0px;--dy:0px;--delay-brief:390ms;--delay-story:1290ms">-0.18</text>
+<rect x="513" y="283" width="64" height="64" rx="0" class="data-fill" data-motion="dock" data-choreo="field-seat" style="--delay:545ms;--dx:0px;--dy:10px;--delay-brief:246ms;--delay-story:1055ms"/>
+<text x="545" y="322.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:775ms;--dx:0px;--dy:0px;--delay-brief:412ms;--delay-story:1380ms">1.00</text>
+<rect x="583" y="283" width="64" height="64" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:590ms;--dx:0px;--dy:10px;--delay-brief:266ms;--delay-story:1140ms"/>
+<text x="615" y="322.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:820ms;--dx:0px;--dy:0px;--delay-brief:435ms;--delay-story:1470ms">+0.36</text>
+<rect x="303" y="353" width="64" height="64" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:480ms;--dx:0px;--dy:10px;--delay-brief:218ms;--delay-story:940ms"/>
+<text x="335" y="392.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:710ms;--dx:0px;--dy:0px;--delay-brief:380ms;--delay-story:1250ms">+0.55</text>
+<rect x="373" y="353" width="64" height="64" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:525ms;--dx:0px;--dy:10px;--delay-brief:238ms;--delay-story:1025ms"/>
+<text x="405" y="392.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:755ms;--dx:0px;--dy:0px;--delay-brief:402ms;--delay-story:1340ms">+0.63</text>
+<rect x="443" y="353" width="64" height="64" rx="0" class="secondary-fill" data-motion="dock" data-choreo="field-seat" style="--delay:570ms;--dx:0px;--dy:10px;--delay-brief:258ms;--delay-story:1110ms"/>
+<text x="475" y="392.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:800ms;--dx:0px;--dy:0px;--delay-brief:425ms;--delay-story:1430ms">-0.24</text>
+<rect x="513" y="353" width="64" height="64" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:615ms;--dx:0px;--dy:10px;--delay-brief:278ms;--delay-story:1195ms"/>
+<text x="545" y="392.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:845ms;--dx:0px;--dy:0px;--delay-brief:447ms;--delay-story:1520ms">+0.36</text>
+<rect x="583" y="353" width="64" height="64" rx="0" class="data-fill" data-motion="dock" data-choreo="field-seat" style="--delay:660ms;--dx:0px;--dy:10px;--delay-brief:298ms;--delay-story:1280ms"/>
+<text x="615" y="392.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:890ms;--dx:0px;--dy:0px;--delay-brief:470ms;--delay-story:1610ms">1.00</text>
+<g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1820ms;--dx:-8px;--dy:0px;--delay-brief:1030ms;--delay-story:3480ms">
+<path d="M 0 346 H 222 L 230 354 V 440 H 8 L 0 432 Z" class="panel-stroke" />
+<text x="14" y="367" class="index muted" text-anchor="start" font-size="12" >C-22</text>
+<text x="216" y="367" class="index signal-text" text-anchor="end" font-size="12" >STRONG</text>
+<text x="14" y="401" class="value" text-anchor="start" font-size="28" font-weight="650" >+0.84</text>
+<text x="14" y="423" class="muted" text-anchor="start" font-size="13" >毛利 × 营收</text>
+</g></svg></section>
+  <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
+  <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" title="重播">↻</button><button type="button" data-action="pause" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" title="切换明暗">◐</button></nav>
+</main>
+<script type="application/json" id="moxing-data">{"labels":["营收","毛利","投放","客单","复购"],"values":[[1,0.84,0.62,0.48,0.55],[0.84,1,0.41,0.57,0.63],[0.62,0.41,1,-0.18,-0.24],[0.48,0.57,-0.18,1,0.36],[0.55,0.63,-0.24,0.36,1]]}</script>
+<script>
+(() => {
+  const root=document.getElementById('moxing-chart');
+  const params=new URLSearchParams(location.search);
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches||params.get('motion')==='off';
+  const requestedProfile=params.get('motion')||'standard';
+  const profile=['brief','standard','story'].includes(requestedProfile)?requestedProfile:'standard';
+  const scales={brief:0.72,standard:1.0,story:1.8};
+  const scale=scales[profile]||1;
+  const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);
+  const total=Number(root.dataset[profileKey]||root.dataset.total||1800);
+  const baseDuration={align:220,dock:620,route:520,lock:280};
+  root.querySelectorAll('[data-motion]').forEach(el=>{
+    const rawDelay=parseFloat(el.style.getPropertyValue('--delay'))||0;
+    const rawDuration=parseFloat(el.style.getPropertyValue('--duration'))||baseDuration[el.dataset.motion]||300;
+    const profileDelay=parseFloat(el.style.getPropertyValue('--delay-'+profile));
+    const profileDuration=parseFloat(el.style.getPropertyValue('--duration-'+profile));
+    el.style.setProperty('--active-delay',Math.round(Number.isFinite(profileDelay)?profileDelay:rawDelay*scale)+'ms');
+    el.style.setProperty('--active-duration',Math.round(Number.isFinite(profileDuration)?profileDuration:rawDuration*scale)+'ms');
+  });
+  let timer=0;
+  const settle=()=>{ clearTimeout(timer); root.classList.remove('is-playing','is-paused'); root.classList.add('is-complete'); };
+  const replay=()=>{
+    clearTimeout(timer); root.classList.remove('is-playing','is-complete','is-paused'); void root.offsetWidth;
+    if(reduce){settle();return;}
+    root.style.setProperty('--motion-scale',scale); root.classList.add('motion-enabled','is-playing');
+    timer=setTimeout(settle,total+120);
+  };
+  const pause=()=>{ root.classList.toggle('is-paused'); const b=root.querySelector('[data-action=pause]'); b.textContent=root.classList.contains('is-paused')?'▶':'Ⅱ'; };
+  root.querySelector('[data-action=replay]').addEventListener('click',replay);
+  root.querySelector('[data-action=pause]').addEventListener('click',pause);
+  root.querySelector('[data-action=surface]').addEventListener('click',()=>{ const html=document.documentElement; html.dataset.surface=html.dataset.surface==='dark'?'light':'dark'; });
+  if(params.get('theme')==='dark') document.documentElement.dataset.surface='dark';
+  window.Moxing={replay,settle,setSurface:(v)=>document.documentElement.dataset.surface=v,profile,duration:total,ready:Promise.resolve()};
+  if(reduce) settle();
+  else if('IntersectionObserver'in window){ const io=new IntersectionObserver(e=>{if(e[0].isIntersecting){io.disconnect();replay();}},{threshold:.35});io.observe(root); }
+  else replay();
+})();
+</script>
+</body>
+</html>

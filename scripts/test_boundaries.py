@@ -75,6 +75,20 @@ CASES = {
         [{"label": "区域", "value": None, "unit": "万元"}],
         [{"label": "区域甲", "value": -100, "unit": "万元", "yoy": -10}, {"label": "区域乙", "value": 100, "unit": "万元", "yoy": 10}],
     ],
+    "C11": [copy.deepcopy(DEFAULTS["C11"]), {"variant": "pie", "items": copy.deepcopy(DEFAULTS["C11"])}, [], [{"label": "单一类目", "value": 100}], [{"label": "无效", "value": -1}]],
+    "C12": [copy.deepcopy(DEFAULTS["C12"]), {"labels": [], "series": []}, {"labels": ["1", "2"], "series": [{"name": "指标", "values": [1, 1]}]}],
+    "C13": [copy.deepcopy(DEFAULTS["C13"]), [], series_case(10, lambda _i: 100), [{"label": "负值", "value": -1}]],
+    "C14": [copy.deepcopy(DEFAULTS["C14"]), {"columns": [], "rows": []}, {"columns": ["M0"], "rows": [{"label": "队列", "values": [100]}]}],
+    "C15": [copy.deepcopy(DEFAULTS["C15"]), {"nodes": [], "links": []}, {"nodes": [{"id": "a", "label": "A", "level": 0, "value": 1}, {"id": "b", "label": "B", "level": 1, "value": 1}], "links": []}],
+    "C16": [copy.deepcopy(DEFAULTS["C16"]), [], [{"label": "单点", "x": 1, "y": 1, "size": 0}], [{"label": "无效", "x": None, "y": 1, "size": 1}]],
+    "C17": [copy.deepcopy(DEFAULTS["C17"]), [], [{"date": "01", "open": 1, "high": 1, "low": 1, "close": 1, "volume": 0}]],
+    "C18": [copy.deepcopy(DEFAULTS["C18"]), {"labels": [], "values": []}, {"labels": ["1", "2"], "values": [100, 100]}],
+    "C19": [copy.deepcopy(DEFAULTS["C19"]), {"maturities": [], "series": []}, {"maturities": ["1Y", "2Y"], "series": [{"name": "曲线", "values": [2, 2]}]}],
+    "C20": [copy.deepcopy(DEFAULTS["C20"]), {"rows": [], "columns": [], "values": []}, {"rows": ["A"], "columns": ["B"], "values": [[100]]}],
+    "C21": [copy.deepcopy(DEFAULTS["C21"]), [], [1, 1], [1, math.nan, 2]],
+    "C22": [copy.deepcopy(DEFAULTS["C22"]), {"labels": [], "values": []}, {"labels": ["A"], "values": [[1]]}],
+    "C23": [copy.deepcopy(DEFAULTS["C23"]), {"labels": [], "actual": [], "forecast": [], "lower": [], "upper": []}],
+    "C24": [copy.deepcopy(DEFAULTS["C24"]), {"labels": [], "values": [], "center": 0, "ucl": 1, "lcl": -1}, {"labels": ["1", "2"], "values": [1, 1], "center": 1, "ucl": 2, "lcl": 0}],
 }
 
 
