@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-surface="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>华东营收领先，华南是唯一同比下滑区域</title>
+<style>
+  @font-face{font-family:'Noto Sans SC';src:url('../assets/fonts/NotoSansSC-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Noto Serif SC';src:url('../assets/fonts/NotoSerifSC-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Doto';src:url('../assets/fonts/Doto-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+
+  [data-surface="light"] {
+    --bg:#F2F3EF; --ink:#171916; --muted:#6F746C;
+    --faint:#A9AEA5; --grid:#D8DBD4; --rail:#9DA39A;
+    --secondary:#BFC3BB; --signal:#D85A36; --panel:#E9EBE5;
+    --cat-1:#536A72; --cat-2:#6D7562; --cat-3:#887665; --cat-4:#7B6874;
+  }
+
+  [data-surface="dark"] {
+    --bg:#151714; --ink:#F0F1EB; --muted:#989D94;
+    --faint:#62675F; --grid:#30332E; --rail:#5E645B;
+    --secondary:#737970; --signal:#E56B47; --panel:#1E211D;
+    --cat-1:#8DA5AD; --cat-2:#A1AA91; --cat-3:#B39A86; --cat-4:#A18C9D;
+  }
+  * { box-sizing:border-box; }
+  html,body { width:1280px; height:720px; margin:0; overflow:hidden; background:var(--bg); color:var(--ink); }
+  body { font-family:'Noto Sans SC','Microsoft YaHei',sans-serif; -webkit-font-smoothing:antialiased; }
+  .chart-container { width:1280px; height:720px; padding:38px 54px 28px; display:grid; grid-template-rows:124px 1fr 28px; position:relative; background:var(--bg); }
+  .chart-header { display:grid; grid-template-columns:170px minmax(0,1fr); align-items:start; border-top:1.5px solid var(--ink); padding:12px 122px 0 0; }
+  .chart-code { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; font-size:14px; letter-spacing:.08em; color:var(--muted); }
+  .chart-title { margin:0; font-family:'Noto Serif SC','Songti SC',serif; font-size:34px; line-height:1.18; font-weight:700; letter-spacing:.01em; }
+  .chart-subtitle { margin-top:8px; color:var(--muted); font-size:14px; }
+  .chart-body { min-height:0; }
+  svg { display:block; width:100%; height:100%; overflow:visible; }
+  svg text { font-family:'Noto Sans SC','Microsoft YaHei',sans-serif; fill:var(--ink); }
+  svg .title-font { font-family:'Noto Serif SC','Songti SC',serif; }
+  svg .index { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; letter-spacing:.08em; }
+  svg .muted { fill:var(--muted); }
+  svg .faint { fill:var(--faint); }
+  svg .signal-text { fill:var(--signal); }
+  svg .value { fill:var(--ink); font-variant-numeric:tabular-nums; }
+  svg .grid { stroke:var(--grid); stroke-width:1; fill:none; vector-effect:non-scaling-stroke; }
+  svg .rail { stroke:var(--rail); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .rail-strong { stroke:var(--ink); stroke-width:2.25; fill:none; vector-effect:non-scaling-stroke; }
+  svg .data-stroke { stroke:var(--ink); stroke-width:2.25; fill:none; vector-effect:non-scaling-stroke; }
+  svg .secondary-stroke { stroke:var(--secondary); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .signal-stroke { stroke:var(--signal); stroke-width:2.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .data-fill { fill:var(--ink); }
+  svg .secondary-fill { fill:var(--secondary); }
+  svg .panel-fill { fill:var(--panel); }
+  svg .panel-stroke { fill:var(--panel); stroke:var(--rail); stroke-width:1; vector-effect:non-scaling-stroke; }
+  svg .signal-fill { fill:var(--signal); }
+  svg .hollow { fill:var(--bg); stroke:var(--ink); stroke-width:1.5; vector-effect:non-scaling-stroke; }
+  svg .cat-1 { fill:var(--cat-1); } svg .cat-2 { fill:var(--cat-2); }
+  svg .cat-3 { fill:var(--cat-3); } svg .cat-4 { fill:var(--cat-4); }
+  .chart-footer { display:flex; justify-content:space-between; align-items:end; color:var(--muted); font-size:12px; letter-spacing:.02em; border-bottom:1px solid var(--grid); padding-bottom:7px; }
+  .chart-footer .mark { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; letter-spacing:.1em; }
+  [data-mode="brief"] .evidence-plate { display:none; }
+  [data-mode="brief"] svg .grid { opacity:.62; }
+  .motion-controls { position:absolute; right:54px; top:48px; display:flex; gap:6px; z-index:5; }
+  .motion-controls button { width:30px; height:30px; border:1px solid var(--rail); background:var(--bg); color:var(--ink); font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; cursor:pointer; padding:0; }
+  .motion-controls button:hover { border-color:var(--signal); color:var(--signal); }
+  [data-motion] { transform-box:fill-box; transform-origin:center; }
+  @keyframes mx-align { from { opacity:0; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
+  @keyframes mx-dock { from { opacity:0; transform:translate(var(--dx),var(--dy)); } to { opacity:1; transform:translate(0,0); } }
+  @keyframes mx-route { from { opacity:.25; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
+  @keyframes mx-lock { 0% { opacity:0; transform:scale(.92); } 68% { opacity:1; transform:scale(1.025); } 100% { opacity:1; transform:scale(1); } }
+  .motion-enabled.is-playing [data-motion="align"] { stroke-dasharray:1; animation:mx-align var(--duration,220ms) linear var(--delay,0ms) both; }
+  .motion-enabled.is-playing [data-motion="dock"] { animation:mx-dock var(--duration,620ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
+  .motion-enabled.is-playing [data-motion="route"] { stroke-dasharray:1; animation:mx-route var(--duration,520ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
+  .motion-enabled.is-playing [data-motion="lock"] { animation:mx-lock var(--duration,280ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
+  .motion-enabled.is-paused [data-motion] { animation-play-state:paused!important; }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing [data-motion] { animation:none!important; } }
+</style>
+</head>
+<body>
+<main class="chart-container" id="moxing-chart" data-total="1750" data-mode="editorial">
+  <header class="chart-header">
+    <div class="chart-code">C10 / DECISION INTERFACE</div>
+    <div><h1 class="chart-title">华东营收领先，华南是唯一同比下滑区域</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div></div>
+  </header>
+  <section class="chart-body"><svg viewBox="0 0 1172 500" role="img" aria-label="华东营收领先，华南是唯一同比下滑区域"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >10 / DECISION INTERFACE</text>
+<path d="M 0 66 H 506 L 520 80 V 422 H 14 L 0 408 Z" class="panel-stroke" data-motion="dock" style="--delay:260ms;--dx:-20px;--dy:0px"/>
+<text x="36" y="114" class="index muted" text-anchor="start" font-size="12" >LEADING REGION</text>
+<text x="36" y="158" class="title-font" text-anchor="start" font-size="30" font-weight="700" >华东</text>
+<text x="36" y="265" class="value title-font" text-anchor="start" font-size="74" font-weight="700" data-motion="lock" style="--delay:940ms;--dx:0px;--dy:0px">1.5万</text>
+<text x="40" y="300" class="muted" text-anchor="start" font-size="16" >万元</text>
+<line x1="36" y1="340" x2="474" y2="340" class="rail-strong" pathLength="1" data-motion="align" style="--delay:120ms;--dx:0px;--dy:0px"/>
+<text x="36" y="382" class="index signal-text" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" style="--delay:1160ms;--dx:0px;--dy:0px">YOY +18.7%</text>
+<path d="M 24 78 V 56 H 46" class="signal-stroke" pathLength="1" data-motion="lock" style="--delay:1080ms;--dx:0px;--dy:0px"/>
+<text x="586" y="78" class="index muted" text-anchor="start" font-size="11" >01</text>
+<text x="628" y="78" class="label" text-anchor="start" font-size="16" font-weight="650" >华北</text>
+<text x="1130" y="78" class="value" text-anchor="end" font-size="18" font-weight="650" >1.3万</text>
+<line x1="628" y1="108" x2="1130" y2="108" class="grid" pathLength="1" data-motion="align" style="--delay:180ms;--dx:0px;--dy:0px"/>
+<path d="M 628 97 H 1055.64 L 1060.64 102 V 119 H 633 L 628 114 Z" class="data-fill" data-motion="dock" style="--delay:430ms;--dx:-24px;--dy:0px"/>
+<text x="1130" y="139" class="muted index" text-anchor="end" font-size="12" data-motion="lock" style="--delay:950ms;--dx:0px;--dy:0px">YOY +23.5%</text>
+<text x="586" y="190" class="index muted" text-anchor="start" font-size="11" >02</text>
+<text x="628" y="190" class="label" text-anchor="start" font-size="16" font-weight="650" >华南</text>
+<text x="1130" y="190" class="value" text-anchor="end" font-size="18" font-weight="650" >9,856</text>
+<line x1="628" y1="220" x2="1130" y2="220" class="grid" pathLength="1" data-motion="align" style="--delay:240ms;--dx:0px;--dy:0px"/>
+<path d="M 628 209 H 948.51 L 953.51 214 V 231 H 633 L 628 226 Z" class="signal-fill" data-motion="dock" style="--delay:560ms;--dx:-24px;--dy:0px"/>
+<text x="1130" y="251" class="signal-text index" text-anchor="end" font-size="12" data-motion="lock" style="--delay:1030ms;--dx:0px;--dy:0px">YOY -5.2%</text>
+<text x="586" y="302" class="index muted" text-anchor="start" font-size="11" >03</text>
+<text x="628" y="302" class="label" text-anchor="start" font-size="16" font-weight="650" >西南</text>
+<text x="1130" y="302" class="value" text-anchor="end" font-size="18" font-weight="650" >7,421</text>
+<line x1="628" y1="332" x2="1130" y2="332" class="grid" pathLength="1" data-motion="align" style="--delay:300ms;--dx:0px;--dy:0px"/>
+<path d="M 628 321 H 868.09 L 873.09 326 V 343 H 633 L 628 338 Z" class="data-fill" data-motion="dock" style="--delay:690ms;--dx:-24px;--dy:0px"/>
+<text x="1130" y="363" class="muted index" text-anchor="end" font-size="12" data-motion="lock" style="--delay:1110ms;--dx:0px;--dy:0px">YOY +31.8%</text>
+<g class="evidence-plate" data-motion="lock" style="--delay:1420ms;--dx:-8px;--dy:0px">
+<path d="M 586 374 H 822 L 830 382 V 468 H 594 L 586 460 Z" class="panel-stroke" />
+<text x="600" y="395" class="index muted" text-anchor="start" font-size="12" >D-01</text>
+<text x="816" y="395" class="index signal-text" text-anchor="end" font-size="12" >RISK</text>
+<text x="600" y="429" class="value" text-anchor="start" font-size="28" font-weight="650" >-5.2%</text>
+<text x="600" y="451" class="muted" text-anchor="start" font-size="13" >华南 / 同比</text>
+</g></svg></section>
+  <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
+  <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" title="重播">↻</button><button type="button" data-action="pause" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" title="切换明暗">◐</button></nav>
+</main>
+<script type="application/json" id="moxing-data">[{"label":"华东","value":15200,"unit":"万元","yoy":18.7},{"label":"华北","value":13100,"unit":"万元","yoy":23.5},{"label":"华南","value":9856,"unit":"万元","yoy":-5.2},{"label":"西南","value":7421,"unit":"万元","yoy":31.8}]</script>
+<script>
+(() => {
+  const root=document.getElementById('moxing-chart');
+  const params=new URLSearchParams(location.search);
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches||params.get('motion')==='off';
+  const profile=params.get('motion')||'standard';
+  const scales={brief:.72,standard:1,story:1.8};
+  const scale=scales[profile]||1;
+  const total=Math.round(Number(root.dataset.total||1800)*scale);
+  const baseDuration={align:220,dock:620,route:520,lock:280};
+  root.querySelectorAll('[data-motion]').forEach(el=>{
+    const rawDelay=parseFloat(el.style.getPropertyValue('--delay'))||0;
+    const rawDuration=parseFloat(el.style.getPropertyValue('--duration'))||baseDuration[el.dataset.motion]||300;
+    el.style.setProperty('--delay',Math.round(rawDelay*scale)+'ms');
+    el.style.setProperty('--duration',Math.round(rawDuration*scale)+'ms');
+  });
+  let timer=0;
+  const settle=()=>{ clearTimeout(timer); root.classList.remove('is-playing','is-paused'); root.classList.add('is-complete'); };
+  const replay=()=>{
+    clearTimeout(timer); root.classList.remove('is-playing','is-complete','is-paused'); void root.offsetWidth;
+    if(reduce){settle();return;}
+    root.style.setProperty('--motion-scale',scale); root.classList.add('motion-enabled','is-playing');
+    timer=setTimeout(settle,total+120);
+  };
+  const pause=()=>{ root.classList.toggle('is-paused'); const b=root.querySelector('[data-action=pause]'); b.textContent=root.classList.contains('is-paused')?'▶':'Ⅱ'; };
+  root.querySelector('[data-action=replay]').addEventListener('click',replay);
+  root.querySelector('[data-action=pause]').addEventListener('click',pause);
+  root.querySelector('[data-action=surface]').addEventListener('click',()=>{ const html=document.documentElement; html.dataset.surface=html.dataset.surface==='dark'?'light':'dark'; });
+  if(params.get('theme')==='dark') document.documentElement.dataset.surface='dark';
+  window.Moxing={replay,settle,setSurface:(v)=>document.documentElement.dataset.surface=v,ready:Promise.resolve()};
+  if(reduce) settle();
+  else if('IntersectionObserver'in window){ const io=new IntersectionObserver(e=>{if(e[0].isIntersecting){io.disconnect();replay();}},{threshold:.35});io.observe(root); }
+  else replay();
+})();
+</script>
+</body>
+</html>

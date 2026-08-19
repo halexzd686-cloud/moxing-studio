@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-surface="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>新增和续约抵消流失，期末净增 160</title>
+<style>
+  @font-face{font-family:'Noto Sans SC';src:url('../assets/fonts/NotoSansSC-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Noto Serif SC';src:url('../assets/fonts/NotoSerifSC-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Doto';src:url('../assets/fonts/Doto-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+
+  [data-surface="light"] {
+    --bg:#F2F3EF; --ink:#171916; --muted:#6F746C;
+    --faint:#A9AEA5; --grid:#D8DBD4; --rail:#9DA39A;
+    --secondary:#BFC3BB; --signal:#D85A36; --panel:#E9EBE5;
+    --cat-1:#536A72; --cat-2:#6D7562; --cat-3:#887665; --cat-4:#7B6874;
+  }
+
+  [data-surface="dark"] {
+    --bg:#151714; --ink:#F0F1EB; --muted:#989D94;
+    --faint:#62675F; --grid:#30332E; --rail:#5E645B;
+    --secondary:#737970; --signal:#E56B47; --panel:#1E211D;
+    --cat-1:#8DA5AD; --cat-2:#A1AA91; --cat-3:#B39A86; --cat-4:#A18C9D;
+  }
+  * { box-sizing:border-box; }
+  html,body { width:1280px; height:720px; margin:0; overflow:hidden; background:var(--bg); color:var(--ink); }
+  body { font-family:'Noto Sans SC','Microsoft YaHei',sans-serif; -webkit-font-smoothing:antialiased; }
+  .chart-container { width:1280px; height:720px; padding:38px 54px 28px; display:grid; grid-template-rows:124px 1fr 28px; position:relative; background:var(--bg); }
+  .chart-header { display:grid; grid-template-columns:170px minmax(0,1fr); align-items:start; border-top:1.5px solid var(--ink); padding:12px 122px 0 0; }
+  .chart-code { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; font-size:14px; letter-spacing:.08em; color:var(--muted); }
+  .chart-title { margin:0; font-family:'Noto Serif SC','Songti SC',serif; font-size:34px; line-height:1.18; font-weight:700; letter-spacing:.01em; }
+  .chart-subtitle { margin-top:8px; color:var(--muted); font-size:14px; }
+  .chart-body { min-height:0; }
+  svg { display:block; width:100%; height:100%; overflow:visible; }
+  svg text { font-family:'Noto Sans SC','Microsoft YaHei',sans-serif; fill:var(--ink); }
+  svg .title-font { font-family:'Noto Serif SC','Songti SC',serif; }
+  svg .index { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; letter-spacing:.08em; }
+  svg .muted { fill:var(--muted); }
+  svg .faint { fill:var(--faint); }
+  svg .signal-text { fill:var(--signal); }
+  svg .value { fill:var(--ink); font-variant-numeric:tabular-nums; }
+  svg .grid { stroke:var(--grid); stroke-width:1; fill:none; vector-effect:non-scaling-stroke; }
+  svg .rail { stroke:var(--rail); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .rail-strong { stroke:var(--ink); stroke-width:2.25; fill:none; vector-effect:non-scaling-stroke; }
+  svg .data-stroke { stroke:var(--ink); stroke-width:2.25; fill:none; vector-effect:non-scaling-stroke; }
+  svg .secondary-stroke { stroke:var(--secondary); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .signal-stroke { stroke:var(--signal); stroke-width:2.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .data-fill { fill:var(--ink); }
+  svg .secondary-fill { fill:var(--secondary); }
+  svg .panel-fill { fill:var(--panel); }
+  svg .panel-stroke { fill:var(--panel); stroke:var(--rail); stroke-width:1; vector-effect:non-scaling-stroke; }
+  svg .signal-fill { fill:var(--signal); }
+  svg .hollow { fill:var(--bg); stroke:var(--ink); stroke-width:1.5; vector-effect:non-scaling-stroke; }
+  svg .cat-1 { fill:var(--cat-1); } svg .cat-2 { fill:var(--cat-2); }
+  svg .cat-3 { fill:var(--cat-3); } svg .cat-4 { fill:var(--cat-4); }
+  .chart-footer { display:flex; justify-content:space-between; align-items:end; color:var(--muted); font-size:12px; letter-spacing:.02em; border-bottom:1px solid var(--grid); padding-bottom:7px; }
+  .chart-footer .mark { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; letter-spacing:.1em; }
+  [data-mode="brief"] .evidence-plate { display:none; }
+  [data-mode="brief"] svg .grid { opacity:.62; }
+  .motion-controls { position:absolute; right:54px; top:48px; display:flex; gap:6px; z-index:5; }
+  .motion-controls button { width:30px; height:30px; border:1px solid var(--rail); background:var(--bg); color:var(--ink); font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; cursor:pointer; padding:0; }
+  .motion-controls button:hover { border-color:var(--signal); color:var(--signal); }
+  [data-motion] { transform-box:fill-box; transform-origin:center; }
+  @keyframes mx-align { from { opacity:0; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
+  @keyframes mx-dock { from { opacity:0; transform:translate(var(--dx),var(--dy)); } to { opacity:1; transform:translate(0,0); } }
+  @keyframes mx-route { from { opacity:.25; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
+  @keyframes mx-lock { 0% { opacity:0; transform:scale(.92); } 68% { opacity:1; transform:scale(1.025); } 100% { opacity:1; transform:scale(1); } }
+  .motion-enabled.is-playing [data-motion="align"] { stroke-dasharray:1; animation:mx-align var(--duration,220ms) linear var(--delay,0ms) both; }
+  .motion-enabled.is-playing [data-motion="dock"] { animation:mx-dock var(--duration,620ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
+  .motion-enabled.is-playing [data-motion="route"] { stroke-dasharray:1; animation:mx-route var(--duration,520ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
+  .motion-enabled.is-playing [data-motion="lock"] { animation:mx-lock var(--duration,280ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
+  .motion-enabled.is-paused [data-motion] { animation-play-state:paused!important; }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing [data-motion] { animation:none!important; } }
+</style>
+</head>
+<body>
+<main class="chart-container" id="moxing-chart" data-total="1750" data-mode="editorial">
+  <header class="chart-header">
+    <div class="chart-code">C6 / LEDGER STEPS</div>
+    <div><h1 class="chart-title">新增和续约抵消流失，期末净增 160</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div></div>
+  </header>
+  <section class="chart-body"><svg viewBox="0 0 1172 500" role="img" aria-label="新增和续约抵消流失，期末净增 160"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >06 / LEDGER INTERLOCK</text>
+<g class="evidence-plate" data-motion="lock" style="--delay:1500ms;--dx:-8px;--dy:0px">
+<path d="M 0 74 H 222 L 230 82 V 168 H 8 L 0 160 Z" class="panel-stroke" />
+<text x="14" y="95" class="index muted" text-anchor="start" font-size="12" >L-01</text>
+<text x="216" y="95" class="index signal-text" text-anchor="end" font-size="12" >NET</text>
+<text x="14" y="129" class="value" text-anchor="start" font-size="28" font-weight="650" >+160</text>
+<text x="14" y="151" class="muted" text-anchor="start" font-size="13" >期初至期末</text>
+</g>
+<line x1="300" y1="384.32" x2="1126" y2="384.32" class="rail-strong" pathLength="1" data-motion="align" style="--delay:80ms;--dx:0px;--dy:0px"/>
+<path d="M 330.83 208.65 H 400.83 L 406.83 214.65 V 384.32 H 336.83 L 330.83 378.32 Z" class="data-fill" data-motion="dock" style="--delay:300ms;--dx:0px;--dy:26px"/>
+<text x="368.83" y="196.65" class="value" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" style="--delay:900ms;--dx:0px;--dy:0px">820</text>
+<text x="368.83" y="452" class="muted" text-anchor="middle" font-size="12" >期初</text>
+<line x1="406.83" y1="208.65" x2="468.5" y2="208.65" class="rail" pathLength="1" data-motion="route" style="--delay:620ms;--dx:0px;--dy:0px"/>
+<path d="M 468.5 142.24 H 538.5 L 544.5 148.24 V 208.65 H 474.5 L 468.5 202.65 Z" class="cat-1" data-motion="dock" style="--delay:395ms;--dx:0px;--dy:26px"/>
+<text x="506.5" y="130.24" class="value" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" style="--delay:945ms;--dx:0px;--dy:0px">310</text>
+<text x="506.5" y="452" class="muted" text-anchor="middle" font-size="12" >新增</text>
+<line x1="544.5" y1="142.24" x2="606.17" y2="142.24" class="rail" pathLength="1" data-motion="route" style="--delay:710ms;--dx:0px;--dy:0px"/>
+<path d="M 606.17 103.68 H 676.17 L 682.17 109.68 V 142.24 H 612.17 L 606.17 136.24 Z" class="cat-1" data-motion="dock" style="--delay:490ms;--dx:0px;--dy:26px"/>
+<text x="644.17" y="91.68" class="value" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" style="--delay:990ms;--dx:0px;--dy:0px">180</text>
+<text x="644.17" y="452" class="muted" text-anchor="middle" font-size="12" >续约</text>
+<line x1="682.17" y1="103.68" x2="743.83" y2="103.68" class="rail" pathLength="1" data-motion="route" style="--delay:800ms;--dx:0px;--dy:0px"/>
+<path d="M 743.83 103.68 H 813.83 L 819.83 109.68 V 155.09 H 749.83 L 743.83 149.09 Z" class="signal-fill" data-motion="dock" style="--delay:585ms;--dx:0px;--dy:26px"/>
+<text x="781.83" y="91.68" class="value" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" style="--delay:1035ms;--dx:0px;--dy:0px">-240</text>
+<text x="781.83" y="452" class="muted" text-anchor="middle" font-size="12" >流失</text>
+<line x1="819.83" y1="155.09" x2="881.5" y2="155.09" class="rail" pathLength="1" data-motion="route" style="--delay:890ms;--dx:0px;--dy:0px"/>
+<path d="M 881.5 155.09 H 951.5 L 957.5 161.09 V 174.37 H 887.5 L 881.5 168.37 Z" class="signal-fill" data-motion="dock" style="--delay:680ms;--dx:0px;--dy:26px"/>
+<text x="919.5" y="143.09" class="value" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" style="--delay:1080ms;--dx:0px;--dy:0px">-90</text>
+<text x="919.5" y="452" class="muted" text-anchor="middle" font-size="12" >折扣</text>
+<line x1="957.5" y1="174.37" x2="1019.17" y2="174.37" class="rail" pathLength="1" data-motion="route" style="--delay:980ms;--dx:0px;--dy:0px"/>
+<path d="M 1019.17 174.37 H 1089.17 L 1095.17 180.37 V 384.32 H 1025.17 L 1019.17 378.32 Z" class="data-fill" data-motion="dock" style="--delay:775ms;--dx:0px;--dy:26px"/>
+<text x="1057.17" y="162.37" class="value" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" style="--delay:1125ms;--dx:0px;--dy:0px">980</text>
+<text x="1057.17" y="452" class="muted" text-anchor="middle" font-size="12" >期末</text></svg></section>
+  <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
+  <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" title="重播">↻</button><button type="button" data-action="pause" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" title="切换明暗">◐</button></nav>
+</main>
+<script type="application/json" id="moxing-data">[{"label":"期初","value":820,"type":"start"},{"label":"新增","value":310,"type":"increase"},{"label":"续约","value":180,"type":"increase"},{"label":"流失","value":-240,"type":"decrease"},{"label":"折扣","value":-90,"type":"decrease"},{"label":"期末","value":980,"type":"end"}]</script>
+<script>
+(() => {
+  const root=document.getElementById('moxing-chart');
+  const params=new URLSearchParams(location.search);
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches||params.get('motion')==='off';
+  const profile=params.get('motion')||'standard';
+  const scales={brief:.72,standard:1,story:1.8};
+  const scale=scales[profile]||1;
+  const total=Math.round(Number(root.dataset.total||1800)*scale);
+  const baseDuration={align:220,dock:620,route:520,lock:280};
+  root.querySelectorAll('[data-motion]').forEach(el=>{
+    const rawDelay=parseFloat(el.style.getPropertyValue('--delay'))||0;
+    const rawDuration=parseFloat(el.style.getPropertyValue('--duration'))||baseDuration[el.dataset.motion]||300;
+    el.style.setProperty('--delay',Math.round(rawDelay*scale)+'ms');
+    el.style.setProperty('--duration',Math.round(rawDuration*scale)+'ms');
+  });
+  let timer=0;
+  const settle=()=>{ clearTimeout(timer); root.classList.remove('is-playing','is-paused'); root.classList.add('is-complete'); };
+  const replay=()=>{
+    clearTimeout(timer); root.classList.remove('is-playing','is-complete','is-paused'); void root.offsetWidth;
+    if(reduce){settle();return;}
+    root.style.setProperty('--motion-scale',scale); root.classList.add('motion-enabled','is-playing');
+    timer=setTimeout(settle,total+120);
+  };
+  const pause=()=>{ root.classList.toggle('is-paused'); const b=root.querySelector('[data-action=pause]'); b.textContent=root.classList.contains('is-paused')?'▶':'Ⅱ'; };
+  root.querySelector('[data-action=replay]').addEventListener('click',replay);
+  root.querySelector('[data-action=pause]').addEventListener('click',pause);
+  root.querySelector('[data-action=surface]').addEventListener('click',()=>{ const html=document.documentElement; html.dataset.surface=html.dataset.surface==='dark'?'light':'dark'; });
+  if(params.get('theme')==='dark') document.documentElement.dataset.surface='dark';
+  window.Moxing={replay,settle,setSurface:(v)=>document.documentElement.dataset.surface=v,ready:Promise.resolve()};
+  if(reduce) settle();
+  else if('IntersectionObserver'in window){ const io=new IntersectionObserver(e=>{if(e[0].isIntersecting){io.disconnect();replay();}},{threshold:.35});io.observe(root); }
+  else replay();
+})();
+</script>
+</body>
+</html>

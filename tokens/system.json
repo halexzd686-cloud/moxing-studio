@@ -1,0 +1,55 @@
+{
+  "version": "2.0",
+  "surfaces": {
+    "light": {
+      "bg": "#F2F3EF",
+      "ink": "#171916",
+      "muted": "#6F746C",
+      "faint": "#A9AEA5",
+      "grid": "#D8DBD4",
+      "rail": "#9DA39A",
+      "secondary": "#BFC3BB",
+      "signal": "#D85A36",
+      "panel": "#E9EBE5",
+      "cat": ["#536A72", "#6D7562", "#887665", "#7B6874"]
+    },
+    "dark": {
+      "bg": "#151714",
+      "ink": "#F0F1EB",
+      "muted": "#989D94",
+      "faint": "#62675F",
+      "grid": "#30332E",
+      "rail": "#5E645B",
+      "secondary": "#737970",
+      "signal": "#E56B47",
+      "panel": "#1E211D",
+      "cat": ["#8DA5AD", "#A1AA91", "#B39A86", "#A18C9D"]
+    }
+  },
+  "typography": {
+    "title": "'Noto Serif SC','Songti SC',serif",
+    "text": "'Noto Sans SC','Microsoft YaHei',sans-serif",
+    "index": "'Doto','IBM Plex Mono','Cascadia Mono',monospace",
+    "sizes": {"title": 34, "subtitle": 14, "axis": 14, "value": 16, "source": 12}
+  },
+  "geometry": {
+    "canvas": [1280, 720],
+    "viewbox": [1172, 500],
+    "grid": 16,
+    "cut": 8,
+    "stroke": 1.5,
+    "strokeStrong": 2.25
+  },
+  "motion": {
+    "profiles": {
+      "brief": {"scale": 0.72},
+      "standard": {"scale": 1.0},
+      "story": {"scale": 1.8}
+    },
+    "align": 220,
+    "dock": 620,
+    "route": 520,
+    "lock": 280,
+    "ease": "cubic-bezier(.22,.78,.22,1)"
+  }
+}

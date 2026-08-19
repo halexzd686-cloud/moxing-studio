@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-surface="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>华东服务评分居首，区域差距仍可控</title>
+<style>
+  @font-face{font-family:'Noto Sans SC';src:url('../assets/fonts/NotoSansSC-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Noto Serif SC';src:url('../assets/fonts/NotoSerifSC-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Doto';src:url('../assets/fonts/Doto-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+
+  [data-surface="light"] {
+    --bg:#F2F3EF; --ink:#171916; --muted:#6F746C;
+    --faint:#A9AEA5; --grid:#D8DBD4; --rail:#9DA39A;
+    --secondary:#BFC3BB; --signal:#D85A36; --panel:#E9EBE5;
+    --cat-1:#536A72; --cat-2:#6D7562; --cat-3:#887665; --cat-4:#7B6874;
+  }
+
+  [data-surface="dark"] {
+    --bg:#151714; --ink:#F0F1EB; --muted:#989D94;
+    --faint:#62675F; --grid:#30332E; --rail:#5E645B;
+    --secondary:#737970; --signal:#E56B47; --panel:#1E211D;
+    --cat-1:#8DA5AD; --cat-2:#A1AA91; --cat-3:#B39A86; --cat-4:#A18C9D;
+  }
+  * { box-sizing:border-box; }
+  html,body { width:1280px; height:720px; margin:0; overflow:hidden; background:var(--bg); color:var(--ink); }
+  body { font-family:'Noto Sans SC','Microsoft YaHei',sans-serif; -webkit-font-smoothing:antialiased; }
+  .chart-container { width:1280px; height:720px; padding:38px 54px 28px; display:grid; grid-template-rows:124px 1fr 28px; position:relative; background:var(--bg); }
+  .chart-header { display:grid; grid-template-columns:170px minmax(0,1fr); align-items:start; border-top:1.5px solid var(--ink); padding:12px 122px 0 0; }
+  .chart-code { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; font-size:14px; letter-spacing:.08em; color:var(--muted); }
+  .chart-title { margin:0; font-family:'Noto Serif SC','Songti SC',serif; font-size:34px; line-height:1.18; font-weight:700; letter-spacing:.01em; }
+  .chart-subtitle { margin-top:8px; color:var(--muted); font-size:14px; }
+  .chart-body { min-height:0; }
+  svg { display:block; width:100%; height:100%; overflow:visible; }
+  svg text { font-family:'Noto Sans SC','Microsoft YaHei',sans-serif; fill:var(--ink); }
+  svg .title-font { font-family:'Noto Serif SC','Songti SC',serif; }
+  svg .index { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; letter-spacing:.08em; }
+  svg .muted { fill:var(--muted); }
+  svg .faint { fill:var(--faint); }
+  svg .signal-text { fill:var(--signal); }
+  svg .value { fill:var(--ink); font-variant-numeric:tabular-nums; }
+  svg .grid { stroke:var(--grid); stroke-width:1; fill:none; vector-effect:non-scaling-stroke; }
+  svg .rail { stroke:var(--rail); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .rail-strong { stroke:var(--ink); stroke-width:2.25; fill:none; vector-effect:non-scaling-stroke; }
+  svg .data-stroke { stroke:var(--ink); stroke-width:2.25; fill:none; vector-effect:non-scaling-stroke; }
+  svg .secondary-stroke { stroke:var(--secondary); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .signal-stroke { stroke:var(--signal); stroke-width:2.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .data-fill { fill:var(--ink); }
+  svg .secondary-fill { fill:var(--secondary); }
+  svg .panel-fill { fill:var(--panel); }
+  svg .panel-stroke { fill:var(--panel); stroke:var(--rail); stroke-width:1; vector-effect:non-scaling-stroke; }
+  svg .signal-fill { fill:var(--signal); }
+  svg .hollow { fill:var(--bg); stroke:var(--ink); stroke-width:1.5; vector-effect:non-scaling-stroke; }
+  svg .cat-1 { fill:var(--cat-1); } svg .cat-2 { fill:var(--cat-2); }
+  svg .cat-3 { fill:var(--cat-3); } svg .cat-4 { fill:var(--cat-4); }
+  .chart-footer { display:flex; justify-content:space-between; align-items:end; color:var(--muted); font-size:12px; letter-spacing:.02em; border-bottom:1px solid var(--grid); padding-bottom:7px; }
+  .chart-footer .mark { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; letter-spacing:.1em; }
+  [data-mode="brief"] .evidence-plate { display:none; }
+  [data-mode="brief"] svg .grid { opacity:.62; }
+  .motion-controls { position:absolute; right:54px; top:48px; display:flex; gap:6px; z-index:5; }
+  .motion-controls button { width:30px; height:30px; border:1px solid var(--rail); background:var(--bg); color:var(--ink); font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; cursor:pointer; padding:0; }
+  .motion-controls button:hover { border-color:var(--signal); color:var(--signal); }
+  [data-motion] { transform-box:fill-box; transform-origin:center; }
+  @keyframes mx-align { from { opacity:0; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
+  @keyframes mx-dock { from { opacity:0; transform:translate(var(--dx),var(--dy)); } to { opacity:1; transform:translate(0,0); } }
+  @keyframes mx-route { from { opacity:.25; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
+  @keyframes mx-lock { 0% { opacity:0; transform:scale(.92); } 68% { opacity:1; transform:scale(1.025); } 100% { opacity:1; transform:scale(1); } }
+  .motion-enabled.is-playing [data-motion="align"] { stroke-dasharray:1; animation:mx-align var(--duration,220ms) linear var(--delay,0ms) both; }
+  .motion-enabled.is-playing [data-motion="dock"] { animation:mx-dock var(--duration,620ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
+  .motion-enabled.is-playing [data-motion="route"] { stroke-dasharray:1; animation:mx-route var(--duration,520ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
+  .motion-enabled.is-playing [data-motion="lock"] { animation:mx-lock var(--duration,280ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
+  .motion-enabled.is-paused [data-motion] { animation-play-state:paused!important; }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing [data-motion] { animation:none!important; } }
+</style>
+</head>
+<body>
+<main class="chart-container" id="moxing-chart" data-total="1750" data-mode="editorial">
+  <header class="chart-header">
+    <div class="chart-code">C2 / RANKED RAIL</div>
+    <div><h1 class="chart-title">华东服务评分居首，区域差距仍可控</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div></div>
+  </header>
+  <section class="chart-body"><svg viewBox="0 0 1172 500" role="img" aria-label="华东服务评分居首，区域差距仍可控"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >02 / RANKED DATUM</text>
+<g class="evidence-plate" data-motion="lock" style="--delay:1300ms;--dx:-8px;--dy:0px">
+<path d="M 0 74 H 234 L 242 82 V 168 H 8 L 0 160 Z" class="panel-stroke" />
+<text x="14" y="95" class="index muted" text-anchor="start" font-size="12" >R-01</text>
+<text x="228" y="95" class="index signal-text" text-anchor="end" font-size="12" >TOP</text>
+<text x="14" y="129" class="value" text-anchor="start" font-size="28" font-weight="650" >94</text>
+<text x="14" y="151" class="muted" text-anchor="start" font-size="13" >华东客户服务中心</text>
+</g>
+<text x="0" y="88" class="index muted" text-anchor="start" font-size="12" >01</text>
+<text x="44" y="88" class="label" text-anchor="start" font-size="14" font-weight="600" >华东客户服务中心</text>
+<line x1="330" y1="82" x2="1116" y2="82" class="grid" pathLength="1" data-motion="align" style="--delay:80ms;--dx:0px;--dy:0px"/>
+<path d="M 330 70 H 1111 L 1116 75 V 94 H 335 L 330 89 Z" class="signal-fill" data-motion="dock" style="--delay:280ms;--dx:-28px;--dy:0px"/>
+<line x1="1116" y1="65" x2="1116" y2="100" class="rail" data-motion="align" style="--delay:680ms;--dx:0px;--dy:0px"/>
+<text x="1114" y="88" class="value" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" style="--delay:900ms;--dx:0px;--dy:0px">94</text>
+<text x="0" y="151" class="index muted" text-anchor="start" font-size="12" >02</text>
+<text x="44" y="151" class="label" text-anchor="start" font-size="14" >华南客户服务中心</text>
+<line x1="330" y1="145" x2="1116" y2="145" class="grid" pathLength="1" data-motion="align" style="--delay:115ms;--dx:0px;--dy:0px"/>
+<path d="M 330 133 H 1052.47 L 1057.47 138 V 157 H 335 L 330 152 Z" class="data-fill" data-motion="dock" style="--delay:350ms;--dx:-28px;--dy:0px"/>
+<line x1="1057.47" y1="128" x2="1057.47" y2="163" class="rail" data-motion="align" style="--delay:735ms;--dx:0px;--dy:0px"/>
+<text x="1069.47" y="151" class="value" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" style="--delay:940ms;--dx:0px;--dy:0px">87</text>
+<text x="0" y="214" class="index muted" text-anchor="start" font-size="12" >03</text>
+<text x="44" y="214" class="label" text-anchor="start" font-size="14" >华北客户服务中心</text>
+<line x1="330" y1="208" x2="1116" y2="208" class="grid" pathLength="1" data-motion="align" style="--delay:150ms;--dx:0px;--dy:0px"/>
+<path d="M 330 196 H 1010.66 L 1015.66 201 V 220 H 335 L 330 215 Z" class="data-fill" data-motion="dock" style="--delay:420ms;--dx:-28px;--dy:0px"/>
+<line x1="1015.66" y1="191" x2="1015.66" y2="226" class="rail" data-motion="align" style="--delay:790ms;--dx:0px;--dy:0px"/>
+<text x="1027.66" y="214" class="value" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" style="--delay:980ms;--dx:0px;--dy:0px">82</text>
+<text x="0" y="277" class="index muted" text-anchor="start" font-size="12" >04</text>
+<text x="44" y="277" class="label" text-anchor="start" font-size="14" >西南客户服务中心</text>
+<line x1="330" y1="271" x2="1116" y2="271" class="grid" pathLength="1" data-motion="align" style="--delay:185ms;--dx:0px;--dy:0px"/>
+<path d="M 330 259 H 960.49 L 965.49 264 V 283 H 335 L 330 278 Z" class="data-fill" data-motion="dock" style="--delay:490ms;--dx:-28px;--dy:0px"/>
+<line x1="965.49" y1="254" x2="965.49" y2="289" class="rail" data-motion="align" style="--delay:845ms;--dx:0px;--dy:0px"/>
+<text x="977.49" y="277" class="value" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" style="--delay:1020ms;--dx:0px;--dy:0px">76</text>
+<text x="0" y="340" class="index muted" text-anchor="start" font-size="12" >05</text>
+<text x="44" y="340" class="label" text-anchor="start" font-size="14" >华中客户服务中心</text>
+<line x1="330" y1="334" x2="1116" y2="334" class="grid" pathLength="1" data-motion="align" style="--delay:220ms;--dx:0px;--dy:0px"/>
+<path d="M 330 322 H 918.68 L 923.68 327 V 346 H 335 L 330 341 Z" class="data-fill" data-motion="dock" style="--delay:560ms;--dx:-28px;--dy:0px"/>
+<line x1="923.68" y1="317" x2="923.68" y2="352" class="rail" data-motion="align" style="--delay:900ms;--dx:0px;--dy:0px"/>
+<text x="935.68" y="340" class="value" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" style="--delay:1060ms;--dx:0px;--dy:0px">71</text>
+<text x="0" y="403" class="index muted" text-anchor="start" font-size="12" >06</text>
+<text x="44" y="403" class="label" text-anchor="start" font-size="14" >西北客户服务中心</text>
+<line x1="330" y1="397" x2="1116" y2="397" class="grid" pathLength="1" data-motion="align" style="--delay:255ms;--dx:0px;--dy:0px"/>
+<path d="M 330 385 H 868.51 L 873.51 390 V 409 H 335 L 330 404 Z" class="data-fill" data-motion="dock" style="--delay:630ms;--dx:-28px;--dy:0px"/>
+<line x1="873.51" y1="380" x2="873.51" y2="415" class="rail" data-motion="align" style="--delay:955ms;--dx:0px;--dy:0px"/>
+<text x="885.51" y="403" class="value" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" style="--delay:1100ms;--dx:0px;--dy:0px">65</text></svg></section>
+  <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
+  <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" title="重播">↻</button><button type="button" data-action="pause" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" title="切换明暗">◐</button></nav>
+</main>
+<script type="application/json" id="moxing-data">[{"label":"华东客户服务中心","value":94},{"label":"华南客户服务中心","value":87},{"label":"华北客户服务中心","value":82},{"label":"西南客户服务中心","value":76},{"label":"华中客户服务中心","value":71},{"label":"西北客户服务中心","value":65}]</script>
+<script>
+(() => {
+  const root=document.getElementById('moxing-chart');
+  const params=new URLSearchParams(location.search);
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches||params.get('motion')==='off';
+  const profile=params.get('motion')||'standard';
+  const scales={brief:.72,standard:1,story:1.8};
+  const scale=scales[profile]||1;
+  const total=Math.round(Number(root.dataset.total||1800)*scale);
+  const baseDuration={align:220,dock:620,route:520,lock:280};
+  root.querySelectorAll('[data-motion]').forEach(el=>{
+    const rawDelay=parseFloat(el.style.getPropertyValue('--delay'))||0;
+    const rawDuration=parseFloat(el.style.getPropertyValue('--duration'))||baseDuration[el.dataset.motion]||300;
+    el.style.setProperty('--delay',Math.round(rawDelay*scale)+'ms');
+    el.style.setProperty('--duration',Math.round(rawDuration*scale)+'ms');
+  });
+  let timer=0;
+  const settle=()=>{ clearTimeout(timer); root.classList.remove('is-playing','is-paused'); root.classList.add('is-complete'); };
+  const replay=()=>{
+    clearTimeout(timer); root.classList.remove('is-playing','is-complete','is-paused'); void root.offsetWidth;
+    if(reduce){settle();return;}
+    root.style.setProperty('--motion-scale',scale); root.classList.add('motion-enabled','is-playing');
+    timer=setTimeout(settle,total+120);
+  };
+  const pause=()=>{ root.classList.toggle('is-paused'); const b=root.querySelector('[data-action=pause]'); b.textContent=root.classList.contains('is-paused')?'▶':'Ⅱ'; };
+  root.querySelector('[data-action=replay]').addEventListener('click',replay);
+  root.querySelector('[data-action=pause]').addEventListener('click',pause);
+  root.querySelector('[data-action=surface]').addEventListener('click',()=>{ const html=document.documentElement; html.dataset.surface=html.dataset.surface==='dark'?'light':'dark'; });
+  if(params.get('theme')==='dark') document.documentElement.dataset.surface='dark';
+  window.Moxing={replay,settle,setSurface:(v)=>document.documentElement.dataset.surface=v,ready:Promise.resolve()};
+  if(reduce) settle();
+  else if('IntersectionObserver'in window){ const io=new IntersectionObserver(e=>{if(e[0].isIntersecting){io.disconnect();replay();}},{threshold:.35});io.observe(root); }
+  else replay();
+})();
+</script>
+</body>
+</html>

@@ -1,162 +1,174 @@
 {
-  "generatedAt": "2026-08-19T08:31:25.362Z",
+  "generatedAt": "2026-08-19T10:53:41.252Z",
   "status": "passed",
   "checks": [
     {
-      "scope": "paper",
-      "message": "TXT/BG 对比度 14.51"
+      "scope": "tokens:light",
+      "message": "ink/bg contrast 15.87"
     },
     {
-      "scope": "paper",
-      "message": "MUT/BG 对比度 3.11"
+      "scope": "tokens:light",
+      "message": "signal/bg contrast 3.47"
     },
     {
-      "scope": "ink",
-      "message": "TXT/BG 对比度 14.91"
+      "scope": "tokens:dark",
+      "message": "ink/bg contrast 15.87"
     },
     {
-      "scope": "ink",
-      "message": "MUT/BG 对比度 3.90"
+      "scope": "tokens:dark",
+      "message": "signal/bg contrast 5.60"
     },
     {
-      "scope": "boardroom",
-      "message": "TXT/BG 对比度 15.11"
+      "scope": "static:c01-structural-rank.html",
+      "message": "v2 static contract"
     },
     {
-      "scope": "boardroom",
-      "message": "MUT/BG 对比度 3.71"
+      "scope": "static:c02-ranked-rail.html",
+      "message": "v2 static contract"
     },
     {
-      "scope": "tech",
-      "message": "TXT/BG 对比度 14.76"
+      "scope": "static:c03-signal-trend.html",
+      "message": "v2 static contract"
     },
     {
-      "scope": "tech",
-      "message": "MUT/BG 对比度 5.63"
+      "scope": "static:c04-composition-field.html",
+      "message": "v2 static contract"
     },
     {
-      "scope": "mori",
-      "message": "TXT/BG 对比度 10.01"
+      "scope": "static:c05-composition-bands.html",
+      "message": "v2 static contract"
     },
     {
-      "scope": "mori",
-      "message": "MUT/BG 对比度 3.06"
+      "scope": "static:c06-ledger-steps.html",
+      "message": "v2 static contract"
     },
     {
-      "scope": "dawn",
-      "message": "TXT/BG 对比度 14.65"
+      "scope": "static:c07-milestone-lanes.html",
+      "message": "v2 static contract"
     },
     {
-      "scope": "dawn",
-      "message": "MUT/BG 对比度 5.75"
+      "scope": "static:c08-stage-channel.html",
+      "message": "v2 static contract"
     },
     {
-      "scope": "c01-bar.html:js",
-      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+      "scope": "static:c09-metric-lockup.html",
+      "message": "v2 static contract"
     },
     {
-      "scope": "c01-bar.html:no-js",
-      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+      "scope": "static:c10-decision-interface.html",
+      "message": "v2 static contract"
     },
     {
-      "scope": "c02-hbar.html:js",
-      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+      "scope": "c01-structural-rank.html:js",
+      "message": "runtime and locked frame"
     },
     {
-      "scope": "c02-hbar.html:no-js",
-      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+      "scope": "c01-structural-rank.html:no-js",
+      "message": "static fallback"
     },
     {
-      "scope": "c03-line.html:js",
-      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+      "scope": "c02-ranked-rail.html:js",
+      "message": "runtime and locked frame"
     },
     {
-      "scope": "c03-line.html:no-js",
-      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+      "scope": "c02-ranked-rail.html:no-js",
+      "message": "static fallback"
     },
     {
-      "scope": "c04-donut.html:js",
-      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+      "scope": "c03-signal-trend.html:js",
+      "message": "runtime and locked frame"
     },
     {
-      "scope": "c04-donut.html:no-js",
-      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+      "scope": "c03-signal-trend.html:no-js",
+      "message": "static fallback"
     },
     {
-      "scope": "c05-stacked.html:js",
-      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+      "scope": "c04-composition-field.html:js",
+      "message": "runtime and locked frame"
     },
     {
-      "scope": "c05-stacked.html:no-js",
-      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+      "scope": "c04-composition-field.html:no-js",
+      "message": "static fallback"
     },
     {
-      "scope": "c06-waterfall.html:js",
-      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+      "scope": "c05-composition-bands.html:js",
+      "message": "runtime and locked frame"
     },
     {
-      "scope": "c06-waterfall.html:no-js",
-      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+      "scope": "c05-composition-bands.html:no-js",
+      "message": "static fallback"
     },
     {
-      "scope": "c07-gantt.html:js",
-      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+      "scope": "c06-ledger-steps.html:js",
+      "message": "runtime and locked frame"
     },
     {
-      "scope": "c07-gantt.html:no-js",
-      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+      "scope": "c06-ledger-steps.html:no-js",
+      "message": "static fallback"
     },
     {
-      "scope": "c08-funnel.html:js",
-      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+      "scope": "c07-milestone-lanes.html:js",
+      "message": "runtime and locked frame"
     },
     {
-      "scope": "c08-funnel.html:no-js",
-      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+      "scope": "c07-milestone-lanes.html:no-js",
+      "message": "static fallback"
     },
     {
-      "scope": "c09-kpi.html:js",
-      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+      "scope": "c08-stage-channel.html:js",
+      "message": "runtime and locked frame"
     },
     {
-      "scope": "c09-kpi.html:no-js",
-      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+      "scope": "c08-stage-channel.html:no-js",
+      "message": "static fallback"
     },
     {
-      "scope": "c10-compare.html:js",
-      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+      "scope": "c09-metric-lockup.html:js",
+      "message": "runtime and locked frame"
     },
     {
-      "scope": "c10-compare.html:no-js",
-      "message": "静态 SVG、尺寸、控制台与请求检查通过"
+      "scope": "c09-metric-lockup.html:no-js",
+      "message": "static fallback"
     },
     {
-      "scope": "gallery:paper",
-      "message": "10 个图型可见并已导出 C10 主题样张"
+      "scope": "c10-decision-interface.html:js",
+      "message": "runtime and locked frame"
     },
     {
-      "scope": "gallery:ink",
-      "message": "10 个图型可见并已导出 C10 主题样张"
+      "scope": "c10-decision-interface.html:no-js",
+      "message": "static fallback"
     },
     {
-      "scope": "gallery:boardroom",
-      "message": "10 个图型可见并已导出 C10 主题样张"
+      "scope": "motion",
+      "message": "19 deterministic animations active"
     },
     {
-      "scope": "gallery:tech",
-      "message": "10 个图型可见并已导出 C10 主题样张"
+      "scope": "motion",
+      "message": "dark surface toggle"
     },
     {
-      "scope": "gallery:mori",
-      "message": "10 个图型可见并已导出 C10 主题样张"
+      "scope": "reduced-motion",
+      "message": "locked frame without motion"
     },
     {
-      "scope": "gallery:dawn",
-      "message": "10 个图型可见并已导出 C10 主题样张"
+      "scope": "preview:c01-structural-rank.html",
+      "message": "locked preview exported"
     },
     {
-      "scope": "gallery:no-js",
-      "message": "禁用 JS 时 paper 主题 10 个图型完整可见"
+      "scope": "preview:c03-signal-trend.html",
+      "message": "locked preview exported"
+    },
+    {
+      "scope": "preview:c08-stage-channel.html",
+      "message": "locked preview exported"
+    },
+    {
+      "scope": "preview:c10-decision-interface.html",
+      "message": "locked preview exported"
+    },
+    {
+      "scope": "gallery",
+      "message": "10 compact v2 cards"
     }
   ],
   "failures": []

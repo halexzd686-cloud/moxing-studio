@@ -1,85 +1,70 @@
-# Moxing Studio
+# Moxing Studio v2
 
-Moxing Studio 是一个面向职场汇报的单页图表 Skill：输入数据，输出可直接投屏或贴入 PPT 的 `1280×720` 单文件 HTML 图表。
+Moxing Studio 把中文商业数据生成具有结构装配动画的离线 HTML/SVG 图表。它不是一组 PPT 主题，而是一套统一的 **Structural Interface / 结构接口**：数据先对齐基准、装配构件、接通关系，最后锁定结论。
 
-图表主体是内联静态 SVG。没有在线字体、外部图表库和运行时布局计算；即使禁用 JavaScript，图表仍然完整可见。
+## Visual language
 
-## 图型
+- 建筑秩序主导，东方当代气质来自比例、留白和中文排版。
+- 基准脊线、榫接接口、证据铭牌和氧化橙锁定标记构成统一签名。
+- 冷白工程纸为默认，配套深色仪器面板。
+- 动画遵循 `ALIGN → DOCK → ROUTE → LOCK`。
+- 无 JavaScript 或减少动态效果时，直接显示完整静态终态。
 
-| 编号 | 图型 | 适用数据 |
+## Charts
+
+| ID | Name | Use |
 |---|---|---|
-| C1 | 柱状图 | 少量类目比较 |
-| C2 | 条形图 | 排名、长类目名 |
-| C3 | 折线图 | 时间趋势，最多 4 条序列 |
-| C4 | 环形图 | 最多 6 部分的占比构成 |
-| C5 | 堆叠柱 | 构成 × 时间或类目 |
-| C6 | 瀑布图 | 起点到终点的增减分解 |
-| C7 | 甘特图 | 最多 10 个任务的项目排期 |
-| C8 | 漏斗图 | 3–6 级阶段转化 |
-| C9 | 指标卡 | 单个 KPI |
-| C10 | 对比卡 | 2–4 个 KPI 并列比较 |
+| C1 | Structural Rank | 少量类目比较 |
+| C2 | Ranked Rail | 排名、长类目名 |
+| C3 | Signal Trend | 时间趋势 |
+| C4 | Composition Field | 占比构成 |
+| C5 | Composition Bands | 构成随时间/类目变化 |
+| C6 | Ledger Steps | 增减分解 |
+| C7 | Milestone Lanes | 项目排期 |
+| C8 | Stage Channel | 阶段转化 |
+| C9 | Metric Lockup | 单个 KPI |
+| C10 | Decision Interface | 2–4 个 KPI 对比 |
 
-## 主题
+## Generate
 
-内置 `paper`、`ink`、`boardroom`、`tech`、`mori`、`dawn` 六套主题。完整的 60 种组合可在 [验收画廊](templates/gallery.html) 中查看。
-
-| paper | ink | boardroom |
-|---|---|---|
-| ![paper](docs/previews/paper.png) | ![ink](docs/previews/ink.png) | ![boardroom](docs/previews/boardroom.png) |
-
-| tech | mori | dawn |
-|---|---|---|
-| ![tech](docs/previews/tech.png) | ![mori](docs/previews/mori.png) | ![dawn](docs/previews/dawn.png) |
-
-## 使用
-
-1. 根据 [SKILL.md](SKILL.md) 的数据形状决策树选择 C1–C10。
-2. 复制 `templates/` 中对应模板，只替换数据、结论标题、单位、时间范围和来源。
-3. 按 `SKILL.md` 的 11 条清单自检后交付 HTML。
-4. 需要 PNG 时运行：
-
-```powershell
-python scripts/export.py templates/c10-compare.html output.png
-```
-
-导出脚本优先使用 Python Playwright；未安装时会自动尝试系统 Chrome 或 Edge。成功输出为 `2560×1440` PNG。
-
-## 重新构建
-
-项目构建阶段需要 Python 3，生成后的 HTML 没有运行依赖。
+生成默认模板和动画画廊：
 
 ```powershell
 python scripts/build_templates.py
 python scripts/build_gallery.py
 ```
 
-## 验收
+从 JSON 生成可独立发送的单文件 HTML：
 
-边界数据测试不需要第三方依赖：
+```powershell
+python scripts/render.py --chart C3 --data data.json --output chart.html `
+  --title "增长在下半年加速，年末达到新高" `
+  --subtitle "单位：万元 · 2025 年 1–12 月" `
+  --footer "数据来源：内部经营系统 · 口径：含税收入"
+```
+
+打开 [templates/gallery.html](templates/gallery.html) 查看十种动画图表。
+
+## Export
+
+```powershell
+python scripts/export.py chart.html chart.png
+node scripts/export-motion.mjs chart.html chart.webm standard
+```
+
+视频脚本支持 WebM；首次使用可运行 `npx playwright install ffmpeg` 安装录制组件。系统安装 `ffmpeg` 后还可输出 MP4/GIF。静态导出固定为 `2560×1440`。
+
+## Validation
 
 ```powershell
 python scripts/test_boundaries.py
-```
-
-浏览器验收需要 Node.js、Playwright 和 Chrome/Edge。通常可直接运行：
-
-```powershell
 node scripts/validate.mjs .
 ```
 
-若使用已有的 Playwright 包或指定系统浏览器，可设置 `MOXING_PLAYWRIGHT_PATH` 和 `MOXING_BROWSER_EXECUTABLE`。验收结果写入 `docs/previews/qa-report.json`。
+浏览器验收覆盖：浅/深模式、动画播放、禁用 JavaScript、减少动态效果、外部请求、字体加载、页面溢出和锁定状态截图。
 
-## 设计约束
+## Fonts and licensing
 
-- 固定画布 `1280×720`，一屏一图一结论。
-- 单文件 HTML，无外部请求。
-- 静态 SVG；JavaScript 只允许增强 tooltip。
-- 柱长与数值成正比，坐标轴包含零点。
-- 标题写结论，单位、时间和来源静态可见。
-- 不使用 3D、渐变、阴影、玻璃拟态、双 Y 轴或彩虹色。
+仓库包含经过 GB2312 常用字符压缩的 Noto Sans SC、Noto Serif SC 和 Doto WOFF2，用于离线渲染。字体遵循各自的 SIL Open Font License，许可证位于 `assets/fonts/`。
 
-## License
-
-[MIT](LICENSE)
-
-架构灵感来自 lieflat-charts 的模板驱动、设计令牌和自检思路；本项目的代码、文案与色值均为独立实现。
+项目代码使用 [MIT License](LICENSE)。v1 完整版本保存在 Git 标签 `v1.0`，主分支不重复维护旧模板和旧主题。

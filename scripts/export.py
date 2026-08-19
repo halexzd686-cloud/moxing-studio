@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""moxing-studio PNG 导出：优先 Playwright，缺失时回退到系统 Chrome/Edge。"""
+"""Moxing v2 PNG 导出：捕获动画完成后的锁定状态。"""
 from pathlib import Path
 import os
 import shutil
@@ -52,7 +52,7 @@ def export_with_browser(html_path, png_path):
             "--window-size=1280,720",
             "--force-device-scale-factor=2",
             f"--screenshot={Path(png_path).resolve()}",
-            Path(html_path).resolve().as_uri(),
+            f"{Path(html_path).resolve().as_uri()}?motion=off",
         ]
         result = subprocess.run(
             command,
@@ -80,8 +80,10 @@ def main():
             browser = p.chromium.launch()
             page = browser.new_page(viewport={"width": 1280, "height": 720},
                                     device_scale_factor=2)
-            page.goto(Path(html_path).resolve().as_uri())
-            page.wait_for_timeout(500)
+            page.goto(f"{Path(html_path).resolve().as_uri()}?motion=off", wait_until="load")
+            page.evaluate("document.fonts ? document.fonts.ready : Promise.resolve()")
+            page.evaluate("window.Moxing && window.Moxing.settle()")
+            page.wait_for_timeout(100)
             page.screenshot(path=png_path)
             browser.close()
         exported = True

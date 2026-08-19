@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-surface="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>付费转化是主瓶颈，续约质量相对稳定</title>
+<style>
+  @font-face{font-family:'Noto Sans SC';src:url('../assets/fonts/NotoSansSC-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Noto Serif SC';src:url('../assets/fonts/NotoSerifSC-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Doto';src:url('../assets/fonts/Doto-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+
+  [data-surface="light"] {
+    --bg:#F2F3EF; --ink:#171916; --muted:#6F746C;
+    --faint:#A9AEA5; --grid:#D8DBD4; --rail:#9DA39A;
+    --secondary:#BFC3BB; --signal:#D85A36; --panel:#E9EBE5;
+    --cat-1:#536A72; --cat-2:#6D7562; --cat-3:#887665; --cat-4:#7B6874;
+  }
+
+  [data-surface="dark"] {
+    --bg:#151714; --ink:#F0F1EB; --muted:#989D94;
+    --faint:#62675F; --grid:#30332E; --rail:#5E645B;
+    --secondary:#737970; --signal:#E56B47; --panel:#1E211D;
+    --cat-1:#8DA5AD; --cat-2:#A1AA91; --cat-3:#B39A86; --cat-4:#A18C9D;
+  }
+  * { box-sizing:border-box; }
+  html,body { width:1280px; height:720px; margin:0; overflow:hidden; background:var(--bg); color:var(--ink); }
+  body { font-family:'Noto Sans SC','Microsoft YaHei',sans-serif; -webkit-font-smoothing:antialiased; }
+  .chart-container { width:1280px; height:720px; padding:38px 54px 28px; display:grid; grid-template-rows:124px 1fr 28px; position:relative; background:var(--bg); }
+  .chart-header { display:grid; grid-template-columns:170px minmax(0,1fr); align-items:start; border-top:1.5px solid var(--ink); padding:12px 122px 0 0; }
+  .chart-code { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; font-size:14px; letter-spacing:.08em; color:var(--muted); }
+  .chart-title { margin:0; font-family:'Noto Serif SC','Songti SC',serif; font-size:34px; line-height:1.18; font-weight:700; letter-spacing:.01em; }
+  .chart-subtitle { margin-top:8px; color:var(--muted); font-size:14px; }
+  .chart-body { min-height:0; }
+  svg { display:block; width:100%; height:100%; overflow:visible; }
+  svg text { font-family:'Noto Sans SC','Microsoft YaHei',sans-serif; fill:var(--ink); }
+  svg .title-font { font-family:'Noto Serif SC','Songti SC',serif; }
+  svg .index { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; letter-spacing:.08em; }
+  svg .muted { fill:var(--muted); }
+  svg .faint { fill:var(--faint); }
+  svg .signal-text { fill:var(--signal); }
+  svg .value { fill:var(--ink); font-variant-numeric:tabular-nums; }
+  svg .grid { stroke:var(--grid); stroke-width:1; fill:none; vector-effect:non-scaling-stroke; }
+  svg .rail { stroke:var(--rail); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .rail-strong { stroke:var(--ink); stroke-width:2.25; fill:none; vector-effect:non-scaling-stroke; }
+  svg .data-stroke { stroke:var(--ink); stroke-width:2.25; fill:none; vector-effect:non-scaling-stroke; }
+  svg .secondary-stroke { stroke:var(--secondary); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .signal-stroke { stroke:var(--signal); stroke-width:2.5; fill:none; vector-effect:non-scaling-stroke; }
+  svg .data-fill { fill:var(--ink); }
+  svg .secondary-fill { fill:var(--secondary); }
+  svg .panel-fill { fill:var(--panel); }
+  svg .panel-stroke { fill:var(--panel); stroke:var(--rail); stroke-width:1; vector-effect:non-scaling-stroke; }
+  svg .signal-fill { fill:var(--signal); }
+  svg .hollow { fill:var(--bg); stroke:var(--ink); stroke-width:1.5; vector-effect:non-scaling-stroke; }
+  svg .cat-1 { fill:var(--cat-1); } svg .cat-2 { fill:var(--cat-2); }
+  svg .cat-3 { fill:var(--cat-3); } svg .cat-4 { fill:var(--cat-4); }
+  .chart-footer { display:flex; justify-content:space-between; align-items:end; color:var(--muted); font-size:12px; letter-spacing:.02em; border-bottom:1px solid var(--grid); padding-bottom:7px; }
+  .chart-footer .mark { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; letter-spacing:.1em; }
+  [data-mode="brief"] .evidence-plate { display:none; }
+  [data-mode="brief"] svg .grid { opacity:.62; }
+  .motion-controls { position:absolute; right:54px; top:48px; display:flex; gap:6px; z-index:5; }
+  .motion-controls button { width:30px; height:30px; border:1px solid var(--rail); background:var(--bg); color:var(--ink); font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; cursor:pointer; padding:0; }
+  .motion-controls button:hover { border-color:var(--signal); color:var(--signal); }
+  [data-motion] { transform-box:fill-box; transform-origin:center; }
+  @keyframes mx-align { from { opacity:0; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
+  @keyframes mx-dock { from { opacity:0; transform:translate(var(--dx),var(--dy)); } to { opacity:1; transform:translate(0,0); } }
+  @keyframes mx-route { from { opacity:.25; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }
+  @keyframes mx-lock { 0% { opacity:0; transform:scale(.92); } 68% { opacity:1; transform:scale(1.025); } 100% { opacity:1; transform:scale(1); } }
+  .motion-enabled.is-playing [data-motion="align"] { stroke-dasharray:1; animation:mx-align var(--duration,220ms) linear var(--delay,0ms) both; }
+  .motion-enabled.is-playing [data-motion="dock"] { animation:mx-dock var(--duration,620ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
+  .motion-enabled.is-playing [data-motion="route"] { stroke-dasharray:1; animation:mx-route var(--duration,520ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
+  .motion-enabled.is-playing [data-motion="lock"] { animation:mx-lock var(--duration,280ms) cubic-bezier(.22,.78,.22,1) var(--delay,0ms) both; }
+  .motion-enabled.is-paused [data-motion] { animation-play-state:paused!important; }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing [data-motion] { animation:none!important; } }
+</style>
+</head>
+<body>
+<main class="chart-container" id="moxing-chart" data-total="1900" data-mode="editorial">
+  <header class="chart-header">
+    <div class="chart-code">C8 / STAGE CHANNEL</div>
+    <div><h1 class="chart-title">付费转化是主瓶颈，续约质量相对稳定</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div></div>
+  </header>
+  <section class="chart-body"><svg viewBox="0 0 1172 500" role="img" aria-label="付费转化是主瓶颈，续约质量相对稳定"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >08 / STAGE INTERLOCK</text>
+<g class="evidence-plate" data-motion="lock" style="--delay:1520ms;--dx:-8px;--dy:0px">
+<path d="M 0 74 H 222 L 230 82 V 168 H 8 L 0 160 Z" class="panel-stroke" />
+<text x="14" y="95" class="index muted" text-anchor="start" font-size="12" >S-01</text>
+<text x="216" y="95" class="index signal-text" text-anchor="end" font-size="12" >RETENTION</text>
+<text x="14" y="129" class="value" text-anchor="start" font-size="28" font-weight="650" >11.8%</text>
+<text x="14" y="151" class="muted" text-anchor="start" font-size="13" >首阶段至末阶段</text>
+</g>
+<path d="M 332.8 108 H 428.8 L 436.8 116 V 392 H 340.8 L 332.8 384 Z" class="data-fill" data-motion="dock" style="--delay:300ms;--dx:-28px;--dy:0px"/>
+<line x1="384.8" y1="94" x2="384.8" y2="406" class="rail" data-motion="align" style="--delay:180ms;--dx:0px;--dy:0px"/>
+<text x="384.8" y="84" class="label" text-anchor="middle" font-size="14" font-weight="650" >访问</text>
+<text x="384.8" y="256" class="value" text-anchor="middle" font-size="16" font-weight="650" >1.2万</text>
+<path d="M 498.4 150 H 594.4 L 602.4 158 V 350 H 506.4 L 498.4 342 Z" class="cat-1" data-motion="dock" style="--delay:420ms;--dx:-28px;--dy:0px"/>
+<line x1="550.4" y1="136" x2="550.4" y2="364" class="rail" data-motion="align" style="--delay:240ms;--dx:0px;--dy:0px"/>
+<text x="550.4" y="126" class="label" text-anchor="middle" font-size="14" font-weight="650" >试用</text>
+<text x="550.4" y="256" class="value" text-anchor="middle" font-size="16" font-weight="650" >7,200</text>
+<line x1="436.8" y1="250" x2="498.4" y2="250" class="rail" pathLength="1" data-motion="route" style="--delay:790ms;--dx:0px;--dy:0px"/>
+<text x="467.6" y="234" class="muted index" text-anchor="middle" font-size="11" data-motion="lock" style="--delay:1095ms;--dx:0px;--dy:0px">−40%</text>
+<path d="M 664 174.68 H 760 L 768 182.68 V 325.33 H 672 L 664 317.33 Z" class="cat-1" data-motion="dock" style="--delay:540ms;--dx:-28px;--dy:0px"/>
+<line x1="716" y1="160.68" x2="716" y2="339.33" class="rail" data-motion="align" style="--delay:300ms;--dx:0px;--dy:0px"/>
+<text x="716" y="150.68" class="label" text-anchor="middle" font-size="14" font-weight="650" >激活</text>
+<text x="716" y="256" class="value" text-anchor="middle" font-size="16" font-weight="650" >4,380</text>
+<line x1="602.4" y1="250" x2="664" y2="250" class="rail" pathLength="1" data-motion="route" style="--delay:900ms;--dx:0px;--dy:0px"/>
+<text x="633.2" y="234" class="muted index" text-anchor="middle" font-size="11" data-motion="lock" style="--delay:1150ms;--dx:0px;--dy:0px">−39%</text>
+<path d="M 829.6 196.72 H 925.6 L 933.6 204.72 V 303.27 H 837.6 L 829.6 295.27 Z" class="signal-fill" data-motion="dock" style="--delay:660ms;--dx:-28px;--dy:0px"/>
+<line x1="881.6" y1="182.72" x2="881.6" y2="317.27" class="rail" data-motion="align" style="--delay:360ms;--dx:0px;--dy:0px"/>
+<text x="881.6" y="172.72" class="label" text-anchor="middle" font-size="14" font-weight="650" >付费</text>
+<text x="881.6" y="256" class="value" text-anchor="middle" font-size="16" font-weight="650" >1,860</text>
+<line x1="768" y1="250" x2="829.6" y2="250" class="signal-stroke" pathLength="1" data-motion="route" style="--delay:1010ms;--dx:0px;--dy:0px"/>
+<text x="798.8" y="234" class="signal-text index" text-anchor="middle" font-size="11" data-motion="lock" style="--delay:1205ms;--dx:0px;--dy:0px">−58%</text>
+<path d="M 995.2 200.57 H 1091.2 L 1099.2 208.57 V 299.42 H 1003.2 L 995.2 291.42 Z" class="cat-1" data-motion="dock" style="--delay:780ms;--dx:-28px;--dy:0px"/>
+<line x1="1047.2" y1="186.57" x2="1047.2" y2="313.42" class="rail" data-motion="align" style="--delay:420ms;--dx:0px;--dy:0px"/>
+<text x="1047.2" y="176.57" class="label" text-anchor="middle" font-size="14" font-weight="650" >续约</text>
+<text x="1047.2" y="256" class="value" text-anchor="middle" font-size="16" font-weight="650" >1,420</text>
+<line x1="933.6" y1="250" x2="995.2" y2="250" class="rail" pathLength="1" data-motion="route" style="--delay:1120ms;--dx:0px;--dy:0px"/>
+<text x="964.4" y="234" class="muted index" text-anchor="middle" font-size="11" data-motion="lock" style="--delay:1260ms;--dx:0px;--dy:0px">−24%</text>
+<line x1="302" y1="420" x2="1130" y2="420" class="rail-strong" pathLength="1" data-motion="align" style="--delay:90ms;--dx:0px;--dy:0px"/></svg></section>
+  <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
+  <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" title="重播">↻</button><button type="button" data-action="pause" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" title="切换明暗">◐</button></nav>
+</main>
+<script type="application/json" id="moxing-data">[{"stage":"访问","value":12000},{"stage":"试用","value":7200},{"stage":"激活","value":4380},{"stage":"付费","value":1860},{"stage":"续约","value":1420}]</script>
+<script>
+(() => {
+  const root=document.getElementById('moxing-chart');
+  const params=new URLSearchParams(location.search);
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches||params.get('motion')==='off';
+  const profile=params.get('motion')||'standard';
+  const scales={brief:.72,standard:1,story:1.8};
+  const scale=scales[profile]||1;
+  const total=Math.round(Number(root.dataset.total||1800)*scale);
+  const baseDuration={align:220,dock:620,route:520,lock:280};
+  root.querySelectorAll('[data-motion]').forEach(el=>{
+    const rawDelay=parseFloat(el.style.getPropertyValue('--delay'))||0;
+    const rawDuration=parseFloat(el.style.getPropertyValue('--duration'))||baseDuration[el.dataset.motion]||300;
+    el.style.setProperty('--delay',Math.round(rawDelay*scale)+'ms');
+    el.style.setProperty('--duration',Math.round(rawDuration*scale)+'ms');
+  });
+  let timer=0;
+  const settle=()=>{ clearTimeout(timer); root.classList.remove('is-playing','is-paused'); root.classList.add('is-complete'); };
+  const replay=()=>{
+    clearTimeout(timer); root.classList.remove('is-playing','is-complete','is-paused'); void root.offsetWidth;
+    if(reduce){settle();return;}
+    root.style.setProperty('--motion-scale',scale); root.classList.add('motion-enabled','is-playing');
+    timer=setTimeout(settle,total+120);
+  };
+  const pause=()=>{ root.classList.toggle('is-paused'); const b=root.querySelector('[data-action=pause]'); b.textContent=root.classList.contains('is-paused')?'▶':'Ⅱ'; };
+  root.querySelector('[data-action=replay]').addEventListener('click',replay);
+  root.querySelector('[data-action=pause]').addEventListener('click',pause);
+  root.querySelector('[data-action=surface]').addEventListener('click',()=>{ const html=document.documentElement; html.dataset.surface=html.dataset.surface==='dark'?'light':'dark'; });
+  if(params.get('theme')==='dark') document.documentElement.dataset.surface='dark';
+  window.Moxing={replay,settle,setSurface:(v)=>document.documentElement.dataset.surface=v,ready:Promise.resolve()};
+  if(reduce) settle();
+  else if('IntersectionObserver'in window){ const io=new IntersectionObserver(e=>{if(e[0].isIntersecting){io.disconnect();replay();}},{threshold:.35});io.observe(root); }
+  else replay();
+})();
+</script>
+</body>
+</html>
