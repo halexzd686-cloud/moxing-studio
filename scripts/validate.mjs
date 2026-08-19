@@ -225,6 +225,37 @@ for (const [file, headingSelector] of Object.entries({
   await context.close();
 }
 
+const collisionContext = await browser.newContext({ viewport: { width: 1280, height: 720 } });
+const collisionPage = await collisionContext.newPage();
+for (const file of chartFiles) {
+  await collisionPage.goto(`${pathToFileURL(path.join(templatesDir, file)).href}?motion=off`, { waitUntil: "load" });
+  const collisions = await collisionPage.evaluate(() => {
+    const plates = [...document.querySelectorAll(".evidence-plate")];
+    const geometry = [...document.querySelectorAll([
+      "line.rail-strong",
+      "path.data-stroke", "path.signal-stroke", "path.secondary-stroke",
+      "rect.data-fill", "rect.signal-fill", "rect.secondary-fill", "rect.cat-1",
+      "circle.data-fill", "circle.signal-fill", "circle.secondary-fill", "circle.cat-1",
+      "polygon.data-fill", "polygon.signal-fill", "polygon.secondary-fill", "polygon.cat-1",
+    ].join(","))].filter((element) => !element.closest(".evidence-plate"));
+    const overlaps = (a, b) => (
+      a.x <= b.x + b.width && a.x + a.width >= b.x
+      && a.y <= b.y + b.height && a.y + a.height >= b.y
+    );
+    return plates.flatMap((plate, plateIndex) => {
+      const plateBox = plate.getBBox();
+      return geometry.flatMap((element, geometryIndex) => {
+        const box = element.getBBox();
+        if (!overlaps(plateBox, box)) return [];
+        return [{ plate: plateIndex, geometry: geometryIndex, tag: element.tagName, className: element.getAttribute("class") || "" }];
+      });
+    });
+  });
+  if (collisions.length) fail(`collision:${file}`, JSON.stringify(collisions.slice(0, 4)));
+  else pass(`collision:${file}`, "evidence plates clear critical plot geometry");
+}
+await collisionContext.close();
+
 const fillContext = await browser.newContext({ viewport: { width: 1280, height: 720 } });
 const fillPage = await fillContext.newPage();
 await fillPage.goto(`${pathToFileURL(path.join(templatesDir, "c05-composition-bands.html")).href}?motion=off`, { waitUntil: "load" });
@@ -242,7 +273,7 @@ if (reducedState.running || !reducedState.complete) fail("reduced-motion", JSON.
 else pass("reduced-motion", "locked frame without motion");
 await reducedContext.close();
 
-for (const file of ["c01-structural-rank.html", "c03-signal-trend.html", "c08-stage-channel.html", "c10-decision-interface.html", "c11-sector-lock.html", "c17-market-candles.html", "c20-sensitivity-matrix.html", "c23-forecast-fan.html"]) {
+for (const file of ["c01-structural-rank.html", "c03-signal-trend.html", "c08-stage-channel.html", "c10-decision-interface.html", "c11-sector-lock.html", "c16-decision-bubble-matrix.html", "c17-market-candles.html", "c20-sensitivity-matrix.html", "c23-forecast-fan.html"]) {
   const context = await browser.newContext({ viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1 });
   const page = await context.newPage();
   await page.goto(`${pathToFileURL(path.join(templatesDir, file)).href}?motion=off`, { waitUntil: "load" });

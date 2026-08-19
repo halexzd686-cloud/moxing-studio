@@ -26,6 +26,12 @@ from .core import (
 )
 
 
+# Charts with a top-left evidence plate reserve a dedicated annotation lane.
+# Keeping plot geometry to the right of this boundary prevents axes, marks, and
+# motion paths from disappearing behind the plate at any supported data density.
+PLOT_LEFT_WITH_EVIDENCE = 276
+
+
 DEFAULTS: dict[str, Any] = {
     "C1": [
         {"label": "华东", "value": 4280}, {"label": "华南", "value": 3650},
@@ -771,7 +777,7 @@ def build_c13(data: Any) -> str:
         cumulative.append(running / total * 100)
         if cumulative[-1] >= 80 and threshold == len(items) - 1:
             threshold = index
-    x0, x1, y0, y1 = 120, 1126, 80, 410
+    x0, x1, y0, y1 = PLOT_LEFT_WITH_EVIDENCE, 1126, 80, 410
     band = (x1 - x0) / len(items)
     maximum = max(item["value"] for item in items)
     parts = [text(0, 28, "13 / PARETO CONTRIBUTION", cls="index muted", size=13), line(x0, y1, x1, y1, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
@@ -844,13 +850,13 @@ def build_c15(data: Any) -> str:
     maximum = max(node["value"] for node in nodes) or 1
     for level_i, level in enumerate(levels):
         group_nodes = by_level[level]
-        x = _scale(level_i, 0, max(1, len(levels) - 1), 90, 1040)
+        x = _scale(level_i, 0, max(1, len(levels) - 1), PLOT_LEFT_WITH_EVIDENCE, 1040)
         for row_i, node in enumerate(group_nodes):
             y = 120 + (row_i + .5) * 300 / len(group_nodes)
             height = 42 + 74 * math.sqrt(node["value"] / maximum)
             positions[str(node["id"])] = (x, y - height / 2, 112, height)
     valid_links = [item for item in links[:18] if isinstance(item, dict) and str(item.get("source")) in positions and str(item.get("target")) in positions and is_number(item.get("value")) and item["value"] >= 0]
-    parts = [text(0, 28, "15 / COMMERCE FLOW", cls="index muted", size=13), line(42, 442, 1130, 442, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
+    parts = [text(0, 28, "15 / COMMERCE FLOW", cls="index muted", size=13), line(PLOT_LEFT_WITH_EVIDENCE, 442, 1130, 442, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
     link_max = max((item["value"] for item in valid_links), default=1) or 1
     for index, item in enumerate(valid_links):
         sx, sy, sw, sh = positions[str(item["source"])]
@@ -880,7 +886,7 @@ def build_c16(data: Any) -> str:
     x_values, y_values = [item["x"] for item in items], [item["y"] for item in items]
     x_low, x_high, y_low, y_high = min(x_values), max(x_values), min(y_values), max(y_values)
     x_pad, y_pad = max((x_high - x_low) * .12, 1), max((y_high - y_low) * .15, 1)
-    x0, x1, y0, y1 = 160, 1118, 74, 420
+    x0, x1, y0, y1 = PLOT_LEFT_WITH_EVIDENCE, 1118, 74, 420
     mid_x, mid_y = (x_low + x_high) / 2, (y_low + y_high) / 2
     x_mid, y_mid = _scale(mid_x, x_low - x_pad, x_high + x_pad, x0, x1), _scale(mid_y, y_low - y_pad, y_high + y_pad, y1, y0)
     leader = max(range(len(items)), key=lambda i: items[i]["x"] * items[i]["y"])
@@ -912,7 +918,7 @@ def build_c17(data: Any) -> str:
         return no_data()
     low, high = min(item["low"] for item in items), max(item["high"] for item in items)
     volume_max = max(item["volume"] for item in items) or 1
-    x0, x1, price_top, price_bottom, volume_bottom = 150, 1118, 64, 338, 432
+    x0, x1, price_top, price_bottom, volume_bottom = PLOT_LEFT_WITH_EVIDENCE, 1118, 64, 338, 432
     band = (x1 - x0) / len(items)
     y = lambda value: _scale(value, low, high, price_bottom, price_top)
     parts = [text(0, 28, "17 / MARKET CANDLES", cls="index muted", size=13), line(x0, price_bottom, x1, price_bottom, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}'), line(x0, volume_bottom, x1, volume_bottom, cls="rail")]
@@ -948,7 +954,7 @@ def build_c18(data: Any) -> str:
         dd = value / peak - 1
         drawdowns.append(dd)
         max_dd = min(max_dd, dd)
-    x0, x1, top, split, bottom = 150, 1118, 66, 294, 430
+    x0, x1, top, split, bottom = PLOT_LEFT_WITH_EVIDENCE, 1118, 66, 294, 430
     xs = [_scale(i, 0, max(1, len(values) - 1), x0, x1) for i in range(len(values))]
     perf = [(x, _scale(value, min(values), max(values), split - 24, top)) for x, value in zip(xs, values)]
     under = [(x, _scale(dd, max_dd if max_dd < 0 else -1, 0, bottom, split + 28)) for x, dd in zip(xs, drawdowns)]
@@ -975,7 +981,7 @@ def build_c19(data: Any) -> str:
     all_values = [value for item in series for value in item["values"]]
     low, high = min(all_values), max(all_values)
     pad = max((high - low) * .18, .1)
-    x0, x1, y0, y1 = 150, 1118, 76, 408
+    x0, x1, y0, y1 = PLOT_LEFT_WITH_EVIDENCE, 1118, 76, 408
     parts = [text(0, 28, "19 / YIELD CURVE", cls="index muted", size=13), line(x0, y1, x1, y1, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
     for tick in range(5):
         yy = y1 - (y1 - y0) * tick / 4
@@ -1050,7 +1056,7 @@ def build_c21(data: Any) -> str:
     for value in values:
         index = min(bins - 1, int((value - low) / (high - low or 1) * bins))
         counts[index] += 1
-    x0, x1, top, base = 150, 1118, 84, 336
+    x0, x1, top, base = PLOT_LEFT_WITH_EVIDENCE, 1118, 84, 336
     band = (x1 - x0) / bins
     maximum = max(counts)
     parts = [text(0, 28, "21 / DISTRIBUTION PROFILE", cls="index muted", size=13), line(x0, base, x1, base, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
@@ -1102,7 +1108,7 @@ def build_c23(data: Any) -> str:
     all_values = actual + lower + upper
     low, high = min(all_values), max(all_values)
     pad = max((high - low) * .12, 1)
-    x0, x1, y0, y1 = 150, 1118, 72, 414
+    x0, x1, y0, y1 = PLOT_LEFT_WITH_EVIDENCE, 1118, 72, 414
     xs = [_scale(index, 0, len(labels) - 1, x0, x1) for index in range(len(labels))]
     y = lambda value: _scale(value, low - pad, high + pad, y1, y0)
     split = len(actual) - 1
@@ -1137,7 +1143,7 @@ def build_c24(data: Any) -> str:
         return no_data()
     low, high = min(min(values), lcl), max(max(values), ucl)
     pad = max((high - low) * .15, 1)
-    x0, x1, y0, y1 = 150, 1118, 72, 414
+    x0, x1, y0, y1 = PLOT_LEFT_WITH_EVIDENCE, 1118, 72, 414
     xs = [_scale(index, 0, max(1, len(values) - 1), x0, x1) for index in range(len(values))]
     y = lambda value: _scale(value, low - pad, high + pad, y1, y0)
     points = [(x, y(value)) for x, value in zip(xs, values)]

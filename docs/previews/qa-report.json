@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-19T12:44:08.296Z",
+  "generatedAt": "2026-08-19T13:13:29.542Z",
   "status": "passed",
   "checks": [
     {
@@ -531,6 +531,102 @@
       "message": "evidence plate clears row headings"
     },
     {
+      "scope": "collision:c01-structural-rank.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c02-ranked-rail.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c03-signal-trend.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c04-composition-field.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c05-composition-bands.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c06-ledger-steps.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c07-milestone-lanes.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c08-stage-channel.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c09-metric-lockup.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c10-decision-interface.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c11-sector-lock.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c12-metric-small-multiples.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c13-pareto-contribution.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c14-cohort-matrix.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c15-commerce-flow.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c16-decision-bubble-matrix.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c17-market-candles.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c18-performance-drawdown.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c19-yield-curve.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c20-sensitivity-matrix.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c21-distribution-profile.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c22-correlation-matrix.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c23-forecast-fan.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
+      "scope": "collision:c24-control-chart.html",
+      "message": "evidence plates clear critical plot geometry"
+    },
+    {
       "scope": "layout:c05-composition-bands.html",
       "message": "12 adaptive on-fill labels"
     },
@@ -556,6 +652,10 @@
     },
     {
       "scope": "preview:c11-sector-lock.html",
+      "message": "locked preview exported"
+    },
+    {
+      "scope": "preview:c16-decision-bubble-matrix.html",
       "message": "locked preview exported"
     },
     {

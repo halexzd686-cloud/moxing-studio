@@ -141,7 +141,7 @@ npx playwright install chromium
 node scripts/validate.mjs .
 ```
 
-当前基线：边界渲染 `103/103`，浏览器、静态降级、动效与布局检查 `143/143`。GitHub Actions 会在每次推送和 Pull Request 中重新执行这些检查。
+当前基线：边界渲染 `103/103`，浏览器、静态降级、动效与布局检查 `168/168`。其中包含 24 张图的“结论铭牌—关键图形”碰撞扫描；GitHub Actions 会在每次推送和 Pull Request 中重新执行这些检查。
 
 ## Contributing
 

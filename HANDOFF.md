@@ -2,9 +2,9 @@
 
 > Updated: 2026-08-19
 >
-> Branch: `v2.0.1-hardening`
+> Branch: `v2.0.2-layout-safety`
 >
-> Status: v2 renderer, 24 public chart contracts, install/use docs, examples, CI, Pages workflow, fonts, export, and QA implemented
+> Status: v2.0.1 released; v2.0.2 layout-safety candidate reserves an evidence lane and prevents plate/plot collisions
 >
 > Visual review: approved on 2026-08-19
 
@@ -58,10 +58,11 @@ If Playwright is installed outside the project, set `MOXING_PLAYWRIGHT_PATH`. Se
 ## Current QA
 
 - 103 boundary render cases pass.
-- 143 browser/static/motion checks pass; see `docs/previews/qa-report.json`.
+- 168 browser/static/motion/layout checks pass; see `docs/previews/qa-report.json`.
 - All 24 templates render with and without JavaScript.
 - Reduced-motion mode settles immediately.
 - No external runtime requests.
+- All 24 templates scan evidence plates against critical plot geometry with zero collisions.
 - Signature locked-frame previews cover foundation, commerce, finance, and analysis contracts.
 
 ## v1 migration
@@ -70,6 +71,6 @@ The reusable data contracts, numerical formatting, boundary cases, browser detec
 
 ## Next release steps
 
-1. Review README installation and usage commands on a clean machine.
-2. Merge `v2.0.1-hardening` after CI and Pages pass remotely.
-3. Publish `v2.0.1` after the live Gallery URL is confirmed.
+1. Visually review the left evidence lane on C13, C15–C19, C21, C23, and C24.
+2. Merge `v2.0.2-layout-safety` after the gallery review passes.
+3. Publish a v2.0.2 patch release after CI and Pages pass remotely.
