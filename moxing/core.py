@@ -210,6 +210,7 @@ def _surface_css(name: str, values: dict[str, Any]) -> str:
     return f"""
   [data-surface=\"{name}\"] {{
     --bg:{values['bg']}; --ink:{values['ink']}; --muted:{values['muted']};
+    --matrix-strong:{values['matrixStrong']}; --matrix-quiet:{values['matrixQuiet']};
     --faint:{values['faint']}; --grid:{values['grid']}; --rail:{values['rail']};
     --secondary:{values['secondary']}; --signal:{values['signal']}; --panel:{values['panel']};
     --cat-1:{cats[0]}; --cat-2:{cats[1]}; --cat-3:{cats[2]}; --cat-4:{cats[3]};
@@ -259,17 +260,19 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   body {{ font-family:{text_font}; -webkit-font-smoothing:antialiased; }}
   .chart-container {{ width:1280px; height:720px; padding:38px 54px 28px; display:grid; grid-template-rows:124px 1fr 28px; position:relative; background:var(--bg); }}
   .chart-header {{ display:grid; grid-template-columns:170px minmax(0,1fr); align-items:start; border-top:1.5px solid var(--ink); padding:12px 122px 0 0; }}
-  .chart-code {{ font-family:{index_font}; font-size:14px; letter-spacing:.08em; color:var(--muted); }}
+  .chart-code {{ font-family:{index_font}; font-size:14px; font-weight:650; font-variation-settings:'ROND' 0,'wght' 650; letter-spacing:.055em; color:var(--matrix-strong); }}
   .chart-title {{ margin:0; font-family:{title_font}; font-size:34px; line-height:1.18; font-weight:700; letter-spacing:.01em; }}
   .chart-subtitle {{ margin-top:8px; color:var(--muted); font-size:14px; }}
   .chart-body {{ min-height:0; }}
   svg {{ display:block; width:100%; height:100%; overflow:visible; }}
   svg text {{ font-family:{text_font}; fill:var(--ink); }}
   svg .title-font {{ font-family:{title_font}; }}
-  svg .index {{ font-family:{index_font}; letter-spacing:.08em; }}
+  svg .index {{ font-family:{index_font}; font-weight:650; font-variation-settings:'ROND' 0,'wght' 650; letter-spacing:.055em; fill:var(--matrix-strong); }}
   svg .muted {{ fill:var(--muted); }}
   svg .faint {{ fill:var(--faint); }}
+  svg .index.muted {{ fill:var(--matrix-quiet); font-weight:560; font-variation-settings:'ROND' 0,'wght' 560; letter-spacing:.04em; }}
   svg .signal-text {{ fill:var(--signal); }}
+  svg .index.signal-text {{ fill:var(--signal); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; }}
   svg .value {{ fill:var(--ink); font-variant-numeric:tabular-nums; }}
   svg .grid {{ stroke:var(--grid); stroke-width:1; fill:none; vector-effect:non-scaling-stroke; }}
   svg .rail {{ stroke:var(--rail); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }}
@@ -286,7 +289,7 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   svg .cat-1 {{ fill:var(--cat-1); }} svg .cat-2 {{ fill:var(--cat-2); }}
   svg .cat-3 {{ fill:var(--cat-3); }} svg .cat-4 {{ fill:var(--cat-4); }}
   .chart-footer {{ display:flex; justify-content:space-between; align-items:end; color:var(--muted); font-size:12px; letter-spacing:.02em; border-bottom:1px solid var(--grid); padding-bottom:7px; }}
-  .chart-footer .mark {{ font-family:{index_font}; letter-spacing:.1em; }}
+  .chart-footer .mark {{ font-family:{index_font}; color:var(--matrix-quiet); font-weight:600; font-variation-settings:'ROND' 0,'wght' 600; letter-spacing:.07em; }}
   [data-mode=\"brief\"] .evidence-plate {{ display:none; }}
   [data-mode=\"brief\"] svg .grid {{ opacity:.62; }}
   .motion-controls {{ position:absolute; right:54px; top:48px; display:flex; gap:6px; z-index:5; }}

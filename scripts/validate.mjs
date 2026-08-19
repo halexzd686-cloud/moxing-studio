@@ -33,16 +33,24 @@ const tokens = JSON.parse(fs.readFileSync(path.join(root, "tokens", "system.json
 for (const [name, surface] of Object.entries(tokens.surfaces)) {
   const textRatio = contrast(surface.ink, surface.bg);
   const signalRatio = contrast(surface.signal, surface.bg);
+  const matrixStrongRatio = contrast(surface.matrixStrong, surface.bg);
+  const matrixQuietRatio = contrast(surface.matrixQuiet, surface.bg);
   if (textRatio < 7) fail(`tokens:${name}`, `ink/bg contrast ${textRatio.toFixed(2)}`);
   else pass(`tokens:${name}`, `ink/bg contrast ${textRatio.toFixed(2)}`);
   if (signalRatio < 3) fail(`tokens:${name}`, `signal/bg contrast ${signalRatio.toFixed(2)}`);
   else pass(`tokens:${name}`, `signal/bg contrast ${signalRatio.toFixed(2)}`);
+  if (matrixStrongRatio < 5) fail(`tokens:${name}`, `matrixStrong/bg contrast ${matrixStrongRatio.toFixed(2)}`);
+  else pass(`tokens:${name}`, `matrixStrong/bg contrast ${matrixStrongRatio.toFixed(2)}`);
+  if (matrixQuietRatio < 3.5) fail(`tokens:${name}`, `matrixQuiet/bg contrast ${matrixQuietRatio.toFixed(2)}`);
+  else pass(`tokens:${name}`, `matrixQuiet/bg contrast ${matrixQuietRatio.toFixed(2)}`);
 }
 
 for (const file of chartFiles) {
   const source = fs.readFileSync(path.join(templatesDir, file), "utf8");
   const scope = `static:${file}`;
   if (!source.includes('viewBox="0 0 1172 500"')) fail(scope, "missing v2 viewBox");
+  if (!source.includes("--matrix-strong:") || !source.includes("--matrix-quiet:")) fail(scope, "missing matrix contrast tokens");
+  if (/class="[^"]*index[^"]*"[^>]*font-size="11"/.test(source)) fail(scope, "dot-matrix text below 12px");
   if (!source.includes('data-motion="align"') || !source.includes('data-motion="dock"') || !source.includes('data-motion="lock"')) fail(scope, "missing motion primitives");
   if (!source.includes("prefers-reduced-motion") || !source.includes("window.Moxing")) fail(scope, "missing motion accessibility/runtime API");
   if (/<canvas\b/i.test(source)) fail(scope, "canvas is not allowed");

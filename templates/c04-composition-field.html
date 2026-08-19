@@ -11,6 +11,7 @@
 
   [data-surface="light"] {
     --bg:#F2F3EF; --ink:#171916; --muted:#6F746C;
+    --matrix-strong:#4E544D; --matrix-quiet:#777C75;
     --faint:#A9AEA5; --grid:#D8DBD4; --rail:#9DA39A;
     --secondary:#BFC3BB; --signal:#D85A36; --panel:#E9EBE5;
     --cat-1:#536A72; --cat-2:#6D7562; --cat-3:#887665; --cat-4:#7B6874;
@@ -18,6 +19,7 @@
 
   [data-surface="dark"] {
     --bg:#151714; --ink:#F0F1EB; --muted:#989D94;
+    --matrix-strong:#C3C7BF; --matrix-quiet:#8D938A;
     --faint:#62675F; --grid:#30332E; --rail:#5E645B;
     --secondary:#737970; --signal:#E56B47; --panel:#1E211D;
     --cat-1:#8DA5AD; --cat-2:#A1AA91; --cat-3:#B39A86; --cat-4:#A18C9D;
@@ -27,17 +29,19 @@
   body { font-family:'Noto Sans SC','Microsoft YaHei',sans-serif; -webkit-font-smoothing:antialiased; }
   .chart-container { width:1280px; height:720px; padding:38px 54px 28px; display:grid; grid-template-rows:124px 1fr 28px; position:relative; background:var(--bg); }
   .chart-header { display:grid; grid-template-columns:170px minmax(0,1fr); align-items:start; border-top:1.5px solid var(--ink); padding:12px 122px 0 0; }
-  .chart-code { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; font-size:14px; letter-spacing:.08em; color:var(--muted); }
+  .chart-code { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; font-size:14px; font-weight:650; font-variation-settings:'ROND' 0,'wght' 650; letter-spacing:.055em; color:var(--matrix-strong); }
   .chart-title { margin:0; font-family:'Noto Serif SC','Songti SC',serif; font-size:34px; line-height:1.18; font-weight:700; letter-spacing:.01em; }
   .chart-subtitle { margin-top:8px; color:var(--muted); font-size:14px; }
   .chart-body { min-height:0; }
   svg { display:block; width:100%; height:100%; overflow:visible; }
   svg text { font-family:'Noto Sans SC','Microsoft YaHei',sans-serif; fill:var(--ink); }
   svg .title-font { font-family:'Noto Serif SC','Songti SC',serif; }
-  svg .index { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; letter-spacing:.08em; }
+  svg .index { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; font-weight:650; font-variation-settings:'ROND' 0,'wght' 650; letter-spacing:.055em; fill:var(--matrix-strong); }
   svg .muted { fill:var(--muted); }
   svg .faint { fill:var(--faint); }
+  svg .index.muted { fill:var(--matrix-quiet); font-weight:560; font-variation-settings:'ROND' 0,'wght' 560; letter-spacing:.04em; }
   svg .signal-text { fill:var(--signal); }
+  svg .index.signal-text { fill:var(--signal); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; }
   svg .value { fill:var(--ink); font-variant-numeric:tabular-nums; }
   svg .grid { stroke:var(--grid); stroke-width:1; fill:none; vector-effect:non-scaling-stroke; }
   svg .rail { stroke:var(--rail); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
@@ -54,7 +58,7 @@
   svg .cat-1 { fill:var(--cat-1); } svg .cat-2 { fill:var(--cat-2); }
   svg .cat-3 { fill:var(--cat-3); } svg .cat-4 { fill:var(--cat-4); }
   .chart-footer { display:flex; justify-content:space-between; align-items:end; color:var(--muted); font-size:12px; letter-spacing:.02em; border-bottom:1px solid var(--grid); padding-bottom:7px; }
-  .chart-footer .mark { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; letter-spacing:.1em; }
+  .chart-footer .mark { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; color:var(--matrix-quiet); font-weight:600; font-variation-settings:'ROND' 0,'wght' 600; letter-spacing:.07em; }
   [data-mode="brief"] .evidence-plate { display:none; }
   [data-mode="brief"] svg .grid { opacity:.62; }
   .motion-controls { position:absolute; right:54px; top:48px; display:flex; gap:6px; z-index:5; }
@@ -180,7 +184,7 @@
 <text x="798" y="297" class="label" text-anchor="start" font-size="14" >社交媒体</text>
 <text x="1118" y="297" class="value index" text-anchor="end" font-size="14" font-weight="650" >14.0%</text>
 <line x1="310" y1="382" x2="704" y2="382" class="rail-strong" pathLength="1" data-motion="align" style="--delay:100ms;--dx:0px;--dy:0px"/>
-<text x="310" y="410" class="index muted" text-anchor="start" font-size="11" >40 MODULES / EACH = 2.5%</text></svg></section>
+<text x="310" y="410" class="index muted" text-anchor="start" font-size="12" >40 MODULES / EACH = 2.5%</text></svg></section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" title="重播">↻</button><button type="button" data-action="pause" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" title="切换明暗">◐</button></nav>
 </main>

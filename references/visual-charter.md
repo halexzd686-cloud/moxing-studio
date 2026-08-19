@@ -33,6 +33,7 @@ The internal metaphor is precise joinery. Public-facing language uses **Structur
 - Labels, notes, and axes: Noto Sans SC.
 - Latin indices, timecodes, percentages, and state codes: Doto.
 - Dot-matrix text never carries long Chinese labels or body copy.
+- Dot-matrix text uses its own strong/quiet contrast tokens, 12 px minimum, and 560–700 weight; signal states use the oxide colour and the strongest weight.
 - Minimum presentation sizes: title 30 px, body/axis 14 px, data label 16 px, source 12 px.
 
 ## Colour

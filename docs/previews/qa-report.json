@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-19T10:53:41.252Z",
+  "generatedAt": "2026-08-19T10:59:45.179Z",
   "status": "passed",
   "checks": [
     {
@@ -11,12 +11,28 @@
       "message": "signal/bg contrast 3.47"
     },
     {
+      "scope": "tokens:light",
+      "message": "matrixStrong/bg contrast 6.98"
+    },
+    {
+      "scope": "tokens:light",
+      "message": "matrixQuiet/bg contrast 3.83"
+    },
+    {
       "scope": "tokens:dark",
       "message": "ink/bg contrast 15.87"
     },
     {
       "scope": "tokens:dark",
       "message": "signal/bg contrast 5.60"
+    },
+    {
+      "scope": "tokens:dark",
+      "message": "matrixStrong/bg contrast 10.51"
+    },
+    {
+      "scope": "tokens:dark",
+      "message": "matrixQuiet/bg contrast 5.73"
     },
     {
       "scope": "static:c01-structural-rank.html",
