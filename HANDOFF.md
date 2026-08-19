@@ -2,7 +2,7 @@
 
 > 更新时间：2026-08-19  
 > 版本：v1.0 发布候选版  
-> 状态：Phase 3 验收完成；Phase 4 本地发布完成，待 GitHub 重新认证后推送
+> 状态：Phase 3 验收完成；Phase 4 已发布到 GitHub
 
 ## 一、项目概览
 
@@ -63,7 +63,7 @@ C7 已正式统一为甘特图，`SKILL.md`、构建脚本、模板和画廊口�
 - [x] 初始化本地 Git 仓库，默认分支为 `main`
 - [x] 创建首个发布提交与 `v1.0` tag
 - [x] 配置远端 `https://github.com/halexzd686-cloud/moxing-studio.git`
-- [ ] 推送主分支与标签（当前 GitHub CLI 登录令牌已失效，需重新认证）
+- [x] 推送 `main` 主分支与 `v1.0` 标签
 
 ## 三、本轮新增的健壮性处理
 
@@ -127,15 +127,10 @@ moxing-studio/
         └── qa-report.json
 ```
 
-## 六、剩余发布条件
+## 六、发布结果
 
-本地仓库、`main` 分支、发布提交、`v1.0` 标签和 `origin` 均已准备完成。当前唯一阻塞是 GitHub CLI 中 `halexzd686-cloud` 账号的登录令牌已经失效。
-
-重新执行 `gh auth login -h github.com` 完成登录后，运行：
-
-```powershell
-git push -u origin main
-git push origin v1.0
-```
-
-推送过程不使用 `--force`，不会主动覆盖远端历史。
+- 远端：`https://github.com/halexzd686-cloud/moxing-studio`
+- 默认分支：`main`
+- 发布标签：`v1.0`
+- 远端原有的 MIT LICENSE 初始提交已通过普通合并保留。
+- 整个发布过程未使用 `--force`，没有覆盖远端历史。
