@@ -4,3 +4,7 @@ __pycache__/
 moxing-studio-handoff.md
 .moxing-export-*/
 output.png
+output/
+node_modules/
+.venv/
+_site/

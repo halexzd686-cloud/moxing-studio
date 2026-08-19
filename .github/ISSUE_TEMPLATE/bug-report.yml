@@ -1,0 +1,43 @@
+name: Bug report
+description: 报告渲染、布局、动画、导出或安装问题
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: 问题范围
+      options:
+        - Skill 安装或调用
+        - HTML/SVG 渲染
+        - 动画与交互
+        - PNG/WebM/MP4/GIF 导出
+        - Gallery 或文档
+        - 其他
+    validations:
+      required: true
+  - type: input
+    id: chart
+    attributes:
+      label: 图表 ID
+      placeholder: 例如 C13；与具体图表无关时填写 N/A
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 最小复现步骤与数据
+      description: 请移除敏感业务数据，并提供可复制的最小 JSON。
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期结果与实际结果
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: 环境
+      placeholder: Windows 11 / Python 3.12 / Chrome 版本
+    validations:
+      required: true

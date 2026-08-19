@@ -10,6 +10,7 @@ description: 生成具有结构装配动画和静态降级能力的中文商业�
 ## Workflow
 
 1. 按数据形状、行业问题、标签长度和阅读速度选择 C1–C24。读取 [references/chart-contracts.md](references/chart-contracts.md) 获取契约、家族复用与选型边界。
+   需要可复制输入时，从 `examples/data/` 选择对应 ID 的 JSON；这些示例由 `scripts/export_examples.py` 从受测试保护的默认数据生成。
 2. 选择 `brief` 或 `editorial`。汇报默认 `brief`；文章、网页或需要解释证据时使用 `editorial`。需要动画时再选 `brief`、`standard` 或 `story` 时间轴，三者不是简单倍速。
 3. 默认使用冷白画布。用户明确要求深色、发布展示或仪器感时使用 `dark`。
 4. 标题写判断，不写图型名。单位、时间范围、口径和来源进入副标题或底行。

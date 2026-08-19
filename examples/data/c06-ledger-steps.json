@@ -1,0 +1,32 @@
+[
+  {
+    "label": "期初",
+    "value": 820,
+    "type": "start"
+  },
+  {
+    "label": "新增",
+    "value": 310,
+    "type": "increase"
+  },
+  {
+    "label": "续约",
+    "value": 180,
+    "type": "increase"
+  },
+  {
+    "label": "流失",
+    "value": -240,
+    "type": "decrease"
+  },
+  {
+    "label": "折扣",
+    "value": -90,
+    "type": "decrease"
+  },
+  {
+    "label": "期末",
+    "value": 980,
+    "type": "end"
+  }
+]
