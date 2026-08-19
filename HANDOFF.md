@@ -2,9 +2,9 @@
 
 > Updated: 2026-08-19
 >
-> Branch: `v2.0.2-layout-safety`
+> Branch: `main`
 >
-> Status: v2.0.2 release candidate; evidence-lane layout and plate/plot collision safeguards implemented
+> Status: v2.0.2; evidence-lane layout and plate/plot collision safeguards implemented
 >
 > Visual review: approved on 2026-08-19
 
@@ -69,8 +69,8 @@ If Playwright is installed outside the project, set `MOXING_PLAYWRIGHT_PATH`. Se
 
 The reusable data contracts, numerical formatting, boundary cases, browser detection, and static-fallback principle were retained. Six legacy themes, colour-substitution gallery, legacy SVG silhouettes, system-only font stack, and tooltip-only JavaScript restrictions were removed. The complete former project remains recoverable from tag `v1.0`.
 
-## Next release steps
+## Next maintenance steps
 
-1. Visually review the left evidence lane on C13, C15–C19, C21, C23, and C24.
-2. Merge `v2.0.2-layout-safety` after the gallery review passes.
-3. Publish a v2.0.2 patch release after CI and Pages pass remotely.
+1. Keep new top-left evidence plates inside the reserved annotation lane.
+2. Extend the critical-geometry selector when a new SVG mark family is introduced.
+3. Run boundary and browser QA before every release.
