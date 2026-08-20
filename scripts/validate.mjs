@@ -56,6 +56,7 @@ for (const [name, surface] of Object.entries(tokens.surfaces)) {
   const signalRatio = contrast(surface.signal, surface.bg);
   const matrixStrongRatio = contrast(surface.matrixStrong, surface.bg);
   const matrixQuietRatio = contrast(surface.matrixQuiet, surface.bg);
+  const onSignalRatio = contrast(surface.onSignal, surface.signal);
   if (textRatio < 7) fail(`tokens:${name}`, `ink/bg contrast ${textRatio.toFixed(2)}`);
   else pass(`tokens:${name}`, `ink/bg contrast ${textRatio.toFixed(2)}`);
   if (signalRatio < 3) fail(`tokens:${name}`, `signal/bg contrast ${signalRatio.toFixed(2)}`);
@@ -64,13 +65,20 @@ for (const [name, surface] of Object.entries(tokens.surfaces)) {
   else pass(`tokens:${name}`, `matrixStrong/bg contrast ${matrixStrongRatio.toFixed(2)}`);
   if (matrixQuietRatio < 3.5) fail(`tokens:${name}`, `matrixQuiet/bg contrast ${matrixQuietRatio.toFixed(2)}`);
   else pass(`tokens:${name}`, `matrixQuiet/bg contrast ${matrixQuietRatio.toFixed(2)}`);
+  if (onSignalRatio < 4.5) fail(`tokens:${name}`, `onSignal/signal contrast ${onSignalRatio.toFixed(2)}`);
+  else pass(`tokens:${name}`, `onSignal/signal contrast ${onSignalRatio.toFixed(2)}`);
+  for (const [index, category] of surface.cat.entries()) {
+    const ratio = contrast(surface.bg, category);
+    if (ratio < 4.5) fail(`tokens:${name}`, `bg/cat-${index + 1} contrast ${ratio.toFixed(2)}`);
+    else pass(`tokens:${name}`, `bg/cat-${index + 1} contrast ${ratio.toFixed(2)}`);
+  }
 }
 
 for (const file of chartFiles) {
   const source = fs.readFileSync(path.join(templatesDir, file), "utf8");
   const scope = `static:${file}`;
   if (!source.includes('viewBox="0 0 1172 500"')) fail(scope, "missing v2 viewBox");
-  if (!source.includes("--matrix-strong:") || !source.includes("--matrix-quiet:")) fail(scope, "missing matrix contrast tokens");
+  if (!source.includes("--matrix-strong:") || !source.includes("--matrix-quiet:") || !source.includes("--on-signal:")) fail(scope, "missing contrast tokens");
   if (/class="[^"]*index[^"]*"[^>]*font-size="11"/.test(source)) fail(scope, "dot-matrix text below 12px");
   if (!source.includes('data-motion="align"') || !source.includes('data-motion="dock"') || !source.includes('data-motion="lock"')) fail(scope, "missing motion primitives");
   if (!source.includes('data-total-brief="') || !source.includes('data-total-standard="') || !source.includes('data-total-story="')) fail(scope, "missing profile totals");
@@ -129,6 +137,7 @@ async function inspect(file, javaScriptEnabled) {
       shapes: document.querySelectorAll("svg path,svg rect,svg circle,svg line,svg polygon").length,
       api: Boolean(window.Moxing),
       surface: document.documentElement.dataset.surface,
+      headerGap: (() => { const code = document.querySelector(".chart-code"); const title = document.querySelector(".chart-title"); if (!code || !title) return -1; const range = document.createRange(); range.selectNodeContents(code); return title.getBoundingClientRect().left - range.getBoundingClientRect().right; })(),
       titleOverflow: (() => { const title = document.querySelector(".chart-title"); const header = document.querySelector(".chart-header"); if (!title || !header) return true; const range = document.createRange(); range.selectNodeContents(title); const textBox = range.getBoundingClientRect(); const titleBox = title.getBoundingClientRect(); const headerBox = header.getBoundingClientRect(); return textBox.right > titleBox.right + .5 || textBox.bottom > headerBox.bottom + .5; })(),
       overflow: document.body.scrollWidth > 1280 || document.body.scrollHeight > 720,
     };
@@ -137,6 +146,7 @@ async function inspect(file, javaScriptEnabled) {
   if (state.svg !== 1 || state.text === 0 || state.shapes === 0) fail(scope, `svg=${state.svg} text=${state.text} shapes=${state.shapes}`);
   if (state.overflow) fail(scope, "page overflow");
   if (state.titleOverflow) fail(scope, "conclusion title overflow");
+  if (state.headerGap < 24) fail(scope, `header gap ${state.headerGap.toFixed(1)}px`);
   if (javaScriptEnabled && !state.api) fail(scope, "runtime API missing");
   if (consoleErrors.length || pageErrors.length || external.length) fail(scope, [...consoleErrors, ...pageErrors, ...external].join(" | "));
   if (!failures.some((item) => item.scope === scope)) pass(scope, javaScriptEnabled ? "runtime and locked frame" : "static fallback");
@@ -256,6 +266,80 @@ for (const file of chartFiles) {
 }
 await collisionContext.close();
 
+const readabilityContext = await browser.newContext({ viewport: { width: 1280, height: 720 } });
+const readabilityPage = await readabilityContext.newPage();
+for (const file of chartFiles) {
+  const issues = [];
+  for (const surface of ["light", "dark"]) {
+    await readabilityPage.goto(`${pathToFileURL(path.join(templatesDir, file)).href}?motion=off`, { waitUntil: "load" });
+    await readabilityPage.evaluate((name) => { document.documentElement.dataset.surface = name; }, surface);
+    await readabilityPage.evaluate(() => document.fonts?.ready || Promise.resolve());
+    const surfaceIssues = await readabilityPage.evaluate((surfaceName) => {
+      const selector = [
+        "path.data-fill", "path.signal-fill", "path.secondary-fill",
+        "rect.data-fill", "rect.signal-fill", "rect.secondary-fill",
+        "circle.data-fill", "circle.signal-fill", "circle.secondary-fill",
+        "polygon.data-fill", "polygon.signal-fill", "polygon.secondary-fill",
+        "path.cat-1", "path.cat-2", "path.cat-3", "path.cat-4",
+        "rect.cat-1", "rect.cat-2", "rect.cat-3", "rect.cat-4",
+        "circle.cat-1", "circle.cat-2", "circle.cat-3", "circle.cat-4",
+        "polygon.cat-1", "polygon.cat-2", "polygon.cat-3", "polygon.cat-4",
+      ].join(",");
+      const geometry = [...document.querySelectorAll(selector)];
+      const parseRgb = (value) => {
+        const numbers = value.match(/[\d.]+/g)?.slice(0, 3).map(Number);
+        return numbers?.length === 3 ? numbers : null;
+      };
+      const luminance = (rgb) => {
+        const channels = rgb.map((value) => value / 255).map((value) => value <= .04045 ? value / 12.92 : ((value + .055) / 1.055) ** 2.4);
+        return .2126 * channels[0] + .7152 * channels[1] + .0722 * channels[2];
+      };
+      const ratio = (foreground, background) => {
+        const a = luminance(foreground), b = luminance(background);
+        return (Math.max(a, b) + .05) / (Math.min(a, b) + .05);
+      };
+      const containsPoint = (shape, point) => {
+        const matrix = shape.getScreenCTM();
+        if (!matrix || typeof shape.isPointInFill !== "function") return false;
+        return shape.isPointInFill(new DOMPoint(point.x, point.y).matrixTransform(matrix.inverse()));
+      };
+      return [...document.querySelectorAll("svg text")].flatMap((label) => {
+        const box = label.getBoundingClientRect();
+        if (!box.width || !box.height || !label.textContent.trim()) return [];
+        const samples = [
+          { x: box.left + box.width * .25, y: box.top + box.height * .5 },
+          { x: box.left + box.width * .5, y: box.top + box.height * .5 },
+          { x: box.left + box.width * .75, y: box.top + box.height * .5 },
+        ];
+        const foreground = parseRgb(getComputedStyle(label).fill);
+        if (!foreground) return [];
+        let minimum = Number.POSITIVE_INFINITY;
+        let backgroundClass = "";
+        for (const point of samples) {
+          const beneath = geometry.filter((shape) => (
+            Boolean(shape.compareDocumentPosition(label) & Node.DOCUMENT_POSITION_FOLLOWING)
+            && containsPoint(shape, point)
+          )).at(-1);
+          if (!beneath) continue;
+          const background = parseRgb(getComputedStyle(beneath).fill);
+          if (!background) continue;
+          const current = ratio(foreground, background);
+          if (current < minimum) {
+            minimum = current;
+            backgroundClass = beneath.getAttribute("class") || beneath.tagName;
+          }
+        }
+        if (minimum >= 4.5) return [];
+        return [{ surface: surfaceName, text: label.textContent.trim(), ratio: Number(minimum.toFixed(2)), background: backgroundClass }];
+      });
+    }, surface);
+    issues.push(...surfaceIssues);
+  }
+  if (issues.length) fail(`readability:${file}`, JSON.stringify(issues.slice(0, 8)));
+  else pass(`readability:${file}`, "filled-mark labels pass in light and dark surfaces");
+}
+await readabilityContext.close();
+
 const fillContext = await browser.newContext({ viewport: { width: 1280, height: 720 } });
 const fillPage = await fillContext.newPage();
 await fillPage.goto(`${pathToFileURL(path.join(templatesDir, "c05-composition-bands.html")).href}?motion=off`, { waitUntil: "load" });
@@ -273,7 +357,7 @@ if (reducedState.running || !reducedState.complete) fail("reduced-motion", JSON.
 else pass("reduced-motion", "locked frame without motion");
 await reducedContext.close();
 
-for (const file of ["c01-structural-rank.html", "c03-signal-trend.html", "c08-stage-channel.html", "c10-decision-interface.html", "c11-sector-lock.html", "c16-decision-bubble-matrix.html", "c17-market-candles.html", "c20-sensitivity-matrix.html", "c23-forecast-fan.html"]) {
+for (const file of ["c01-structural-rank.html", "c03-signal-trend.html", "c05-composition-bands.html", "c08-stage-channel.html", "c10-decision-interface.html", "c11-sector-lock.html", "c14-cohort-matrix.html", "c15-commerce-flow.html", "c16-decision-bubble-matrix.html", "c17-market-candles.html", "c20-sensitivity-matrix.html", "c22-correlation-matrix.html", "c23-forecast-fan.html"]) {
   const context = await browser.newContext({ viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1 });
   const page = await context.newPage();
   await page.goto(`${pathToFileURL(path.join(templatesDir, file)).href}?motion=off`, { waitUntil: "load" });

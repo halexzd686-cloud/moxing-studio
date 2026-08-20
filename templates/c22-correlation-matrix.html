@@ -13,22 +13,22 @@
     --bg:#F2F3EF; --ink:#171916; --muted:#6F746C;
     --matrix-strong:#4E544D; --matrix-quiet:#777C75;
     --faint:#A9AEA5; --grid:#D8DBD4; --rail:#9DA39A;
-    --secondary:#BFC3BB; --signal:#D85A36; --panel:#E9EBE5;
-    --cat-1:#536A72; --cat-2:#6D7562; --cat-3:#887665; --cat-4:#7B6874;
+    --secondary:#BFC3BB; --signal:#D85A36; --on-signal:#171916; --panel:#E9EBE5;
+    --cat-1:#536A72; --cat-2:#5F6854; --cat-3:#746052; --cat-4:#7B6874;
   }
 
   [data-surface="dark"] {
     --bg:#151714; --ink:#F0F1EB; --muted:#989D94;
     --matrix-strong:#C3C7BF; --matrix-quiet:#8D938A;
     --faint:#62675F; --grid:#30332E; --rail:#5E645B;
-    --secondary:#737970; --signal:#E56B47; --panel:#1E211D;
+    --secondary:#737970; --signal:#E56B47; --on-signal:#151714; --panel:#1E211D;
     --cat-1:#8DA5AD; --cat-2:#A1AA91; --cat-3:#B39A86; --cat-4:#A18C9D;
   }
   * { box-sizing:border-box; }
   html,body { width:1280px; height:720px; margin:0; overflow:hidden; background:var(--bg); color:var(--ink); }
   body { font-family:'Noto Sans SC','Microsoft YaHei',sans-serif; -webkit-font-smoothing:antialiased; }
   .chart-container { width:1280px; height:720px; padding:38px 54px 28px; display:grid; grid-template-rows:124px 1fr 28px; position:relative; background:var(--bg); }
-  .chart-header { display:grid; grid-template-columns:170px minmax(0,1fr); align-items:start; border-top:1.5px solid var(--ink); padding:12px 122px 0 0; }
+  .chart-header { display:grid; grid-template-columns:170px minmax(0,1fr); column-gap:30px; align-items:start; border-top:1.5px solid var(--ink); padding:12px 122px 0 0; }
   .chart-code { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; font-size:14px; font-weight:650; font-variation-settings:'ROND' 0,'wght' 650; letter-spacing:.055em; color:var(--matrix-strong); }
   .chart-title { margin:0; font-family:'Noto Serif SC','Songti SC',serif; font-size:34px; line-height:1.18; font-weight:700; letter-spacing:.01em; }
   .chart-subtitle { margin-top:8px; color:var(--muted); font-size:14px; }
@@ -42,8 +42,9 @@
   svg .index.muted { fill:var(--matrix-quiet); font-weight:560; font-variation-settings:'ROND' 0,'wght' 560; letter-spacing:.04em; }
   svg .signal-text { fill:var(--signal); }
   svg .index.signal-text { fill:var(--signal); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; }
-  svg .on-fill { fill:var(--bg); font-weight:700; }
   svg .value { fill:var(--ink); font-variant-numeric:tabular-nums; }
+  svg .on-fill { fill:var(--bg); font-weight:700; }
+  svg .on-signal { fill:var(--on-signal); font-weight:700; }
   svg .grid { stroke:var(--grid); stroke-width:1; fill:none; vector-effect:non-scaling-stroke; }
   svg .rail { stroke:var(--rail); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
   svg .rail-strong { stroke:var(--ink); stroke-width:2.25; fill:none; vector-effect:non-scaling-stroke; }
@@ -116,7 +117,7 @@
 <rect x="303" y="73" width="64" height="64" rx="0" class="data-fill" data-motion="dock" data-choreo="field-seat" style="--delay:200ms;--dx:0px;--dy:10px;--delay-brief:90ms;--delay-story:380ms"/>
 <text x="335" y="112.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:430ms;--dx:0px;--dy:0px;--delay-brief:240ms;--delay-story:690ms">1.00</text>
 <rect x="373" y="73" width="64" height="64" rx="0" class="signal-fill" data-motion="dock" data-choreo="field-seat" style="--delay:245ms;--dx:0px;--dy:10px;--delay-brief:110ms;--delay-story:465ms"/>
-<text x="405" y="112.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:475ms;--dx:0px;--dy:0px;--delay-brief:262ms;--delay-story:780ms">+0.84</text>
+<text x="405" y="112.7" class="on-signal" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:475ms;--dx:0px;--dy:0px;--delay-brief:262ms;--delay-story:780ms">+0.84</text>
 <rect x="443" y="73" width="64" height="64" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:290ms;--dx:0px;--dy:10px;--delay-brief:130ms;--delay-story:550ms"/>
 <text x="475" y="112.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:520ms;--dx:0px;--dy:0px;--delay-brief:285ms;--delay-story:870ms">+0.62</text>
 <rect x="513" y="73" width="64" height="64" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:335ms;--dx:0px;--dy:10px;--delay-brief:150ms;--delay-story:635ms"/>
@@ -124,7 +125,7 @@
 <rect x="583" y="73" width="64" height="64" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:380ms;--dx:0px;--dy:10px;--delay-brief:170ms;--delay-story:720ms"/>
 <text x="615" y="112.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:610ms;--dx:0px;--dy:0px;--delay-brief:330ms;--delay-story:1050ms">+0.55</text>
 <rect x="303" y="143" width="64" height="64" rx="0" class="signal-fill" data-motion="dock" data-choreo="field-seat" style="--delay:270ms;--dx:0px;--dy:10px;--delay-brief:122ms;--delay-story:520ms"/>
-<text x="335" y="182.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:500ms;--dx:0px;--dy:0px;--delay-brief:275ms;--delay-story:830ms">+0.84</text>
+<text x="335" y="182.7" class="on-signal" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:500ms;--dx:0px;--dy:0px;--delay-brief:275ms;--delay-story:830ms">+0.84</text>
 <rect x="373" y="143" width="64" height="64" rx="0" class="data-fill" data-motion="dock" data-choreo="field-seat" style="--delay:315ms;--dx:0px;--dy:10px;--delay-brief:142ms;--delay-story:605ms"/>
 <text x="405" y="182.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:545ms;--dx:0px;--dy:0px;--delay-brief:297ms;--delay-story:920ms">1.00</text>
 <rect x="443" y="143" width="64" height="64" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:360ms;--dx:0px;--dy:10px;--delay-brief:162ms;--delay-story:690ms"/>
@@ -139,15 +140,15 @@
 <text x="405" y="252.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:615ms;--dx:0px;--dy:0px;--delay-brief:332ms;--delay-story:1060ms">+0.41</text>
 <rect x="443" y="213" width="64" height="64" rx="0" class="data-fill" data-motion="dock" data-choreo="field-seat" style="--delay:430ms;--dx:0px;--dy:10px;--delay-brief:194ms;--delay-story:830ms"/>
 <text x="475" y="252.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:660ms;--dx:0px;--dy:0px;--delay-brief:355ms;--delay-story:1150ms">1.00</text>
-<rect x="513" y="213" width="64" height="64" rx="0" class="secondary-fill" data-motion="dock" data-choreo="field-seat" style="--delay:475ms;--dx:0px;--dy:10px;--delay-brief:214ms;--delay-story:915ms"/>
+<rect x="513" y="213" width="64" height="64" rx="0" class="cat-4" data-motion="dock" data-choreo="field-seat" style="--delay:475ms;--dx:0px;--dy:10px;--delay-brief:214ms;--delay-story:915ms"/>
 <text x="545" y="252.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:705ms;--dx:0px;--dy:0px;--delay-brief:377ms;--delay-story:1240ms">-0.18</text>
-<rect x="583" y="213" width="64" height="64" rx="0" class="secondary-fill" data-motion="dock" data-choreo="field-seat" style="--delay:520ms;--dx:0px;--dy:10px;--delay-brief:234ms;--delay-story:1000ms"/>
+<rect x="583" y="213" width="64" height="64" rx="0" class="cat-4" data-motion="dock" data-choreo="field-seat" style="--delay:520ms;--dx:0px;--dy:10px;--delay-brief:234ms;--delay-story:1000ms"/>
 <text x="615" y="252.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:750ms;--dx:0px;--dy:0px;--delay-brief:400ms;--delay-story:1330ms">-0.24</text>
 <rect x="303" y="283" width="64" height="64" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:410ms;--dx:0px;--dy:10px;--delay-brief:186ms;--delay-story:800ms"/>
 <text x="335" y="322.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:640ms;--dx:0px;--dy:0px;--delay-brief:345ms;--delay-story:1110ms">+0.48</text>
 <rect x="373" y="283" width="64" height="64" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:455ms;--dx:0px;--dy:10px;--delay-brief:206ms;--delay-story:885ms"/>
 <text x="405" y="322.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:685ms;--dx:0px;--dy:0px;--delay-brief:367ms;--delay-story:1200ms">+0.57</text>
-<rect x="443" y="283" width="64" height="64" rx="0" class="secondary-fill" data-motion="dock" data-choreo="field-seat" style="--delay:500ms;--dx:0px;--dy:10px;--delay-brief:226ms;--delay-story:970ms"/>
+<rect x="443" y="283" width="64" height="64" rx="0" class="cat-4" data-motion="dock" data-choreo="field-seat" style="--delay:500ms;--dx:0px;--dy:10px;--delay-brief:226ms;--delay-story:970ms"/>
 <text x="475" y="322.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:730ms;--dx:0px;--dy:0px;--delay-brief:390ms;--delay-story:1290ms">-0.18</text>
 <rect x="513" y="283" width="64" height="64" rx="0" class="data-fill" data-motion="dock" data-choreo="field-seat" style="--delay:545ms;--dx:0px;--dy:10px;--delay-brief:246ms;--delay-story:1055ms"/>
 <text x="545" y="322.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:775ms;--dx:0px;--dy:0px;--delay-brief:412ms;--delay-story:1380ms">1.00</text>
@@ -157,7 +158,7 @@
 <text x="335" y="392.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:710ms;--dx:0px;--dy:0px;--delay-brief:380ms;--delay-story:1250ms">+0.55</text>
 <rect x="373" y="353" width="64" height="64" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:525ms;--dx:0px;--dy:10px;--delay-brief:238ms;--delay-story:1025ms"/>
 <text x="405" y="392.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:755ms;--dx:0px;--dy:0px;--delay-brief:402ms;--delay-story:1340ms">+0.63</text>
-<rect x="443" y="353" width="64" height="64" rx="0" class="secondary-fill" data-motion="dock" data-choreo="field-seat" style="--delay:570ms;--dx:0px;--dy:10px;--delay-brief:258ms;--delay-story:1110ms"/>
+<rect x="443" y="353" width="64" height="64" rx="0" class="cat-4" data-motion="dock" data-choreo="field-seat" style="--delay:570ms;--dx:0px;--dy:10px;--delay-brief:258ms;--delay-story:1110ms"/>
 <text x="475" y="392.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:800ms;--dx:0px;--dy:0px;--delay-brief:425ms;--delay-story:1430ms">-0.24</text>
 <rect x="513" y="353" width="64" height="64" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:615ms;--dx:0px;--dy:10px;--delay-brief:278ms;--delay-story:1195ms"/>
 <text x="545" y="392.7" class="on-fill" text-anchor="middle" font-size="12" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:845ms;--dx:0px;--dy:0px;--delay-brief:447ms;--delay-story:1520ms">+0.36</text>

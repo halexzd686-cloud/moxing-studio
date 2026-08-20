@@ -35,6 +35,7 @@ The internal metaphor is precise joinery. Public-facing language uses **Structur
 - Dot-matrix text never carries long Chinese labels or body copy.
 - Dot-matrix text uses its own strong/quiet contrast tokens, 12 px minimum, and 560–700 weight; signal states use the oxide colour and the strongest weight.
 - Minimum presentation sizes: title 30 px, body/axis 14 px, data label 16 px, source 12 px.
+- Keep at least 24 px of visible separation between the dot-matrix chart identifier and the Chinese conclusion title.
 
 ## Colour
 
@@ -42,6 +43,7 @@ The internal metaphor is precise joinery. Public-facing language uses **Structur
 - Companion surface: charcoal instrument panel.
 - Brand signal: oxide orange-red; one locked conclusion per chart.
 - Multi-series charts may use up to four low-saturation functional colours. Preserve a second channel such as fill/outline/dash.
+- Text inside ink/category fills uses the surface colour; text inside the oxide signal uses the dedicated dark `onSignal` token. Filled-mark labels must retain at least 4.5:1 contrast in both surfaces.
 - Avoid decorative gradients, glassmorphism, neon glow, and drop shadows. Controlled opacity is allowed for ranges, forecasts, and structural depth.
 
 ## Density modes

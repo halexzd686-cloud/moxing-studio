@@ -13,22 +13,22 @@
     --bg:#F2F3EF; --ink:#171916; --muted:#6F746C;
     --matrix-strong:#4E544D; --matrix-quiet:#777C75;
     --faint:#A9AEA5; --grid:#D8DBD4; --rail:#9DA39A;
-    --secondary:#BFC3BB; --signal:#D85A36; --panel:#E9EBE5;
-    --cat-1:#536A72; --cat-2:#6D7562; --cat-3:#887665; --cat-4:#7B6874;
+    --secondary:#BFC3BB; --signal:#D85A36; --on-signal:#171916; --panel:#E9EBE5;
+    --cat-1:#536A72; --cat-2:#5F6854; --cat-3:#746052; --cat-4:#7B6874;
   }
 
   [data-surface="dark"] {
     --bg:#151714; --ink:#F0F1EB; --muted:#989D94;
     --matrix-strong:#C3C7BF; --matrix-quiet:#8D938A;
     --faint:#62675F; --grid:#30332E; --rail:#5E645B;
-    --secondary:#737970; --signal:#E56B47; --panel:#1E211D;
+    --secondary:#737970; --signal:#E56B47; --on-signal:#151714; --panel:#1E211D;
     --cat-1:#8DA5AD; --cat-2:#A1AA91; --cat-3:#B39A86; --cat-4:#A18C9D;
   }
   * { box-sizing:border-box; }
   html,body { width:1280px; height:720px; margin:0; overflow:hidden; background:var(--bg); color:var(--ink); }
   body { font-family:'Noto Sans SC','Microsoft YaHei',sans-serif; -webkit-font-smoothing:antialiased; }
   .chart-container { width:1280px; height:720px; padding:38px 54px 28px; display:grid; grid-template-rows:124px 1fr 28px; position:relative; background:var(--bg); }
-  .chart-header { display:grid; grid-template-columns:170px minmax(0,1fr); align-items:start; border-top:1.5px solid var(--ink); padding:12px 122px 0 0; }
+  .chart-header { display:grid; grid-template-columns:170px minmax(0,1fr); column-gap:30px; align-items:start; border-top:1.5px solid var(--ink); padding:12px 122px 0 0; }
   .chart-code { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; font-size:14px; font-weight:650; font-variation-settings:'ROND' 0,'wght' 650; letter-spacing:.055em; color:var(--matrix-strong); }
   .chart-title { margin:0; font-family:'Noto Serif SC','Songti SC',serif; font-size:34px; line-height:1.18; font-weight:700; letter-spacing:.01em; }
   .chart-subtitle { margin-top:8px; color:var(--muted); font-size:14px; }
@@ -42,8 +42,9 @@
   svg .index.muted { fill:var(--matrix-quiet); font-weight:560; font-variation-settings:'ROND' 0,'wght' 560; letter-spacing:.04em; }
   svg .signal-text { fill:var(--signal); }
   svg .index.signal-text { fill:var(--signal); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; }
-  svg .on-fill { fill:var(--bg); font-weight:700; }
   svg .value { fill:var(--ink); font-variant-numeric:tabular-nums; }
+  svg .on-fill { fill:var(--bg); font-weight:700; }
+  svg .on-signal { fill:var(--on-signal); font-weight:700; }
   svg .grid { stroke:var(--grid); stroke-width:1; fill:none; vector-effect:non-scaling-stroke; }
   svg .rail { stroke:var(--rail); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
   svg .rail-strong { stroke:var(--ink); stroke-width:2.25; fill:none; vector-effect:non-scaling-stroke; }
@@ -112,13 +113,13 @@
 <g class="stage-module" data-motion="dock" data-choreo="interlock" style="--delay:220ms;--dx:-34px;--dy:0px;--duration:320ms;--delay-brief:90ms;--delay-story:360ms;--duration-brief:220ms;--duration-story:540ms">
 <path d="M 332.8 108 H 428.8 L 436.8 116 V 392 H 340.8 L 332.8 384 Z" class="data-fill" />
 <text x="384.8" y="84" class="label" text-anchor="middle" font-size="14" font-weight="650" >访问</text>
-<text x="384.8" y="256" class="value" text-anchor="middle" font-size="16" font-weight="650" >1.2万</text>
+<text x="384.8" y="256" class="value on-fill" text-anchor="middle" font-size="16" font-weight="650" >1.2万</text>
 </g>
 <line x1="384.8" y1="94" x2="384.8" y2="406" class="rail" data-motion="align" style="--delay:130ms;--dx:0px;--dy:0px;--delay-brief:45ms;--delay-story:160ms"/>
 <g class="stage-module" data-motion="dock" data-choreo="interlock" style="--delay:560ms;--dx:-34px;--dy:0px;--duration:320ms;--delay-brief:340ms;--delay-story:1080ms;--duration-brief:220ms;--duration-story:540ms">
 <path d="M 498.4 150 H 594.4 L 602.4 158 V 350 H 506.4 L 498.4 342 Z" class="cat-1" />
 <text x="550.4" y="126" class="label" text-anchor="middle" font-size="14" font-weight="650" >试用</text>
-<text x="550.4" y="256" class="value" text-anchor="middle" font-size="16" font-weight="650" >7,200</text>
+<text x="550.4" y="256" class="value on-fill" text-anchor="middle" font-size="16" font-weight="650" >7,200</text>
 </g>
 <line x1="550.4" y1="136" x2="550.4" y2="364" class="rail" data-motion="align" style="--delay:180ms;--dx:0px;--dy:0px;--delay-brief:69ms;--delay-story:255ms"/>
 <line x1="436.8" y1="250" x2="498.4" y2="250" class="rail" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:440ms;--dx:0px;--dy:0px;--duration:180ms;--delay-brief:240ms;--delay-story:780ms;--duration-brief:140ms;--duration-story:360ms"/>
@@ -126,7 +127,7 @@
 <g class="stage-module" data-motion="dock" data-choreo="interlock" style="--delay:750ms;--dx:-34px;--dy:0px;--duration:320ms;--delay-brief:450ms;--delay-story:1480ms;--duration-brief:220ms;--duration-story:540ms">
 <path d="M 664 174.68 H 760 L 768 182.68 V 325.33 H 672 L 664 317.33 Z" class="cat-1" />
 <text x="716" y="150.68" class="label" text-anchor="middle" font-size="14" font-weight="650" >激活</text>
-<text x="716" y="256" class="value" text-anchor="middle" font-size="16" font-weight="650" >4,380</text>
+<text x="716" y="256" class="value on-fill" text-anchor="middle" font-size="16" font-weight="650" >4,380</text>
 </g>
 <line x1="716" y1="160.68" x2="716" y2="339.33" class="rail" data-motion="align" style="--delay:230ms;--dx:0px;--dy:0px;--delay-brief:93ms;--delay-story:350ms"/>
 <line x1="602.4" y1="250" x2="664" y2="250" class="rail" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:630ms;--dx:0px;--dy:0px;--duration:180ms;--delay-brief:350ms;--delay-story:1180ms;--duration-brief:140ms;--duration-story:360ms"/>
@@ -134,7 +135,7 @@
 <g class="stage-module" data-motion="dock" data-choreo="interlock" style="--delay:940ms;--dx:-34px;--dy:0px;--duration:320ms;--delay-brief:560ms;--delay-story:1880ms;--duration-brief:220ms;--duration-story:540ms">
 <path d="M 829.6 196.72 H 925.6 L 933.6 204.72 V 303.27 H 837.6 L 829.6 295.27 Z" class="signal-fill" />
 <text x="881.6" y="172.72" class="label" text-anchor="middle" font-size="14" font-weight="650" >付费</text>
-<text x="881.6" y="256" class="value" text-anchor="middle" font-size="16" font-weight="650" >1,860</text>
+<text x="881.6" y="256" class="value on-signal" text-anchor="middle" font-size="16" font-weight="650" >1,860</text>
 </g>
 <line x1="881.6" y1="182.72" x2="881.6" y2="317.27" class="rail" data-motion="align" style="--delay:280ms;--dx:0px;--dy:0px;--delay-brief:117ms;--delay-story:445ms"/>
 <line x1="768" y1="250" x2="829.6" y2="250" class="signal-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:820ms;--dx:0px;--dy:0px;--duration:180ms;--delay-brief:460ms;--delay-story:1580ms;--duration-brief:140ms;--duration-story:360ms"/>
@@ -142,7 +143,7 @@
 <g class="stage-module" data-motion="dock" data-choreo="interlock" style="--delay:1130ms;--dx:-34px;--dy:0px;--duration:320ms;--delay-brief:670ms;--delay-story:2280ms;--duration-brief:220ms;--duration-story:540ms">
 <path d="M 995.2 200.57 H 1091.2 L 1099.2 208.57 V 299.42 H 1003.2 L 995.2 291.42 Z" class="cat-1" />
 <text x="1047.2" y="176.57" class="label" text-anchor="middle" font-size="14" font-weight="650" >续约</text>
-<text x="1047.2" y="256" class="value" text-anchor="middle" font-size="16" font-weight="650" >1,420</text>
+<text x="1047.2" y="256" class="value on-fill" text-anchor="middle" font-size="16" font-weight="650" >1,420</text>
 </g>
 <line x1="1047.2" y1="186.57" x2="1047.2" y2="313.42" class="rail" data-motion="align" style="--delay:330ms;--dx:0px;--dy:0px;--delay-brief:141ms;--delay-story:540ms"/>
 <line x1="933.6" y1="250" x2="995.2" y2="250" class="rail" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:1010ms;--dx:0px;--dy:0px;--duration:180ms;--delay-brief:570ms;--delay-story:1980ms;--duration-brief:140ms;--duration-story:360ms"/>

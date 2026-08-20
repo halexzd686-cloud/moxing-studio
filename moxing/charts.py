@@ -32,6 +32,15 @@ from .core import (
 PLOT_LEFT_WITH_EVIDENCE = 276
 
 
+def _contrast_text_class(fill_class: str) -> str:
+    """Choose the readable foreground token for a filled data mark."""
+    if fill_class == "signal-fill":
+        return "on-signal"
+    if fill_class == "data-fill" or fill_class.startswith("cat-"):
+        return "on-fill"
+    return "value"
+
+
 DEFAULTS: dict[str, Any] = {
     "C1": [
         {"label": "华东", "value": 4280}, {"label": "华南", "value": 3650},
@@ -445,7 +454,7 @@ def build_c5(data: Any) -> str:
             segment_story = round(700 + cat_index * story_step + series_index * 120)
             parts.append(path(cut_rect_path(cursor, y, max(1, width - 4), 42, 5), cls=cls, extra=motion("dock", segment_standard, dx=-18, brief=segment_brief, story=segment_story, duration=420, duration_brief=280, duration_story=620, choreo="band-fill")))
             if width > 74:
-                parts.append(text(cursor + width / 2, y + 26, f"{item['values'][cat_index]/total*100:.0f}%", cls="index on-fill", anchor="middle", size=12, weight=700, extra=motion("lock", segment_standard + 300, brief=segment_brief + 190, story=segment_story + 470, choreo="readout")))
+                parts.append(text(cursor + width / 2, y + 26, f"{item['values'][cat_index]/total*100:.0f}%", cls=f"index {_contrast_text_class(cls)}", anchor="middle", size=12, weight=700, extra=motion("lock", segment_standard + 300, brief=segment_brief + 190, story=segment_story + 470, choreo="readout")))
             cursor += width
     for index, item in enumerate(series):
         x = x0 + index * 190
@@ -576,7 +585,7 @@ def build_c8(data: Any) -> str:
             [
                 path(cut_rect_path(cx - width/2, y, width, height, 8), cls=cls),
                 text(cx, y - 24, item["stage"], cls="label", anchor="middle", size=14, weight=650),
-                text(cx, y + height/2 + 6, format_num(item["value"]), cls="value", anchor="middle", size=16, weight=650),
+                text(cx, y + height/2 + 6, format_num(item["value"]), cls=f"value {_contrast_text_class(cls)}", anchor="middle", size=16, weight=650),
             ],
             cls="stage-module",
             extra=motion("dock", stage_standard, dx=-34, brief=stage_brief, story=stage_story, duration=320, duration_brief=220, duration_story=540, choreo="interlock"),
@@ -828,7 +837,7 @@ def build_c14(data: Any) -> str:
             delay = 220 + row_i * 90 + col * 45
             parts += [
                 rect(x + 3, y + 3, cell_w - 6, cell_h - 6, cls=cls, extra=motion("dock", delay, dy=12, brief=100 + row_i * 40 + col * 20, story=420 + row_i * 160 + col * 90, choreo="field-seat")),
-                text(x + cell_w / 2, y + cell_h * .62, f"{value:.0f}%", cls="on-fill" if value >= 40 else "value", anchor="middle", size=13, weight=650, extra=motion("lock", delay + 250, brief=delay // 2 + 160, story=delay * 2 + 320, choreo="readout")),
+                text(x + cell_w / 2, y + cell_h * .62, f"{value:.0f}%", cls=_contrast_text_class(cls), anchor="middle", size=13, weight=650, extra=motion("lock", delay + 250, brief=delay // 2 + 160, story=delay * 2 + 320, choreo="readout")),
             ]
             if col > 0 and value > best[0]:
                 best = (value, row["label"], columns[col])
@@ -868,10 +877,12 @@ def build_c15(data: Any) -> str:
         parts.append(path(d, cls="secondary-stroke", extra=f'stroke-width="{width:.1f}" pathLength="1" {motion("route", 320 + index * 120, brief=160 + index * 65, story=620 + index * 240, duration=480, duration_brief=300, duration_story=760, choreo="trace")}'))
     for index, node in enumerate(nodes):
         x, y, width, height = positions[str(node["id"])]
+        fill_cls = "signal-fill" if node["level"] == max(levels) else "data-fill"
+        label_cls = _contrast_text_class(fill_cls)
         parts += [
-            path(cut_rect_path(x, y, width, height, 8), cls="signal-fill" if node["level"] == max(levels) else "data-fill", extra=motion("dock", 220 + index * 110, dx=-22, brief=100 + index * 55, story=420 + index * 210, choreo="interlock")),
-            text(x + width / 2, y + height / 2 - 2, node.get("label", node["id"]), cls="on-fill", anchor="middle", size=13, weight=650),
-            text(x + width / 2, y + height / 2 + 20, format_num(node["value"]), cls="on-fill index", anchor="middle", size=12),
+            path(cut_rect_path(x, y, width, height, 8), cls=fill_cls, extra=motion("dock", 220 + index * 110, dx=-22, brief=100 + index * 55, story=420 + index * 210, choreo="interlock")),
+            text(x + width / 2, y + height / 2 - 2, node.get("label", node["id"]), cls=label_cls, anchor="middle", size=13, weight=650),
+            text(x + width / 2, y + height / 2 + 20, format_num(node["value"]), cls=f"index {label_cls}", anchor="middle", size=12),
         ]
     if valid_links:
         weakest = min(valid_links, key=lambda item: item["value"])
@@ -903,9 +914,10 @@ def build_c16(data: Any) -> str:
         x = _scale(item["x"], x_low - x_pad, x_high + x_pad, x0, x1)
         y = _scale(item["y"], y_low - y_pad, y_high + y_pad, y1, y0)
         radius = 12 + 28 * math.sqrt(item["size"] / max_size)
+        fill_cls = "signal-fill" if index == leader else "cat-1"
         parts += [
-            circle(x, y, radius, cls="signal-fill" if index == leader else "cat-1", extra=motion("dock", 300 + index * 110, dy=18, brief=150 + index * 58, story=560 + index * 220, choreo="pin")),
-            text(x, y + 4, f"{index + 1:02d}", cls="on-fill index", anchor="middle", size=12),
+            circle(x, y, radius, cls=fill_cls, extra=motion("dock", 300 + index * 110, dy=18, brief=150 + index * 58, story=560 + index * 220, choreo="pin")),
+            text(x, y + 4, f"{index + 1:02d}", cls=f"index {_contrast_text_class(fill_cls)}", anchor="middle", size=12),
             text(x + radius + 8, y - radius - 4, item["label"], size=13, weight=650 if index == leader else None, extra=motion("lock", 720 + index * 70, brief=430 + index * 40, story=1380 + index * 150, choreo="readout")),
         ]
     parts.append(evidence_plate(0, 82, "D-16", "PRIORITY", items[leader]["label"], "综合位置最优", delay=1580, width=220, brief=900, story=3020, choreo="alarm"))
@@ -1033,7 +1045,7 @@ def build_c20(data: Any) -> str:
             ratio = (value - low) / (high - low or 1)
             cls = "signal-fill" if (value, row_i, col_i) == best else ("data-fill" if ratio > .72 else "cat-1" if ratio > .38 else "panel-stroke")
             delay = 220 + row_i * 80 + col_i * 55
-            parts += [rect(x + 3, y + 3, cell_w - 6, cell_h - 6, cls=cls, extra=motion("dock", delay, dy=12, brief=100 + row_i * 35 + col_i * 24, story=420 + row_i * 150 + col_i * 100, choreo="field-seat")), text(x + cell_w / 2, y + cell_h * .62, format_num(value), cls="on-fill" if ratio > .38 or (value, row_i, col_i) == best else "value", anchor="middle", size=14, weight=650, extra=motion("lock", delay + 240, brief=delay // 2 + 150, story=delay * 2 + 300, choreo="readout"))]
+            parts += [rect(x + 3, y + 3, cell_w - 6, cell_h - 6, cls=cls, extra=motion("dock", delay, dy=12, brief=100 + row_i * 35 + col_i * 24, story=420 + row_i * 150 + col_i * 100, choreo="field-seat")), text(x + cell_w / 2, y + cell_h * .62, format_num(value), cls=_contrast_text_class(cls), anchor="middle", size=14, weight=650, extra=motion("lock", delay + 240, brief=delay // 2 + 150, story=delay * 2 + 300, choreo="readout"))]
     parts.append(evidence_plate(0, 348, "S-20", "UPSIDE", format_num(best[0]), f"{rows[best[1]]} / {columns[best[2]]}", delay=1780, width=246, brief=1020, story=3400, choreo="alarm"))
     return "\n".join(parts)
 
@@ -1092,9 +1104,9 @@ def build_c22(data: Any) -> str:
         for col, value in enumerate(line_values):
             x, y = x0 + col * size, y0 + row * size
             is_focus = row != col and abs(value) == strongest[0]
-            cls = "signal-fill" if is_focus else ("data-fill" if value >= .65 else "cat-1" if value >= 0 else "secondary-fill")
+            cls = "signal-fill" if is_focus else ("data-fill" if value >= .65 else "cat-1" if value >= 0 else "cat-4")
             delay = 200 + row * 70 + col * 45
-            parts += [rect(x + 3, y + 3, size - 6, size - 6, cls=cls, extra=motion("dock", delay, dy=10, brief=90 + row * 32 + col * 20, story=380 + row * 140 + col * 85, choreo="field-seat")), text(x + size / 2, y + size * .61, f"{value:+.2f}" if value != 1 else "1.00", cls="on-fill", anchor="middle", size=12, weight=650, extra=motion("lock", delay + 230, brief=delay // 2 + 140, story=delay * 2 + 290, choreo="readout"))]
+            parts += [rect(x + 3, y + 3, size - 6, size - 6, cls=cls, extra=motion("dock", delay, dy=10, brief=90 + row * 32 + col * 20, story=380 + row * 140 + col * 85, choreo="field-seat")), text(x + size / 2, y + size * .61, f"{value:+.2f}" if value != 1 else "1.00", cls=_contrast_text_class(cls), anchor="middle", size=12, weight=650, extra=motion("lock", delay + 230, brief=delay // 2 + 140, story=delay * 2 + 290, choreo="readout"))]
     parts.append(evidence_plate(0, 346, "C-22", "STRONG", f"{strongest[1]:+.2f}", f"{labels[strongest[2]]} × {labels[strongest[3]]}", delay=1820, width=230, brief=1030, story=3480, choreo="alarm"))
     return "\n".join(parts)
 

@@ -13,22 +13,22 @@
     --bg:#F2F3EF; --ink:#171916; --muted:#6F746C;
     --matrix-strong:#4E544D; --matrix-quiet:#777C75;
     --faint:#A9AEA5; --grid:#D8DBD4; --rail:#9DA39A;
-    --secondary:#BFC3BB; --signal:#D85A36; --panel:#E9EBE5;
-    --cat-1:#536A72; --cat-2:#6D7562; --cat-3:#887665; --cat-4:#7B6874;
+    --secondary:#BFC3BB; --signal:#D85A36; --on-signal:#171916; --panel:#E9EBE5;
+    --cat-1:#536A72; --cat-2:#5F6854; --cat-3:#746052; --cat-4:#7B6874;
   }
 
   [data-surface="dark"] {
     --bg:#151714; --ink:#F0F1EB; --muted:#989D94;
     --matrix-strong:#C3C7BF; --matrix-quiet:#8D938A;
     --faint:#62675F; --grid:#30332E; --rail:#5E645B;
-    --secondary:#737970; --signal:#E56B47; --panel:#1E211D;
+    --secondary:#737970; --signal:#E56B47; --on-signal:#151714; --panel:#1E211D;
     --cat-1:#8DA5AD; --cat-2:#A1AA91; --cat-3:#B39A86; --cat-4:#A18C9D;
   }
   * { box-sizing:border-box; }
   html,body { width:1280px; height:720px; margin:0; overflow:hidden; background:var(--bg); color:var(--ink); }
   body { font-family:'Noto Sans SC','Microsoft YaHei',sans-serif; -webkit-font-smoothing:antialiased; }
   .chart-container { width:1280px; height:720px; padding:38px 54px 28px; display:grid; grid-template-rows:124px 1fr 28px; position:relative; background:var(--bg); }
-  .chart-header { display:grid; grid-template-columns:170px minmax(0,1fr); align-items:start; border-top:1.5px solid var(--ink); padding:12px 122px 0 0; }
+  .chart-header { display:grid; grid-template-columns:170px minmax(0,1fr); column-gap:30px; align-items:start; border-top:1.5px solid var(--ink); padding:12px 122px 0 0; }
   .chart-code { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; font-size:14px; font-weight:650; font-variation-settings:'ROND' 0,'wght' 650; letter-spacing:.055em; color:var(--matrix-strong); }
   .chart-title { margin:0; font-family:'Noto Serif SC','Songti SC',serif; font-size:34px; line-height:1.18; font-weight:700; letter-spacing:.01em; }
   .chart-subtitle { margin-top:8px; color:var(--muted); font-size:14px; }
@@ -42,8 +42,9 @@
   svg .index.muted { fill:var(--matrix-quiet); font-weight:560; font-variation-settings:'ROND' 0,'wght' 560; letter-spacing:.04em; }
   svg .signal-text { fill:var(--signal); }
   svg .index.signal-text { fill:var(--signal); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; }
-  svg .on-fill { fill:var(--bg); font-weight:700; }
   svg .value { fill:var(--ink); font-variant-numeric:tabular-nums; }
+  svg .on-fill { fill:var(--bg); font-weight:700; }
+  svg .on-signal { fill:var(--on-signal); font-weight:700; }
   svg .grid { stroke:var(--grid); stroke-width:1; fill:none; vector-effect:non-scaling-stroke; }
   svg .rail { stroke:var(--rail); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
   svg .rail-strong { stroke:var(--ink); stroke-width:2.25; fill:none; vector-effect:non-scaling-stroke; }
@@ -109,19 +110,19 @@
 <path d="M 897.3333333333333 270.0 C 968.6666666666666 270.0 968.6666666666666 270.0 1040.0 270.0" class="secondary-stroke" stroke-width="10.3" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:680ms;--dx:0px;--dy:0px;--duration:480ms;--delay-brief:355ms;--delay-story:1340ms;--duration-brief:300ms;--duration-story:760ms"/>
 <path d="M 276 139.84 H 380 L 388 147.84 V 250.16 H 284 L 276 242.16 Z" class="data-fill" data-motion="dock" data-choreo="interlock" style="--delay:220ms;--dx:-22px;--dy:0px;--delay-brief:100ms;--delay-story:420ms"/>
 <text x="332" y="193" class="on-fill" text-anchor="middle" font-size="13" font-weight="650" >搜索</text>
-<text x="332" y="215" class="on-fill index" text-anchor="middle" font-size="12" >5,200</text>
+<text x="332" y="215" class="index on-fill" text-anchor="middle" font-size="12" >5,200</text>
 <path d="M 276 294.42 H 380 L 388 302.42 V 395.58 H 284 L 276 387.58 Z" class="data-fill" data-motion="dock" data-choreo="interlock" style="--delay:330ms;--dx:-22px;--dy:0px;--delay-brief:155ms;--delay-story:630ms"/>
 <text x="332" y="343" class="on-fill" text-anchor="middle" font-size="13" font-weight="650" >内容</text>
-<text x="332" y="365" class="on-fill index" text-anchor="middle" font-size="12" >3,900</text>
+<text x="332" y="365" class="index on-fill" text-anchor="middle" font-size="12" >3,900</text>
 <path d="M 530.67 212 H 634.67 L 642.67 220 V 328 H 538.67 L 530.67 320 Z" class="data-fill" data-motion="dock" data-choreo="interlock" style="--delay:440ms;--dx:-22px;--dy:0px;--delay-brief:210ms;--delay-story:840ms"/>
 <text x="586.67" y="268" class="on-fill" text-anchor="middle" font-size="13" font-weight="650" >商品详情</text>
-<text x="586.67" y="290" class="on-fill index" text-anchor="middle" font-size="12" >6,100</text>
+<text x="586.67" y="290" class="index on-fill" text-anchor="middle" font-size="12" >6,100</text>
 <path d="M 785.33 223.75 H 889.33 L 897.33 231.75 V 316.25 H 793.33 L 785.33 308.25 Z" class="data-fill" data-motion="dock" data-choreo="interlock" style="--delay:550ms;--dx:-22px;--dy:0px;--delay-brief:265ms;--delay-story:1050ms"/>
 <text x="841.33" y="268" class="on-fill" text-anchor="middle" font-size="13" font-weight="650" >加购</text>
-<text x="841.33" y="290" class="on-fill index" text-anchor="middle" font-size="12" >2,840</text>
+<text x="841.33" y="290" class="index on-fill" text-anchor="middle" font-size="12" >2,840</text>
 <path d="M 1040 229.41 H 1144 L 1152 237.41 V 310.59 H 1048 L 1040 302.59 Z" class="signal-fill" data-motion="dock" data-choreo="interlock" style="--delay:660ms;--dx:-22px;--dy:0px;--delay-brief:320ms;--delay-story:1260ms"/>
-<text x="1096" y="268" class="on-fill" text-anchor="middle" font-size="13" font-weight="650" >成交</text>
-<text x="1096" y="290" class="on-fill index" text-anchor="middle" font-size="12" >1,710</text>
+<text x="1096" y="268" class="on-signal" text-anchor="middle" font-size="13" font-weight="650" >成交</text>
+<text x="1096" y="290" class="index on-signal" text-anchor="middle" font-size="12" >1,710</text>
 <g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1740ms;--dx:-8px;--dy:0px;--delay-brief:980ms;--delay-story:3300ms">
 <path d="M 0 86 H 192 L 200 94 V 180 H 8 L 0 172 Z" class="panel-stroke" />
 <text x="14" y="107" class="index muted" text-anchor="start" font-size="12" >F-15</text>

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-19T16:45:32.469Z",
+  "generatedAt": "2026-08-20T02:58:27.687Z",
   "status": "passed",
   "checks": [
     {
@@ -19,6 +19,26 @@
       "message": "matrixQuiet/bg contrast 3.83"
     },
     {
+      "scope": "tokens:light",
+      "message": "onSignal/signal contrast 4.58"
+    },
+    {
+      "scope": "tokens:light",
+      "message": "bg/cat-1 contrast 5.13"
+    },
+    {
+      "scope": "tokens:light",
+      "message": "bg/cat-2 contrast 5.24"
+    },
+    {
+      "scope": "tokens:light",
+      "message": "bg/cat-3 contrast 5.33"
+    },
+    {
+      "scope": "tokens:light",
+      "message": "bg/cat-4 contrast 4.62"
+    },
+    {
       "scope": "tokens:dark",
       "message": "ink/bg contrast 15.87"
     },
@@ -33,6 +53,26 @@
     {
       "scope": "tokens:dark",
       "message": "matrixQuiet/bg contrast 5.73"
+    },
+    {
+      "scope": "tokens:dark",
+      "message": "onSignal/signal contrast 5.60"
+    },
+    {
+      "scope": "tokens:dark",
+      "message": "bg/cat-1 contrast 6.97"
+    },
+    {
+      "scope": "tokens:dark",
+      "message": "bg/cat-2 contrast 7.45"
+    },
+    {
+      "scope": "tokens:dark",
+      "message": "bg/cat-3 contrast 6.77"
+    },
+    {
+      "scope": "tokens:dark",
+      "message": "bg/cat-4 contrast 5.80"
     },
     {
       "scope": "static:c01-structural-rank.html",
@@ -627,8 +667,104 @@
       "message": "evidence plates clear critical plot geometry"
     },
     {
+      "scope": "readability:c01-structural-rank.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c02-ranked-rail.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c03-signal-trend.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c04-composition-field.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c05-composition-bands.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c06-ledger-steps.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c07-milestone-lanes.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c08-stage-channel.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c09-metric-lockup.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c10-decision-interface.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c11-sector-lock.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c12-metric-small-multiples.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c13-pareto-contribution.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c14-cohort-matrix.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c15-commerce-flow.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c16-decision-bubble-matrix.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c17-market-candles.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c18-performance-drawdown.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c19-yield-curve.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c20-sensitivity-matrix.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c21-distribution-profile.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c22-correlation-matrix.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c23-forecast-fan.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
+      "scope": "readability:c24-control-chart.html",
+      "message": "filled-mark labels pass in light and dark surfaces"
+    },
+    {
       "scope": "layout:c05-composition-bands.html",
-      "message": "12 adaptive on-fill labels"
+      "message": "8 adaptive on-fill labels"
     },
     {
       "scope": "reduced-motion",
@@ -640,6 +776,10 @@
     },
     {
       "scope": "preview:c03-signal-trend.html",
+      "message": "locked preview exported"
+    },
+    {
+      "scope": "preview:c05-composition-bands.html",
       "message": "locked preview exported"
     },
     {
@@ -655,6 +795,14 @@
       "message": "locked preview exported"
     },
     {
+      "scope": "preview:c14-cohort-matrix.html",
+      "message": "locked preview exported"
+    },
+    {
+      "scope": "preview:c15-commerce-flow.html",
+      "message": "locked preview exported"
+    },
+    {
       "scope": "preview:c16-decision-bubble-matrix.html",
       "message": "locked preview exported"
     },
@@ -664,6 +812,10 @@
     },
     {
       "scope": "preview:c20-sensitivity-matrix.html",
+      "message": "locked preview exported"
+    },
+    {
+      "scope": "preview:c22-correlation-matrix.html",
       "message": "locked preview exported"
     },
     {

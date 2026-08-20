@@ -2,9 +2,9 @@
 
 > Updated: 2026-08-19
 >
-> Branch: `main`
+> Branch: `v2.0.3-readability`
 >
-> Status: v2.0.2; evidence-lane layout and plate/plot collision safeguards implemented
+> Status: v2.0.3 readability candidate; header separation and adaptive filled-mark labels implemented
 >
 > Visual review: approved on 2026-08-19
 
@@ -58,11 +58,12 @@ If Playwright is installed outside the project, set `MOXING_PLAYWRIGHT_PATH`. Se
 ## Current QA
 
 - 103 boundary render cases pass.
-- 168 browser/static/motion/layout checks pass; see `docs/previews/qa-report.json`.
+- 206 browser/static/motion/layout/readability checks pass; see `docs/previews/qa-report.json`.
 - All 24 templates render with and without JavaScript.
 - Reduced-motion mode settles immediately.
 - No external runtime requests.
 - All 24 templates scan evidence plates against critical plot geometry with zero collisions.
+- All 24 templates check filled-mark label contrast on both light and dark surfaces.
 - Signature locked-frame previews cover foundation, commerce, finance, and analysis contracts.
 
 ## v1 migration
