@@ -4,7 +4,7 @@
 >
 > Branch: `codex/v2.1-production-rollout`
 >
-> Status: A / Direct Canvas and B / Embedded Evidence groups complete; C / Evidence Interface is next
+> Status: A / Direct Canvas, B / Embedded Evidence, and C / Evidence Interface production groups complete
 >
 > Visual review: C1 Direct Canvas, C14 Embedded Evidence, and C6 Evidence Interface approved on 2026-08-20
 
@@ -68,11 +68,12 @@ If Playwright is installed outside the project, set `MOXING_PLAYWRIGHT_PATH`. Se
 
 - 103 boundary render cases pass.
 - 256 browser/static/motion/layout/readability/gallery-scheduling/frame-pacing checks pass; see `docs/previews/qa-report.json`.
-- The presentation mapping passes 13 checks and the carrier/A+B architecture passes 16 checks.
+- The presentation mapping passes 13 checks and the three-carrier A+B+C architecture passes 19 checks.
 - All ten A charts contain no side bay or detached evidence card; each compiles playback to `DATA_FIELD → RELATIONSHIP → TARGET_LOCK` with three composited layers.
 - All nine B charts use the full-width Embedded Evidence carrier and compile playback to `DATA_FIELD → RELATIONSHIP → LOCAL_EVIDENCE → TARGET_LOCK` with four composited layers.
 - Their evidence capsules occupy chart-specific natural whitespace: threshold, triangular matrix void, empty quadrant, chart endpoint, panel gap, or distribution tail. No B chart uses a detached left evidence plate.
-- Thirteen signature locked-frame PNGs form the current visual baseline; A and B signatures are refreshed while C signatures remain structurally unchanged.
+- All five C charts preserve their approved trend, ledger, stage, flow, and matrix compositions on one shared Evidence Interface builder. Each compiles to `DATA_FIELD → EVIDENCE_BAY → TERMINAL → TARGET_LOCK`, and its evidence plate, terminal, and target address share one ID.
+- Thirteen signature locked-frame PNGs form the current visual baseline; all three production groups are represented while the approved C compositions remain geometrically unchanged.
 - The approved four-chart Precision Interface Lab passes 17 focused layout, motion-layer, and narrow-viewport checks.
 - All 24 templates render with and without JavaScript.
 - Reduced-motion mode settles immediately.
@@ -87,6 +88,6 @@ The reusable data contracts, numerical formatting, boundary cases, browser detec
 
 ## Next maintenance steps
 
-1. Consolidate the full C group C3/C6/C8/C15/C22 on the shared full-interface carrier without changing their approved compositions.
-2. Run presentation-mode, carrier, boundary, browser, and Lab QA before C is accepted.
-3. Complete final repository documentation and release review after all three groups are approved.
+1. Complete the final repository documentation and release review for all three approved production groups.
+2. Review Gallery motion at native and scaled widths, then freeze the release candidate visual baseline.
+3. Merge the rollout branch only after the final Gallery review is accepted.

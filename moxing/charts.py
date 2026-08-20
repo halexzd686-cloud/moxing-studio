@@ -354,6 +354,32 @@ def _embedded_artwork(
     )
 
 
+def _interface_artwork(
+    field_parts: list[str],
+    evidence_svg: str,
+    lock_parts: list[str],
+    *,
+    evidence_id: str,
+    evidence_viewbox: str,
+    plot_x: float,
+    lock_delay: int,
+    plot_right: float = W,
+) -> ChartArtwork:
+    """Compile a C-mode chart into the shared bay/terminal/target-lock carrier."""
+    return ChartArtwork(
+        svg="\n".join(field_parts),
+        presentation=EvidenceInterface(
+            evidence_id=evidence_id,
+            evidence_viewbox=evidence_viewbox,
+            plot_x=plot_x,
+            lock_delay=lock_delay,
+            evidence_svg=evidence_svg,
+            foreground_svg="\n".join(lock_parts),
+            plot_right=plot_right,
+        ),
+    )
+
+
 def build_c1(data: Any) -> str | ChartArtwork:
     items = _valid_series(data)[:10]
     if not items:
@@ -501,7 +527,7 @@ def build_c3(data: Any) -> str | ChartArtwork:
     y = lambda v: y1 - (v - y_min) / max(1e-9, y_max - y_min) * (y1 - y0)
     latest = series[0]["values"][-1]
     peak_index = max(range(len(series[0]["values"])), key=lambda i: series[0]["values"][i])
-    evidence = evidence_plate(0, 74, "T-01", "LATEST", format_num(latest), f"{series[0]['name']} / {labels[-1]}", delay=1540, width=230, brief=1020, story=2820, choreo="readout")
+    evidence = evidence_plate(0, 74, "E03", "LATEST", format_num(latest), f"{series[0]['name']} / {labels[-1]}", delay=1540, width=230, brief=1020, story=2820, choreo="readout")
     parts = [text(0, 28, "03 / PATH ROUTING", cls="index muted", size=13)]
     for tick in range(5):
         yy = y0 + (y1 - y0) * tick / 4
@@ -526,15 +552,20 @@ def build_c3(data: Any) -> str | ChartArtwork:
     parts += [line(px, py - 12, px, y0, cls="rail", extra=f'pathLength="1" {motion("align", 1220, brief=820, story=2140)}'), text(px, y0 - 10, f"PEAK / {labels[peak_index]}", cls="index signal-text", anchor="middle", size=12, extra=motion("lock", 1400, brief=950, story=2480, choreo="alarm"))]
     first_y = y(series[0]["values"][0])
     latest_y = y(latest)
-    foreground = "\n".join([
+    foreground = [
         rect(x0 - 6, first_y - 6, 12, 12, cls="pi-socket", extra='style="--pi-delay:180ms"'),
         circle(x1, latest_y, 14, cls="pi-lock-ring"),
         path(f"M {x1-20} {latest_y} H {x1-12} M {x1+12} {latest_y} H {x1+20} M {x1} {latest_y-20} V {latest_y-12}", cls="pi-lock-cross"),
         text(x1 - 21, latest_y + 27, f"E03 / T{len(labels):02d}", cls="pi-address pi-address-signal", anchor="end", size=10),
-    ])
-    return ChartArtwork(
-        svg="\n".join(parts),
-        presentation=EvidenceInterface("E03", "0 64 230 114", 248, 1280, evidence, foreground),
+    ]
+    return _interface_artwork(
+        parts,
+        evidence,
+        foreground,
+        evidence_id="E03",
+        evidence_viewbox="0 64 230 114",
+        plot_x=248,
+        lock_delay=1280,
     )
 
 
@@ -690,7 +721,7 @@ def build_c6(data: Any) -> str | ChartArtwork:
     width = min(76, band * .58)
     final_delta = levels[-1][1] - levels[0][1]
     extra_steps = max(0, len(items) - 6)
-    evidence = evidence_plate(0, 74, "L-01", "NET", f"{final_delta:+,.0f}", "期初至期末", delay=1750 + extra_steps * 50, width=230, brief=950 + extra_steps * 25, story=3300 + extra_steps * 100, choreo="alarm")
+    evidence = evidence_plate(0, 74, "E06", "NET", f"{final_delta:+,.0f}", "期初至期末", delay=1750 + extra_steps * 50, width=230, brief=950 + extra_steps * 25, story=3300 + extra_steps * 100, choreo="alarm")
     parts = [line(x0, y(0), x1, y(0), cls="rail-strong", extra=f'pathLength="1" {motion("align", 80, brief=35, story=120)}')]
     centers: list[tuple[float, float, float]] = []
     for index, (item, pair) in enumerate(zip(items, levels)):
@@ -720,9 +751,14 @@ def build_c6(data: Any) -> str | ChartArtwork:
         path(f"M {lock_x} {lock_y+13} V {target_top-5} H {target_edge}", cls="pi-lock-cross"),
         text(lock_x, lock_y - 19, "E06 / NET", cls="pi-address pi-address-signal", anchor="middle", size=10),
     ]
-    return ChartArtwork(
-        svg="\n".join(parts),
-        presentation=EvidenceInterface("E06", "0 64 230 114", 260, 1160, evidence, "\n".join(overlay)),
+    return _interface_artwork(
+        parts,
+        evidence,
+        overlay,
+        evidence_id="E06",
+        evidence_viewbox="0 64 230 114",
+        plot_x=260,
+        lock_delay=1160,
     )
 
 
@@ -805,7 +841,7 @@ def build_c8(data: Any) -> str | ChartArtwork:
     plate_standard = 1600 + max(0, len(items) - 5) * 170
     plate_brief = 960 + max(0, len(items) - 5) * 80
     plate_story = 3040 + max(0, len(items) - 5) * 320
-    evidence = evidence_plate(0, 74, "S-01", "RETENTION", f"{retention:.1f}%", "首阶段至末阶段", delay=plate_standard, width=230, brief=plate_brief, story=plate_story, choreo="readout")
+    evidence = evidence_plate(0, 74, "E08", "RETENTION", f"{retention:.1f}%", "首阶段至末阶段", delay=plate_standard, width=230, brief=plate_brief, story=plate_story, choreo="readout")
     parts = [text(0, 28, "08 / STAGE INTERLOCK", cls="index muted", size=13)]
     x0, x1, center = 302, 1130, 250
     band = (x1 - x0) / len(items)
@@ -854,9 +890,14 @@ def build_c8(data: Any) -> str | ChartArtwork:
         path(f"M {target_x-18} {center} H {target_x-11} M {target_x+11} {center} H {target_x+18}", cls="pi-lock-cross"),
         text(target_x, center + 29, f"E08 / Δ{loss:.0f}", cls="pi-address pi-address-signal", anchor="middle", size=10),
     ]
-    return ChartArtwork(
-        svg="\n".join(parts),
-        presentation=EvidenceInterface("E08", "0 64 230 114", 280, 1180, evidence, "\n".join(overlay)),
+    return _interface_artwork(
+        parts,
+        evidence,
+        overlay,
+        evidence_id="E08",
+        evidence_viewbox="0 64 230 114",
+        plot_x=280,
+        lock_delay=1180,
     )
 
 
@@ -1279,7 +1320,7 @@ def build_c15(data: Any) -> str | ChartArtwork:
         return "\n".join(parts)
     weakest_index = min(range(len(valid_links)), key=lambda index: valid_links[index]["value"])
     weakest = valid_links[weakest_index]
-    evidence = evidence_plate(0, 86, "F-15", "LEAK", format_num(weakest["value"]), "最小有效流量", delay=1740, width=200, brief=980, story=3300, choreo="alarm")
+    evidence = evidence_plate(0, 86, "E15", "LEAK", format_num(weakest["value"]), "最小有效流量", delay=1740, width=200, brief=980, story=3300, choreo="alarm")
     ports: list[tuple[float, float]] = []
     for item in valid_links:
         sx, sy, sw, sh = positions[str(item["source"])]
@@ -1301,9 +1342,14 @@ def build_c15(data: Any) -> str | ChartArtwork:
         circle(target_x, target_y, 14, cls="pi-lock-ring"),
         text(target_x, target_y + 30, f"E15 / L{weakest_index + 1:02d}", cls="pi-address pi-address-signal", anchor="middle", size=10),
     ]
-    return ChartArtwork(
-        svg="\n".join(parts),
-        presentation=EvidenceInterface("E15", "0 76 200 114", 250, 1100, evidence, "\n".join(overlay)),
+    return _interface_artwork(
+        parts,
+        evidence,
+        overlay,
+        evidence_id="E15",
+        evidence_viewbox="0 76 200 114",
+        plot_x=250,
+        lock_delay=1100,
     )
 
 
@@ -1635,7 +1681,7 @@ def build_c22(data: Any) -> str | ChartArtwork:
             cls = "signal-fill" if is_focus else ("data-fill" if value >= .65 else "cat-1" if value >= 0 else "cat-4")
             delay = 200 + row * 70 + col * 45
             parts += [rect(x + 3, y + 3, size - 6, size - 6, cls=cls, extra=motion("dock", delay, dy=10, brief=90 + row * 32 + col * 20, story=380 + row * 140 + col * 85, choreo="field-seat")), text(x + size / 2, y + size * .61, f"{value:+.2f}" if value != 1 else "1.00", cls=_contrast_text_class(cls), anchor="middle", size=12, weight=650, extra=motion("lock", delay + 230, brief=delay // 2 + 140, story=delay * 2 + 290, choreo="readout"))]
-    evidence = evidence_plate(0, 346, "C-22", "STRONG", f"{strongest[1]:+.2f}", f"{labels[strongest[2]]} × {labels[strongest[3]]}", delay=1820, width=230, brief=1030, story=3480, choreo="alarm")
+    evidence = evidence_plate(0, 346, "E22", "STRONG", f"{strongest[1]:+.2f}", f"{labels[strongest[2]]} × {labels[strongest[3]]}", delay=1820, width=230, brief=1030, story=3480, choreo="alarm")
     focus_row, focus_col = strongest[2], strongest[3]
     focus_x, focus_y = x0 + focus_col * size, y0 + focus_row * size
     inset, arm = 1, min(16, size * .24)
@@ -1659,9 +1705,14 @@ def build_c22(data: Any) -> str | ChartArtwork:
         path(focus_path, cls="pi-focus-corner"),
         text(x0 + size * len(labels) + 10, top + 19, f"E22 / A{focus_col + 1:02d}", cls="pi-address pi-address-signal", size=10),
     ]
-    return ChartArtwork(
-        svg="\n".join(parts),
-        presentation=EvidenceInterface("E22", "0 336 230 114", 255, 980, evidence, "\n".join(overlay)),
+    return _interface_artwork(
+        parts,
+        evidence,
+        overlay,
+        evidence_id="E22",
+        evidence_viewbox="0 336 230 114",
+        plot_x=255,
+        lock_delay=980,
     )
 
 

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T08:42:37.926Z",
+  "generatedAt": "2026-08-20T09:05:52.918Z",
   "status": "passed",
   "checks": [
     {
@@ -568,7 +568,7 @@
     },
     {
       "scope": "precision-performance:c06-ledger-steps.html",
-      "message": "precision carrier p95 16.7ms; 4 layers; legacy idle"
+      "message": "precision carrier p95 16.8ms; 4 layers; legacy idle"
     },
     {
       "scope": "precision-performance:c08-stage-channel.html",
@@ -580,19 +580,19 @@
     },
     {
       "scope": "precision-performance:c22-correlation-matrix.html",
-      "message": "precision carrier p95 16.7ms; 4 layers; legacy idle"
+      "message": "precision carrier p95 16.8ms; 4 layers; legacy idle"
     },
     {
       "scope": "embedded-performance:c13-pareto-contribution.html",
-      "message": "embedded carrier p95 16.8ms; 4 layers; legacy idle"
+      "message": "embedded carrier p95 16.7ms; 4 layers; legacy idle"
     },
     {
       "scope": "embedded-performance:c14-cohort-matrix.html",
-      "message": "embedded carrier p95 16.7ms; 4 layers; legacy idle"
+      "message": "embedded carrier p95 16.8ms; 4 layers; legacy idle"
     },
     {
       "scope": "embedded-performance:c16-decision-bubble-matrix.html",
-      "message": "embedded carrier p95 16.7ms; 4 layers; legacy idle"
+      "message": "embedded carrier p95 16.8ms; 4 layers; legacy idle"
     },
     {
       "scope": "embedded-performance:c17-market-candles.html",
@@ -600,11 +600,11 @@
     },
     {
       "scope": "embedded-performance:c18-performance-drawdown.html",
-      "message": "embedded carrier p95 16.7ms; 4 layers; legacy idle"
+      "message": "embedded carrier p95 16.8ms; 4 layers; legacy idle"
     },
     {
       "scope": "embedded-performance:c19-yield-curve.html",
-      "message": "embedded carrier p95 16.7ms; 4 layers; legacy idle"
+      "message": "embedded carrier p95 16.8ms; 4 layers; legacy idle"
     },
     {
       "scope": "embedded-performance:c21-distribution-profile.html",
@@ -624,7 +624,7 @@
     },
     {
       "scope": "direct-performance:c02-ranked-rail.html",
-      "message": "direct carrier p95 16.8ms; 3 layers; legacy idle"
+      "message": "direct carrier p95 16.7ms; 3 layers; legacy idle"
     },
     {
       "scope": "direct-performance:c04-composition-field.html",
@@ -632,11 +632,11 @@
     },
     {
       "scope": "direct-performance:c05-composition-bands.html",
-      "message": "direct carrier p95 16.8ms; 3 layers; legacy idle"
+      "message": "direct carrier p95 16.7ms; 3 layers; legacy idle"
     },
     {
       "scope": "direct-performance:c07-milestone-lanes.html",
-      "message": "direct carrier p95 16.8ms; 3 layers; legacy idle"
+      "message": "direct carrier p95 16.7ms; 3 layers; legacy idle"
     },
     {
       "scope": "direct-performance:c09-metric-lockup.html",
@@ -652,7 +652,7 @@
     },
     {
       "scope": "direct-performance:c12-metric-small-multiples.html",
-      "message": "direct carrier p95 16.8ms; 3 layers; legacy idle"
+      "message": "direct carrier p95 16.7ms; 3 layers; legacy idle"
     },
     {
       "scope": "direct-performance:c20-sensitivity-matrix.html",

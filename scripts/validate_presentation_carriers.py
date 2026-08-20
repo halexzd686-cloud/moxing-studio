@@ -57,6 +57,9 @@ def main() -> None:
         "A group activates direct carrier": {chart_id for chart_id, mode in active.items() if mode == "direct"} == direct_a_ids,
         "B group activates embedded carrier": {chart_id for chart_id, mode in active.items() if mode == "embedded"} == embedded_b_ids,
         "interface markup remains compatible": all('data-interface="precision-v2.1"' in rendered[chart_id] and 'class="chart-body pi-split-body"' in rendered[chart_id] for chart_id in interface_ids),
+        "C interface charts use four compiled macro layers": all('class="pi-data-field"' in rendered[chart_id] and 'class="pi-evidence-bay"' in rendered[chart_id] and 'class="pi-bay-terminal"' in rendered[chart_id] and ('class="pi-lock-ring"' in rendered[chart_id] or 'class="pi-focus-corner"' in rendered[chart_id]) for chart_id in interface_ids),
+        "C interface charts keep one evidence identity": all(interface_identity_matches(chart_id, rendered[chart_id]) for chart_id in interface_ids),
+        "C interface charts contain no embedded evidence capsule": all('class="pm-local-evidence"' not in rendered[chart_id] for chart_id in interface_ids),
         "direct markup has no split bay": all('<section class="chart-body pi-split-body">' not in rendered[chart_id] and 'class="chart-body pm-direct-body"' in rendered[chart_id] for chart_id in direct_a_ids),
         "A direct charts use three compiled macro layers": all('data-motion-system="presentation-v2.1"' in rendered[chart_id] and 'class="pm-data-field-layer"' in rendered[chart_id] and 'class="pm-plot-layer"' in rendered[chart_id] and 'class="pm-target-lock"' in rendered[chart_id] for chart_id in direct_a_ids),
         "A direct charts contain no evidence container": all('evidence bay' not in rendered[chart_id] and 'class="evidence-plate"' not in rendered[chart_id] and 'class="pm-local-evidence"' not in rendered[chart_id] for chart_id in direct_a_ids),
@@ -83,6 +86,16 @@ def conflict_fails() -> bool:
     except ValueError:
         return True
     return False
+
+
+def interface_identity_matches(chart_id: str, source: str) -> bool:
+    evidence_id = f"E{int(chart_id[1:]):02d}"
+    return (
+        f'aria-label="{evidence_id} evidence bay"' in source
+        and f'<span>{evidence_id}</span>' in source
+        and source.count(f'>{evidence_id}<') >= 2
+        and f'>{evidence_id} / ' in source
+    )
 
 
 if __name__ == "__main__":

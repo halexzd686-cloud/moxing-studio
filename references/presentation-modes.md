@@ -27,7 +27,7 @@ Sequence: `DATA_FIELD → RELATIONSHIP → LOCAL_EVIDENCE → TARGET_LOCK`, exac
 
 Use when the reasoning chain is as important as the result, or when the chart has no safe internal whitespace. Reserve the 220px evidence bay and 28px safety gap. The bay, local terminal, and target lock must refer to the same evidence ID.
 
-Sequence: `DATA_FIELD → EVIDENCE_BAY → TERMINAL → TARGET_LOCK`, maximum 4 macro layers.
+Sequence: `DATA_FIELD → EVIDENCE_BAY → TERMINAL → TARGET_LOCK`, exactly 4 compiled macro layers. The evidence plate, bay terminal, and target address reuse one zero-padded evidence ID.
 
 ## Approved C1–C24 mapping
 
