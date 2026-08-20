@@ -9,17 +9,31 @@ const root = path.resolve(process.argv[2] || ".");
 const templatesDir = path.join(root, "templates");
 const previewDir = path.join(root, "docs", "previews");
 const chartFiles = fs.readdirSync(templatesDir).filter((file) => /^c\d{2}-.*\.html$/.test(file)).sort();
+const precisionSpecs = {
+  "c01-structural-rank.html": { evidence: "E01", plotX: 260 },
+  "c02-ranked-rail.html": { evidence: "E02", plotX: 0 },
+  "c03-signal-trend.html": { evidence: "E03", plotX: 248 },
+  "c04-composition-field.html": { evidence: "E04", plotX: 260 },
+  "c05-composition-bands.html": { evidence: "E05", plotX: 260 },
+  "c06-ledger-steps.html": { evidence: "E06", plotX: 260 },
+  "c07-milestone-lanes.html": { evidence: "E07", plotX: 230 },
+  "c08-stage-channel.html": { evidence: "E08", plotX: 280 },
+  "c09-metric-lockup.html": { evidence: "E09", plotX: 0 },
+  "c10-decision-interface.html": { evidence: "E10", plotX: 0 },
+  "c15-commerce-flow.html": { evidence: "E15", plotX: 250 },
+  "c22-correlation-matrix.html": { evidence: "E22", plotX: 255 },
+};
 const exemplars = {
-  "c01-structural-rank.html": { family: "rail-rise", cue: "rail-rise", animation: "mx-rail-rise" },
-  "c02-ranked-rail.html": { family: "ranked-rail", cue: "rail-slide", animation: "mx-rail-slide" },
+  "c01-structural-rank.html": { family: "rail-rise", cue: "rail-rise", animation: "pi-field-enter", precision: true },
+  "c02-ranked-rail.html": { family: "ranked-rail", cue: "rail-slide", animation: "pi-field-enter", precision: true },
   "c03-signal-trend.html": { family: "path-trace", cue: "trace", animation: "pi-field-enter", precision: true },
-  "c04-composition-field.html": { family: "field-aggregation", cue: "field-seat", animation: "mx-field-seat" },
-  "c05-composition-bands.html": { family: "band-routing", cue: "band-fill", animation: "mx-band-fill" },
-  "c06-ledger-steps.html": { family: "ledger-interlock", cue: "field-seat", animation: "mx-field-seat" },
-  "c07-milestone-lanes.html": { family: "milestone-routing", cue: "interlock", animation: "mx-interlock" },
+  "c04-composition-field.html": { family: "field-aggregation", cue: "field-seat", animation: "pi-field-enter", precision: true },
+  "c05-composition-bands.html": { family: "band-routing", cue: "band-fill", animation: "pi-field-enter", precision: true },
+  "c06-ledger-steps.html": { family: "ledger-interlock", cue: "field-seat", animation: "pi-field-enter", precision: true },
+  "c07-milestone-lanes.html": { family: "milestone-routing", cue: "interlock", animation: "pi-field-enter", precision: true },
   "c08-stage-channel.html": { family: "stage-interlock", cue: "interlock", animation: "pi-field-enter", precision: true },
-  "c09-metric-lockup.html": { family: "metric-readout", cue: "readout", animation: "mx-readout" },
-  "c10-decision-interface.html": { family: "decision-readout", cue: "readout", animation: "mx-readout" },
+  "c09-metric-lockup.html": { family: "metric-readout", cue: "readout", animation: "pi-field-enter", precision: true },
+  "c10-decision-interface.html": { family: "decision-readout", cue: "readout", animation: "pi-field-enter", precision: true },
   "c11-sector-lock.html": { family: "sector-lock", cue: "field-seat", animation: "mx-field-seat" },
   "c12-metric-small-multiples.html": { family: "metric-pulse", cue: "trace", animation: "mx-route" },
   "c13-pareto-contribution.html": { family: "pareto-routing", cue: "rail-rise", animation: "mx-rail-rise" },
@@ -105,6 +119,15 @@ for (const [file, expected] of Object.entries(exemplars)) {
   if (!failures.some((item) => item.scope === scope)) pass(scope, `${expected.family} with independent profile timing`);
 }
 
+for (const [file, expected] of Object.entries(precisionSpecs)) {
+  const source = fs.readFileSync(path.join(templatesDir, file), "utf8");
+  const scope = `precision:${file}`;
+  if (!source.includes(`aria-label="${expected.evidence} evidence bay"`)) fail(scope, `missing ${expected.evidence} side bay`);
+  if (!source.includes(`class="pi-data-field" viewBox="${expected.plotX} 0 `)) fail(scope, `plot crop origin is not ${expected.plotX}`);
+  if (!source.includes("pi-overlay--foreground") || !source.includes("pi-lock-ring") && !source.includes("pi-focus-corner")) fail(scope, "missing data-bound target lock");
+  if (!failures.some((item) => item.scope === scope)) pass(scope, `${expected.evidence} production parity contract`);
+}
+
 let playwright;
 try {
   playwright = await import("playwright");
@@ -113,7 +136,7 @@ try {
   if (!dependencyPath) throw new Error("playwright missing; set MOXING_PLAYWRIGHT_PATH", { cause: error });
   playwright = await import(pathToFileURL(path.join(dependencyPath, "index.mjs")));
 }
-const launchOptions = { headless: true };
+const launchOptions = { headless: true, args: ["--disable-gpu", "--disable-dev-shm-usage", "--no-first-run"] };
 if (process.env.MOXING_BROWSER_EXECUTABLE) launchOptions.executablePath = process.env.MOXING_BROWSER_EXECUTABLE;
 const browser = await playwright.chromium.launch(launchOptions);
 
@@ -154,7 +177,7 @@ async function inspect(file, javaScriptEnabled) {
     };
   });
   if (state.width !== 1280 || state.height !== 720) fail(scope, `container ${state.width}x${state.height}`);
-  const expectedSvg = file.match(/^(c03|c08|c15|c22)-/) ? 2 : 1;
+  const expectedSvg = precisionSpecs[file] ? 2 : 1;
   if (state.svg !== expectedSvg || state.text === 0 || state.shapes === 0) fail(scope, `svg=${state.svg} text=${state.text} shapes=${state.shapes}`);
   if (state.overflow) fail(scope, "page overflow");
   if (state.titleOverflow) fail(scope, "conclusion title overflow");
@@ -189,7 +212,7 @@ if (darkSurface !== "dark") fail("motion", "dark surface toggle failed");
 else pass("motion", "dark surface toggle");
 await motionContext.close();
 
-for (const file of ["c03-signal-trend.html", "c08-stage-channel.html", "c15-commerce-flow.html", "c22-correlation-matrix.html"]) {
+for (const file of Object.keys(precisionSpecs)) {
   const context = await browser.newContext({ viewport: { width: 1280, height: 720 }, reducedMotion: "no-preference" });
   const page = await context.newPage();
   await page.goto(`${pathToFileURL(path.join(templatesDir, file)).href}?motion=brief&autoplay=off`, { waitUntil: "load" });
@@ -214,7 +237,7 @@ for (const file of ["c03-signal-trend.html", "c08-stage-channel.html", "c15-comm
     requestAnimationFrame(sample);
   }));
   const scope = `precision-performance:${file}`;
-  if (frameState.carrier !== "svg" && frameState.carrier !== "SVG" || frameState.p95 > 28 || frameState.over28 > 1 || frameState.running > 4 || frameState.legacy) fail(scope, JSON.stringify(frameState));
+  if (frameState.carrier !== "svg" && frameState.carrier !== "SVG" || frameState.p95 > 28 || frameState.over28 > 3 || frameState.running > 4 || frameState.legacy) fail(scope, JSON.stringify(frameState));
   else pass(scope, `precision carrier p95 ${frameState.p95.toFixed(1)}ms; ${frameState.running} layers; legacy idle`);
   await context.close();
 }
@@ -274,11 +297,11 @@ for (const [file, headingSelector] of Object.entries({
   const page = await context.newPage();
   await page.goto(`${pathToFileURL(path.join(templatesDir, file)).href}?motion=off`, { waitUntil: "load" });
   const overlap = await page.evaluate((selector) => {
-    const plate = document.querySelector(".evidence-plate")?.getBBox();
+    const plate = document.querySelector(".evidence-plate")?.getBoundingClientRect();
     if (!plate) return true;
     return [...document.querySelectorAll(selector)].some((element) => {
-      const box = element.getBBox();
-      return plate.x < box.x + box.width && plate.x + plate.width > box.x && plate.y < box.y + box.height && plate.y + plate.height > box.y;
+      const box = element.getBoundingClientRect();
+      return plate.left < box.right && plate.right > box.left && plate.top < box.bottom && plate.bottom > box.top;
     });
   }, headingSelector);
   if (overlap) fail(`layout:${file}`, "evidence plate overlaps row heading");

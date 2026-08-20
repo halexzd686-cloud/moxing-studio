@@ -228,6 +228,7 @@ class PrecisionInterface:
     lock_delay: int
     evidence_svg: str
     foreground_svg: str
+    plot_right: float = W
 
 
 @dataclass
@@ -309,7 +310,7 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
     html_interface = ' data-interface="precision-v2.1"' if precision else ""
     root_interface = ' data-interface="precision-v2.1"' if precision else ""
     if precision:
-        plot_width = W - precision.plot_x
+        plot_width = precision.plot_right - precision.plot_x
         body_markup = f'''<section class="chart-body pi-split-body">
     <aside class="pi-evidence-bay" aria-label="{esc(precision.evidence_id)} evidence bay" style="--pi-terminal-delay:{max(0, precision.lock_delay - 120)}ms">
       <span class="pi-evidence-bay__label">EVIDENCE / BAY</span>

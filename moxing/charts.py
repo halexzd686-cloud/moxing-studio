@@ -273,7 +273,7 @@ def _valid_series(data: Any, label_key: str = "label") -> list[dict[str, Any]]:
     return [item for item in data if isinstance(item, dict) and is_number(item.get("value")) and str(item.get(label_key, "")).strip()]
 
 
-def build_c1(data: Any) -> str:
+def build_c1(data: Any) -> str | ChartArtwork:
     items = _valid_series(data)[:10]
     if not items:
         return no_data()
@@ -281,13 +281,10 @@ def build_c1(data: Any) -> str:
     top = max(range(len(items)), key=lambda index: items[index]["value"])
     total_positive = sum(max(0, item["value"]) for item in items) or 1
     x0, x1, baseline, top_y = 300, 1134, 426, 88
-    parts = [
-        text(0, 32, "01 / RAIL ASSEMBLY", cls="index muted", size=13),
-        text(0, 90, format_num(items[top]["value"]), cls="value title-font", size=52, weight=700, extra=motion("lock", 1320, brief=760, story=2380, choreo="readout")),
-        text(0, 117, f"{items[top]['label']} / 当前最高", cls="muted", size=15),
-        evidence_plate(0, 278, "E-01", "SHARE", f"{items[top]['value'] / total_positive * 100:.1f}%", "占当前类目合计", delay=1460, width=226, brief=880, story=2660, choreo="readout"),
-        line(x0, baseline, x1, baseline, cls="rail-strong", extra=f'pathLength="1" {motion("align", 80, brief=40, story=120, duration=240, duration_brief=150, duration_story=320)}'),
-    ]
+    share = items[top]["value"] / total_positive * 100
+    evidence = evidence_plate(0, 74, "E-01", "LEADER", format_num(items[top]["value"]), f"{items[top]['label']} / {share:.1f}%", delay=1460, width=230, brief=880, story=2660, choreo="readout")
+    parts = [line(x0, baseline, x1, baseline, cls="rail-strong", extra=f'pathLength="1" {motion("align", 80, brief=40, story=120, duration=240, duration_brief=150, duration_story=320)}')]
+    centers: list[tuple[float, float]] = []
     for tick in range(6):
         x = x0 + (x1 - x0) * tick / 5
         parts += [line(x, baseline - 8, x, baseline + 8, cls="rail", extra=motion("align", 120 + tick * 35, brief=70 + tick * 18, story=180 + tick * 48)), text(x, 466, format_num(max_value * tick / 5), cls="muted index", anchor="middle", size=12)]
@@ -298,25 +295,42 @@ def build_c1(data: Any) -> str:
         x = x0 + band * index + (band - width) / 2
         y = baseline - height
         cls = "signal-fill" if index == top else ("data-fill" if index < 3 else "secondary-fill")
+        centers.append((x + width / 2, y))
         shape = path(cut_rect_path(x, y, width, height, 7), cls=cls, extra=motion("dock", 320 + index * 95, dy=42, brief=170 + index * 52, story=520 + index * 160, duration=520, duration_brief=340, duration_story=760, choreo="rail-rise"))
         seam = line(x + width * .5, baseline, x + width * .5, baseline + 11, cls="rail", extra=motion("align", 590 + index * 55, brief=360 + index * 30, story=1080 + index * 120))
         parts += [shape, seam, text(x + width / 2, y - 13, format_num(item["value"]), cls="value", anchor="middle", size=15, weight=650, extra=motion("lock", 930 + index * 52, brief=520 + index * 32, story=1540 + index * 118, choreo="readout")), text(x + width / 2, baseline + 30, item["label"], cls="muted", anchor="middle", size=13)]
         if index == top:
             parts += [path(f"M {x-7} {y+18} V {y-7} H {x+18}", cls="signal-stroke", extra=f'pathLength="1" {motion("lock", 1240, brief=700, story=2250, choreo="alarm")}')]
-    return "\n".join(parts)
+    overlay = []
+    for index, (cx, _top_y) in enumerate(centers):
+        signal = index == top
+        overlay.append(rect(cx - 4, baseline - 4, 8, 8, cls="pi-socket-signal" if signal else "pi-socket"))
+    target_x, target_y = centers[top]
+    overlay += [
+        circle(target_x, target_y, 13, cls="pi-lock-ring"),
+        path(f"M {target_x-18} {target_y} H {target_x-11} M {target_x+11} {target_y} H {target_x+18}", cls="pi-lock-cross"),
+        text(target_x, target_y - 24, f"E01 / R{top + 1:02d}", cls="pi-address pi-address-signal", anchor="middle", size=10),
+    ]
+    return ChartArtwork(
+        svg="\n".join(parts),
+        precision=PrecisionInterface("E01", "0 64 230 114", 260, 1160, evidence, "\n".join(overlay)),
+    )
 
 
-def build_c2(data: Any) -> str:
+def build_c2(data: Any) -> str | ChartArtwork:
     items = sorted(_valid_series(data), key=lambda item: item["value"], reverse=True)[:10]
     if not items:
         return no_data()
     maximum = max(max(item["value"], 0) for item in items) or 1
     x0, x1, y0 = 330, 1116, 120
     row = min(58, 306 / max(1, len(items) - 1))
-    parts = [text(0, 28, "02 / RANKED DATUM", cls="index muted", size=13), evidence_plate(874, 0, "R-01", "TOP", format_num(items[0]["value"]), items[0]["label"][:12], delay=1500, width=242, brief=900, story=2960, choreo="alarm")]
+    evidence = evidence_plate(0, 74, "R-01", "TOP", format_num(items[0]["value"]), items[0]["label"][:12], delay=1500, width=230, brief=900, story=2960, choreo="alarm")
+    parts = []
+    ends: list[tuple[float, float]] = []
     for index, item in enumerate(items):
         y = y0 + index * row
         end = x0 + (x1 - x0) * max(0, item["value"]) / maximum
+        ends.append((end, y + 12))
         heading = group(
             [
                 text(0, y + 18, f"{index + 1:02d}", cls="index muted", size=12),
@@ -335,7 +349,20 @@ def build_c2(data: Any) -> str:
             line(end, y - 5, end, y + 30, cls="rail", extra=motion("align", bar_standard + 350, brief=bar_brief + 230, story=bar_story + 540)),
             text(min(x1 - 2, end + 12), y + 18, format_num(item["value"]), cls="value", size=14, weight=650, extra=motion("lock", bar_standard + 360, brief=bar_brief + 235, story=bar_story + 550, choreo="readout")),
         ]
-    return "\n".join(parts)
+    overlay = []
+    for index, (_end, cy) in enumerate(ends):
+        overlay.append(rect(x0 - 4, cy - 4, 8, 8, cls="pi-socket-signal" if index == 0 else "pi-socket"))
+    target_x, target_y = ends[0]
+    lock_y = target_y - 30
+    overlay += [
+        circle(target_x, lock_y, 13, cls="pi-lock-ring"),
+        path(f"M {target_x} {lock_y+13} V {target_y-5}", cls="pi-lock-cross"),
+        text(min(x1 - 18, target_x - 18), lock_y - 18, "E02 / R01", cls="pi-address pi-address-signal", anchor="end", size=10),
+    ]
+    return ChartArtwork(
+        svg="\n".join(parts),
+        precision=PrecisionInterface("E02", "0 64 230 114", 0, 1120, evidence, "\n".join(overlay)),
+    )
 
 
 def build_c3(data: Any) -> str | ChartArtwork:
@@ -395,7 +422,7 @@ def build_c3(data: Any) -> str | ChartArtwork:
     )
 
 
-def build_c4(data: Any) -> str:
+def build_c4(data: Any) -> str | ChartArtwork:
     items = [item for item in _valid_series(data) if item["value"] > 0][:6]
     if not items:
         return no_data()
@@ -407,7 +434,8 @@ def build_c4(data: Any) -> str:
     for index in sorted(range(len(items)), key=lambda i: raw[i] - counts[i], reverse=True)[: units - sum(counts)]:
         counts[index] += 1
     largest = max(range(len(items)), key=lambda i: items[i]["value"])
-    parts = [text(0, 28, "04 / COMPOSITION BAY", cls="index muted", size=13), evidence_plate(0, 74, "F-01", "SHARE", f"{shares[largest]*100:.0f}%", items[largest]["label"], delay=1500, width=230, brief=900, story=3060, choreo="alarm")]
+    evidence = evidence_plate(0, 74, "F-01", "SHARE", f"{shares[largest]*100:.0f}%", items[largest]["label"], delay=1500, width=230, brief=900, story=3060, choreo="alarm")
+    parts = []
     start_x, start_y, cell_w, cell_h, gap = 310, 116, 34, 48, 6
     cumulative = []
     for idx, count in enumerate(counts):
@@ -430,10 +458,30 @@ def build_c4(data: Any) -> str:
         )
         parts.append(legend)
     parts += [line(start_x, 382, start_x + 394, 382, cls="rail-strong", extra=f'pathLength="1" {motion("align", 100, brief=45, story=140)}'), text(start_x, 410, "40 MODULES / EACH = 2.5%", cls="index muted", size=12)]
-    return "\n".join(parts)
+    last_dominant = max(0, sum(counts[:largest + 1]) - 1)
+    focus_row, focus_col = divmod(last_dominant, 10)
+    focus_x = start_x + focus_col * (cell_w + gap)
+    focus_y = start_y + focus_row * (cell_h + gap)
+    left, right, top_y, bottom = focus_x - 2, focus_x + cell_w + 2, focus_y - 2, focus_y + cell_h + 2
+    arm = 10
+    focus_path = (
+        f"M {left} {top_y+arm} V {top_y} H {left+arm} "
+        f"M {right-arm} {top_y} H {right} V {top_y+arm} "
+        f"M {right} {bottom-arm} V {bottom} H {right-arm} "
+        f"M {left+arm} {bottom} H {left} V {bottom-arm}"
+    )
+    foreground = "\n".join([
+        rect(start_x - 4, 378, 8, 8, cls="pi-socket"),
+        path(focus_path, cls="pi-focus-corner"),
+        text(730, 410, f"E04 / F{counts[largest]:02d}", cls="pi-address pi-address-signal", size=10, anchor="end"),
+    ])
+    return ChartArtwork(
+        svg="\n".join(parts),
+        precision=PrecisionInterface("E04", "0 64 230 114", 260, 1080, evidence, foreground),
+    )
 
 
-def build_c5(data: Any) -> str:
+def build_c5(data: Any) -> str | ChartArtwork:
     categories = data.get("categories", []) if isinstance(data, dict) else []
     series = data.get("series", [])[:4] if isinstance(data, dict) else []
     valid = bool(categories) and series and all(len(item.get("values", [])) == len(categories) and all(is_number(v) and v >= 0 for v in item.get("values", [])) for item in series)
@@ -449,7 +497,9 @@ def build_c5(data: Any) -> str:
     last_standard = 280 + standard_step * (len(categories) - 1) + 70 * (len(series) - 1)
     last_brief = 150 + brief_step * (len(categories) - 1) + 40 * (len(series) - 1)
     last_story = 700 + story_step * (len(categories) - 1) + 120 * (len(series) - 1)
-    parts = [text(0, 28, "05 / BAND AGGREGATION", cls="index muted", size=13), evidence_plate(0, 74, "B-01", "MIX", f"{series[0]['values'][-1]/max(1, totals[-1])*100:.0f}%", f"{series[0].get('name','主系列')} / 最新", delay=round(max(1450, last_standard + 440)), width=230, brief=round(max(900, last_brief + 300)), story=round(max(3000, last_story + 650)), choreo="alarm")]
+    latest_share = series[0]["values"][-1] / max(1, totals[-1]) * 100
+    evidence = evidence_plate(0, 74, "B-01", "MIX", f"{latest_share:.0f}%", f"{series[0].get('name','主系列')} / 最新", delay=round(max(1450, last_standard + 440)), width=230, brief=round(max(900, last_brief + 300)), story=round(max(3000, last_story + 650)), choreo="alarm")
+    parts = []
     x0, x1, y0 = 318, 1122, 95
     row = min(78, 320 / max(1, len(categories)))
     for cat_index, category in enumerate(categories):
@@ -473,10 +523,23 @@ def build_c5(data: Any) -> str:
     for index, item in enumerate(series):
         x = x0 + index * 190
         parts.append(group([rect(x, 442, 12, 12, cls="signal-fill" if index == 0 else f"cat-{index+1}"), text(x + 22, 453, item.get("name", f"系列{index+1}"), cls="muted", size=12)], cls="band-legend", extra=motion("lock", 1180 + index * 70, brief=700 + index * 40, story=2500 + index * 140, choreo="readout")))
-    return "\n".join(parts)
+    latest_y = y0 + (len(categories) - 1) * row
+    primary_end = x0 + (x1 - x0) * series[0]["values"][-1] / max(1, totals[-1])
+    overlay = []
+    for index in range(len(categories)):
+        cy = y0 + index * row + 21
+        overlay.append(rect(x0 - 4, cy - 4, 8, 8, cls="pi-socket-signal" if index == len(categories) - 1 else "pi-socket"))
+    overlay += [
+        circle(primary_end, latest_y + 21, 13, cls="pi-lock-ring"),
+        text(primary_end, latest_y - 3, f"E05 / Q{len(categories):02d}", cls="pi-address pi-address-signal", anchor="middle", size=10),
+    ]
+    return ChartArtwork(
+        svg="\n".join(parts),
+        precision=PrecisionInterface("E05", "0 64 230 114", 260, 1160, evidence, "\n".join(overlay)),
+    )
 
 
-def build_c6(data: Any) -> str:
+def build_c6(data: Any) -> str | ChartArtwork:
     items = _valid_series(data)[:8]
     if len(items) < 2:
         return no_data()
@@ -505,7 +568,9 @@ def build_c6(data: Any) -> str:
     width = min(76, band * .58)
     final_delta = levels[-1][1] - levels[0][1]
     extra_steps = max(0, len(items) - 6)
-    parts = [text(0, 28, "06 / LEDGER INTERLOCK", cls="index muted", size=13), evidence_plate(0, 74, "L-01", "NET", f"{final_delta:+,.0f}", "期初至期末", delay=1750 + extra_steps * 50, width=230, brief=950 + extra_steps * 25, story=3300 + extra_steps * 100, choreo="alarm"), line(x0, y(0), x1, y(0), cls="rail-strong", extra=f'pathLength="1" {motion("align", 80, brief=35, story=120)}')]
+    evidence = evidence_plate(0, 74, "L-01", "NET", f"{final_delta:+,.0f}", "期初至期末", delay=1750 + extra_steps * 50, width=230, brief=950 + extra_steps * 25, story=3300 + extra_steps * 100, choreo="alarm")
+    parts = [line(x0, y(0), x1, y(0), cls="rail-strong", extra=f'pathLength="1" {motion("align", 80, brief=35, story=120)}')]
+    centers: list[tuple[float, float, float]] = []
     for index, (item, pair) in enumerate(zip(items, levels)):
         start, end = pair
         top, bottom = min(y(start), y(end)), max(y(start), y(end))
@@ -513,6 +578,7 @@ def build_c6(data: Any) -> str:
         x = x0 + band * index + (band - width) / 2
         kind = item.get("type", "increase")
         cls = "signal-fill" if kind == "decrease" else ("data-fill" if kind in {"start", "end"} else "cat-1")
+        centers.append((x + width / 2, top, bottom))
         stage_standard = 220 if index == 0 else 620 + (index - 1) * 150
         stage_brief = 90 if index == 0 else 350 + (index - 1) * 80
         stage_story = 360 if index == 0 else 1100 + (index - 1) * 300
@@ -520,7 +586,22 @@ def build_c6(data: Any) -> str:
         if index < len(items) - 1:
             next_x = x0 + band * (index + 1) + (band - width) / 2
             parts.append(line(x + width, y(end), next_x, y(end), cls="rail", extra=f'pathLength="1" {motion("route", 450 + index * 150, brief=240 + index * 80, story=780 + index * 300, duration=190, duration_brief=140, duration_story=360, choreo="trace")}'))
-    return "\n".join(parts)
+    overlay = []
+    for index, (cx, _top, bottom) in enumerate(centers):
+        overlay.append(rect(cx - 4, bottom - 4, 8, 8, cls="pi-socket-signal" if index == len(centers) - 1 else "pi-socket"))
+    target_x, target_top, _target_bottom = centers[-1]
+    target_edge = target_x + width / 2
+    lock_x = target_edge + 30
+    lock_y = target_top - 34
+    overlay += [
+        circle(lock_x, lock_y, 13, cls="pi-lock-ring"),
+        path(f"M {lock_x} {lock_y+13} V {target_top-5} H {target_edge}", cls="pi-lock-cross"),
+        text(lock_x, lock_y - 19, "E06 / NET", cls="pi-address pi-address-signal", anchor="middle", size=10),
+    ]
+    return ChartArtwork(
+        svg="\n".join(parts),
+        precision=PrecisionInterface("E06", "0 64 230 114", 260, 1160, evidence, "\n".join(overlay)),
+    )
 
 
 def _parse_date(value: Any) -> datetime | None:
@@ -535,7 +616,7 @@ def _parse_date(value: Any) -> datetime | None:
     return None
 
 
-def build_c7(data: Any) -> str:
+def build_c7(data: Any) -> str | ChartArtwork:
     items = []
     if isinstance(data, list):
         for item in data[:10]:
@@ -554,7 +635,10 @@ def build_c7(data: Any) -> str:
     row = min(62, 300 / max(1, len(items) - 1))
     pos = lambda dt: x0 + (x1 - x0) * (dt - minimum).days / span
     extra_rows = max(0, len(items) - 5)
-    parts = [text(0, 28, "07 / MILESTONE LANES", cls="index muted", size=13), evidence_plate(0, 38, "M-01", "ACTIVE", f"{sum(0 < item['progress'] < 100 for item in items)}", "进行中的任务", delay=1650 + extra_rows * 40, width=230, brief=950 + extra_rows * 26, story=3200 + extra_rows * 80, choreo="alarm"), line(x0, 110, x1, 110, cls="rail-strong", extra=f'pathLength="1" {motion("align", 80, brief=35, story=120)}')]
+    active_indices = [index for index, item in enumerate(items) if 0 < item["progress"] < 100]
+    evidence = evidence_plate(0, 74, "M-01", "ACTIVE", f"{len(active_indices)}", "进行中的任务", delay=1650 + extra_rows * 40, width=230, brief=950 + extra_rows * 26, story=3200 + extra_rows * 80, choreo="alarm")
+    parts = [line(x0, 110, x1, 110, cls="rail-strong", extra=f'pathLength="1" {motion("align", 80, brief=35, story=120)}')]
+    progress_points: list[tuple[float, float]] = []
     for tick in range(6):
         x = x0 + (x1 - x0) * tick / 5
         parts += [line(x, 103, x, 460, cls="grid", extra=f'pathLength="1" {motion("align", 100 + tick * 35, brief=45 + tick * 18, story=160 + tick * 55)}'), text(x, 95, f"D+{round(span* tick/5)}", cls="index muted", anchor="middle", size=12)]
@@ -565,9 +649,24 @@ def build_c7(data: Any) -> str:
         task_standard = 360 + index * 100
         task_brief = 180 + index * 55
         task_story = 700 + index * 210
-        heading = group([text(0, y + 19, f"{index+1:02d}", cls="index muted", size=12), text(42, y + 19, item.get("task", "任务"), size=14), text(x1, y + 19, f"{item['progress']:.0f}%", cls="index muted", anchor="end", size=12)], cls="milestone-heading", extra=motion("lock", 240 + index * 50, brief=120 + index * 25, story=420 + index * 95, choreo="readout"))
+        progress_points.append((start + width * item["progress"] / 100, y + 13))
+        heading = group([text(244, y + 19, f"{index+1:02d}", cls="index muted", anchor="end", size=12), text(258, y + 19, item.get("task", "任务"), size=14), text(x1, y + 19, f"{item['progress']:.0f}%", cls="index muted", anchor="end", size=12)], cls="milestone-heading", extra=motion("lock", 240 + index * 50, brief=120 + index * 25, story=420 + index * 95, choreo="readout"))
         parts += [heading, line(x0, y + 12, x1, y + 12, cls="grid", extra=motion("align", 140 + index * 35, brief=70 + index * 18, story=220 + index * 70)), path(cut_rect_path(start, y, width, 26, 5), cls="panel-stroke", extra=motion("dock", task_standard, dx=-24, brief=task_brief, story=task_story, duration=350, duration_brief=220, duration_story=540, choreo="interlock")), rect(start, y, width * item["progress"] / 100, 26, cls="signal-fill" if 0 < item["progress"] < 100 else "data-fill", extra=motion("route", task_standard + 250, brief=task_brief + 150, story=task_story + 390, duration=320, duration_brief=220, duration_story=600, choreo="band-fill")), line(end, y - 5, end, y + 34, cls="rail", extra=motion("lock", task_standard + 500, brief=task_brief + 300, story=task_story + 780, choreo="readout"))]
-    return "\n".join(parts)
+    focus_index = min(active_indices, key=lambda index: abs(items[index]["progress"] - 50)) if active_indices else max(0, len(items) - 1)
+    target_x, target_y = progress_points[focus_index]
+    overlay = []
+    for index, item in enumerate(items):
+        socket_x = pos(item["_start"])
+        socket_y = y0 + index * row + 13
+        overlay.append(rect(socket_x - 4, socket_y - 4, 8, 8, cls="pi-socket-signal" if index == focus_index else "pi-socket"))
+    overlay += [
+        circle(target_x, target_y, 13, cls="pi-lock-ring"),
+        text(target_x, target_y - 22, f"E07 / M{focus_index + 1:02d}", cls="pi-address pi-address-signal", anchor="middle", size=10),
+    ]
+    return ChartArtwork(
+        svg="\n".join(parts),
+        precision=PrecisionInterface("E07", "0 64 230 114", 230, 1140, evidence, "\n".join(overlay)),
+    )
 
 
 def build_c8(data: Any) -> str | ChartArtwork:
@@ -636,7 +735,7 @@ def build_c8(data: Any) -> str | ChartArtwork:
     )
 
 
-def build_c9(data: Any) -> str:
+def build_c9(data: Any) -> str | ChartArtwork:
     if not isinstance(data, dict) or not is_number(data.get("value")):
         return no_data()
     value, target = data["value"], data.get("target") if is_number(data.get("target")) and data.get("target") > 0 else None
@@ -644,21 +743,51 @@ def build_c9(data: Any) -> str:
     yoy = data.get("yoy")
     metric_meta = group([text(34, 122, data.get("label", "核心指标"), cls="muted", size=16), text(38, 275, data.get("unit", ""), cls="muted", size=18)], cls="metric-meta", extra=motion("lock", 400, brief=200, story=600, choreo="readout"))
     parts = [
-        text(0, 28, "09 / METRIC LOCKUP", cls="index muted", size=13),
         path(cut_rect_path(0, 74, 680, 336, 14), cls="panel-stroke", extra=motion("dock", 180, dx=-22, brief=70, story=250, duration=460, duration_brief=300, duration_story=620, choreo="interlock")),
         metric_meta,
         text(34, 235, format_num(value), cls="value title-font", size=84, weight=700, extra=motion("lock", 650, brief=330, story=900, duration=320, duration_brief=220, duration_story=440, choreo="readout")),
         line(38, 326, 622, 326, cls="rail-strong", extra=f'pathLength="1" {motion("align", 120, brief=45, story=170)}'),
     ]
+    target_x = 622
     if target:
         ratio = min(1, max(0, value / target))
-        x = 38 + 584 * ratio
-        parts += [line(38, 326, x, 326, cls="signal-stroke", extra=f'pathLength="1" {motion("route", 820, duration=620, brief=480, story=1450, duration_brief=420, duration_story=900, choreo="trace")}'), line(x, 313, x, 339, cls="signal-stroke", extra=motion("lock", 1240, brief=850, story=2380, choreo="readout")), text(622, 355, f"TARGET {format_num(target)}", cls="index muted", anchor="end", size=12)]
-    parts += [evidence_plate(732, 74, "K-01", "YOY", f"{yoy:+.1f}%" if is_number(yoy) else "—", "同比变化", delay=1100, width=190, brief=650, story=2050, choreo="alarm"), evidence_plate(940, 74, "K-02", "TARGET", f"{completion:.1f}%" if completion is not None else "—", "目标完成度", delay=1280, width=190, brief=760, story=2450, choreo="readout"), evidence_plate(732, 192, "K-03", "MOM", f"{data.get('mom'):+.1f}%" if is_number(data.get("mom")) else "—", "环比变化", delay=1430, width=190, brief=850, story=2750, choreo="readout")]
-    return "\n".join(parts)
+        target_x = 38 + 584 * ratio
+        parts += [line(38, 326, target_x, 326, cls="signal-stroke", extra=f'pathLength="1" {motion("route", 820, duration=620, brief=480, story=1450, duration_brief=420, duration_story=900, choreo="trace")}'), line(target_x, 313, target_x, 339, cls="signal-stroke", extra=motion("lock", 1240, brief=850, story=2380, choreo="readout")), text(622, 355, f"TARGET {format_num(target)}", cls="index muted", anchor="end", size=12)]
+    context_rows = [
+        ("YOY", f"{yoy:+.1f}%" if is_number(yoy) else "—"),
+        ("MOM", f"{data.get('mom'):+.1f}%" if is_number(data.get("mom")) else "—"),
+        ("TARGET", format_num(target) if target else "—"),
+    ]
+    context = [line(732, 84, 1128, 84, cls="rail-strong")]
+    for index, (label, rendered) in enumerate(context_rows):
+        cy = 124 + index * 88
+        context += [
+            text(732, cy, f"0{index + 1} / {label}", cls="index muted", size=12),
+            text(1128, cy + 32, rendered, cls="value", anchor="end", size=26, weight=650),
+            line(732, cy + 48, 1128, cy + 48, cls="grid"),
+        ]
+    parts.append(group(context, cls="metric-context"))
+    if completion is not None:
+        evidence = evidence_plate(0, 74, "K-02", "TARGET", f"{completion:.1f}%", f"目标 {format_num(target)}", delay=1280, width=230, brief=760, story=2450, choreo="readout")
+        lock_code = "TGT"
+    elif is_number(yoy):
+        evidence = evidence_plate(0, 74, "K-01", "YOY", f"{yoy:+.1f}%", "同比变化", delay=1100, width=230, brief=650, story=2050, choreo="alarm")
+        lock_code = "YOY"
+    else:
+        evidence = evidence_plate(0, 74, "K-00", "VALUE", format_num(value), str(data.get("label", "核心指标"))[:12], delay=1100, width=230, brief=650, story=2050, choreo="readout")
+        lock_code = "VAL"
+    foreground = "\n".join([
+        rect(34, 322, 8, 8, cls="pi-socket"),
+        circle(target_x, 326, 13, cls="pi-lock-ring"),
+        text(target_x, 300, f"E09 / {lock_code}", cls="pi-address pi-address-signal", anchor="middle", size=10),
+    ])
+    return ChartArtwork(
+        svg="\n".join(parts),
+        precision=PrecisionInterface("E09", "0 64 230 114", 0, 1060, evidence, foreground, 1172),
+    )
 
 
-def build_c10(data: Any) -> str:
+def build_c10(data: Any) -> str | ChartArtwork:
     items = _valid_series(data)[:4]
     if len(items) < 2:
         return no_data()
@@ -673,11 +802,13 @@ def build_c10(data: Any) -> str:
         cls="decision-hero-meta",
         extra=motion("lock", 420, brief=210, story=620, choreo="readout"),
     )
-    parts = [text(0, 28, "10 / DECISION INTERFACE", cls="index muted", size=13), path(cut_rect_path(0, 66, 520, 356, 14), cls="panel-stroke", extra=motion("dock", 200, dx=-24, brief=80, story=260, duration=460, duration_brief=300, duration_story=620, choreo="interlock")), hero_meta, text(36, 265, format_num(items[hero]["value"]), cls="value title-font", size=74, weight=700, extra=motion("lock", 660, brief=320, story=850, duration=320, duration_brief=220, duration_story=440, choreo="readout")), line(36, 340, 474, 340, cls="rail-strong", extra=f'pathLength="1" {motion("align", 120, brief=45, story=180)}')]
+    parts = [path(cut_rect_path(0, 66, 520, 356, 14), cls="panel-stroke", extra=motion("dock", 200, dx=-24, brief=80, story=260, duration=460, duration_brief=300, duration_story=620, choreo="interlock")), hero_meta, text(36, 265, format_num(items[hero]["value"]), cls="value title-font", size=74, weight=700, extra=motion("lock", 660, brief=320, story=850, duration=320, duration_brief=220, duration_story=440, choreo="readout")), line(36, 340, 474, 340, cls="rail-strong", extra=f'pathLength="1" {motion("align", 120, brief=45, story=180)}')]
     if is_number(items[hero].get("yoy")):
         parts += [text(36, 382, f"YOY {items[hero]['yoy']:+.1f}%", cls="index signal-text", size=14, weight=650, extra=motion("lock", 930, brief=520, story=1320, choreo="readout")), path("M 24 78 V 56 H 46", cls="signal-stroke", extra=f'pathLength="1" {motion("lock", 850, brief=460, story=1200, choreo="readout")}')]
     x0, x1, y0 = 586, 1130, 78
-    others = [item for index, item in enumerate(items) if index != hero]
+    other_indices = [index for index in range(len(items)) if index != hero]
+    others = [items[index] for index in other_indices]
+    row_targets: dict[int, tuple[float, float]] = {}
     maximum = max(item["value"] for item in items) or 1
     for index, item in enumerate(others):
         y = y0 + index * 112
@@ -695,11 +826,30 @@ def build_c10(data: Any) -> str:
             cls="decision-row-heading",
             extra=motion("lock", row_standard, brief=row_brief, story=row_story, choreo="readout"),
         )
+        row_targets[other_indices[index]] = (x0 + 42 + max(6, (x1-x0-42)*ratio), y + 30)
         parts += [row_heading, line(x0 + 42, y + 30, x1, y + 30, cls="grid", extra=f'pathLength="1" {motion("align", row_standard, brief=row_brief, story=row_story)}'), path(cut_rect_path(x0 + 42, y + 19, max(6, (x1-x0-42)*ratio), 22, 5), cls="signal-fill" if is_risk else "data-fill", extra=motion("dock", 760 + index * 190, dx=-28, brief=450 + index * 100, story=1650 + index * 320, duration=440, duration_brief=280, duration_story=620, choreo="interlock")), text(x1, y + 61, f"YOY {item.get('yoy'):+.1f}%" if is_number(item.get("yoy")) else "YOY —", cls="signal-text index" if is_risk else "muted index", anchor="end", size=12, extra=motion("lock", 1080 + index * 135, brief=700 + index * 70, story=2320 + index * 270, choreo="alarm" if is_risk else "readout"))]
     if risks:
-        risk = items[risks[0]]
-        parts.append(evidence_plate(586, 374, "D-01", "RISK", f"{risk.get('yoy'):+.1f}%", f"{risk['label']} / 同比", delay=1480, width=244, brief=900, story=2860, choreo="alarm"))
-    return "\n".join(parts)
+        focus_index = risks[0]
+        risk = items[focus_index]
+        evidence = evidence_plate(0, 74, "D-01", "RISK", f"{risk.get('yoy'):+.1f}%", f"{risk['label']} / 同比", delay=1480, width=230, brief=900, story=2860, choreo="alarm")
+        target_x, target_y = row_targets.get(focus_index, (474, 340))
+        lock_code = f"R{focus_index + 1:02d}"
+    else:
+        focus_index = hero
+        evidence = evidence_plate(0, 74, "D-00", "LEADER", format_num(items[hero]["value"]), items[hero]["label"], delay=1280, width=230, brief=760, story=2450, choreo="readout")
+        target_x, target_y = 474, 340
+        lock_code = f"L{hero + 1:02d}"
+    overlay = []
+    for original_index, (px, py) in row_targets.items():
+        overlay.append(rect(x0 + 38, py - 4, 8, 8, cls="pi-socket-signal" if original_index == focus_index else "pi-socket"))
+    overlay += [
+        circle(target_x, target_y, 13, cls="pi-lock-ring"),
+        text(target_x, target_y - 18, f"E10 / {lock_code}", cls="pi-address pi-address-signal", anchor="middle", size=10),
+    ]
+    return ChartArtwork(
+        svg="\n".join(parts),
+        precision=PrecisionInterface("E10", "0 64 230 114", 0, 1120, evidence, "\n".join(overlay)),
+    )
 
 
 def _polyline(points: list[tuple[float, float]]) -> str:

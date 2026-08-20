@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-surface="light">
+<html lang="zh-CN" data-surface="light" data-interface="precision-v2.1">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -145,21 +145,25 @@
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1100" data-total-standard="1900" data-total-story="3600" data-mode="editorial" data-choreography="field-aggregation" data-motion-system="legacy">
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1100" data-total-standard="1900" data-total-story="3600" data-mode="editorial" data-choreography="field-aggregation" data-motion-system="precision-v2.1" data-interface="precision-v2.1">
   <header class="chart-header">
     <div class="chart-code"><div class="mx-code"><div class="mx-code__top"><strong>C04</strong><span>SYS / 21</span></div><div class="mx-code__name">COMPOSITION FIELD</div><div class="mx-code__state"><span class="mx-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>SHARE.LOCK</div></div></div>
     <div><h1 class="chart-title">自然搜索贡献最大，前三渠道占比达 86%</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / FIELD</span><span>DATA / 04I</span><span data-state>STATE / READY</span></div></div>
     <span class="mx-header-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </header>
-  <section class="chart-body"><svg viewBox="0 0 1172 500" role="img" aria-label="自然搜索贡献最大，前三渠道占比达 86%"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >04 / COMPOSITION BAY</text>
-<g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1500ms;--dx:-8px;--dy:0px;--delay-brief:900ms;--delay-story:3060ms">
+  <section class="chart-body pi-split-body">
+    <aside class="pi-evidence-bay" aria-label="E04 evidence bay" style="--pi-terminal-delay:960ms">
+      <span class="pi-evidence-bay__label">EVIDENCE / BAY</span>
+      <svg class="pi-evidence-svg" viewBox="0 64 230 114" aria-hidden="true"><g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1500ms;--dx:-8px;--dy:0px;--delay-brief:900ms;--delay-story:3060ms">
 <path d="M 0 74 H 222 L 230 82 V 168 H 8 L 0 160 Z" class="panel-stroke" />
 <text x="14" y="95" class="index muted" text-anchor="start" font-size="12" >F-01</text>
 <text x="216" y="95" class="index signal-text" text-anchor="end" font-size="12" >SHARE</text>
 <text x="14" y="129" class="value" text-anchor="start" font-size="28" font-weight="650" >37%</text>
 <text x="14" y="151" class="muted" text-anchor="start" font-size="13" >自然搜索</text>
-</g>
-<path d="M 310 116 H 339 L 344 121 V 164 H 315 L 310 159 Z" class="signal-fill" data-motion="dock" data-choreo="field-seat" style="--delay:240ms;--dx:0px;--dy:18px;--duration:360ms;--delay-brief:120ms;--delay-story:400ms;--duration-brief:240ms;--duration-story:520ms"/>
+</g></svg>
+      <div class="pi-bay-terminal"><span>E04</span><i></i><b></b></div>
+    </aside>
+    <svg class="pi-data-field" viewBox="260 0 912 500" preserveAspectRatio="xMidYMid meet" role="img" aria-label="自然搜索贡献最大，前三渠道占比达 86%" style="--pi-lock-delay:1080ms"><path d="M 310 116 H 339 L 344 121 V 164 H 315 L 310 159 Z" class="signal-fill" data-motion="dock" data-choreo="field-seat" style="--delay:240ms;--dx:0px;--dy:18px;--duration:360ms;--delay-brief:120ms;--delay-story:400ms;--duration-brief:240ms;--duration-story:520ms"/>
 <line x1="327" y1="164" x2="327" y2="169" class="grid" data-motion="align" style="--delay:500ms;--dx:0px;--dy:0px;--delay-brief:300ms;--delay-story:850ms"/>
 <path d="M 350 116 H 379 L 384 121 V 164 H 355 L 350 159 Z" class="signal-fill" data-motion="dock" data-choreo="field-seat" style="--delay:258ms;--dx:0px;--dy:18px;--duration:360ms;--delay-brief:130ms;--delay-story:435ms;--duration-brief:240ms;--duration-story:520ms"/>
 <line x1="367" y1="164" x2="367" y2="169" class="grid" data-motion="align" style="--delay:510ms;--dx:0px;--dy:0px;--delay-brief:305ms;--delay-story:870ms"/>
@@ -260,7 +264,10 @@
 <text x="1118" y="297" class="value index" text-anchor="end" font-size="14" font-weight="650" >14.0%</text>
 </g>
 <line x1="310" y1="382" x2="704" y2="382" class="rail-strong" pathLength="1" data-motion="align" style="--delay:100ms;--dx:0px;--dy:0px;--delay-brief:45ms;--delay-story:140ms"/>
-<text x="310" y="410" class="index muted" text-anchor="start" font-size="12" >40 MODULES / EACH = 2.5%</text></svg></section>
+<text x="310" y="410" class="index muted" text-anchor="start" font-size="12" >40 MODULES / EACH = 2.5%</text><g class="pi-overlay pi-overlay--foreground"><rect x="306" y="378" width="8" height="8" rx="0" class="pi-socket" />
+<path d="M 468 178 V 168 H 478 M 496 168 H 506 V 178 M 506 210 V 220 H 496 M 478 220 H 468 V 210" class="pi-focus-corner" />
+<text x="730" y="410" class="pi-address pi-address-signal" text-anchor="end" font-size="10" >E04 / F15</text></g></svg>
+  </section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" data-code="R" title="重播">↻</button><button type="button" data-action="pause" data-code="H" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" data-code="S" title="切换明暗">◐</button></nav>
 </main>

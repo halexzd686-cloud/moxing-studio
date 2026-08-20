@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-surface="light">
+<html lang="zh-CN" data-surface="light" data-interface="precision-v2.1">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -145,21 +145,25 @@
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1100" data-total-standard="1800" data-total-story="3400" data-mode="editorial" data-choreography="ranked-rail" data-motion-system="legacy">
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1100" data-total-standard="1800" data-total-story="3400" data-mode="editorial" data-choreography="ranked-rail" data-motion-system="precision-v2.1" data-interface="precision-v2.1">
   <header class="chart-header">
     <div class="chart-code"><div class="mx-code"><div class="mx-code__top"><strong>C02</strong><span>SYS / 21</span></div><div class="mx-code__name">RANKED RAIL</div><div class="mx-code__state"><span class="mx-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>TOP.LOCK</div></div></div>
     <div><h1 class="chart-title">华东服务评分居首，区域差距仍可控</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / RANK</span><span>DATA / 06I</span><span data-state>STATE / READY</span></div></div>
     <span class="mx-header-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </header>
-  <section class="chart-body"><svg viewBox="0 0 1172 500" role="img" aria-label="华东服务评分居首，区域差距仍可控"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >02 / RANKED DATUM</text>
-<g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1500ms;--dx:-8px;--dy:0px;--delay-brief:900ms;--delay-story:2960ms">
-<path d="M 874 0 H 1108 L 1116 8 V 94 H 882 L 874 86 Z" class="panel-stroke" />
-<text x="888" y="21" class="index muted" text-anchor="start" font-size="12" >R-01</text>
-<text x="1102" y="21" class="index signal-text" text-anchor="end" font-size="12" >TOP</text>
-<text x="888" y="55" class="value" text-anchor="start" font-size="28" font-weight="650" >94</text>
-<text x="888" y="77" class="muted" text-anchor="start" font-size="13" >华东客户服务中心</text>
-</g>
-<g class="rank-heading" data-motion="lock" data-choreo="readout" style="--delay:120ms;--dx:0px;--dy:0px;--delay-brief:60ms;--delay-story:200ms">
+  <section class="chart-body pi-split-body">
+    <aside class="pi-evidence-bay" aria-label="E02 evidence bay" style="--pi-terminal-delay:1000ms">
+      <span class="pi-evidence-bay__label">EVIDENCE / BAY</span>
+      <svg class="pi-evidence-svg" viewBox="0 64 230 114" aria-hidden="true"><g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1500ms;--dx:-8px;--dy:0px;--delay-brief:900ms;--delay-story:2960ms">
+<path d="M 0 74 H 222 L 230 82 V 168 H 8 L 0 160 Z" class="panel-stroke" />
+<text x="14" y="95" class="index muted" text-anchor="start" font-size="12" >R-01</text>
+<text x="216" y="95" class="index signal-text" text-anchor="end" font-size="12" >TOP</text>
+<text x="14" y="129" class="value" text-anchor="start" font-size="28" font-weight="650" >94</text>
+<text x="14" y="151" class="muted" text-anchor="start" font-size="13" >华东客户服务中心</text>
+</g></svg>
+      <div class="pi-bay-terminal"><span>E02</span><i></i><b></b></div>
+    </aside>
+    <svg class="pi-data-field" viewBox="0 0 1172 500" preserveAspectRatio="xMidYMid meet" role="img" aria-label="华东服务评分居首，区域差距仍可控" style="--pi-lock-delay:1120ms"><g class="rank-heading" data-motion="lock" data-choreo="readout" style="--delay:120ms;--dx:0px;--dy:0px;--delay-brief:60ms;--delay-story:200ms">
 <text x="0" y="138" class="index muted" text-anchor="start" font-size="12" >01</text>
 <text x="44" y="138" class="label" text-anchor="start" font-size="14" font-weight="600" >华东客户服务中心</text>
 </g>
@@ -206,7 +210,16 @@
 <line x1="330" y1="422" x2="1116" y2="422" class="grid" pathLength="1" data-motion="align" style="--delay:255ms;--dx:0px;--dy:0px;--delay-brief:125ms;--delay-story:445ms"/>
 <path d="M 330 410 H 868.51 L 873.51 415 V 434 H 335 L 330 429 Z" class="data-fill" data-motion="dock" data-choreo="rail-slide" style="--delay:655ms;--dx:-32px;--dy:0px;--duration:420ms;--delay-brief:350ms;--delay-story:1250ms;--duration-brief:280ms;--duration-story:620ms"/>
 <line x1="873.51" y1="405" x2="873.51" y2="440" class="rail" data-motion="align" style="--delay:1005ms;--dx:0px;--dy:0px;--delay-brief:580ms;--delay-story:1790ms"/>
-<text x="885.51" y="428" class="value" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:1015ms;--dx:0px;--dy:0px;--delay-brief:585ms;--delay-story:1800ms">65</text></svg></section>
+<text x="885.51" y="428" class="value" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:1015ms;--dx:0px;--dy:0px;--delay-brief:585ms;--delay-story:1800ms">65</text><g class="pi-overlay pi-overlay--foreground"><rect x="326" y="128" width="8" height="8" rx="0" class="pi-socket-signal" />
+<rect x="326" y="186" width="8" height="8" rx="0" class="pi-socket" />
+<rect x="326" y="244" width="8" height="8" rx="0" class="pi-socket" />
+<rect x="326" y="302" width="8" height="8" rx="0" class="pi-socket" />
+<rect x="326" y="360" width="8" height="8" rx="0" class="pi-socket" />
+<rect x="326" y="418" width="8" height="8" rx="0" class="pi-socket" />
+<circle cx="1116" cy="102" r="13" class="pi-lock-ring" />
+<path d="M 1116.0 115 V 127" class="pi-lock-cross" />
+<text x="1098" y="84" class="pi-address pi-address-signal" text-anchor="end" font-size="10" >E02 / R01</text></g></svg>
+  </section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" data-code="R" title="重播">↻</button><button type="button" data-action="pause" data-code="H" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" data-code="S" title="切换明暗">◐</button></nav>
 </main>

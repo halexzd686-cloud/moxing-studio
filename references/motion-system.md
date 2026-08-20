@@ -24,7 +24,7 @@ A chart must run no more than four precision animations at once. Do not animate 
 
 `DATA_FIELD` is the cropped plot SVG inside the HTML split body. Isolate that carrier with paint containment so complex geometry is rasterized once and reused during transform/opacity playback. The evidence plate belongs to its own SVG in the side bay; only ports, addresses, and the target lock remain in the plot foreground.
 
-C3, C8, C15, and C22 are the production canaries for `precision-v2.1`. Their geometry and overlays are generated from live input through the shared renderer. Other families retain the legacy primitive runtime until their static and motion review is complete.
+C3, C8, C15, and C22 remain the approved visual canaries for `precision-v2.1`. The complete foundation family C1–C10 now shares their production carrier, side-bay separation, terminal overlays, and four-layer motion ceiling. C11–C14, C16–C21, C23, and C24 retain the legacy primitive runtime until their bounded-batch review is complete.
 
 ## Profiles
 

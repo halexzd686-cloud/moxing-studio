@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-surface="light">
+<html lang="zh-CN" data-surface="light" data-interface="precision-v2.1">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -145,21 +145,25 @@
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1200" data-total-standard="2200" data-total-story="4000" data-mode="editorial" data-choreography="band-routing" data-motion-system="legacy">
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1200" data-total-standard="2200" data-total-story="4000" data-mode="editorial" data-choreography="band-routing" data-motion-system="precision-v2.1" data-interface="precision-v2.1">
   <header class="chart-header">
     <div class="chart-code"><div class="mx-code"><div class="mx-code__top"><strong>C05</strong><span>SYS / 21</span></div><div class="mx-code__name">COMPOSITION BANDS</div><div class="mx-code__state"><span class="mx-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>MIX.LOCK</div></div></div>
     <div><h1 class="chart-title">产品 A 持续扩张，结构集中度提高</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / BAND</span><span>DATA / 04T · 03S</span><span data-state>STATE / READY</span></div></div>
     <span class="mx-header-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </header>
-  <section class="chart-body"><svg viewBox="0 0 1172 500" role="img" aria-label="产品 A 持续扩张，结构集中度提高"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >05 / BAND AGGREGATION</text>
-<g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1450ms;--dx:-8px;--dy:0px;--delay-brief:900ms;--delay-story:3000ms">
+  <section class="chart-body pi-split-body">
+    <aside class="pi-evidence-bay" aria-label="E05 evidence bay" style="--pi-terminal-delay:1040ms">
+      <span class="pi-evidence-bay__label">EVIDENCE / BAY</span>
+      <svg class="pi-evidence-svg" viewBox="0 64 230 114" aria-hidden="true"><g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1450ms;--dx:-8px;--dy:0px;--delay-brief:900ms;--delay-story:3000ms">
 <path d="M 0 74 H 222 L 230 82 V 168 H 8 L 0 160 Z" class="panel-stroke" />
 <text x="14" y="95" class="index muted" text-anchor="start" font-size="12" >B-01</text>
 <text x="216" y="95" class="index signal-text" text-anchor="end" font-size="12" >MIX</text>
 <text x="14" y="129" class="value" text-anchor="start" font-size="28" font-weight="650" >52%</text>
 <text x="14" y="151" class="muted" text-anchor="start" font-size="13" >产品 A / 最新</text>
-</g>
-<text x="298" y="118" class="muted" text-anchor="end" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:120ms;--dx:0px;--dy:0px;--delay-brief:55ms;--delay-story:180ms">Q1</text>
+</g></svg>
+      <div class="pi-bay-terminal"><span>E05</span><i></i><b></b></div>
+    </aside>
+    <svg class="pi-data-field" viewBox="260 0 912 500" preserveAspectRatio="xMidYMid meet" role="img" aria-label="产品 A 持续扩张，结构集中度提高" style="--pi-lock-delay:1160ms"><text x="298" y="118" class="muted" text-anchor="end" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:120ms;--dx:0px;--dy:0px;--delay-brief:55ms;--delay-story:180ms">Q1</text>
 <line x1="318" y1="126" x2="1122" y2="126" class="grid" pathLength="1" data-motion="align" style="--delay:120ms;--dx:0px;--dy:0px;--delay-brief:55ms;--delay-story:180ms"/>
 <path d="M 318 95 H 646.68 L 651.68 100 V 137 H 323 L 318 132 Z" class="signal-fill" data-motion="dock" data-choreo="band-fill" style="--delay:280ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:150ms;--delay-story:700ms;--duration-brief:280ms;--duration-story:620ms"/>
 <text x="486.84" y="121" class="index on-signal" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:580ms;--dx:0px;--dy:0px;--delay-brief:340ms;--delay-story:1170ms">42%</text>
@@ -202,7 +206,13 @@
 <g class="band-legend" data-motion="lock" data-choreo="readout" style="--delay:1320ms;--dx:0px;--dy:0px;--delay-brief:780ms;--delay-story:2780ms">
 <rect x="698" y="442" width="12" height="12" rx="0" class="cat-3" />
 <text x="720" y="453" class="muted" text-anchor="start" font-size="12" >其他</text>
-</g></svg></section>
+</g><g class="pi-overlay pi-overlay--foreground"><rect x="314" y="112" width="8" height="8" rx="0" class="pi-socket" />
+<rect x="314" y="190" width="8" height="8" rx="0" class="pi-socket" />
+<rect x="314" y="268" width="8" height="8" rx="0" class="pi-socket" />
+<rect x="314" y="346" width="8" height="8" rx="0" class="pi-socket-signal" />
+<circle cx="736.08" cy="350" r="13" class="pi-lock-ring" />
+<text x="736.08" y="326" class="pi-address pi-address-signal" text-anchor="middle" font-size="10" >E05 / Q04</text></g></svg>
+  </section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" data-code="R" title="重播">↻</button><button type="button" data-action="pause" data-code="H" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" data-code="S" title="切换明暗">◐</button></nav>
 </main>

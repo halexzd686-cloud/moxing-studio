@@ -17,7 +17,7 @@ try {
   playwright = await import(pathToFileURL(path.join(dependencyPath, "index.mjs")));
 }
 
-const launchOptions = { headless: true };
+const launchOptions = { headless: true, args: ["--disable-gpu", "--disable-dev-shm-usage", "--no-first-run"] };
 if (process.env.MOXING_BROWSER_EXECUTABLE) launchOptions.executablePath = process.env.MOXING_BROWSER_EXECUTABLE;
 const browser = await playwright.chromium.launch(launchOptions);
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 });

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T05:36:14.691Z",
+  "generatedAt": "2026-08-20T06:15:08.972Z",
   "status": "passed",
   "checks": [
     {
@@ -267,6 +267,54 @@
       "message": "control-lock with independent profile timing"
     },
     {
+      "scope": "precision:c01-structural-rank.html",
+      "message": "E01 production parity contract"
+    },
+    {
+      "scope": "precision:c02-ranked-rail.html",
+      "message": "E02 production parity contract"
+    },
+    {
+      "scope": "precision:c03-signal-trend.html",
+      "message": "E03 production parity contract"
+    },
+    {
+      "scope": "precision:c04-composition-field.html",
+      "message": "E04 production parity contract"
+    },
+    {
+      "scope": "precision:c05-composition-bands.html",
+      "message": "E05 production parity contract"
+    },
+    {
+      "scope": "precision:c06-ledger-steps.html",
+      "message": "E06 production parity contract"
+    },
+    {
+      "scope": "precision:c07-milestone-lanes.html",
+      "message": "E07 production parity contract"
+    },
+    {
+      "scope": "precision:c08-stage-channel.html",
+      "message": "E08 production parity contract"
+    },
+    {
+      "scope": "precision:c09-metric-lockup.html",
+      "message": "E09 production parity contract"
+    },
+    {
+      "scope": "precision:c10-decision-interface.html",
+      "message": "E10 production parity contract"
+    },
+    {
+      "scope": "precision:c15-commerce-flow.html",
+      "message": "E15 production parity contract"
+    },
+    {
+      "scope": "precision:c22-correlation-matrix.html",
+      "message": "E22 production parity contract"
+    },
+    {
       "scope": "c01-structural-rank.html:js",
       "message": "runtime and locked frame"
     },
@@ -467,20 +515,52 @@
       "message": "dark surface toggle"
     },
     {
+      "scope": "precision-performance:c01-structural-rank.html",
+      "message": "precision carrier p95 16.8ms; 4 layers; legacy idle"
+    },
+    {
+      "scope": "precision-performance:c02-ranked-rail.html",
+      "message": "precision carrier p95 16.8ms; 4 layers; legacy idle"
+    },
+    {
       "scope": "precision-performance:c03-signal-trend.html",
-      "message": "precision carrier p95 7.1ms; 4 layers; legacy idle"
+      "message": "precision carrier p95 16.7ms; 4 layers; legacy idle"
+    },
+    {
+      "scope": "precision-performance:c04-composition-field.html",
+      "message": "precision carrier p95 16.7ms; 4 layers; legacy idle"
+    },
+    {
+      "scope": "precision-performance:c05-composition-bands.html",
+      "message": "precision carrier p95 16.7ms; 4 layers; legacy idle"
+    },
+    {
+      "scope": "precision-performance:c06-ledger-steps.html",
+      "message": "precision carrier p95 16.7ms; 4 layers; legacy idle"
+    },
+    {
+      "scope": "precision-performance:c07-milestone-lanes.html",
+      "message": "precision carrier p95 16.7ms; 4 layers; legacy idle"
     },
     {
       "scope": "precision-performance:c08-stage-channel.html",
-      "message": "precision carrier p95 7.2ms; 4 layers; legacy idle"
+      "message": "precision carrier p95 16.7ms; 4 layers; legacy idle"
+    },
+    {
+      "scope": "precision-performance:c09-metric-lockup.html",
+      "message": "precision carrier p95 16.8ms; 4 layers; legacy idle"
+    },
+    {
+      "scope": "precision-performance:c10-decision-interface.html",
+      "message": "precision carrier p95 16.7ms; 4 layers; legacy idle"
     },
     {
       "scope": "precision-performance:c15-commerce-flow.html",
-      "message": "precision carrier p95 7.2ms; 4 layers; legacy idle"
+      "message": "precision carrier p95 16.8ms; 4 layers; legacy idle"
     },
     {
       "scope": "precision-performance:c22-correlation-matrix.html",
-      "message": "precision carrier p95 7.1ms; 4 layers; legacy idle"
+      "message": "precision carrier p95 16.7ms; 4 layers; legacy idle"
     },
     {
       "scope": "profiles:c01-structural-rank.html",
