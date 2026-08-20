@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T05:07:21.794Z",
+  "generatedAt": "2026-08-20T05:36:14.691Z",
   "status": "passed",
   "checks": [
     {
@@ -460,27 +460,27 @@
     },
     {
       "scope": "motion",
-      "message": "3 macro animations active; legacy marks idle"
+      "message": "4 approved precision animations active; legacy marks idle"
     },
     {
       "scope": "motion",
       "message": "dark surface toggle"
     },
     {
-      "scope": "macro-performance:c03-signal-trend.html",
-      "message": "HTML compositor p95 7.1ms; 3 layers; legacy idle"
+      "scope": "precision-performance:c03-signal-trend.html",
+      "message": "precision carrier p95 7.1ms; 4 layers; legacy idle"
     },
     {
-      "scope": "macro-performance:c08-stage-channel.html",
-      "message": "HTML compositor p95 7.3ms; 3 layers; legacy idle"
+      "scope": "precision-performance:c08-stage-channel.html",
+      "message": "precision carrier p95 7.2ms; 4 layers; legacy idle"
     },
     {
-      "scope": "macro-performance:c15-commerce-flow.html",
-      "message": "HTML compositor p95 7.3ms; 3 layers; legacy idle"
+      "scope": "precision-performance:c15-commerce-flow.html",
+      "message": "precision carrier p95 7.2ms; 4 layers; legacy idle"
     },
     {
-      "scope": "macro-performance:c22-correlation-matrix.html",
-      "message": "HTML compositor p95 7.1ms; 3 layers; legacy idle"
+      "scope": "precision-performance:c22-correlation-matrix.html",
+      "message": "precision carrier p95 7.1ms; 4 layers; legacy idle"
     },
     {
       "scope": "profiles:c01-structural-rank.html",
@@ -844,11 +844,11 @@
     },
     {
       "scope": "gallery-motion",
-      "message": "4 visible iframes animating; offscreen idle"
+      "message": "gallery remains static until an explicit replay"
     },
     {
       "scope": "gallery-replay",
-      "message": "canary replay reuses iframe and stays within macro layer budget"
+      "message": "canary replay reuses iframe and stays within precision layer budget"
     }
   ],
   "failures": []

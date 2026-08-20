@@ -12,26 +12,26 @@ const chartFiles = fs.readdirSync(templatesDir).filter((file) => /^c\d{2}-.*\.ht
 const exemplars = {
   "c01-structural-rank.html": { family: "rail-rise", cue: "rail-rise", animation: "mx-rail-rise" },
   "c02-ranked-rail.html": { family: "ranked-rail", cue: "rail-slide", animation: "mx-rail-slide" },
-  "c03-signal-trend.html": { family: "path-trace", cue: "trace", animation: "mx-scene-field", macro: true },
+  "c03-signal-trend.html": { family: "path-trace", cue: "trace", animation: "pi-field-enter", precision: true },
   "c04-composition-field.html": { family: "field-aggregation", cue: "field-seat", animation: "mx-field-seat" },
   "c05-composition-bands.html": { family: "band-routing", cue: "band-fill", animation: "mx-band-fill" },
   "c06-ledger-steps.html": { family: "ledger-interlock", cue: "field-seat", animation: "mx-field-seat" },
   "c07-milestone-lanes.html": { family: "milestone-routing", cue: "interlock", animation: "mx-interlock" },
-  "c08-stage-channel.html": { family: "stage-interlock", cue: "interlock", animation: "mx-scene-field", macro: true },
+  "c08-stage-channel.html": { family: "stage-interlock", cue: "interlock", animation: "pi-field-enter", precision: true },
   "c09-metric-lockup.html": { family: "metric-readout", cue: "readout", animation: "mx-readout" },
   "c10-decision-interface.html": { family: "decision-readout", cue: "readout", animation: "mx-readout" },
   "c11-sector-lock.html": { family: "sector-lock", cue: "field-seat", animation: "mx-field-seat" },
   "c12-metric-small-multiples.html": { family: "metric-pulse", cue: "trace", animation: "mx-route" },
   "c13-pareto-contribution.html": { family: "pareto-routing", cue: "rail-rise", animation: "mx-rail-rise" },
   "c14-cohort-matrix.html": { family: "cohort-seating", cue: "field-seat", animation: "mx-field-seat" },
-  "c15-commerce-flow.html": { family: "flow-routing", cue: "trace", animation: "mx-scene-field", macro: true },
+  "c15-commerce-flow.html": { family: "flow-routing", cue: "trace", animation: "pi-field-enter", precision: true },
   "c16-decision-bubble-matrix.html": { family: "quadrant-lock", cue: "pin", animation: "mx-pin" },
   "c17-market-candles.html": { family: "market-build", cue: "field-seat", animation: "mx-field-seat" },
   "c18-performance-drawdown.html": { family: "drawdown-routing", cue: "trace", animation: "mx-route" },
   "c19-yield-curve.html": { family: "curve-routing", cue: "trace", animation: "mx-route" },
   "c20-sensitivity-matrix.html": { family: "matrix-seating", cue: "field-seat", animation: "mx-field-seat" },
   "c21-distribution-profile.html": { family: "distribution-build", cue: "rail-rise", animation: "mx-rail-rise" },
-  "c22-correlation-matrix.html": { family: "matrix-seating", cue: "field-seat", animation: "mx-scene-field", macro: true },
+  "c22-correlation-matrix.html": { family: "matrix-seating", cue: "field-seat", animation: "pi-field-enter", precision: true },
   "c23-forecast-fan.html": { family: "forecast-routing", cue: "trace", animation: "mx-route" },
   "c24-control-chart.html": { family: "control-lock", cue: "trace", animation: "mx-route" },
 };
@@ -78,7 +78,7 @@ for (const [name, surface] of Object.entries(tokens.surfaces)) {
 for (const file of chartFiles) {
   const source = fs.readFileSync(path.join(templatesDir, file), "utf8");
   const scope = `static:${file}`;
-  if (!source.includes('viewBox="0 0 1172 500"')) fail(scope, "missing v2 viewBox");
+  if (!source.includes('viewBox="0 0 1172 500"') && !/class="pi-data-field" viewBox="\d+(?:\.\d+)? 0 \d+(?:\.\d+)? 500"/.test(source)) fail(scope, "missing v2 or precision-cropped viewBox");
   if (!source.includes("--matrix-strong:") || !source.includes("--matrix-quiet:") || !source.includes("--on-signal:")) fail(scope, "missing contrast tokens");
   if (/class="[^"]*index[^"]*"[^>]*font-size="11"/.test(source)) fail(scope, "dot-matrix text below 12px");
   if (!source.includes('data-motion="align"') || !source.includes('data-motion="dock"') || !source.includes('data-motion="lock"')) fail(scope, "missing motion primitives");
@@ -99,7 +99,7 @@ for (const [file, expected] of Object.entries(exemplars)) {
   const scope = `choreography:${file}`;
   if (!source.includes(`data-choreography="${expected.family}"`)) fail(scope, `missing ${expected.family} family`);
   if (!source.includes(`data-choreo="${expected.cue}"`)) fail(scope, `missing ${expected.cue} cue`);
-  if (expected.macro && (!source.includes('data-motion-system="macro-v2.1"') || !/<section class="chart-body" data-scene="data-field">/.test(source) || !source.includes('data-scene="evidence-bay"') || !source.includes('data-scene="terminal-lock"'))) fail(scope, "macro scene contract incomplete or data field is not on the HTML compositor layer");
+  if (expected.precision && (!source.includes('data-motion-system="precision-v2.1"') || !source.includes('class="chart-body pi-split-body"') || !source.includes('class="pi-evidence-bay"') || !source.includes('class="pi-data-field"') || !source.includes('class="pi-bay-terminal"') || !source.includes('pi-overlay--foreground'))) fail(scope, "approved precision-interface contract incomplete");
   const explicit = source.match(new RegExp(`data-choreo="${expected.cue}"[^>]*style="([^"]+)"`))?.[1] || "";
   if (!explicit.includes("--delay-brief:") || !explicit.includes("--delay-story:")) fail(scope, "cue lacks independent profile timing");
   if (!failures.some((item) => item.scope === scope)) pass(scope, `${expected.family} with independent profile timing`);
@@ -154,7 +154,8 @@ async function inspect(file, javaScriptEnabled) {
     };
   });
   if (state.width !== 1280 || state.height !== 720) fail(scope, `container ${state.width}x${state.height}`);
-  if (state.svg !== 1 || state.text === 0 || state.shapes === 0) fail(scope, `svg=${state.svg} text=${state.text} shapes=${state.shapes}`);
+  const expectedSvg = file.match(/^(c03|c08|c15|c22)-/) ? 2 : 1;
+  if (state.svg !== expectedSvg || state.text === 0 || state.shapes === 0) fail(scope, `svg=${state.svg} text=${state.text} shapes=${state.shapes}`);
   if (state.overflow) fail(scope, "page overflow");
   if (state.titleOverflow) fail(scope, "conclusion title overflow");
   if (state.headerGap < 24) fail(scope, `header gap ${state.headerGap.toFixed(1)}px`);
@@ -177,11 +178,11 @@ await motionPage.evaluate(() => window.Moxing.replay());
 await motionPage.waitForTimeout(100);
 const activeMotion = await motionPage.evaluate(() => ({
   running: document.getAnimations().filter((item) => item.playState === "running").length,
-  scenes: document.querySelectorAll("[data-scene]").length,
-  legacy: [...document.querySelectorAll("[data-motion]")].filter((item) => getComputedStyle(item).animationName !== "none" && !item.hasAttribute("data-scene")).length,
+  layers: document.querySelectorAll(".pi-data-field,.pi-evidence-bay,.pi-bay-terminal,.pi-lock-ring,.pi-focus-corner").length,
+  legacy: [...document.querySelectorAll("[data-motion]")].filter((item) => getComputedStyle(item).animationName !== "none").length,
 }));
-if (activeMotion.running < 3 || activeMotion.running > 4 || activeMotion.scenes !== 3 || activeMotion.legacy) fail("motion", JSON.stringify(activeMotion));
-else pass("motion", `${activeMotion.running} macro animations active; legacy marks idle`);
+if (activeMotion.running < 3 || activeMotion.running > 4 || activeMotion.layers !== 4 || activeMotion.legacy) fail("motion", JSON.stringify(activeMotion));
+else pass("motion", `${activeMotion.running} approved precision animations active; legacy marks idle`);
 await motionPage.evaluate(() => window.Moxing.setSurface("dark"));
 const darkSurface = await motionPage.evaluate(() => document.documentElement.dataset.surface);
 if (darkSurface !== "dark") fail("motion", "dark surface toggle failed");
@@ -201,20 +202,20 @@ for (const file of ["c03-signal-trend.html", "c08-stage-channel.html", "c15-comm
       previous = now;
       if (gaps.length < 50) { requestAnimationFrame(sample); return; }
       const ordered = [...gaps].sort((a, b) => a - b);
-      const field = document.querySelector('[data-scene="data-field"]');
+      const field = document.querySelector('.pi-data-field');
       resolve({
         carrier: field?.tagName,
         p95: ordered[Math.floor(ordered.length * .95)],
         over28: gaps.filter((gap) => gap > 28).length,
         running: document.getAnimations().filter((item) => item.playState === "running").length,
-        legacy: [...document.querySelectorAll('[data-motion]:not([data-scene])')].filter((item) => getComputedStyle(item).animationName !== "none").length,
+        legacy: [...document.querySelectorAll('[data-motion]')].filter((item) => getComputedStyle(item).animationName !== "none").length,
       });
     };
     requestAnimationFrame(sample);
   }));
-  const scope = `macro-performance:${file}`;
-  if (frameState.carrier !== "SECTION" || frameState.p95 > 28 || frameState.over28 > 1 || frameState.running > 4 || frameState.legacy) fail(scope, JSON.stringify(frameState));
-  else pass(scope, `HTML compositor p95 ${frameState.p95.toFixed(1)}ms; ${frameState.running} layers; legacy idle`);
+  const scope = `precision-performance:${file}`;
+  if (frameState.carrier !== "svg" && frameState.carrier !== "SVG" || frameState.p95 > 28 || frameState.over28 > 1 || frameState.running > 4 || frameState.legacy) fail(scope, JSON.stringify(frameState));
+  else pass(scope, `precision carrier p95 ${frameState.p95.toFixed(1)}ms; ${frameState.running} layers; legacy idle`);
   await context.close();
 }
 
@@ -231,20 +232,21 @@ for (const [file, expected] of Object.entries(exemplars)) {
     await page.goto(`${pathToFileURL(path.join(templatesDir, file)).href}?motion=${profile}`, { waitUntil: "load" });
     await page.evaluate(() => window.Moxing.replay());
     await page.waitForTimeout(50);
-    observed[profile] = await page.evaluate(({ cue, macro }) => {
-      const element = document.querySelector(macro ? '[data-scene="data-field"]' : `[data-choreo="${cue}"]`);
-      const lock = document.querySelector(macro ? '[data-scene="terminal-lock"]' : '[data-choreo="alarm"]');
+    observed[profile] = await page.evaluate(({ cue, precision }) => {
+      const element = document.querySelector(precision ? '.pi-data-field' : `[data-choreo="${cue}"]`);
+      const lock = document.querySelector(precision ? '.pi-lock-ring,.pi-focus-corner' : '[data-choreo="alarm"]');
       const style = element ? getComputedStyle(element) : null;
+      const lockStyle = lock ? getComputedStyle(lock) : null;
       return {
         profile: window.Moxing?.profile,
         duration: window.Moxing?.duration,
-        delay: element ? Number.parseFloat(element.style.getPropertyValue(macro ? "--scene-delay" : "--active-delay")) : null,
-        lockDelay: lock ? Number.parseFloat(lock.style.getPropertyValue(macro ? "--scene-delay" : "--active-delay")) : null,
+        delay: element ? (precision ? Number.parseFloat(style.animationDelay) * 1000 : Number.parseFloat(element.style.getPropertyValue("--active-delay"))) : null,
+        lockDelay: lock ? (precision ? Number.parseFloat(lockStyle.animationDelay) * 1000 : Number.parseFloat(lock.style.getPropertyValue("--active-delay"))) : null,
         animation: style?.animationName,
         running: document.getAnimations().filter((item) => item.playState === "running").length,
-        scenes: document.querySelectorAll("[data-scene]").length,
+        layers: document.querySelectorAll(".pi-data-field,.pi-evidence-bay,.pi-bay-terminal,.pi-lock-ring,.pi-focus-corner").length,
       };
-    }, { cue: expected.cue, macro: Boolean(expected.macro) });
+    }, { cue: expected.cue, precision: Boolean(expected.precision) });
     await page.evaluate(() => window.Moxing.settle());
   }
   const scope = `profiles:${file}`;
@@ -254,7 +256,7 @@ for (const [file, expected] of Object.entries(exemplars)) {
     if (state.duration < minimum || state.duration > maximum) fail(scope, `${profile} duration ${state.duration}`);
     if (state.animation !== expected.animation) fail(scope, `${profile} animation ${state.animation}`);
     if (state.running < 3) fail(scope, `${profile} only ${state.running} active animations`);
-    if (expected.macro && (state.running > 4 || state.scenes !== 3)) fail(scope, `${profile} macro layers ${state.running}/${state.scenes}`);
+    if (expected.precision && (state.running > 4 || state.layers !== 4)) fail(scope, `${profile} precision layers ${state.running}/${state.layers}`);
   }
   const briefRatio = observed.brief.delay / observed.standard.delay;
   const storyRatio = observed.story.delay / observed.standard.delay;
@@ -302,9 +304,9 @@ for (const file of chartFiles) {
       && a.y <= b.y + b.height && a.y + a.height >= b.y
     );
     return plates.flatMap((plate, plateIndex) => {
-      const plateBox = plate.getBBox();
+      const plateBox = plate.getBoundingClientRect();
       return geometry.flatMap((element, geometryIndex) => {
-        const box = element.getBBox();
+        const box = element.getBoundingClientRect();
         if (!overlaps(plateBox, box)) return [];
         return [{ plate: plateIndex, geometry: geometryIndex, tag: element.tagName, className: element.getAttribute("class") || "" }];
       });
@@ -439,8 +441,8 @@ const galleryMotion = await galleryPage.evaluate(() => {
   const offscreen = active.filter((frame) => { const box = frame.closest(".card").getBoundingClientRect(); return box.bottom <= 0 || box.top >= innerHeight; });
   return { active: active.length, offscreen: offscreen.length };
 });
-if (galleryMotion.offscreen) fail("gallery-motion", JSON.stringify(galleryMotion));
-else pass("gallery-motion", `${galleryMotion.active} visible iframes animating; offscreen idle`);
+if (galleryMotion.active || galleryMotion.offscreen) fail("gallery-motion", JSON.stringify(galleryMotion));
+else pass("gallery-motion", "gallery remains static until an explicit replay");
 const canaryFrame = galleryPage.locator('[data-chart="C3"] iframe');
 await galleryPage.locator('[data-chart="C3"]').scrollIntoViewIfNeeded();
 await galleryPage.waitForFunction(() => Boolean(document.querySelector('[data-chart="C3"] iframe')?.contentWindow?.Moxing));
@@ -451,7 +453,7 @@ await galleryPage.waitForTimeout(80);
 const afterReplay = await canaryFrame.getAttribute("src");
 const canaryRunning = await canaryFrame.evaluate((frame) => frame.contentDocument?.getAnimations().filter((item) => item.playState === "running").length || 0);
 if (beforeReplay !== afterReplay || canaryRunning < 3 || canaryRunning > 4) fail("gallery-replay", JSON.stringify({ beforeReplay, afterReplay, canaryRunning }));
-else pass("gallery-replay", "canary replay reuses iframe and stays within macro layer budget");
+else pass("gallery-replay", "canary replay reuses iframe and stays within precision layer budget");
 await galleryContext.close();
 await new Promise((resolve) => galleryServer.close(resolve));
 await browser.close();

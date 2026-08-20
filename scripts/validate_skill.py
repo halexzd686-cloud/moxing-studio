@@ -6,9 +6,6 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-import yaml
-
-
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / "SKILL.md"
 
@@ -18,7 +15,11 @@ def main() -> None:
     match = re.match(r"^---\s*\n(.*?)\n---\s*\n", source, re.DOTALL)
     if not match:
         raise SystemExit("SKILL.md 缺少有效 YAML frontmatter")
-    metadata = yaml.safe_load(match.group(1))
+    metadata = {}
+    for line in match.group(1).splitlines():
+        key, separator, value = line.partition(":")
+        if separator:
+            metadata[key.strip()] = value.strip().strip('"\'')
     if metadata.get("name") != "moxing-studio":
         raise SystemExit("Skill name 必须为 moxing-studio")
     if not isinstance(metadata.get("description"), str) or len(metadata["description"].strip()) < 20:

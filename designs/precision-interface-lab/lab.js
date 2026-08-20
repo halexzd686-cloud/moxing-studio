@@ -133,6 +133,9 @@
     const controls = doc.querySelector(".motion-controls");
     const svg = doc.querySelector(".chart-body svg");
     if (!code || !header || !controls || !svg) return;
+    const productionPrecision = doc.documentElement.dataset.interface === "precision-v2.1"
+      && Boolean(doc.querySelector(".pi-split-body .pi-evidence-bay"))
+      && Boolean(doc.querySelector(".pi-data-field .pi-overlay--foreground"));
 
     doc.documentElement.dataset.precision = "lab";
     doc.documentElement.dataset.output = state.output;
@@ -161,11 +164,15 @@
     const controlCodes = { replay: "R", pause: "H", surface: "S" };
     controls.querySelectorAll("button").forEach((button) => { button.dataset.code = controlCodes[button.dataset.action]; });
 
-    buildEvidenceBay(doc, svg, spec, key);
-    if (key === "c08") sinkStageRails(svg);
+    if (!productionPrecision) {
+      buildEvidenceBay(doc, svg, spec, key);
+      if (key === "c08") sinkStageRails(svg);
+    }
     optimizeMotion(doc, key);
-    const foreground = svgGroup(doc, "pi-overlay pi-overlay--foreground", spec.foreground);
-    svg.append(foreground);
+    if (!productionPrecision) {
+      const foreground = svgGroup(doc, "pi-overlay pi-overlay--foreground", spec.foreground);
+      svg.append(foreground);
+    }
 
     frame.contentWindow.Moxing?.setSurface(state.surface);
     frame.dataset.ready = "true";

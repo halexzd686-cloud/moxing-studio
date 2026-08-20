@@ -1,1 +1,1 @@
-PyYAML==6.0.2
+# The repository validation and renderer use only the Python standard library.

@@ -1,6 +1,6 @@
 {
   "url": "http://127.0.0.1:4400/designs/precision-interface-lab/index.html",
-  "generatedAt": "2026-08-20T04:16:58.258Z",
+  "generatedAt": "2026-08-20T05:36:27.619Z",
   "checks": [
     {
       "name": "c03 instrument contract",
@@ -75,12 +75,12 @@
     {
       "name": "replay motion-layer budget",
       "pass": true,
-      "details": "{\"frames\":210,\"runningAnimations\":4,\"medianMs\":6.9,\"p95Ms\":7.2,\"longFrames\":0}"
+      "details": "{\"frames\":210,\"runningAnimations\":0,\"medianMs\":6.9,\"p95Ms\":7.3,\"longFrames\":0}"
     },
     {
       "name": "narrow replay cadence",
       "pass": true,
-      "details": "{\"frames\":210,\"runningAnimations\":4,\"medianMs\":6.9,\"p95Ms\":7.2,\"longFrames\":0}"
+      "details": "{\"frames\":210,\"runningAnimations\":0,\"medianMs\":6.9,\"p95Ms\":7.3,\"longFrames\":0}"
     },
     {
       "name": "runtime errors",

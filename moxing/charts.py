@@ -7,8 +7,9 @@ from typing import Any, Callable
 from .core import (
     H,
     W,
+    ChartArtwork,
     ChartPage,
-    SceneContract,
+    PrecisionInterface,
     circle,
     cut_rect_path,
     evidence_plate,
@@ -337,7 +338,7 @@ def build_c2(data: Any) -> str:
     return "\n".join(parts)
 
 
-def build_c3(data: Any) -> str:
+def build_c3(data: Any) -> str | ChartArtwork:
     labels = data.get("labels", []) if isinstance(data, dict) else []
     raw_series = data.get("series", []) if isinstance(data, dict) else []
     series = []
@@ -357,7 +358,8 @@ def build_c3(data: Any) -> str:
     y = lambda v: y1 - (v - y_min) / max(1e-9, y_max - y_min) * (y1 - y0)
     latest = series[0]["values"][-1]
     peak_index = max(range(len(series[0]["values"])), key=lambda i: series[0]["values"][i])
-    parts = [text(0, 28, "03 / PATH ROUTING", cls="index muted", size=13), evidence_plate(0, 74, "T-01", "LATEST", format_num(latest), f"{series[0]['name']} / {labels[-1]}", delay=1540, width=230, brief=1020, story=2820, choreo="readout")]
+    evidence = evidence_plate(0, 74, "T-01", "LATEST", format_num(latest), f"{series[0]['name']} / {labels[-1]}", delay=1540, width=230, brief=1020, story=2820, choreo="readout")
+    parts = [text(0, 28, "03 / PATH ROUTING", cls="index muted", size=13)]
     for tick in range(5):
         yy = y0 + (y1 - y0) * tick / 4
         value = y_max - (y_max - y_min) * tick / 4
@@ -379,7 +381,18 @@ def build_c3(data: Any) -> str:
                 parts.append(circle(x(index), y(value), 4.5 if series_index == 0 else 3.5, cls=point_cls, extra=motion("dock", round(route_start + progress * 800), dy=10, brief=round(route_brief + progress * 600), story=round(route_story + progress * 1250), duration=220, duration_brief=150, duration_story=260, choreo="pin")))
     px, py = x(peak_index), y(series[0]["values"][peak_index])
     parts += [line(px, py - 12, px, y0, cls="rail", extra=f'pathLength="1" {motion("align", 1220, brief=820, story=2140)}'), text(px, y0 - 10, f"PEAK / {labels[peak_index]}", cls="index signal-text", anchor="middle", size=12, extra=motion("lock", 1400, brief=950, story=2480, choreo="alarm"))]
-    return "\n".join(parts)
+    first_y = y(series[0]["values"][0])
+    latest_y = y(latest)
+    foreground = "\n".join([
+        rect(x0 - 6, first_y - 6, 12, 12, cls="pi-socket", extra='style="--pi-delay:180ms"'),
+        circle(x1, latest_y, 14, cls="pi-lock-ring"),
+        path(f"M {x1-20} {latest_y} H {x1-12} M {x1+12} {latest_y} H {x1+20} M {x1} {latest_y-20} V {latest_y-12}", cls="pi-lock-cross"),
+        text(x1 - 21, latest_y + 27, f"E03 / T{len(labels):02d}", cls="pi-address pi-address-signal", anchor="end", size=10),
+    ])
+    return ChartArtwork(
+        svg="\n".join(parts),
+        precision=PrecisionInterface("E03", "0 64 230 114", 248, 1280, evidence, foreground),
+    )
 
 
 def build_c4(data: Any) -> str:
@@ -557,7 +570,7 @@ def build_c7(data: Any) -> str:
     return "\n".join(parts)
 
 
-def build_c8(data: Any) -> str:
+def build_c8(data: Any) -> str | ChartArtwork:
     items = [item for item in _valid_series(data, "stage") if item["value"] > 0][:6]
     if len(items) < 2:
         return no_data()
@@ -568,7 +581,8 @@ def build_c8(data: Any) -> str:
     plate_standard = 1600 + max(0, len(items) - 5) * 170
     plate_brief = 960 + max(0, len(items) - 5) * 80
     plate_story = 3040 + max(0, len(items) - 5) * 320
-    parts = [text(0, 28, "08 / STAGE INTERLOCK", cls="index muted", size=13), evidence_plate(0, 74, "S-01", "RETENTION", f"{retention:.1f}%", "首阶段至末阶段", delay=plate_standard, width=230, brief=plate_brief, story=plate_story, choreo="readout")]
+    evidence = evidence_plate(0, 74, "S-01", "RETENTION", f"{retention:.1f}%", "首阶段至末阶段", delay=plate_standard, width=230, brief=plate_brief, story=plate_story, choreo="readout")
+    parts = [text(0, 28, "08 / STAGE INTERLOCK", cls="index muted", size=13)]
     x0, x1, center = 302, 1130, 250
     band = (x1 - x0) / len(items)
     centers = []
@@ -591,7 +605,8 @@ def build_c8(data: Any) -> str:
             cls="stage-module",
             extra=motion("dock", stage_standard, dx=-34, brief=stage_brief, story=stage_story, duration=320, duration_brief=220, duration_story=540, choreo="interlock"),
         )
-        parts += [stage_module, line(cx, y - 14, cx, y + height + 14, cls="rail", extra=motion("align", 130 + index * 50, brief=45 + index * 24, story=160 + index * 95))]
+        # Datum rails sit below the stage blocks so they never cut through values.
+        parts += [line(cx, y - 14, cx, y + height + 14, cls="rail pi-stage-axis", extra=motion("align", 130 + index * 50, brief=45 + index * 24, story=160 + index * 95)), stage_module]
         if index:
             prev = centers[index - 1]
             connector_standard = 440 + (index - 1) * 190
@@ -601,7 +616,24 @@ def build_c8(data: Any) -> str:
             loss = 100 * (1 - item["value"] / items[index - 1]["value"])
             parts.append(text((prev[0] + cx)/2, center - 16, f"−{loss:.0f}%", cls="signal-text index" if index == bottleneck + 1 else "muted index", anchor="middle", size=12, extra=motion("lock", connector_standard + 190, brief=connector_brief + 135, story=connector_story + 380, choreo="alarm" if index == bottleneck + 1 else "readout")))
     parts.append(line(x0, 420, x1, 420, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=100, duration=240, duration_brief=150, duration_story=320)}'))
-    return "\n".join(parts)
+    target_x = (centers[bottleneck][0] + centers[bottleneck + 1][0]) / 2
+    loss = losses[bottleneck] * 100
+    overlay = []
+    for index, (cx, _y, _height, _width) in enumerate(centers):
+        signal = index == bottleneck + 1
+        overlay += [
+            rect(cx - 4, 416, 8, 8, cls="pi-socket-signal" if signal else "pi-socket", extra="" if signal else f'style="--pi-delay:{180 + index * 120}ms"'),
+            text(cx, 443, f"S{index + 1}", cls="pi-address pi-address-signal" if signal else "pi-address", anchor="middle", size=9),
+        ]
+    overlay += [
+        circle(target_x, center, 13, cls="pi-lock-ring"),
+        path(f"M {target_x-18} {center} H {target_x-11} M {target_x+11} {center} H {target_x+18}", cls="pi-lock-cross"),
+        text(target_x, center + 29, f"E08 / Δ{loss:.0f}", cls="pi-address pi-address-signal", anchor="middle", size=10),
+    ]
+    return ChartArtwork(
+        svg="\n".join(parts),
+        precision=PrecisionInterface("E08", "0 64 230 114", 280, 1180, evidence, "\n".join(overlay)),
+    )
 
 
 def build_c9(data: Any) -> str:
@@ -846,7 +878,7 @@ def build_c14(data: Any) -> str:
     return "\n".join(parts)
 
 
-def build_c15(data: Any) -> str:
+def build_c15(data: Any) -> str | ChartArtwork:
     nodes = data.get("nodes", []) if isinstance(data, dict) else []
     links = data.get("links", []) if isinstance(data, dict) else []
     nodes = [node for node in nodes[:12] if isinstance(node, dict) and str(node.get("id", "")).strip() and is_number(node.get("level")) and is_number(node.get("value")) and node["value"] >= 0]
@@ -885,10 +917,36 @@ def build_c15(data: Any) -> str:
             text(x + width / 2, y + height / 2 - 2, node.get("label", node["id"]), cls=label_cls, anchor="middle", size=13, weight=650),
             text(x + width / 2, y + height / 2 + 20, format_num(node["value"]), cls=f"index {label_cls}", anchor="middle", size=12),
         ]
-    if valid_links:
-        weakest = min(valid_links, key=lambda item: item["value"])
-        parts.append(evidence_plate(0, 86, "F-15", "LEAK", format_num(weakest["value"]), "最小有效流量", delay=1740, width=200, brief=980, story=3300, choreo="alarm"))
-    return "\n".join(parts)
+    if not valid_links:
+        return "\n".join(parts)
+    weakest_index = min(range(len(valid_links)), key=lambda index: valid_links[index]["value"])
+    weakest = valid_links[weakest_index]
+    evidence = evidence_plate(0, 86, "F-15", "LEAK", format_num(weakest["value"]), "最小有效流量", delay=1740, width=200, brief=980, story=3300, choreo="alarm")
+    ports: list[tuple[float, float]] = []
+    for item in valid_links:
+        sx, sy, sw, sh = positions[str(item["source"])]
+        tx, ty, _tw, th = positions[str(item["target"])]
+        for port in ((sx + sw, sy + sh / 2), (tx, ty + th / 2)):
+            if not any(abs(port[0] - x) < .01 and abs(port[1] - y) < .01 for x, y in ports):
+                ports.append(port)
+    weak_sx, weak_sy, weak_sw, weak_sh = positions[str(weakest["source"])]
+    weak_tx, weak_ty, _weak_tw, weak_th = positions[str(weakest["target"])]
+    weak_start = (weak_sx + weak_sw, weak_sy + weak_sh / 2)
+    weak_end = (weak_tx, weak_ty + weak_th / 2)
+    target_x = (weak_start[0] + weak_end[0]) / 2
+    target_y = (weak_start[1] + weak_end[1]) / 2
+    overlay = []
+    for index, (px, py) in enumerate(ports):
+        signal = abs(px - weak_end[0]) < .01 and abs(py - weak_end[1]) < .01
+        overlay.append(rect(px - 4, py - 4, 8, 8, cls="pi-socket-signal" if signal else "pi-socket", extra="" if signal else f'style="--pi-delay:{180 + index * 100}ms"'))
+    overlay += [
+        circle(target_x, target_y, 14, cls="pi-lock-ring"),
+        text(target_x, target_y + 30, f"E15 / L{weakest_index + 1:02d}", cls="pi-address pi-address-signal", anchor="middle", size=10),
+    ]
+    return ChartArtwork(
+        svg="\n".join(parts),
+        precision=PrecisionInterface("E15", "0 76 200 114", 250, 1100, evidence, "\n".join(overlay)),
+    )
 
 
 def build_c16(data: Any) -> str:
@@ -1090,17 +1148,17 @@ def build_c21(data: Any) -> str:
     return "\n".join(parts)
 
 
-def build_c22(data: Any) -> str:
+def build_c22(data: Any) -> str | ChartArtwork:
     labels = data.get("labels", []) if isinstance(data, dict) else []
     values = data.get("values", []) if isinstance(data, dict) else []
     if not labels or len(labels) > 8 or len(values) != len(labels) or any(not isinstance(row, list) or len(row) != len(labels) or not all(is_number(value) and -1 <= value <= 1 for value in row) for row in values):
         return no_data()
     x0, y0 = 300, 70
     size = min(72, 350 / len(labels))
-    strongest = max(((abs(value), value, row, col) for row, line_values in enumerate(values) for col, value in enumerate(line_values) if row != col), default=(0, 0, 0, 0))
+    strongest = max(((abs(value), value, row, col) for row, line_values in enumerate(values) for col, value in enumerate(line_values) if row != col), key=lambda item: item[0], default=(0, 0, 0, 0))
     parts = [text(0, 28, "22 / CORRELATION MATRIX", cls="index muted", size=13), line(x0, 52, x0 + size * len(labels), 52, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
     for index, label in enumerate(labels):
-        parts += [text(x0 + size * (index + .5), 42, label, cls="index muted", anchor="middle", size=12), text(0, y0 + size * (index + .62), label, cls="index muted", size=12)]
+        parts += [text(x0 + size * (index + .5), 42, label, cls="index muted", anchor="middle", size=12), text(288, y0 + size * (index + .62), label, cls="index muted", anchor="end", size=12)]
     for row, line_values in enumerate(values):
         for col, value in enumerate(line_values):
             x, y = x0 + col * size, y0 + row * size
@@ -1108,8 +1166,34 @@ def build_c22(data: Any) -> str:
             cls = "signal-fill" if is_focus else ("data-fill" if value >= .65 else "cat-1" if value >= 0 else "cat-4")
             delay = 200 + row * 70 + col * 45
             parts += [rect(x + 3, y + 3, size - 6, size - 6, cls=cls, extra=motion("dock", delay, dy=10, brief=90 + row * 32 + col * 20, story=380 + row * 140 + col * 85, choreo="field-seat")), text(x + size / 2, y + size * .61, f"{value:+.2f}" if value != 1 else "1.00", cls=_contrast_text_class(cls), anchor="middle", size=12, weight=650, extra=motion("lock", delay + 230, brief=delay // 2 + 140, story=delay * 2 + 290, choreo="readout"))]
-    parts.append(evidence_plate(0, 346, "C-22", "STRONG", f"{strongest[1]:+.2f}", f"{labels[strongest[2]]} × {labels[strongest[3]]}", delay=1820, width=230, brief=1030, story=3480, choreo="alarm"))
-    return "\n".join(parts)
+    evidence = evidence_plate(0, 346, "C-22", "STRONG", f"{strongest[1]:+.2f}", f"{labels[strongest[2]]} × {labels[strongest[3]]}", delay=1820, width=230, brief=1030, story=3480, choreo="alarm")
+    focus_row, focus_col = strongest[2], strongest[3]
+    focus_x, focus_y = x0 + focus_col * size, y0 + focus_row * size
+    inset, arm = 1, min(16, size * .24)
+    left, right, top, bottom = focus_x - inset, focus_x + size + inset, focus_y - inset, focus_y + size + inset
+    overlay = []
+    for index in range(len(labels)):
+        col_x = x0 + size * (index + .5)
+        row_y = y0 + size * (index + .56)
+        signal = index == focus_col
+        overlay += [
+            text(col_x, 65, f"C{index + 1}", cls="pi-address pi-address-signal" if signal else "pi-address", anchor="middle", size=9),
+            text(286, row_y, f"R{index + 1}", cls="pi-address pi-address-signal" if signal else "pi-address", anchor="end", size=9),
+        ]
+    focus_path = (
+        f"M {left} {top+arm} V {top} H {left+arm} "
+        f"M {right-arm} {top} H {right} V {top+arm} "
+        f"M {right} {bottom-arm} V {bottom} H {right-arm} "
+        f"M {left+arm} {bottom} H {left} V {bottom-arm}"
+    )
+    overlay += [
+        path(focus_path, cls="pi-focus-corner"),
+        text(x0 + size * len(labels) + 10, top + 19, f"E22 / A{focus_col + 1:02d}", cls="pi-address pi-address-signal", size=10),
+    ]
+    return ChartArtwork(
+        svg="\n".join(parts),
+        precision=PrecisionInterface("E22", "0 336 230 114", 255, 980, evidence, "\n".join(overlay)),
+    )
 
 
 def build_c23(data: Any) -> str:
@@ -1175,7 +1259,7 @@ def build_c24(data: Any) -> str:
     return "\n".join(parts)
 
 
-BUILDERS: dict[str, Callable[[Any], str]] = {
+BUILDERS: dict[str, Callable[[Any], str | ChartArtwork]] = {
     "C1": build_c1, "C2": build_c2, "C3": build_c3, "C4": build_c4, "C5": build_c5,
     "C6": build_c6, "C7": build_c7, "C8": build_c8, "C9": build_c9, "C10": build_c10,
     "C11": build_c11, "C12": build_c12, "C13": build_c13, "C14": build_c14,
@@ -1183,11 +1267,6 @@ BUILDERS: dict[str, Callable[[Any], str]] = {
     "C19": build_c19, "C20": build_c20, "C21": build_c21, "C22": build_c22,
     "C23": build_c23, "C24": build_c24,
 }
-
-
-# Canary charts use the scene-level motion runtime before it is expanded to all
-# families. SVG builders remain responsible only for complete final geometry.
-SCENE_CONTRACTS = {chart_id: SceneContract() for chart_id in ("C3", "C8", "C15", "C22")}
 
 
 def _data_signature(data: Any) -> str:
@@ -1236,6 +1315,9 @@ def render_chart(
         raise KeyError(f"未知图表编号：{chart_id}")
     meta = CHARTS[key]
     source = DEFAULTS[key] if data is None else data
+    artwork = BUILDERS[key](source)
+    svg = artwork.svg if isinstance(artwork, ChartArtwork) else artwork
+    precision = artwork.precision if isinstance(artwork, ChartArtwork) else None
     page = ChartPage(
         chart_id=key,
         slug=meta["slug"],
@@ -1243,7 +1325,7 @@ def render_chart(
         title=title or meta["title"],
         subtitle=subtitle,
         footer=footer,
-        svg=BUILDERS[key](source),
+        svg=svg,
         data=source,
         family=meta["family"],
         data_signature=_data_signature(source),
@@ -1253,6 +1335,6 @@ def render_chart(
         choreography=CHOREOGRAPHIES.get(key, "structural"),
         surface=surface if surface in {"light", "dark"} else "light",
         mode=mode if mode in {"brief", "editorial"} else "editorial",
-        scene=SCENE_CONTRACTS.get(key),
+        precision=precision,
     )
     return html_page(page, embed_fonts=embed_fonts)

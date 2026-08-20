@@ -99,7 +99,9 @@ def validate_html(source: str) -> None:
     for attribute in ("width", "height", "r", "rx"):
         if re.search(fr'{attribute}="-\d', source):
             raise AssertionError(f"输出含负 {attribute}")
-    required = ["viewBox=\"0 0 1172 500\"", "data-motion=\"align\"", "data-motion=\"lock\"", "data-total-brief=", "data-total-story=", "window.Moxing", "duration:total", "prefers-reduced-motion"]
+    if "viewBox=\"0 0 1172 500\"" not in source and "class=\"pi-data-field\" viewBox=\"" not in source:
+        raise AssertionError("缺少 v2 或精密裁切 viewBox")
+    required = ["data-motion=\"align\"", "data-motion=\"lock\"", "data-total-brief=", "data-total-story=", "window.Moxing", "duration:total", "prefers-reduced-motion"]
     for marker in required:
         if marker not in source:
             raise AssertionError(f"缺少 {marker}")

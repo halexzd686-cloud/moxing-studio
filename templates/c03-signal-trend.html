@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-surface="light">
+<html lang="zh-CN" data-surface="light" data-interface="precision-v2.1">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -113,36 +113,57 @@
   .motion-enabled.is-playing [data-choreo="alarm"] { animation-name:mx-alarm; }
   .motion-enabled.is-paused [data-motion] { animation-play-state:paused!important; }
   @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing [data-motion] { animation:none!important; } }
-  [data-motion-system="macro-v2.1"] [data-motion]:not([data-scene]) { animation:none!important; }
-  [data-scene] { transform-origin:center; }
-  svg [data-scene] { transform-box:fill-box; }
-  .chart-body[data-scene="data-field"] { contain:layout paint; isolation:isolate; backface-visibility:hidden; transform:translateZ(0); }
-  @keyframes mx-scene-field { from { opacity:0; transform:translate3d(0,10px,0); } to { opacity:1; transform:translate3d(0,0,0); } }
-  @keyframes mx-scene-evidence { from { opacity:0; transform:translate3d(-10px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
-  @keyframes mx-scene-lock { 0% { opacity:0; transform:scale(.94); } 72% { opacity:1; transform:scale(1.018); } 100% { opacity:1; transform:scale(1); } }
-  .motion-enabled.is-playing[data-motion-system="macro-v2.1"] [data-scene="data-field"] { will-change:transform,opacity; animation:mx-scene-field var(--scene-duration) cubic-bezier(.2,.72,.18,1) var(--scene-delay) both; }
-  .motion-enabled.is-playing[data-motion-system="macro-v2.1"] [data-scene="evidence-bay"] { will-change:transform,opacity; animation:mx-scene-evidence var(--scene-duration) cubic-bezier(.2,.72,.18,1) var(--scene-delay) both; }
-  .motion-enabled.is-playing[data-motion-system="macro-v2.1"] [data-scene="terminal-lock"] { will-change:transform,opacity; animation:mx-scene-lock var(--scene-duration) cubic-bezier(.2,.72,.18,1) var(--scene-delay) both; }
-  .motion-enabled.is-paused[data-motion-system="macro-v2.1"] [data-scene] { animation-play-state:paused!important; }
-  .is-complete[data-motion-system="macro-v2.1"] [data-scene] { will-change:auto; }
-  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-motion-system="macro-v2.1"] [data-scene] { animation:none!important; } }
+  .pi-split-body { display:grid; grid-template-columns:220px minmax(0,1fr); column-gap:28px; align-items:stretch; min-width:0; }
+  .pi-evidence-bay { position:relative; min-width:0; padding:0 22px 0 4px; border-right:1px solid var(--grid); display:grid; grid-template-rows:18px auto 18px; align-content:center; gap:9px; }
+  .pi-evidence-bay::after { content:""; position:absolute; right:-3px; top:50%; width:5px; height:5px; margin-top:-2px; background:var(--signal); }
+  .pi-evidence-bay__label { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; font-size:9px; font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.08em; color:var(--matrix-quiet); align-self:end; }
+  .pi-evidence-svg { display:block; width:100%!important; height:auto!important; overflow:visible; }
+  .pi-bay-terminal { height:18px; display:grid; grid-template-columns:auto minmax(20px,1fr) 7px; align-items:center; gap:7px; font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; font-size:9px; font-weight:750; font-variation-settings:'ROND' 0,'wght' 750; letter-spacing:.06em; color:var(--signal); }
+  .pi-bay-terminal i { height:1px; background:var(--rail); }
+  .pi-bay-terminal b { display:block; width:7px; height:7px; border:1.5px solid var(--signal); background:var(--bg); }
+  .pi-data-field { display:block; width:100%!important; height:100%!important; min-width:0; overflow:hidden; contain:layout paint; isolation:isolate; backface-visibility:hidden; transform:translateZ(0); }
+  .pi-evidence-bay .evidence-plate .panel-stroke { stroke:var(--ink); stroke-width:1.2; }
+  svg .pi-socket { fill:var(--bg); stroke:var(--ink); stroke-width:1.5; vector-effect:non-scaling-stroke; }
+  svg .pi-socket-signal { fill:var(--signal); stroke:var(--on-signal); stroke-width:1; vector-effect:non-scaling-stroke; }
+  svg .pi-lock-ring { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
+  svg .pi-lock-cross { fill:none; stroke:var(--signal); stroke-width:1; vector-effect:non-scaling-stroke; }
+  svg .pi-address { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }
+  svg .pi-address-signal { fill:var(--signal); }
+  svg .pi-focus-corner { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
+  [data-interface="precision-v2.1"] [data-motion] { animation:none!important; }
+  @keyframes pi-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
+  @keyframes pi-evidence-enter { from { opacity:0; transform:translate3d(-5px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
+  @keyframes pi-terminal-handshake { from { opacity:.2; } to { opacity:1; } }
+  @keyframes pi-lock-settle { from { opacity:0; } to { opacity:1; } }
+  .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-data-field { animation:pi-field-enter 900ms cubic-bezier(.22,.72,.18,1) 40ms both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-evidence-bay { animation:pi-evidence-enter 620ms cubic-bezier(.22,.72,.18,1) 480ms both; will-change:transform,opacity; backface-visibility:hidden; }
+  .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-bay-terminal { animation:pi-terminal-handshake 360ms linear var(--pi-terminal-delay,860ms) both; }
+  .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-lock-ring,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-focus-corner { animation:pi-lock-settle 320ms linear var(--pi-lock-delay,980ms) both; }
+  .motion-enabled.is-paused[data-interface="precision-v2.1"] .pi-data-field,.motion-enabled.is-paused[data-interface="precision-v2.1"] .pi-evidence-bay,.motion-enabled.is-paused[data-interface="precision-v2.1"] .pi-bay-terminal,.motion-enabled.is-paused[data-interface="precision-v2.1"] .pi-lock-ring,.motion-enabled.is-paused[data-interface="precision-v2.1"] .pi-focus-corner { animation-play-state:paused!important; }
+  .is-complete[data-interface="precision-v2.1"] .pi-data-field,.is-complete[data-interface="precision-v2.1"] .pi-evidence-bay { will-change:auto; }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-data-field,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-evidence-bay,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-bay-terminal,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-lock-ring,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-focus-corner { animation:none!important; } }
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1900" data-total-brief="1200" data-total-standard="1900" data-total-story="3200" data-mode="editorial" data-choreography="path-trace" data-motion-system="macro-v2.1">
+<main class="chart-container" id="moxing-chart" data-total="1900" data-total-brief="1200" data-total-standard="1900" data-total-story="3200" data-mode="editorial" data-choreography="path-trace" data-motion-system="precision-v2.1" data-interface="precision-v2.1">
   <header class="chart-header">
     <div class="chart-code"><div class="mx-code"><div class="mx-code__top"><strong>C03</strong><span>SYS / 21</span></div><div class="mx-code__name">SIGNAL TREND</div><div class="mx-code__state"><span class="mx-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>TRACE.LOCK</div></div></div>
-    <div><h1 class="chart-title">增长在下半年加速，年末达到新高</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / ROUTE</span><span>DATA / 12T · 02S</span><span data-state data-scene="terminal-lock">STATE / READY</span></div></div>
+    <div><h1 class="chart-title">增长在下半年加速，年末达到新高</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / ROUTE</span><span>DATA / 12T · 02S</span><span data-state>STATE / READY</span></div></div>
     <span class="mx-header-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </header>
-  <section class="chart-body" data-scene="data-field"><svg viewBox="0 0 1172 500" role="img" aria-label="增长在下半年加速，年末达到新高"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >03 / PATH ROUTING</text>
-<g class="evidence-plate" data-scene="evidence-bay" data-motion="lock" data-choreo="readout" style="--delay:1540ms;--dx:-8px;--dy:0px;--delay-brief:1020ms;--delay-story:2820ms">
+  <section class="chart-body pi-split-body">
+    <aside class="pi-evidence-bay" aria-label="E03 evidence bay" style="--pi-terminal-delay:1160ms">
+      <span class="pi-evidence-bay__label">EVIDENCE / BAY</span>
+      <svg class="pi-evidence-svg" viewBox="0 64 230 114" aria-hidden="true"><g class="evidence-plate" data-motion="lock" data-choreo="readout" style="--delay:1540ms;--dx:-8px;--dy:0px;--delay-brief:1020ms;--delay-story:2820ms">
 <path d="M 0 74 H 222 L 230 82 V 168 H 8 L 0 160 Z" class="panel-stroke" />
 <text x="14" y="95" class="index muted" text-anchor="start" font-size="12" >T-01</text>
 <text x="216" y="95" class="index signal-text" text-anchor="end" font-size="12" >LATEST</text>
 <text x="14" y="129" class="value" text-anchor="start" font-size="28" font-weight="650" >1,750</text>
 <text x="14" y="151" class="muted" text-anchor="start" font-size="13" >2025 / 12月</text>
-</g>
+</g></svg>
+      <div class="pi-bay-terminal"><span>E03</span><i></i><b></b></div>
+    </aside>
+    <svg class="pi-data-field" viewBox="248 0 924 500" preserveAspectRatio="xMidYMid meet" role="img" aria-label="增长在下半年加速，年末达到新高" style="--pi-lock-delay:1280ms"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >03 / PATH ROUTING</text>
 <line x1="292" y1="74" x2="1126" y2="74" class="grid" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--delay-brief:40ms;--delay-story:120ms"/>
 <text x="278" y="78" class="muted index" text-anchor="end" font-size="12" >1,930.8</text>
 <line x1="292" y1="160.5" x2="1126" y2="160.5" class="grid" pathLength="1" data-motion="align" style="--delay:105ms;--dx:0px;--dy:0px;--delay-brief:58ms;--delay-story:175ms"/>
@@ -171,7 +192,11 @@
 <circle cx="292" cy="378.06" r="3.5" class="hollow" data-motion="dock" data-choreo="pin" style="--delay:480ms;--dx:0px;--dy:10px;--duration:220ms;--delay-brief:260ms;--delay-story:830ms;--duration-brief:150ms;--duration-story:260ms"/>
 <circle cx="1126" cy="234.24" r="3.5" class="hollow" data-motion="dock" data-choreo="pin" style="--delay:1280ms;--dx:0px;--dy:10px;--duration:220ms;--delay-brief:860ms;--delay-story:2080ms;--duration-brief:150ms;--duration-story:260ms"/>
 <line x1="1126" y1="103.94" x2="1126" y2="74" class="rail" pathLength="1" data-motion="align" style="--delay:1220ms;--dx:0px;--dy:0px;--delay-brief:820ms;--delay-story:2140ms"/>
-<text x="1126" y="64" class="index signal-text" text-anchor="middle" font-size="12" data-motion="lock" data-choreo="alarm" style="--delay:1400ms;--dx:0px;--dy:0px;--delay-brief:950ms;--delay-story:2480ms">PEAK / 12月</text></svg></section>
+<text x="1126" y="64" class="index signal-text" text-anchor="middle" font-size="12" data-motion="lock" data-choreo="alarm" style="--delay:1400ms;--dx:0px;--dy:0px;--delay-brief:950ms;--delay-story:2480ms">PEAK / 12月</text><g class="pi-overlay pi-overlay--foreground"><rect x="286" y="325.67" width="12" height="12" rx="0" class="pi-socket" style="--pi-delay:180ms"/>
+<circle cx="1126" cy="115.94" r="14" class="pi-lock-ring" />
+<path d="M 1106 115.93939393939394 H 1114 M 1138 115.93939393939394 H 1146 M 1126 95.93939393939394 V 103.93939393939394" class="pi-lock-cross" />
+<text x="1105" y="142.94" class="pi-address pi-address-signal" text-anchor="end" font-size="10" >E03 / T12</text></g></svg>
+  </section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" data-code="R" title="重播">↻</button><button type="button" data-action="pause" data-code="H" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" data-code="S" title="切换明暗">◐</button></nav>
 </main>
@@ -187,8 +212,6 @@
   const scale=scales[profile]||1;
   const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);
   const total=Number(root.dataset[profileKey]||root.dataset.total||1800);
-  const macro=root.dataset.motionSystem==='macro-v2.1';
-  const sceneTimings={"brief":{"data-field":{"delay":0,"duration":650},"evidence-bay":{"delay":300,"duration":450},"terminal-lock":{"delay":620,"duration":260}},"standard":{"data-field":{"delay":0,"duration":850},"evidence-bay":{"delay":450,"duration":600},"terminal-lock":{"delay":820,"duration":380}},"story":{"data-field":{"delay":0,"duration":1450},"evidence-bay":{"delay":850,"duration":1150},"terminal-lock":{"delay":1700,"duration":650}}};
   const baseDuration={align:220,dock:620,route:520,lock:280};
   root.querySelectorAll('[data-motion]').forEach(el=>{
     const rawDelay=parseFloat(el.style.getPropertyValue('--delay'))||0;
@@ -197,11 +220,6 @@
     const profileDuration=parseFloat(el.style.getPropertyValue('--duration-'+profile));
     el.style.setProperty('--active-delay',Math.round(Number.isFinite(profileDelay)?profileDelay:rawDelay*scale)+'ms');
     el.style.setProperty('--active-duration',Math.round(Number.isFinite(profileDuration)?profileDuration:rawDuration*scale)+'ms');
-  });
-  if(macro) root.querySelectorAll('[data-scene]').forEach(el=>{
-    const timing=sceneTimings[profile]?.[el.dataset.scene]||{delay:0,duration:300};
-    el.style.setProperty('--scene-delay',timing.delay+'ms');
-    el.style.setProperty('--scene-duration',timing.duration+'ms');
   });
   let timer=0,frame=0;
   const settle=()=>{ clearTimeout(timer); cancelAnimationFrame(frame); root.classList.remove('is-playing','is-paused'); root.classList.add('is-complete'); const b=root.querySelector('[data-action=pause]'); if(b)b.textContent='Ⅱ'; };

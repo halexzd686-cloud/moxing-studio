@@ -203,7 +203,7 @@ def evidence_plate(
     return group(
         children,
         cls="evidence-plate",
-        extra=f'data-scene="evidence-bay" {motion("lock", delay, dx=-8, brief=brief, story=story, choreo=choreo)}',
+        extra=motion("lock", delay, dx=-8, brief=brief, story=story, choreo=choreo),
     )
 
 
@@ -219,10 +219,23 @@ def no_data(message: str = "暂无可用数据") -> str:
 
 
 @dataclass
-class SceneContract:
-    """Scene-level motion ownership for the production renderer."""
+class PrecisionInterface:
+    """Approved precision-interface shell for production chart artwork."""
 
-    system: str = "macro-v2.1"
+    evidence_id: str
+    evidence_viewbox: str
+    plot_x: float
+    lock_delay: int
+    evidence_svg: str
+    foreground_svg: str
+
+
+@dataclass
+class ChartArtwork:
+    """Chart geometry plus an optional precision-interface presentation."""
+
+    svg: str
+    precision: PrecisionInterface | None = None
 
 
 @dataclass
@@ -243,7 +256,7 @@ class ChartPage:
     choreography: str = "structural"
     surface: str = "light"
     mode: str = "editorial"
-    scene: SceneContract | None = None
+    precision: PrecisionInterface | None = None
 
 
 def _surface_css(name: str, values: dict[str, Any]) -> str:
@@ -287,16 +300,28 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
     index_font = TOKENS["typography"]["index"]
     interface_tokens = TOKENS["interface"]
     motion_tokens = TOKENS["motion"]
+    precision_motion = motion_tokens["precision"]
     font_css = _font_face_css(embed_fonts)
     display_code = f"C{int(page.chart_id[1:]):02d}" if page.chart_id[1:].isdigit() else page.chart_id
     header_ticks = "<i></i>" * 16
-    motion_system = page.scene.system if page.scene else "legacy"
-    scene_svg = page.svg
-    body_scene = ' data-scene="data-field"' if page.scene else ""
-    state_scene = ' data-scene="terminal-lock"' if page.scene else ""
-    scene_timings = json.dumps(motion_tokens.get("scenes", {}), separators=(",", ":"))
+    precision = page.precision
+    motion_system = "precision-v2.1" if precision else "legacy"
+    html_interface = ' data-interface="precision-v2.1"' if precision else ""
+    root_interface = ' data-interface="precision-v2.1"' if precision else ""
+    if precision:
+        plot_width = W - precision.plot_x
+        body_markup = f'''<section class="chart-body pi-split-body">
+    <aside class="pi-evidence-bay" aria-label="{esc(precision.evidence_id)} evidence bay" style="--pi-terminal-delay:{max(0, precision.lock_delay - 120)}ms">
+      <span class="pi-evidence-bay__label">EVIDENCE / BAY</span>
+      <svg class="pi-evidence-svg" viewBox="{esc(precision.evidence_viewbox)}" aria-hidden="true">{precision.evidence_svg}</svg>
+      <div class="pi-bay-terminal"><span>{esc(precision.evidence_id)}</span><i></i><b></b></div>
+    </aside>
+    <svg class="pi-data-field" viewBox="{fmt(precision.plot_x)} 0 {fmt(plot_width)} {H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="{esc(page.title)}" style="--pi-lock-delay:{precision.lock_delay}ms">{page.svg}<g class="pi-overlay pi-overlay--foreground">{precision.foreground_svg}</g></svg>
+  </section>'''
+    else:
+        body_markup = f'<section class="chart-body"><svg viewBox="0 0 {W} {H}" role="img" aria-label="{esc(page.title)}">{page.svg}</svg></section>'
     return f"""<!DOCTYPE html>
-<html lang=\"zh-CN\" data-surface=\"{esc(page.surface)}\">
+<html lang=\"zh-CN\" data-surface=\"{esc(page.surface)}\"{html_interface}>
 <head>
 <meta charset=\"UTF-8\">
 <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">
@@ -393,29 +418,45 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   .motion-enabled.is-playing [data-choreo=\"alarm\"] {{ animation-name:mx-alarm; }}
   .motion-enabled.is-paused [data-motion] {{ animation-play-state:paused!important; }}
   @media (prefers-reduced-motion:reduce) {{ .motion-enabled.is-playing [data-motion] {{ animation:none!important; }} }}
-  [data-motion-system="macro-v2.1"] [data-motion]:not([data-scene]) {{ animation:none!important; }}
-  [data-scene] {{ transform-origin:center; }}
-  svg [data-scene] {{ transform-box:fill-box; }}
-  .chart-body[data-scene="data-field"] {{ contain:layout paint; isolation:isolate; backface-visibility:hidden; transform:translateZ(0); }}
-  @keyframes mx-scene-field {{ from {{ opacity:0; transform:translate3d(0,10px,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
-  @keyframes mx-scene-evidence {{ from {{ opacity:0; transform:translate3d(-10px,0,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
-  @keyframes mx-scene-lock {{ 0% {{ opacity:0; transform:scale(.94); }} 72% {{ opacity:1; transform:scale(1.018); }} 100% {{ opacity:1; transform:scale(1); }} }}
-  .motion-enabled.is-playing[data-motion-system="macro-v2.1"] [data-scene="data-field"] {{ will-change:transform,opacity; animation:mx-scene-field var(--scene-duration) {motion_tokens['sceneEase']} var(--scene-delay) both; }}
-  .motion-enabled.is-playing[data-motion-system="macro-v2.1"] [data-scene="evidence-bay"] {{ will-change:transform,opacity; animation:mx-scene-evidence var(--scene-duration) {motion_tokens['sceneEase']} var(--scene-delay) both; }}
-  .motion-enabled.is-playing[data-motion-system="macro-v2.1"] [data-scene="terminal-lock"] {{ will-change:transform,opacity; animation:mx-scene-lock var(--scene-duration) {motion_tokens['sceneEase']} var(--scene-delay) both; }}
-  .motion-enabled.is-paused[data-motion-system="macro-v2.1"] [data-scene] {{ animation-play-state:paused!important; }}
-  .is-complete[data-motion-system="macro-v2.1"] [data-scene] {{ will-change:auto; }}
-  @media (prefers-reduced-motion:reduce) {{ .motion-enabled.is-playing[data-motion-system="macro-v2.1"] [data-scene] {{ animation:none!important; }} }}
+  .pi-split-body {{ display:grid; grid-template-columns:{interface_tokens['evidenceBay']['width']}px minmax(0,1fr); column-gap:{interface_tokens['evidenceBay']['gap']}px; align-items:stretch; min-width:0; }}
+  .pi-evidence-bay {{ position:relative; min-width:0; padding:0 22px 0 4px; border-right:1px solid var(--grid); display:grid; grid-template-rows:18px auto 18px; align-content:center; gap:9px; }}
+  .pi-evidence-bay::after {{ content:""; position:absolute; right:-3px; top:50%; width:5px; height:5px; margin-top:-2px; background:var(--signal); }}
+  .pi-evidence-bay__label {{ font-family:{index_font}; font-size:9px; font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.08em; color:var(--matrix-quiet); align-self:end; }}
+  .pi-evidence-svg {{ display:block; width:100%!important; height:auto!important; overflow:visible; }}
+  .pi-bay-terminal {{ height:18px; display:grid; grid-template-columns:auto minmax(20px,1fr) 7px; align-items:center; gap:7px; font-family:{index_font}; font-size:9px; font-weight:750; font-variation-settings:'ROND' 0,'wght' 750; letter-spacing:.06em; color:var(--signal); }}
+  .pi-bay-terminal i {{ height:1px; background:var(--rail); }}
+  .pi-bay-terminal b {{ display:block; width:7px; height:7px; border:1.5px solid var(--signal); background:var(--bg); }}
+  .pi-data-field {{ display:block; width:100%!important; height:100%!important; min-width:0; overflow:hidden; contain:layout paint; isolation:isolate; backface-visibility:hidden; transform:translateZ(0); }}
+  .pi-evidence-bay .evidence-plate .panel-stroke {{ stroke:var(--ink); stroke-width:1.2; }}
+  svg .pi-socket {{ fill:var(--bg); stroke:var(--ink); stroke-width:1.5; vector-effect:non-scaling-stroke; }}
+  svg .pi-socket-signal {{ fill:var(--signal); stroke:var(--on-signal); stroke-width:1; vector-effect:non-scaling-stroke; }}
+  svg .pi-lock-ring {{ fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }}
+  svg .pi-lock-cross {{ fill:none; stroke:var(--signal); stroke-width:1; vector-effect:non-scaling-stroke; }}
+  svg .pi-address {{ font-family:{index_font}; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }}
+  svg .pi-address-signal {{ fill:var(--signal); }}
+  svg .pi-focus-corner {{ fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }}
+  [data-interface="precision-v2.1"] [data-motion] {{ animation:none!important; }}
+  @keyframes pi-field-enter {{ from {{ opacity:.18; transform:translate3d(-7px,0,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
+  @keyframes pi-evidence-enter {{ from {{ opacity:0; transform:translate3d(-5px,0,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
+  @keyframes pi-terminal-handshake {{ from {{ opacity:.2; }} to {{ opacity:1; }} }}
+  @keyframes pi-lock-settle {{ from {{ opacity:0; }} to {{ opacity:1; }} }}
+  .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-data-field {{ animation:pi-field-enter {precision_motion['field']['duration']}ms {precision_motion['ease']} {precision_motion['field']['delay']}ms both; will-change:transform,opacity; }}
+  .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-evidence-bay {{ animation:pi-evidence-enter {precision_motion['evidence']['duration']}ms {precision_motion['ease']} {precision_motion['evidence']['delay']}ms both; will-change:transform,opacity; backface-visibility:hidden; }}
+  .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-bay-terminal {{ animation:pi-terminal-handshake {precision_motion['terminal']['duration']}ms linear var(--pi-terminal-delay,860ms) both; }}
+  .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-lock-ring,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-focus-corner {{ animation:pi-lock-settle {precision_motion['lock']['duration']}ms linear var(--pi-lock-delay,980ms) both; }}
+  .motion-enabled.is-paused[data-interface="precision-v2.1"] .pi-data-field,.motion-enabled.is-paused[data-interface="precision-v2.1"] .pi-evidence-bay,.motion-enabled.is-paused[data-interface="precision-v2.1"] .pi-bay-terminal,.motion-enabled.is-paused[data-interface="precision-v2.1"] .pi-lock-ring,.motion-enabled.is-paused[data-interface="precision-v2.1"] .pi-focus-corner {{ animation-play-state:paused!important; }}
+  .is-complete[data-interface="precision-v2.1"] .pi-data-field,.is-complete[data-interface="precision-v2.1"] .pi-evidence-bay {{ will-change:auto; }}
+  @media (prefers-reduced-motion:reduce) {{ .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-data-field,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-evidence-bay,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-bay-terminal,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-lock-ring,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-focus-corner {{ animation:none!important; }} }}
 </style>
 </head>
 <body>
-<main class=\"chart-container\" id=\"moxing-chart\" data-total=\"{page.total_ms}\" data-total-brief=\"{page.profile_totals.get('brief', round(page.total_ms * .68))}\" data-total-standard=\"{page.profile_totals.get('standard', page.total_ms)}\" data-total-story=\"{page.profile_totals.get('story', round(page.total_ms * 1.8))}\" data-mode=\"{esc(page.mode)}\" data-choreography=\"{esc(page.choreography)}\" data-motion-system=\"{esc(motion_system)}\">
+<main class=\"chart-container\" id=\"moxing-chart\" data-total=\"{page.total_ms}\" data-total-brief=\"{page.profile_totals.get('brief', round(page.total_ms * .68))}\" data-total-standard=\"{page.profile_totals.get('standard', page.total_ms)}\" data-total-story=\"{page.profile_totals.get('story', round(page.total_ms * 1.8))}\" data-mode=\"{esc(page.mode)}\" data-choreography=\"{esc(page.choreography)}\" data-motion-system=\"{esc(motion_system)}\"{root_interface}>
   <header class=\"chart-header\">
     <div class=\"chart-code\"><div class=\"mx-code\"><div class=\"mx-code__top\"><strong>{esc(display_code)}</strong><span>SYS / 21</span></div><div class=\"mx-code__name\">{esc(page.public_name.upper())}</div><div class=\"mx-code__state\"><span class=\"mx-dots\" aria-hidden=\"true\"><i></i><i></i><i></i><i></i><i></i><i></i></span>{esc(page.interface_state)}</div></div></div>
-    <div><h1 class=\"chart-title\">{esc(page.title)}</h1><div class=\"chart-subtitle\">{esc(page.subtitle)}</div><div class=\"mx-meta\"><span>FAMILY / {esc(page.family)}</span><span>DATA / {esc(page.data_signature)}</span><span data-state{state_scene}>STATE / READY</span></div></div>
+    <div><h1 class=\"chart-title\">{esc(page.title)}</h1><div class=\"chart-subtitle\">{esc(page.subtitle)}</div><div class=\"mx-meta\"><span>FAMILY / {esc(page.family)}</span><span>DATA / {esc(page.data_signature)}</span><span data-state>STATE / READY</span></div></div>
     <span class=\"mx-header-ticks\" aria-hidden=\"true\">{header_ticks}</span>
   </header>
-  <section class=\"chart-body\"{body_scene}><svg viewBox=\"0 0 {W} {H}\" role=\"img\" aria-label=\"{esc(page.title)}\">{scene_svg}</svg></section>
+  {body_markup}
   <footer class=\"chart-footer\"><span>{esc(page.footer)}</span><span class=\"mark\">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class=\"motion-controls\" aria-label=\"动画控制\"><button type=\"button\" data-action=\"replay\" data-code=\"R\" title=\"重播\">↻</button><button type=\"button\" data-action=\"pause\" data-code=\"H\" title=\"暂停或继续\">Ⅱ</button><button type=\"button\" data-action=\"surface\" data-code=\"S\" title=\"切换明暗\">◐</button></nav>
 </main>
@@ -431,8 +472,6 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   const scale=scales[profile]||1;
   const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);
   const total=Number(root.dataset[profileKey]||root.dataset.total||1800);
-  const macro=root.dataset.motionSystem==='macro-v2.1';
-  const sceneTimings={scene_timings};
   const baseDuration={{align:{motion_tokens['align']},dock:{motion_tokens['dock']},route:{motion_tokens['route']},lock:{motion_tokens['lock']}}};
   root.querySelectorAll('[data-motion]').forEach(el=>{{
     const rawDelay=parseFloat(el.style.getPropertyValue('--delay'))||0;
@@ -441,11 +480,6 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
     const profileDuration=parseFloat(el.style.getPropertyValue('--duration-'+profile));
     el.style.setProperty('--active-delay',Math.round(Number.isFinite(profileDelay)?profileDelay:rawDelay*scale)+'ms');
     el.style.setProperty('--active-duration',Math.round(Number.isFinite(profileDuration)?profileDuration:rawDuration*scale)+'ms');
-  }});
-  if(macro) root.querySelectorAll('[data-scene]').forEach(el=>{{
-    const timing=sceneTimings[profile]?.[el.dataset.scene]||{{delay:0,duration:300}};
-    el.style.setProperty('--scene-delay',timing.delay+'ms');
-    el.style.setProperty('--scene-duration',timing.duration+'ms');
   }});
   let timer=0,frame=0;
   const settle=()=>{{ clearTimeout(timer); cancelAnimationFrame(frame); root.classList.remove('is-playing','is-paused'); root.classList.add('is-complete'); const b=root.querySelector('[data-action=pause]'); if(b)b.textContent='Ⅱ'; }};

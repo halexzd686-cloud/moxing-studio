@@ -9,21 +9,22 @@ Every chart interprets its structure through four semantic primitives:
 3. `ROUTE` — reveal relationships along time, dependency, or flow.
 4. `LOCK` — attach the conclusion and leave the signal mark in its final position.
 
-These primitives are authoring semantics, not a requirement to animate every mark. Production playback compiles them into a small scene graph so motion explains structure without producing dozens of simultaneous animations.
+These primitives are authoring semantics, not a requirement to animate every mark. Production playback compiles them into a small interface sequence so motion explains structure without producing dozens of simultaneous animations.
 
-## Production scene graph
+## Production precision sequence
 
 The default runtime order is:
 
 1. `DATA_FIELD` — the complete plot enters as one composited layer. It absorbs `ALIGN`, `DOCK`, and ordinary routing marks.
 2. `EVIDENCE_BAY` — the reserved evidence plate enters after the field is readable.
-3. `TERMINAL_LOCK` — the header state or one decisive signal locks the conclusion.
+3. `TERMINAL` — the evidence ID completes its short local handshake.
+4. `TARGET_LOCK` — one decisive ring or focus bracket locks the conclusion.
 
-One `PRIMARY_ROUTE` layer may be added only when a single path is essential to reading time, dependency, or flow. A chart must run no more than four scene animations at once. Do not animate individual bars, cells, glyphs, labels, or repeated nodes in the production scene graph.
+A chart must run no more than four precision animations at once. Do not animate individual bars, cells, glyphs, labels, or repeated nodes in the production sequence.
 
-`DATA_FIELD` belongs on the HTML chart-body compositor layer, not on a full-SVG `<g>`. Isolate that carrier with paint containment so a complex SVG is rasterized once and reused during transform/opacity playback. Small evidence and lock groups may remain inside SVG.
+`DATA_FIELD` is the cropped plot SVG inside the HTML split body. Isolate that carrier with paint containment so complex geometry is rasterized once and reused during transform/opacity playback. The evidence plate belongs to its own SVG in the side bay; only ports, addresses, and the target lock remain in the plot foreground.
 
-C3, C8, C15, and C22 are the production canaries for `macro-v2.1`. Other families retain the legacy primitive runtime until their static and motion review is complete.
+C3, C8, C15, and C22 are the production canaries for `precision-v2.1`. Their geometry and overlays are generated from live input through the shared renderer. Other families retain the legacy primitive runtime until their static and motion review is complete.
 
 ## Profiles
 
@@ -66,8 +67,8 @@ Do not apply a family because its movement looks attractive. Select it from the 
 - SVG geometry and final labels are generated before runtime.
 - JavaScript only schedules states; it does not compute essential layout.
 - Without JavaScript, the final locked state is immediately visible.
-- First viewport entry plays once. Controls provide replay and pause/resume.
-- A gallery must disable iframe autoplay, start only visible charts, and call the existing runtime for replay instead of reloading the iframe.
+- A standalone chart may play on first viewport entry. Controls provide replay and pause/resume.
+- A gallery must disable iframe autoplay and remain completely static until the user requests replay. Replay settles every other iframe and calls the existing runtime without reloading the selected iframe.
 - Replay restarts on consecutive animation frames; do not force synchronous layout with `offsetWidth`.
 - Honour `prefers-reduced-motion`; show the final state without staged motion.
 - Use deterministic delays. Do not use random motion, bounce, elastic easing, or endless loops.

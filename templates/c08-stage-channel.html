@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-surface="light">
+<html lang="zh-CN" data-surface="light" data-interface="precision-v2.1">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -113,75 +113,109 @@
   .motion-enabled.is-playing [data-choreo="alarm"] { animation-name:mx-alarm; }
   .motion-enabled.is-paused [data-motion] { animation-play-state:paused!important; }
   @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing [data-motion] { animation:none!important; } }
-  [data-motion-system="macro-v2.1"] [data-motion]:not([data-scene]) { animation:none!important; }
-  [data-scene] { transform-origin:center; }
-  svg [data-scene] { transform-box:fill-box; }
-  .chart-body[data-scene="data-field"] { contain:layout paint; isolation:isolate; backface-visibility:hidden; transform:translateZ(0); }
-  @keyframes mx-scene-field { from { opacity:0; transform:translate3d(0,10px,0); } to { opacity:1; transform:translate3d(0,0,0); } }
-  @keyframes mx-scene-evidence { from { opacity:0; transform:translate3d(-10px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
-  @keyframes mx-scene-lock { 0% { opacity:0; transform:scale(.94); } 72% { opacity:1; transform:scale(1.018); } 100% { opacity:1; transform:scale(1); } }
-  .motion-enabled.is-playing[data-motion-system="macro-v2.1"] [data-scene="data-field"] { will-change:transform,opacity; animation:mx-scene-field var(--scene-duration) cubic-bezier(.2,.72,.18,1) var(--scene-delay) both; }
-  .motion-enabled.is-playing[data-motion-system="macro-v2.1"] [data-scene="evidence-bay"] { will-change:transform,opacity; animation:mx-scene-evidence var(--scene-duration) cubic-bezier(.2,.72,.18,1) var(--scene-delay) both; }
-  .motion-enabled.is-playing[data-motion-system="macro-v2.1"] [data-scene="terminal-lock"] { will-change:transform,opacity; animation:mx-scene-lock var(--scene-duration) cubic-bezier(.2,.72,.18,1) var(--scene-delay) both; }
-  .motion-enabled.is-paused[data-motion-system="macro-v2.1"] [data-scene] { animation-play-state:paused!important; }
-  .is-complete[data-motion-system="macro-v2.1"] [data-scene] { will-change:auto; }
-  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-motion-system="macro-v2.1"] [data-scene] { animation:none!important; } }
+  .pi-split-body { display:grid; grid-template-columns:220px minmax(0,1fr); column-gap:28px; align-items:stretch; min-width:0; }
+  .pi-evidence-bay { position:relative; min-width:0; padding:0 22px 0 4px; border-right:1px solid var(--grid); display:grid; grid-template-rows:18px auto 18px; align-content:center; gap:9px; }
+  .pi-evidence-bay::after { content:""; position:absolute; right:-3px; top:50%; width:5px; height:5px; margin-top:-2px; background:var(--signal); }
+  .pi-evidence-bay__label { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; font-size:9px; font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.08em; color:var(--matrix-quiet); align-self:end; }
+  .pi-evidence-svg { display:block; width:100%!important; height:auto!important; overflow:visible; }
+  .pi-bay-terminal { height:18px; display:grid; grid-template-columns:auto minmax(20px,1fr) 7px; align-items:center; gap:7px; font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; font-size:9px; font-weight:750; font-variation-settings:'ROND' 0,'wght' 750; letter-spacing:.06em; color:var(--signal); }
+  .pi-bay-terminal i { height:1px; background:var(--rail); }
+  .pi-bay-terminal b { display:block; width:7px; height:7px; border:1.5px solid var(--signal); background:var(--bg); }
+  .pi-data-field { display:block; width:100%!important; height:100%!important; min-width:0; overflow:hidden; contain:layout paint; isolation:isolate; backface-visibility:hidden; transform:translateZ(0); }
+  .pi-evidence-bay .evidence-plate .panel-stroke { stroke:var(--ink); stroke-width:1.2; }
+  svg .pi-socket { fill:var(--bg); stroke:var(--ink); stroke-width:1.5; vector-effect:non-scaling-stroke; }
+  svg .pi-socket-signal { fill:var(--signal); stroke:var(--on-signal); stroke-width:1; vector-effect:non-scaling-stroke; }
+  svg .pi-lock-ring { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
+  svg .pi-lock-cross { fill:none; stroke:var(--signal); stroke-width:1; vector-effect:non-scaling-stroke; }
+  svg .pi-address { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }
+  svg .pi-address-signal { fill:var(--signal); }
+  svg .pi-focus-corner { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
+  [data-interface="precision-v2.1"] [data-motion] { animation:none!important; }
+  @keyframes pi-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
+  @keyframes pi-evidence-enter { from { opacity:0; transform:translate3d(-5px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
+  @keyframes pi-terminal-handshake { from { opacity:.2; } to { opacity:1; } }
+  @keyframes pi-lock-settle { from { opacity:0; } to { opacity:1; } }
+  .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-data-field { animation:pi-field-enter 900ms cubic-bezier(.22,.72,.18,1) 40ms both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-evidence-bay { animation:pi-evidence-enter 620ms cubic-bezier(.22,.72,.18,1) 480ms both; will-change:transform,opacity; backface-visibility:hidden; }
+  .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-bay-terminal { animation:pi-terminal-handshake 360ms linear var(--pi-terminal-delay,860ms) both; }
+  .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-lock-ring,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-focus-corner { animation:pi-lock-settle 320ms linear var(--pi-lock-delay,980ms) both; }
+  .motion-enabled.is-paused[data-interface="precision-v2.1"] .pi-data-field,.motion-enabled.is-paused[data-interface="precision-v2.1"] .pi-evidence-bay,.motion-enabled.is-paused[data-interface="precision-v2.1"] .pi-bay-terminal,.motion-enabled.is-paused[data-interface="precision-v2.1"] .pi-lock-ring,.motion-enabled.is-paused[data-interface="precision-v2.1"] .pi-focus-corner { animation-play-state:paused!important; }
+  .is-complete[data-interface="precision-v2.1"] .pi-data-field,.is-complete[data-interface="precision-v2.1"] .pi-evidence-bay { will-change:auto; }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-data-field,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-evidence-bay,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-bay-terminal,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-lock-ring,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-focus-corner { animation:none!important; } }
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1900" data-total-brief="1200" data-total-standard="2100" data-total-story="3500" data-mode="editorial" data-choreography="stage-interlock" data-motion-system="macro-v2.1">
+<main class="chart-container" id="moxing-chart" data-total="1900" data-total-brief="1200" data-total-standard="2100" data-total-story="3500" data-mode="editorial" data-choreography="stage-interlock" data-motion-system="precision-v2.1" data-interface="precision-v2.1">
   <header class="chart-header">
     <div class="chart-code"><div class="mx-code"><div class="mx-code__top"><strong>C08</strong><span>SYS / 21</span></div><div class="mx-code__name">STAGE CHANNEL</div><div class="mx-code__state"><span class="mx-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>BOTTLENECK</div></div></div>
-    <div><h1 class="chart-title">付费转化是主瓶颈，续约质量相对稳定</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / STAGE</span><span>DATA / 05I</span><span data-state data-scene="terminal-lock">STATE / READY</span></div></div>
+    <div><h1 class="chart-title">付费转化是主瓶颈，续约质量相对稳定</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / STAGE</span><span>DATA / 05I</span><span data-state>STATE / READY</span></div></div>
     <span class="mx-header-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </header>
-  <section class="chart-body" data-scene="data-field"><svg viewBox="0 0 1172 500" role="img" aria-label="付费转化是主瓶颈，续约质量相对稳定"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >08 / STAGE INTERLOCK</text>
-<g class="evidence-plate" data-scene="evidence-bay" data-motion="lock" data-choreo="readout" style="--delay:1600ms;--dx:-8px;--dy:0px;--delay-brief:960ms;--delay-story:3040ms">
+  <section class="chart-body pi-split-body">
+    <aside class="pi-evidence-bay" aria-label="E08 evidence bay" style="--pi-terminal-delay:1060ms">
+      <span class="pi-evidence-bay__label">EVIDENCE / BAY</span>
+      <svg class="pi-evidence-svg" viewBox="0 64 230 114" aria-hidden="true"><g class="evidence-plate" data-motion="lock" data-choreo="readout" style="--delay:1600ms;--dx:-8px;--dy:0px;--delay-brief:960ms;--delay-story:3040ms">
 <path d="M 0 74 H 222 L 230 82 V 168 H 8 L 0 160 Z" class="panel-stroke" />
 <text x="14" y="95" class="index muted" text-anchor="start" font-size="12" >S-01</text>
 <text x="216" y="95" class="index signal-text" text-anchor="end" font-size="12" >RETENTION</text>
 <text x="14" y="129" class="value" text-anchor="start" font-size="28" font-weight="650" >11.8%</text>
 <text x="14" y="151" class="muted" text-anchor="start" font-size="13" >首阶段至末阶段</text>
-</g>
+</g></svg>
+      <div class="pi-bay-terminal"><span>E08</span><i></i><b></b></div>
+    </aside>
+    <svg class="pi-data-field" viewBox="280 0 892 500" preserveAspectRatio="xMidYMid meet" role="img" aria-label="付费转化是主瓶颈，续约质量相对稳定" style="--pi-lock-delay:1180ms"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >08 / STAGE INTERLOCK</text>
+<line x1="384.8" y1="94" x2="384.8" y2="406" class="rail pi-stage-axis" data-motion="align" style="--delay:130ms;--dx:0px;--dy:0px;--delay-brief:45ms;--delay-story:160ms"/>
 <g class="stage-module" data-motion="dock" data-choreo="interlock" style="--delay:220ms;--dx:-34px;--dy:0px;--duration:320ms;--delay-brief:90ms;--delay-story:360ms;--duration-brief:220ms;--duration-story:540ms">
 <path d="M 332.8 108 H 428.8 L 436.8 116 V 392 H 340.8 L 332.8 384 Z" class="data-fill" />
 <text x="384.8" y="84" class="label" text-anchor="middle" font-size="14" font-weight="650" >访问</text>
 <text x="384.8" y="256" class="value on-fill" text-anchor="middle" font-size="16" font-weight="650" >1.2万</text>
 </g>
-<line x1="384.8" y1="94" x2="384.8" y2="406" class="rail" data-motion="align" style="--delay:130ms;--dx:0px;--dy:0px;--delay-brief:45ms;--delay-story:160ms"/>
+<line x1="550.4" y1="136" x2="550.4" y2="364" class="rail pi-stage-axis" data-motion="align" style="--delay:180ms;--dx:0px;--dy:0px;--delay-brief:69ms;--delay-story:255ms"/>
 <g class="stage-module" data-motion="dock" data-choreo="interlock" style="--delay:560ms;--dx:-34px;--dy:0px;--duration:320ms;--delay-brief:340ms;--delay-story:1080ms;--duration-brief:220ms;--duration-story:540ms">
 <path d="M 498.4 150 H 594.4 L 602.4 158 V 350 H 506.4 L 498.4 342 Z" class="cat-1" />
 <text x="550.4" y="126" class="label" text-anchor="middle" font-size="14" font-weight="650" >试用</text>
 <text x="550.4" y="256" class="value on-fill" text-anchor="middle" font-size="16" font-weight="650" >7,200</text>
 </g>
-<line x1="550.4" y1="136" x2="550.4" y2="364" class="rail" data-motion="align" style="--delay:180ms;--dx:0px;--dy:0px;--delay-brief:69ms;--delay-story:255ms"/>
 <line x1="436.8" y1="250" x2="498.4" y2="250" class="rail" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:440ms;--dx:0px;--dy:0px;--duration:180ms;--delay-brief:240ms;--delay-story:780ms;--duration-brief:140ms;--duration-story:360ms"/>
 <text x="467.6" y="234" class="muted index" text-anchor="middle" font-size="12" data-motion="lock" data-choreo="readout" style="--delay:630ms;--dx:0px;--dy:0px;--delay-brief:375ms;--delay-story:1160ms">−40%</text>
+<line x1="716" y1="160.68" x2="716" y2="339.33" class="rail pi-stage-axis" data-motion="align" style="--delay:230ms;--dx:0px;--dy:0px;--delay-brief:93ms;--delay-story:350ms"/>
 <g class="stage-module" data-motion="dock" data-choreo="interlock" style="--delay:750ms;--dx:-34px;--dy:0px;--duration:320ms;--delay-brief:450ms;--delay-story:1480ms;--duration-brief:220ms;--duration-story:540ms">
 <path d="M 664 174.68 H 760 L 768 182.68 V 325.33 H 672 L 664 317.33 Z" class="cat-1" />
 <text x="716" y="150.68" class="label" text-anchor="middle" font-size="14" font-weight="650" >激活</text>
 <text x="716" y="256" class="value on-fill" text-anchor="middle" font-size="16" font-weight="650" >4,380</text>
 </g>
-<line x1="716" y1="160.68" x2="716" y2="339.33" class="rail" data-motion="align" style="--delay:230ms;--dx:0px;--dy:0px;--delay-brief:93ms;--delay-story:350ms"/>
 <line x1="602.4" y1="250" x2="664" y2="250" class="rail" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:630ms;--dx:0px;--dy:0px;--duration:180ms;--delay-brief:350ms;--delay-story:1180ms;--duration-brief:140ms;--duration-story:360ms"/>
 <text x="633.2" y="234" class="muted index" text-anchor="middle" font-size="12" data-motion="lock" data-choreo="readout" style="--delay:820ms;--dx:0px;--dy:0px;--delay-brief:485ms;--delay-story:1560ms">−39%</text>
+<line x1="881.6" y1="182.72" x2="881.6" y2="317.27" class="rail pi-stage-axis" data-motion="align" style="--delay:280ms;--dx:0px;--dy:0px;--delay-brief:117ms;--delay-story:445ms"/>
 <g class="stage-module" data-motion="dock" data-choreo="interlock" style="--delay:940ms;--dx:-34px;--dy:0px;--duration:320ms;--delay-brief:560ms;--delay-story:1880ms;--duration-brief:220ms;--duration-story:540ms">
 <path d="M 829.6 196.72 H 925.6 L 933.6 204.72 V 303.27 H 837.6 L 829.6 295.27 Z" class="signal-fill" />
 <text x="881.6" y="172.72" class="label" text-anchor="middle" font-size="14" font-weight="650" >付费</text>
 <text x="881.6" y="256" class="value on-signal" text-anchor="middle" font-size="16" font-weight="650" >1,860</text>
 </g>
-<line x1="881.6" y1="182.72" x2="881.6" y2="317.27" class="rail" data-motion="align" style="--delay:280ms;--dx:0px;--dy:0px;--delay-brief:117ms;--delay-story:445ms"/>
 <line x1="768" y1="250" x2="829.6" y2="250" class="signal-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:820ms;--dx:0px;--dy:0px;--duration:180ms;--delay-brief:460ms;--delay-story:1580ms;--duration-brief:140ms;--duration-story:360ms"/>
 <text x="798.8" y="234" class="signal-text index" text-anchor="middle" font-size="12" data-motion="lock" data-choreo="alarm" style="--delay:1010ms;--dx:0px;--dy:0px;--delay-brief:595ms;--delay-story:1960ms">−58%</text>
+<line x1="1047.2" y1="186.57" x2="1047.2" y2="313.42" class="rail pi-stage-axis" data-motion="align" style="--delay:330ms;--dx:0px;--dy:0px;--delay-brief:141ms;--delay-story:540ms"/>
 <g class="stage-module" data-motion="dock" data-choreo="interlock" style="--delay:1130ms;--dx:-34px;--dy:0px;--duration:320ms;--delay-brief:670ms;--delay-story:2280ms;--duration-brief:220ms;--duration-story:540ms">
 <path d="M 995.2 200.57 H 1091.2 L 1099.2 208.57 V 299.42 H 1003.2 L 995.2 291.42 Z" class="cat-1" />
 <text x="1047.2" y="176.57" class="label" text-anchor="middle" font-size="14" font-weight="650" >续约</text>
 <text x="1047.2" y="256" class="value on-fill" text-anchor="middle" font-size="16" font-weight="650" >1,420</text>
 </g>
-<line x1="1047.2" y1="186.57" x2="1047.2" y2="313.42" class="rail" data-motion="align" style="--delay:330ms;--dx:0px;--dy:0px;--delay-brief:141ms;--delay-story:540ms"/>
 <line x1="933.6" y1="250" x2="995.2" y2="250" class="rail" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:1010ms;--dx:0px;--dy:0px;--duration:180ms;--delay-brief:570ms;--delay-story:1980ms;--duration-brief:140ms;--duration-story:360ms"/>
 <text x="964.4" y="234" class="muted index" text-anchor="middle" font-size="12" data-motion="lock" data-choreo="readout" style="--delay:1200ms;--dx:0px;--dy:0px;--delay-brief:705ms;--delay-story:2360ms">−24%</text>
-<line x1="302" y1="420" x2="1130" y2="420" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--duration:240ms;--delay-brief:30ms;--delay-story:100ms;--duration-brief:150ms;--duration-story:320ms"/></svg></section>
+<line x1="302" y1="420" x2="1130" y2="420" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--duration:240ms;--delay-brief:30ms;--delay-story:100ms;--duration-brief:150ms;--duration-story:320ms"/><g class="pi-overlay pi-overlay--foreground"><rect x="380.8" y="416" width="8" height="8" rx="0" class="pi-socket" style="--pi-delay:180ms"/>
+<text x="384.8" y="443" class="pi-address" text-anchor="middle" font-size="9" >S1</text>
+<rect x="546.4" y="416" width="8" height="8" rx="0" class="pi-socket" style="--pi-delay:300ms"/>
+<text x="550.4" y="443" class="pi-address" text-anchor="middle" font-size="9" >S2</text>
+<rect x="712" y="416" width="8" height="8" rx="0" class="pi-socket" style="--pi-delay:420ms"/>
+<text x="716" y="443" class="pi-address" text-anchor="middle" font-size="9" >S3</text>
+<rect x="877.6" y="416" width="8" height="8" rx="0" class="pi-socket-signal" />
+<text x="881.6" y="443" class="pi-address pi-address-signal" text-anchor="middle" font-size="9" >S4</text>
+<rect x="1043.2" y="416" width="8" height="8" rx="0" class="pi-socket" style="--pi-delay:660ms"/>
+<text x="1047.2" y="443" class="pi-address" text-anchor="middle" font-size="9" >S5</text>
+<circle cx="798.8" cy="250" r="13" class="pi-lock-ring" />
+<path d="M 780.8 250 H 787.8 M 809.8 250 H 816.8" class="pi-lock-cross" />
+<text x="798.8" y="279" class="pi-address pi-address-signal" text-anchor="middle" font-size="10" >E08 / Δ58</text></g></svg>
+  </section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" data-code="R" title="重播">↻</button><button type="button" data-action="pause" data-code="H" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" data-code="S" title="切换明暗">◐</button></nav>
 </main>
@@ -197,8 +231,6 @@
   const scale=scales[profile]||1;
   const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);
   const total=Number(root.dataset[profileKey]||root.dataset.total||1800);
-  const macro=root.dataset.motionSystem==='macro-v2.1';
-  const sceneTimings={"brief":{"data-field":{"delay":0,"duration":650},"evidence-bay":{"delay":300,"duration":450},"terminal-lock":{"delay":620,"duration":260}},"standard":{"data-field":{"delay":0,"duration":850},"evidence-bay":{"delay":450,"duration":600},"terminal-lock":{"delay":820,"duration":380}},"story":{"data-field":{"delay":0,"duration":1450},"evidence-bay":{"delay":850,"duration":1150},"terminal-lock":{"delay":1700,"duration":650}}};
   const baseDuration={align:220,dock:620,route:520,lock:280};
   root.querySelectorAll('[data-motion]').forEach(el=>{
     const rawDelay=parseFloat(el.style.getPropertyValue('--delay'))||0;
@@ -207,11 +239,6 @@
     const profileDuration=parseFloat(el.style.getPropertyValue('--duration-'+profile));
     el.style.setProperty('--active-delay',Math.round(Number.isFinite(profileDelay)?profileDelay:rawDelay*scale)+'ms');
     el.style.setProperty('--active-duration',Math.round(Number.isFinite(profileDuration)?profileDuration:rawDuration*scale)+'ms');
-  });
-  if(macro) root.querySelectorAll('[data-scene]').forEach(el=>{
-    const timing=sceneTimings[profile]?.[el.dataset.scene]||{delay:0,duration:300};
-    el.style.setProperty('--scene-delay',timing.delay+'ms');
-    el.style.setProperty('--scene-duration',timing.duration+'ms');
   });
   let timer=0,frame=0;
   const settle=()=>{ clearTimeout(timer); cancelAnimationFrame(frame); root.classList.remove('is-playing','is-paused'); root.classList.add('is-complete'); const b=root.querySelector('[data-action=pause]'); if(b)b.textContent='Ⅱ'; };

@@ -1,6 +1,6 @@
 # Moxing Precision Interface Lab
 
-This approved lab freezes the agreed **60% Moxing / 40% precision-device** visual direction without overriding the 24 production templates.
+This approved lab freezes the agreed **60% Moxing / 40% precision-device** visual direction. C03, C08, C15, and C22 now consume the same production renderer contract; the Lab keeps only its comparison and review shell.
 
 ## Locked decisions
 
@@ -34,4 +34,4 @@ This approved lab freezes the agreed **60% Moxing / 40% precision-device** visua
 
 `http://127.0.0.1:4400/designs/precision-interface-lab/index.html`
 
-Approved on 2026-08-20. Production rollout proceeds separately so the reusable renderer can absorb the system without copying prototype-only DOM patches into 24 templates.
+Approved on 2026-08-20. The first production rollout uses shared `ChartArtwork` / `PrecisionInterface` data rather than copying prototype-only DOM patches. The remaining 20 templates stay on the legacy chart runtime until the four canaries are reviewed.
