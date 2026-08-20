@@ -137,17 +137,25 @@
   svg .pm-address { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }
   svg .pm-address-signal { fill:var(--signal); }
   svg .pm-focus-corner { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
-  [data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] [data-motion] { animation:none!important; }
+  [data-motion-system="presentation-v2.1"] [data-motion] { animation:none!important; }
   @keyframes pm-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pm-plot-enter { from { opacity:0; transform:translate3d(0,10px,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pm-lock-settle { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:scale(1); } }
-  .pm-data-field-layer,.pm-plot-layer,.pm-target-lock { transform-box:fill-box; transform-origin:center; }
+  @keyframes pm-evidence-enter { from { opacity:0; transform:translate3d(-5px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
+  .pm-data-field-layer,.pm-plot-layer,.pm-local-evidence,.pm-target-lock { transform-box:fill-box; transform-origin:center; }
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer { animation:pm-field-enter var(--pm-field-duration,680ms) cubic-bezier(.22,.72,.18,1) var(--pm-field-delay,40ms) both; will-change:transform,opacity; }
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer { animation:pm-plot-enter var(--pm-plot-duration,620ms) cubic-bezier(.22,.72,.18,1) var(--pm-plot-delay,320ms) both; will-change:transform,opacity; }
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,980ms)) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer { animation:pm-field-enter var(--pm-field-duration,680ms) cubic-bezier(.22,.72,.18,1) var(--pm-field-delay,40ms) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer { animation:pm-plot-enter var(--pm-plot-duration,620ms) cubic-bezier(.22,.72,.18,1) var(--pm-plot-delay,300ms) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence { animation:pm-evidence-enter var(--pm-evidence-duration,360ms) cubic-bezier(.22,.72,.18,1) var(--pm-active-evidence-delay,var(--pm-evidence-delay,760ms)) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,1080ms)) both; will-change:transform,opacity; }
   .motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation-play-state:paused!important; }
+  .motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation-play-state:paused!important; }
   .is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { will-change:auto; }
+  .is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { will-change:auto; }
   @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:none!important; } }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:none!important; } }
   [data-interface="precision-v2.1"] [data-motion] { animation:none!important; }
   @keyframes pi-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pi-evidence-enter { from { opacity:0; transform:translate3d(-5px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
@@ -163,29 +171,31 @@
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1200" data-total-standard="2100" data-total-story="3900" data-mode="editorial" data-choreography="forecast-routing" data-motion-system="legacy" data-presentation-carrier="direct" data-presentation-target="embedded">
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1200" data-total-standard="2100" data-total-story="3900" data-mode="editorial" data-choreography="forecast-routing" data-motion-system="presentation-v2.1" data-presentation-carrier="embedded" data-presentation-target="embedded">
   <header class="chart-header">
     <div class="chart-code"><div class="mx-code"><div class="mx-code__top"><strong>C23</strong><span>SYS / 21</span></div><div class="mx-code__name">FORECAST FAN</div><div class="mx-code__state"><span class="mx-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>RANGE.LOCK</div></div></div>
     <div><h1 class="chart-title">基准预测继续增长，远期区间明显扩大</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / FORECAST</span><span>DATA / 10T</span><span data-state>STATE / READY</span></div></div>
     <span class="mx-header-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </header>
-  <section class="chart-body pm-direct-body"><svg class="pm-direct-field" viewBox="0 0 1172 500" role="img" aria-label="基准预测继续增长，远期区间明显扩大" style="--pm-lock-delay:980ms;--pm-lock-delay-brief:608ms;--pm-lock-delay-story:1764ms"><g class="pm-data-field-layer"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >23 / FORECAST FAN</text>
-<line x1="276" y1="414" x2="1118" y2="414" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--delay-brief:30ms;--delay-story:110ms"/>
-<line x1="743.78" y1="72" x2="743.78" y2="414" class="rail" data-motion="align" style="--delay:160ms;--dx:0px;--dy:0px;--delay-brief:70ms;--delay-story:250ms"/>
-<text x="743.78" y="62" class="index signal-text" text-anchor="start" font-size="12" >FORECAST →</text>
-<polygon points="743.78,287.82 837.33,239.55 930.89,194.73 1024.44,149.92 1118,105.1 1118,263.69 1024.44,270.58 930.89,280.92 837.33,287.82 743.78,287.82" class="cat-1" data-motion="dock" data-choreo="band-fill" style="--delay:520ms;--dx:-20px;--dy:0px;--delay-brief:300ms;--delay-story:1020ms"/>
-<path d="M 276.00 380.90 L 369.56 360.22 L 463.11 349.88 L 556.67 332.64 L 650.22 308.50 L 743.78 287.82" class="data-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:240ms;--dx:0px;--dy:0px;--duration:600ms;--delay-brief:120ms;--delay-story:460ms;--duration-brief:380ms;--duration-story:900ms"/>
-<path d="M 743.78 287.82 L 837.33 263.69 L 930.89 239.55 L 1024.44 211.97 L 1118.00 187.84" class="signal-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:760ms;--dx:0px;--dy:0px;--duration:650ms;--delay-brief:440ms;--delay-story:1480ms;--duration-brief:420ms;--duration-story:980ms"/>
-<text x="276" y="442" class="index muted" text-anchor="middle" font-size="12" >1月</text>
-<text x="743.78" y="442" class="index muted" text-anchor="middle" font-size="12" >6月</text>
-<text x="1118" y="442" class="index muted" text-anchor="middle" font-size="12" >10月</text>
-<g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1580ms;--dx:-8px;--dy:0px;--delay-brief:900ms;--delay-story:3040ms">
-<path d="M 0 82 H 218 L 226 90 V 176 H 8 L 0 168 Z" class="panel-stroke" />
-<text x="14" y="103" class="index muted" text-anchor="start" font-size="12" >F-23</text>
-<text x="212" y="103" class="index signal-text" text-anchor="end" font-size="12" >RANGE</text>
-<text x="14" y="137" class="value" text-anchor="start" font-size="28" font-weight="650" >46</text>
-<text x="14" y="159" class="muted" text-anchor="start" font-size="13" >末期预测区间宽度</text>
-</g></g></svg></section>
+  <section class="chart-body pm-embedded-body">
+    <svg class="pm-data-field pm-embedded-field" viewBox="0 0 1172 500" role="img" aria-label="基准预测继续增长，远期区间明显扩大" style="--pm-evidence-delay:820ms;--pm-evidence-delay-brief:500ms;--pm-evidence-delay-story:1580ms;--pm-lock-delay:1150ms;--pm-lock-delay-brief:700ms;--pm-lock-delay-story:2240ms"><g class="pm-data-field-layer"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >23 / EMBEDDED FORECAST FIELD</text>
+<line x1="86" y1="414" x2="920" y2="414" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--delay-brief:30ms;--delay-story:110ms"/>
+<line x1="549.33" y1="72" x2="549.33" y2="414" class="rail" data-motion="align" style="--delay:160ms;--dx:0px;--dy:0px;--delay-brief:70ms;--delay-story:250ms"/>
+<text x="549.33" y="62" class="index signal-text" text-anchor="start" font-size="12" >FORECAST →</text>
+<text x="86" y="442" class="index muted" text-anchor="middle" font-size="12" >1月</text>
+<text x="549.33" y="442" class="index muted" text-anchor="middle" font-size="12" >6月</text>
+<text x="920" y="442" class="index muted" text-anchor="middle" font-size="12" >10月</text></g><g class="pm-plot-layer"><polygon points="549.33,287.82 642,239.55 734.67,194.73 827.33,149.92 920,105.1 920,263.69 827.33,270.58 734.67,280.92 642,287.82 549.33,287.82" class="cat-1" data-motion="dock" data-choreo="band-fill" style="--delay:520ms;--dx:-20px;--dy:0px;--delay-brief:300ms;--delay-story:1020ms"/>
+<path d="M 86.00 380.90 L 178.67 360.22 L 271.33 349.88 L 364.00 332.64 L 456.67 308.50 L 549.33 287.82" class="data-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:240ms;--dx:0px;--dy:0px;--duration:600ms;--delay-brief:120ms;--delay-story:460ms;--duration-brief:380ms;--duration-story:900ms"/>
+<path d="M 549.33 287.82 L 642.00 263.69 L 734.67 239.55 L 827.33 211.97 L 920.00 187.84" class="signal-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:760ms;--dx:0px;--dy:0px;--duration:650ms;--delay-brief:440ms;--delay-story:1480ms;--duration-brief:420ms;--duration-story:980ms"/></g><g class="pm-local-evidence" aria-label="E23 local evidence"><path d="M 946 149.84 H 1144 L 1152 157.84 V 225.84 H 954 L 946 217.84 Z" class="panel-stroke" />
+<text x="960" y="167.84" class="index muted" text-anchor="start" font-size="10" >E23 / RANGE</text>
+<text x="1138" y="167.84" class="index signal-text" text-anchor="end" font-size="10" >WIDTH</text>
+<text x="960" y="201.84" class="value signal-text" text-anchor="start" font-size="25" font-weight="700" >46</text>
+<text x="1138" y="198.84" class="muted" text-anchor="end" font-size="11" >末期预测区间</text>
+<rect x="1142" y="183.84" width="8" height="8" rx="0" class="pm-socket-signal" /></g><g class="pm-target-lock"><path d="M 925.0 187.83870967741936 H 946" class="pm-lock-cross" />
+<path d="M 920.0 105.09677419354836 V 263.68548387096774" class="pm-lock-cross" />
+<rect x="915" y="182.84" width="10" height="10" rx="0" class="pm-socket-signal" />
+<text x="920" y="283.69" class="pm-address pm-address-signal" text-anchor="end" font-size="10" >F10 / RANGE</text></g></svg>
+  </section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" data-code="R" title="重播">↻</button><button type="button" data-action="pause" data-code="H" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" data-code="S" title="切换明暗">◐</button></nav>
 </main>
@@ -200,7 +210,7 @@
   const scales={brief:0.72,standard:1.0,story:1.8};
   const scale=scales[profile]||1;
   const macroProfiles={brief:{fieldDelay:25,fieldDuration:420,plotDelay:180,plotDuration:360,lockDuration:220},standard:{fieldDelay:40,fieldDuration:680,plotDelay:320,plotDuration:620,lockDuration:260},story:{fieldDelay:60,fieldDuration:900,plotDelay:480,plotDuration:780,lockDuration:320}};
-  const stagedMacroProfiles={...macroProfiles,standard:{...macroProfiles.standard,fieldDelay:30,lockDuration:300}};
+  const stagedMacroProfiles={...macroProfiles,standard:{...macroProfiles.standard,fieldDelay:30,lockDuration:300,evidenceDuration:360},brief:{...macroProfiles.brief,evidenceDuration:280},story:{...macroProfiles.story,evidenceDuration:440}};
   const activeMacroProfiles=root.querySelector('.pm-plot-layer')?stagedMacroProfiles:macroProfiles;
   const macro=activeMacroProfiles[profile]||activeMacroProfiles.standard;
   root.style.setProperty('--pm-field-delay',macro.fieldDelay+'ms');
@@ -208,10 +218,20 @@
   root.style.setProperty('--pm-plot-delay',macro.plotDelay+'ms');
   root.style.setProperty('--pm-plot-duration',macro.plotDuration+'ms');
   root.style.setProperty('--pm-lock-duration',macro.lockDuration+'ms');
+  root.style.setProperty('--pm-evidence-duration',(macro.evidenceDuration||360)+'ms');
   const directField=root.querySelector('.pm-direct-field');
   if(directField){
     const profileLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay-'+profile));
     const standardLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay'))||980;
+    root.style.setProperty('--pm-active-lock-delay',(Number.isFinite(profileLock)?profileLock:standardLock)+'ms');
+  }
+  const embeddedField=root.querySelector('.pm-embedded-field');
+  if(embeddedField){
+    const profileEvidence=parseFloat(embeddedField.style.getPropertyValue('--pm-evidence-delay-'+profile));
+    const standardEvidence=parseFloat(embeddedField.style.getPropertyValue('--pm-evidence-delay'))||760;
+    const profileLock=parseFloat(embeddedField.style.getPropertyValue('--pm-lock-delay-'+profile));
+    const standardLock=parseFloat(embeddedField.style.getPropertyValue('--pm-lock-delay'))||1080;
+    root.style.setProperty('--pm-active-evidence-delay',(Number.isFinite(profileEvidence)?profileEvidence:standardEvidence)+'ms');
     root.style.setProperty('--pm-active-lock-delay',(Number.isFinite(profileLock)?profileLock:standardLock)+'ms');
   }
   const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);

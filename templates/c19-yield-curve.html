@@ -137,17 +137,25 @@
   svg .pm-address { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }
   svg .pm-address-signal { fill:var(--signal); }
   svg .pm-focus-corner { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
-  [data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] [data-motion] { animation:none!important; }
+  [data-motion-system="presentation-v2.1"] [data-motion] { animation:none!important; }
   @keyframes pm-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pm-plot-enter { from { opacity:0; transform:translate3d(0,10px,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pm-lock-settle { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:scale(1); } }
-  .pm-data-field-layer,.pm-plot-layer,.pm-target-lock { transform-box:fill-box; transform-origin:center; }
+  @keyframes pm-evidence-enter { from { opacity:0; transform:translate3d(-5px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
+  .pm-data-field-layer,.pm-plot-layer,.pm-local-evidence,.pm-target-lock { transform-box:fill-box; transform-origin:center; }
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer { animation:pm-field-enter var(--pm-field-duration,680ms) cubic-bezier(.22,.72,.18,1) var(--pm-field-delay,40ms) both; will-change:transform,opacity; }
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer { animation:pm-plot-enter var(--pm-plot-duration,620ms) cubic-bezier(.22,.72,.18,1) var(--pm-plot-delay,320ms) both; will-change:transform,opacity; }
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,980ms)) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer { animation:pm-field-enter var(--pm-field-duration,680ms) cubic-bezier(.22,.72,.18,1) var(--pm-field-delay,40ms) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer { animation:pm-plot-enter var(--pm-plot-duration,620ms) cubic-bezier(.22,.72,.18,1) var(--pm-plot-delay,300ms) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence { animation:pm-evidence-enter var(--pm-evidence-duration,360ms) cubic-bezier(.22,.72,.18,1) var(--pm-active-evidence-delay,var(--pm-evidence-delay,760ms)) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,1080ms)) both; will-change:transform,opacity; }
   .motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation-play-state:paused!important; }
+  .motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation-play-state:paused!important; }
   .is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { will-change:auto; }
+  .is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { will-change:auto; }
   @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:none!important; } }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:none!important; } }
   [data-interface="precision-v2.1"] [data-motion] { animation:none!important; }
   @keyframes pi-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pi-evidence-enter { from { opacity:0; transform:translate3d(-5px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
@@ -163,59 +171,62 @@
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1100" data-total-standard="1900" data-total-story="3500" data-mode="editorial" data-choreography="curve-routing" data-motion-system="legacy" data-presentation-carrier="direct" data-presentation-target="embedded">
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1100" data-total-standard="1900" data-total-story="3500" data-mode="editorial" data-choreography="curve-routing" data-motion-system="presentation-v2.1" data-presentation-carrier="embedded" data-presentation-target="embedded">
   <header class="chart-header">
     <div class="chart-code"><div class="mx-code"><div class="mx-code__top"><strong>C19</strong><span>SYS / 21</span></div><div class="mx-code__name">YIELD CURVE</div><div class="mx-code__state"><span class="mx-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>SLOPE.LOCK</div></div></div>
     <div><h1 class="chart-title">曲线整体上移且保持陡峭，期限溢价继续扩张</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / CURVE</span><span>DATA / 08T · 02S</span><span data-state>STATE / READY</span></div></div>
     <span class="mx-header-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </header>
-  <section class="chart-body pm-direct-body"><svg class="pm-direct-field" viewBox="0 0 1172 500" role="img" aria-label="曲线整体上移且保持陡峭，期限溢价继续扩张" style="--pm-lock-delay:980ms;--pm-lock-delay-brief:608ms;--pm-lock-delay-story:1764ms"><g class="pm-data-field-layer"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >19 / YIELD CURVE</text>
-<line x1="276" y1="408" x2="1118" y2="408" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--delay-brief:30ms;--delay-story:110ms"/>
-<line x1="276" y1="408" x2="1118" y2="408" class="grid" />
-<text x="258" y="412" class="index muted" text-anchor="end" font-size="12" >1.39%</text>
-<line x1="276" y1="325" x2="1118" y2="325" class="grid" />
-<text x="258" y="329" class="index muted" text-anchor="end" font-size="12" >1.74%</text>
-<line x1="276" y1="242" x2="1118" y2="242" class="grid" />
-<text x="258" y="246" class="index muted" text-anchor="end" font-size="12" >2.09%</text>
-<line x1="276" y1="159" x2="1118" y2="159" class="grid" />
-<text x="258" y="163" class="index muted" text-anchor="end" font-size="12" >2.45%</text>
-<line x1="276" y1="76" x2="1118" y2="76" class="grid" />
-<text x="258" y="80" class="index muted" text-anchor="end" font-size="12" >2.80%</text>
-<path d="M 276.00 364.06 L 396.29 354.58 L 516.57 335.62 L 636.86 307.18 L 757.14 262.15 L 877.43 198.15 L 997.71 155.49 L 1118.00 119.94" class="signal-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:280ms;--dx:0px;--dy:0px;--duration:650ms;--delay-brief:140ms;--delay-story:520ms;--duration-brief:420ms;--duration-story:980ms"/>
-<text x="1118" y="109.94" class="index signal-text" text-anchor="end" font-size="12" data-motion="lock" data-choreo="readout" style="--delay:980ms;--dx:0px;--dy:0px;--delay-brief:580ms;--delay-story:1920ms">当前</text>
-<circle cx="276" cy="364.06" r="4" class="signal-fill" data-motion="dock" data-choreo="pin" style="--delay:520ms;--dx:0px;--dy:0px;--delay-brief:290ms;--delay-story:980ms"/>
-<circle cx="396.29" cy="354.58" r="4" class="signal-fill" data-motion="dock" data-choreo="pin" style="--delay:520ms;--dx:0px;--dy:0px;--delay-brief:290ms;--delay-story:980ms"/>
-<circle cx="516.57" cy="335.62" r="4" class="signal-fill" data-motion="dock" data-choreo="pin" style="--delay:520ms;--dx:0px;--dy:0px;--delay-brief:290ms;--delay-story:980ms"/>
-<circle cx="636.86" cy="307.18" r="4" class="signal-fill" data-motion="dock" data-choreo="pin" style="--delay:520ms;--dx:0px;--dy:0px;--delay-brief:290ms;--delay-story:980ms"/>
-<circle cx="757.14" cy="262.15" r="4" class="signal-fill" data-motion="dock" data-choreo="pin" style="--delay:520ms;--dx:0px;--dy:0px;--delay-brief:290ms;--delay-story:980ms"/>
-<circle cx="877.43" cy="198.15" r="4" class="signal-fill" data-motion="dock" data-choreo="pin" style="--delay:520ms;--dx:0px;--dy:0px;--delay-brief:290ms;--delay-story:980ms"/>
-<circle cx="997.71" cy="155.49" r="4" class="signal-fill" data-motion="dock" data-choreo="pin" style="--delay:520ms;--dx:0px;--dy:0px;--delay-brief:290ms;--delay-story:980ms"/>
-<circle cx="1118" cy="119.94" r="4" class="signal-fill" data-motion="dock" data-choreo="pin" style="--delay:520ms;--dx:0px;--dy:0px;--delay-brief:290ms;--delay-story:980ms"/>
-<path d="M 276.00 345.10 L 396.29 337.99 L 516.57 328.51 L 636.86 316.66 L 757.14 285.85 L 877.43 228.96 L 997.71 183.93 L 1118.00 141.27" class="secondary-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:460ms;--dx:0px;--dy:0px;--duration:650ms;--delay-brief:240ms;--delay-story:940ms;--duration-brief:420ms;--duration-story:980ms"/>
-<text x="1118" y="113.27" class="index muted" text-anchor="end" font-size="12" data-motion="lock" data-choreo="readout" style="--delay:1160ms;--dx:0px;--dy:0px;--delay-brief:680ms;--delay-story:2280ms">一月前</text>
-<circle cx="276" cy="345.1" r="3" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:640ms;--dx:0px;--dy:0px;--delay-brief:360ms;--delay-story:1260ms"/>
-<circle cx="396.29" cy="337.99" r="3" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:640ms;--dx:0px;--dy:0px;--delay-brief:360ms;--delay-story:1260ms"/>
-<circle cx="516.57" cy="328.51" r="3" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:640ms;--dx:0px;--dy:0px;--delay-brief:360ms;--delay-story:1260ms"/>
-<circle cx="636.86" cy="316.66" r="3" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:640ms;--dx:0px;--dy:0px;--delay-brief:360ms;--delay-story:1260ms"/>
-<circle cx="757.14" cy="285.85" r="3" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:640ms;--dx:0px;--dy:0px;--delay-brief:360ms;--delay-story:1260ms"/>
-<circle cx="877.43" cy="228.96" r="3" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:640ms;--dx:0px;--dy:0px;--delay-brief:360ms;--delay-story:1260ms"/>
-<circle cx="997.71" cy="183.93" r="3" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:640ms;--dx:0px;--dy:0px;--delay-brief:360ms;--delay-story:1260ms"/>
-<circle cx="1118" cy="141.27" r="3" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:640ms;--dx:0px;--dy:0px;--delay-brief:360ms;--delay-story:1260ms"/>
-<text x="276" y="436" class="index muted" text-anchor="middle" font-size="12" >1M</text>
-<text x="396.29" y="436" class="index muted" text-anchor="middle" font-size="12" >3M</text>
-<text x="516.57" y="436" class="index muted" text-anchor="middle" font-size="12" >6M</text>
-<text x="636.86" y="436" class="index muted" text-anchor="middle" font-size="12" >1Y</text>
-<text x="757.14" y="436" class="index muted" text-anchor="middle" font-size="12" >2Y</text>
-<text x="877.43" y="436" class="index muted" text-anchor="middle" font-size="12" >5Y</text>
-<text x="997.71" y="436" class="index muted" text-anchor="middle" font-size="12" >10Y</text>
-<text x="1118" y="436" class="index muted" text-anchor="middle" font-size="12" >30Y</text>
-<g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1480ms;--dx:-8px;--dy:0px;--delay-brief:850ms;--delay-story:2820ms">
-<path d="M 0 82 H 202 L 210 90 V 176 H 8 L 0 168 Z" class="panel-stroke" />
-<text x="14" y="103" class="index muted" text-anchor="start" font-size="12" >Y-19</text>
-<text x="196" y="103" class="index signal-text" text-anchor="end" font-size="12" >SLOPE</text>
-<text x="14" y="137" class="value" text-anchor="start" font-size="28" font-weight="650" >+1.03pp</text>
-<text x="14" y="159" class="muted" text-anchor="start" font-size="13" >长端减短端</text>
-</g></g></svg></section>
+  <section class="chart-body pm-embedded-body">
+    <svg class="pm-data-field pm-embedded-field" viewBox="0 0 1172 500" role="img" aria-label="曲线整体上移且保持陡峭，期限溢价继续扩张" style="--pm-evidence-delay:760ms;--pm-evidence-delay-brief:460ms;--pm-evidence-delay-story:1480ms;--pm-lock-delay:1080ms;--pm-lock-delay-brief:660ms;--pm-lock-delay-story:2100ms"><g class="pm-data-field-layer"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >19 / EMBEDDED YIELD FIELD</text>
+<line x1="86" y1="408" x2="920" y2="408" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--delay-brief:30ms;--delay-story:110ms"/>
+<line x1="86" y1="408" x2="920" y2="408" class="grid" />
+<text x="68" y="412" class="index muted" text-anchor="end" font-size="12" >1.39%</text>
+<line x1="86" y1="325" x2="920" y2="325" class="grid" />
+<text x="68" y="329" class="index muted" text-anchor="end" font-size="12" >1.74%</text>
+<line x1="86" y1="242" x2="920" y2="242" class="grid" />
+<text x="68" y="246" class="index muted" text-anchor="end" font-size="12" >2.09%</text>
+<line x1="86" y1="159" x2="920" y2="159" class="grid" />
+<text x="68" y="163" class="index muted" text-anchor="end" font-size="12" >2.45%</text>
+<line x1="86" y1="76" x2="920" y2="76" class="grid" />
+<text x="68" y="80" class="index muted" text-anchor="end" font-size="12" >2.80%</text>
+<line x1="724" y1="92" x2="756" y2="92" class="signal-stroke" />
+<text x="768" y="96" class="index signal-text" text-anchor="start" font-size="12" >当前</text>
+<line x1="724" y1="116" x2="756" y2="116" class="secondary-stroke" />
+<text x="768" y="120" class="index muted" text-anchor="start" font-size="12" >一月前</text>
+<text x="86" y="436" class="index muted" text-anchor="middle" font-size="12" >1M</text>
+<text x="205.14" y="436" class="index muted" text-anchor="middle" font-size="12" >3M</text>
+<text x="324.29" y="436" class="index muted" text-anchor="middle" font-size="12" >6M</text>
+<text x="443.43" y="436" class="index muted" text-anchor="middle" font-size="12" >1Y</text>
+<text x="562.57" y="436" class="index muted" text-anchor="middle" font-size="12" >2Y</text>
+<text x="681.71" y="436" class="index muted" text-anchor="middle" font-size="12" >5Y</text>
+<text x="800.86" y="436" class="index muted" text-anchor="middle" font-size="12" >10Y</text>
+<text x="920" y="436" class="index muted" text-anchor="middle" font-size="12" >30Y</text></g><g class="pm-plot-layer"><path d="M 86.00 364.06 L 205.14 354.58 L 324.29 335.62 L 443.43 307.18 L 562.57 262.15 L 681.71 198.15 L 800.86 155.49 L 920.00 119.94" class="signal-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:280ms;--dx:0px;--dy:0px;--duration:650ms;--delay-brief:140ms;--delay-story:520ms;--duration-brief:420ms;--duration-story:980ms"/>
+<circle cx="86" cy="364.06" r="4" class="signal-fill" data-motion="dock" data-choreo="pin" style="--delay:520ms;--dx:0px;--dy:0px;--delay-brief:290ms;--delay-story:980ms"/>
+<circle cx="205.14" cy="354.58" r="4" class="signal-fill" data-motion="dock" data-choreo="pin" style="--delay:520ms;--dx:0px;--dy:0px;--delay-brief:290ms;--delay-story:980ms"/>
+<circle cx="324.29" cy="335.62" r="4" class="signal-fill" data-motion="dock" data-choreo="pin" style="--delay:520ms;--dx:0px;--dy:0px;--delay-brief:290ms;--delay-story:980ms"/>
+<circle cx="443.43" cy="307.18" r="4" class="signal-fill" data-motion="dock" data-choreo="pin" style="--delay:520ms;--dx:0px;--dy:0px;--delay-brief:290ms;--delay-story:980ms"/>
+<circle cx="562.57" cy="262.15" r="4" class="signal-fill" data-motion="dock" data-choreo="pin" style="--delay:520ms;--dx:0px;--dy:0px;--delay-brief:290ms;--delay-story:980ms"/>
+<circle cx="681.71" cy="198.15" r="4" class="signal-fill" data-motion="dock" data-choreo="pin" style="--delay:520ms;--dx:0px;--dy:0px;--delay-brief:290ms;--delay-story:980ms"/>
+<circle cx="800.86" cy="155.49" r="4" class="signal-fill" data-motion="dock" data-choreo="pin" style="--delay:520ms;--dx:0px;--dy:0px;--delay-brief:290ms;--delay-story:980ms"/>
+<circle cx="920" cy="119.94" r="4" class="signal-fill" data-motion="dock" data-choreo="pin" style="--delay:520ms;--dx:0px;--dy:0px;--delay-brief:290ms;--delay-story:980ms"/>
+<path d="M 86.00 345.10 L 205.14 337.99 L 324.29 328.51 L 443.43 316.66 L 562.57 285.85 L 681.71 228.96 L 800.86 183.93 L 920.00 141.27" class="secondary-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:460ms;--dx:0px;--dy:0px;--duration:650ms;--delay-brief:240ms;--delay-story:940ms;--duration-brief:420ms;--duration-story:980ms"/>
+<circle cx="86" cy="345.1" r="3" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:640ms;--dx:0px;--dy:0px;--delay-brief:360ms;--delay-story:1260ms"/>
+<circle cx="205.14" cy="337.99" r="3" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:640ms;--dx:0px;--dy:0px;--delay-brief:360ms;--delay-story:1260ms"/>
+<circle cx="324.29" cy="328.51" r="3" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:640ms;--dx:0px;--dy:0px;--delay-brief:360ms;--delay-story:1260ms"/>
+<circle cx="443.43" cy="316.66" r="3" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:640ms;--dx:0px;--dy:0px;--delay-brief:360ms;--delay-story:1260ms"/>
+<circle cx="562.57" cy="285.85" r="3" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:640ms;--dx:0px;--dy:0px;--delay-brief:360ms;--delay-story:1260ms"/>
+<circle cx="681.71" cy="228.96" r="3" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:640ms;--dx:0px;--dy:0px;--delay-brief:360ms;--delay-story:1260ms"/>
+<circle cx="800.86" cy="183.93" r="3" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:640ms;--dx:0px;--dy:0px;--delay-brief:360ms;--delay-story:1260ms"/>
+<circle cx="920" cy="141.27" r="3" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:640ms;--dx:0px;--dy:0px;--delay-brief:360ms;--delay-story:1260ms"/></g><g class="pm-local-evidence" aria-label="E19 local evidence"><path d="M 946 86 H 1144 L 1152 94 V 162 H 954 L 946 154 Z" class="panel-stroke" />
+<text x="960" y="104" class="index muted" text-anchor="start" font-size="10" >E19 / LONG</text>
+<text x="1138" y="104" class="index signal-text" text-anchor="end" font-size="10" >SLOPE</text>
+<text x="960" y="138" class="value signal-text" text-anchor="start" font-size="25" font-weight="700" >+1.03pp</text>
+<text x="1138" y="135" class="muted" text-anchor="end" font-size="11" >长端减短端</text>
+<rect x="1142" y="120" width="8" height="8" rx="0" class="pm-socket-signal" /></g><g class="pm-target-lock"><path d="M 925 119.94117647058823 H 946" class="pm-lock-cross" />
+<rect x="915" y="114.94" width="10" height="10" rx="0" class="pm-socket-signal" />
+<text x="920" y="141.94" class="pm-address pm-address-signal" text-anchor="end" font-size="10" >L08 / END</text></g></svg>
+  </section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" data-code="R" title="重播">↻</button><button type="button" data-action="pause" data-code="H" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" data-code="S" title="切换明暗">◐</button></nav>
 </main>
@@ -230,7 +241,7 @@
   const scales={brief:0.72,standard:1.0,story:1.8};
   const scale=scales[profile]||1;
   const macroProfiles={brief:{fieldDelay:25,fieldDuration:420,plotDelay:180,plotDuration:360,lockDuration:220},standard:{fieldDelay:40,fieldDuration:680,plotDelay:320,plotDuration:620,lockDuration:260},story:{fieldDelay:60,fieldDuration:900,plotDelay:480,plotDuration:780,lockDuration:320}};
-  const stagedMacroProfiles={...macroProfiles,standard:{...macroProfiles.standard,fieldDelay:30,lockDuration:300}};
+  const stagedMacroProfiles={...macroProfiles,standard:{...macroProfiles.standard,fieldDelay:30,lockDuration:300,evidenceDuration:360},brief:{...macroProfiles.brief,evidenceDuration:280},story:{...macroProfiles.story,evidenceDuration:440}};
   const activeMacroProfiles=root.querySelector('.pm-plot-layer')?stagedMacroProfiles:macroProfiles;
   const macro=activeMacroProfiles[profile]||activeMacroProfiles.standard;
   root.style.setProperty('--pm-field-delay',macro.fieldDelay+'ms');
@@ -238,10 +249,20 @@
   root.style.setProperty('--pm-plot-delay',macro.plotDelay+'ms');
   root.style.setProperty('--pm-plot-duration',macro.plotDuration+'ms');
   root.style.setProperty('--pm-lock-duration',macro.lockDuration+'ms');
+  root.style.setProperty('--pm-evidence-duration',(macro.evidenceDuration||360)+'ms');
   const directField=root.querySelector('.pm-direct-field');
   if(directField){
     const profileLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay-'+profile));
     const standardLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay'))||980;
+    root.style.setProperty('--pm-active-lock-delay',(Number.isFinite(profileLock)?profileLock:standardLock)+'ms');
+  }
+  const embeddedField=root.querySelector('.pm-embedded-field');
+  if(embeddedField){
+    const profileEvidence=parseFloat(embeddedField.style.getPropertyValue('--pm-evidence-delay-'+profile));
+    const standardEvidence=parseFloat(embeddedField.style.getPropertyValue('--pm-evidence-delay'))||760;
+    const profileLock=parseFloat(embeddedField.style.getPropertyValue('--pm-lock-delay-'+profile));
+    const standardLock=parseFloat(embeddedField.style.getPropertyValue('--pm-lock-delay'))||1080;
+    root.style.setProperty('--pm-active-evidence-delay',(Number.isFinite(profileEvidence)?profileEvidence:standardEvidence)+'ms');
     root.style.setProperty('--pm-active-lock-delay',(Number.isFinite(profileLock)?profileLock:standardLock)+'ms');
   }
   const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);

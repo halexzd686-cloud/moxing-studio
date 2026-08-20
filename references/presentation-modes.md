@@ -21,7 +21,7 @@ Sequence: `DATA_FIELD → RELATIONSHIP → TARGET_LOCK`, exactly 3 macro layers.
 
 Use when a derived value or relationship needs explanation and the chart owns stable natural whitespace. Dock one compact evidence capsule in that whitespace and connect it with a short local leader. It must not cover marks, labels, axes, row/column headings, or uncertainty ranges.
 
-Sequence: `DATA_FIELD → RELATIONSHIP → LOCAL_EVIDENCE → TARGET_LOCK`, maximum 4 macro layers.
+Sequence: `DATA_FIELD → RELATIONSHIP → LOCAL_EVIDENCE → TARGET_LOCK`, exactly 4 compiled macro layers in production.
 
 ### C / Evidence Interface
 

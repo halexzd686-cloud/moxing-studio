@@ -137,17 +137,25 @@
   svg .pm-address { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }
   svg .pm-address-signal { fill:var(--signal); }
   svg .pm-focus-corner { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
-  [data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] [data-motion] { animation:none!important; }
+  [data-motion-system="presentation-v2.1"] [data-motion] { animation:none!important; }
   @keyframes pm-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pm-plot-enter { from { opacity:0; transform:translate3d(0,10px,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pm-lock-settle { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:scale(1); } }
-  .pm-data-field-layer,.pm-plot-layer,.pm-target-lock { transform-box:fill-box; transform-origin:center; }
+  @keyframes pm-evidence-enter { from { opacity:0; transform:translate3d(-5px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
+  .pm-data-field-layer,.pm-plot-layer,.pm-local-evidence,.pm-target-lock { transform-box:fill-box; transform-origin:center; }
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer { animation:pm-field-enter var(--pm-field-duration,680ms) cubic-bezier(.22,.72,.18,1) var(--pm-field-delay,40ms) both; will-change:transform,opacity; }
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer { animation:pm-plot-enter var(--pm-plot-duration,620ms) cubic-bezier(.22,.72,.18,1) var(--pm-plot-delay,320ms) both; will-change:transform,opacity; }
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,980ms)) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer { animation:pm-field-enter var(--pm-field-duration,680ms) cubic-bezier(.22,.72,.18,1) var(--pm-field-delay,40ms) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer { animation:pm-plot-enter var(--pm-plot-duration,620ms) cubic-bezier(.22,.72,.18,1) var(--pm-plot-delay,300ms) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence { animation:pm-evidence-enter var(--pm-evidence-duration,360ms) cubic-bezier(.22,.72,.18,1) var(--pm-active-evidence-delay,var(--pm-evidence-delay,760ms)) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,1080ms)) both; will-change:transform,opacity; }
   .motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation-play-state:paused!important; }
+  .motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation-play-state:paused!important; }
   .is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { will-change:auto; }
+  .is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { will-change:auto; }
   @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:none!important; } }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:none!important; } }
   [data-interface="precision-v2.1"] [data-motion] { animation:none!important; }
   @keyframes pi-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pi-evidence-enter { from { opacity:0; transform:translate3d(-5px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
@@ -163,36 +171,37 @@
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1100" data-total-standard="1900" data-total-story="3500" data-mode="editorial" data-choreography="distribution-build" data-motion-system="legacy" data-presentation-carrier="direct" data-presentation-target="embedded">
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1100" data-total-standard="1900" data-total-story="3500" data-mode="editorial" data-choreography="distribution-build" data-motion-system="presentation-v2.1" data-presentation-carrier="embedded" data-presentation-target="embedded">
   <header class="chart-header">
     <div class="chart-code"><div class="mx-code"><div class="mx-code__top"><strong>C21</strong><span>SYS / 21</span></div><div class="mx-code__name">DISTRIBUTION PROFILE</div><div class="mx-code__state"><span class="mx-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>MEDIAN.LOCK</div></div></div>
     <div><h1 class="chart-title">数据主体集中在 15–25，右侧长尾需要单独核查</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / DISTRIBUTION</span><span>DATA / 21I</span><span data-state>STATE / READY</span></div></div>
     <span class="mx-header-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </header>
-  <section class="chart-body pm-direct-body"><svg class="pm-direct-field" viewBox="0 0 1172 500" role="img" aria-label="数据主体集中在 15–25，右侧长尾需要单独核查" style="--pm-lock-delay:980ms;--pm-lock-delay-brief:608ms;--pm-lock-delay-story:1764ms"><g class="pm-data-field-layer"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >21 / DISTRIBUTION PROFILE</text>
-<line x1="276" y1="336" x2="1118" y2="336" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--delay-brief:30ms;--delay-story:110ms"/>
-<rect x="279" y="168" width="162.4" height="168" rx="0" class="data-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:240ms;--dx:0px;--dy:24px;--delay-brief:120ms;--delay-story:440ms"/>
-<text x="360.2" y="158" class="index muted" text-anchor="middle" font-size="12" >6</text>
-<rect x="447.4" y="84" width="162.4" height="252" rx="0" class="signal-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:320ms;--dx:0px;--dy:24px;--delay-brief:162ms;--delay-story:590ms"/>
-<text x="528.6" y="74" class="index muted" text-anchor="middle" font-size="12" >9</text>
-<rect x="615.8" y="224" width="162.4" height="112" rx="0" class="data-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:400ms;--dx:0px;--dy:24px;--delay-brief:204ms;--delay-story:740ms"/>
-<text x="697" y="214" class="index muted" text-anchor="middle" font-size="12" >4</text>
-<rect x="784.2" y="308" width="162.4" height="28" rx="0" class="data-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:480ms;--dx:0px;--dy:24px;--delay-brief:246ms;--delay-story:890ms"/>
-<text x="865.4" y="298" class="index muted" text-anchor="middle" font-size="12" >1</text>
-<rect x="952.6" y="308" width="162.4" height="28" rx="0" class="data-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:560ms;--dx:0px;--dy:24px;--delay-brief:288ms;--delay-story:1040ms"/>
-<text x="1033.8" y="298" class="index muted" text-anchor="middle" font-size="12" >1</text>
-<line x1="276" y1="394" x2="1118" y2="394" class="rail" pathLength="1" data-motion="align" style="--delay:650ms;--dx:0px;--dy:0px;--delay-brief:380ms;--delay-story:1280ms"/>
-<rect x="421.17" y="372" width="203.24" height="44" rx="0" class="panel-stroke" data-motion="dock" data-choreo="interlock" style="--delay:820ms;--dx:-16px;--dy:0px;--delay-brief:480ms;--delay-story:1580ms"/>
-<line x1="508.28" y1="366" x2="508.28" y2="422" class="signal-stroke" data-motion="lock" data-choreo="alarm" style="--delay:1120ms;--dx:0px;--dy:0px;--delay-brief:650ms;--delay-story:2180ms"/>
-<text x="276" y="446" class="index muted" text-anchor="start" font-size="12" >12</text>
-<text x="1118" y="446" class="index muted" text-anchor="end" font-size="12" >41</text>
-<g class="evidence-plate" data-motion="lock" data-choreo="readout" style="--delay:1480ms;--dx:-8px;--dy:0px;--delay-brief:850ms;--delay-story:2840ms">
-<path d="M 0 82 H 192 L 200 90 V 176 H 8 L 0 168 Z" class="panel-stroke" />
-<text x="14" y="103" class="index muted" text-anchor="start" font-size="12" >D-21</text>
-<text x="186" y="103" class="index signal-text" text-anchor="end" font-size="12" >MEDIAN</text>
-<text x="14" y="137" class="value" text-anchor="start" font-size="28" font-weight="650" >20</text>
-<text x="14" y="159" class="muted" text-anchor="start" font-size="13" >IQR 7</text>
-</g></g></svg></section>
+  <section class="chart-body pm-embedded-body">
+    <svg class="pm-data-field pm-embedded-field" viewBox="0 0 1172 500" role="img" aria-label="数据主体集中在 15–25，右侧长尾需要单独核查" style="--pm-evidence-delay:780ms;--pm-evidence-delay-brief:470ms;--pm-evidence-delay-story:1520ms;--pm-lock-delay:1110ms;--pm-lock-delay-brief:680ms;--pm-lock-delay-story:2160ms"><g class="pm-data-field-layer"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >21 / EMBEDDED DISTRIBUTION FIELD</text>
+<line x1="76" y1="336" x2="1118" y2="336" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--delay-brief:30ms;--delay-story:110ms"/>
+<text x="76" y="446" class="index muted" text-anchor="start" font-size="12" >12</text>
+<text x="1118" y="446" class="index muted" text-anchor="end" font-size="12" >41</text></g><g class="pm-plot-layer"><rect x="79" y="168" width="202.4" height="168" rx="0" class="data-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:240ms;--dx:0px;--dy:24px;--delay-brief:120ms;--delay-story:440ms"/>
+<text x="180.2" y="158" class="index muted" text-anchor="middle" font-size="12" >6</text>
+<rect x="287.4" y="84" width="202.4" height="252" rx="0" class="signal-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:320ms;--dx:0px;--dy:24px;--delay-brief:162ms;--delay-story:590ms"/>
+<text x="388.6" y="74" class="index muted" text-anchor="middle" font-size="12" >9</text>
+<rect x="495.8" y="224" width="202.4" height="112" rx="0" class="data-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:400ms;--dx:0px;--dy:24px;--delay-brief:204ms;--delay-story:740ms"/>
+<text x="597" y="214" class="index muted" text-anchor="middle" font-size="12" >4</text>
+<rect x="704.2" y="308" width="202.4" height="28" rx="0" class="data-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:480ms;--dx:0px;--dy:24px;--delay-brief:246ms;--delay-story:890ms"/>
+<text x="805.4" y="298" class="index muted" text-anchor="middle" font-size="12" >1</text>
+<rect x="912.6" y="308" width="202.4" height="28" rx="0" class="data-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:560ms;--dx:0px;--dy:24px;--delay-brief:288ms;--delay-story:1040ms"/>
+<text x="1013.8" y="298" class="index muted" text-anchor="middle" font-size="12" >1</text>
+<line x1="76" y1="394" x2="1118" y2="394" class="rail" pathLength="1" data-motion="align" style="--delay:650ms;--dx:0px;--dy:0px;--delay-brief:380ms;--delay-story:1280ms"/>
+<rect x="255.66" y="372" width="251.52" height="44" rx="0" class="panel-stroke" data-motion="dock" data-choreo="interlock" style="--delay:820ms;--dx:-16px;--dy:0px;--delay-brief:480ms;--delay-story:1580ms"/>
+<line x1="363.45" y1="366" x2="363.45" y2="422" class="signal-stroke" data-motion="lock" data-choreo="alarm" style="--delay:1120ms;--dx:0px;--dy:0px;--delay-brief:650ms;--delay-story:2180ms"/></g><g class="pm-local-evidence" aria-label="E21 local evidence"><path d="M 650 92 H 872 L 880 100 V 168 H 658 L 650 160 Z" class="panel-stroke" />
+<text x="664" y="110" class="index muted" text-anchor="start" font-size="10" >E21 / TAIL</text>
+<text x="866" y="110" class="index signal-text" text-anchor="end" font-size="10" >CHECK</text>
+<text x="664" y="144" class="value signal-text" text-anchor="start" font-size="25" font-weight="700" >5</text>
+<text x="866" y="141" class="muted" text-anchor="end" font-size="11" >&gt; Q3 24</text>
+<rect x="870" y="126" width="8" height="8" rx="0" class="pm-socket-signal" /></g><g class="pm-target-lock"><path d="M 597.0 216.0 L 650 130" class="pm-lock-cross" />
+<rect x="592" y="219" width="10" height="10" rx="0" class="pm-socket-signal" />
+<text x="597" y="208" class="pm-address pm-address-signal" text-anchor="middle" font-size="10" >B03 / TAIL</text></g></svg>
+  </section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" data-code="R" title="重播">↻</button><button type="button" data-action="pause" data-code="H" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" data-code="S" title="切换明暗">◐</button></nav>
 </main>
@@ -207,7 +216,7 @@
   const scales={brief:0.72,standard:1.0,story:1.8};
   const scale=scales[profile]||1;
   const macroProfiles={brief:{fieldDelay:25,fieldDuration:420,plotDelay:180,plotDuration:360,lockDuration:220},standard:{fieldDelay:40,fieldDuration:680,plotDelay:320,plotDuration:620,lockDuration:260},story:{fieldDelay:60,fieldDuration:900,plotDelay:480,plotDuration:780,lockDuration:320}};
-  const stagedMacroProfiles={...macroProfiles,standard:{...macroProfiles.standard,fieldDelay:30,lockDuration:300}};
+  const stagedMacroProfiles={...macroProfiles,standard:{...macroProfiles.standard,fieldDelay:30,lockDuration:300,evidenceDuration:360},brief:{...macroProfiles.brief,evidenceDuration:280},story:{...macroProfiles.story,evidenceDuration:440}};
   const activeMacroProfiles=root.querySelector('.pm-plot-layer')?stagedMacroProfiles:macroProfiles;
   const macro=activeMacroProfiles[profile]||activeMacroProfiles.standard;
   root.style.setProperty('--pm-field-delay',macro.fieldDelay+'ms');
@@ -215,10 +224,20 @@
   root.style.setProperty('--pm-plot-delay',macro.plotDelay+'ms');
   root.style.setProperty('--pm-plot-duration',macro.plotDuration+'ms');
   root.style.setProperty('--pm-lock-duration',macro.lockDuration+'ms');
+  root.style.setProperty('--pm-evidence-duration',(macro.evidenceDuration||360)+'ms');
   const directField=root.querySelector('.pm-direct-field');
   if(directField){
     const profileLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay-'+profile));
     const standardLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay'))||980;
+    root.style.setProperty('--pm-active-lock-delay',(Number.isFinite(profileLock)?profileLock:standardLock)+'ms');
+  }
+  const embeddedField=root.querySelector('.pm-embedded-field');
+  if(embeddedField){
+    const profileEvidence=parseFloat(embeddedField.style.getPropertyValue('--pm-evidence-delay-'+profile));
+    const standardEvidence=parseFloat(embeddedField.style.getPropertyValue('--pm-evidence-delay'))||760;
+    const profileLock=parseFloat(embeddedField.style.getPropertyValue('--pm-lock-delay-'+profile));
+    const standardLock=parseFloat(embeddedField.style.getPropertyValue('--pm-lock-delay'))||1080;
+    root.style.setProperty('--pm-active-evidence-delay',(Number.isFinite(profileEvidence)?profileEvidence:standardEvidence)+'ms');
     root.style.setProperty('--pm-active-lock-delay',(Number.isFinite(profileLock)?profileLock:standardLock)+'ms');
   }
   const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);

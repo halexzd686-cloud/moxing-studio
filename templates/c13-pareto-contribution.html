@@ -137,17 +137,25 @@
   svg .pm-address { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }
   svg .pm-address-signal { fill:var(--signal); }
   svg .pm-focus-corner { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
-  [data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] [data-motion] { animation:none!important; }
+  [data-motion-system="presentation-v2.1"] [data-motion] { animation:none!important; }
   @keyframes pm-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pm-plot-enter { from { opacity:0; transform:translate3d(0,10px,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pm-lock-settle { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:scale(1); } }
-  .pm-data-field-layer,.pm-plot-layer,.pm-target-lock { transform-box:fill-box; transform-origin:center; }
+  @keyframes pm-evidence-enter { from { opacity:0; transform:translate3d(-5px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
+  .pm-data-field-layer,.pm-plot-layer,.pm-local-evidence,.pm-target-lock { transform-box:fill-box; transform-origin:center; }
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer { animation:pm-field-enter var(--pm-field-duration,680ms) cubic-bezier(.22,.72,.18,1) var(--pm-field-delay,40ms) both; will-change:transform,opacity; }
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer { animation:pm-plot-enter var(--pm-plot-duration,620ms) cubic-bezier(.22,.72,.18,1) var(--pm-plot-delay,320ms) both; will-change:transform,opacity; }
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,980ms)) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer { animation:pm-field-enter var(--pm-field-duration,680ms) cubic-bezier(.22,.72,.18,1) var(--pm-field-delay,40ms) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer { animation:pm-plot-enter var(--pm-plot-duration,620ms) cubic-bezier(.22,.72,.18,1) var(--pm-plot-delay,300ms) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence { animation:pm-evidence-enter var(--pm-evidence-duration,360ms) cubic-bezier(.22,.72,.18,1) var(--pm-active-evidence-delay,var(--pm-evidence-delay,760ms)) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,1080ms)) both; will-change:transform,opacity; }
   .motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation-play-state:paused!important; }
+  .motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation-play-state:paused!important; }
   .is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { will-change:auto; }
+  .is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { will-change:auto; }
   @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:none!important; } }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:none!important; } }
   [data-interface="precision-v2.1"] [data-motion] { animation:none!important; }
   @keyframes pi-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pi-evidence-enter { from { opacity:0; transform:translate3d(-5px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
@@ -163,42 +171,44 @@
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1200" data-total-standard="2100" data-total-story="3900" data-mode="editorial" data-choreography="pareto-routing" data-motion-system="legacy" data-presentation-carrier="direct" data-presentation-target="embedded">
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1200" data-total-standard="2100" data-total-story="3900" data-mode="editorial" data-choreography="pareto-routing" data-motion-system="presentation-v2.1" data-presentation-carrier="embedded" data-presentation-target="embedded">
   <header class="chart-header">
     <div class="chart-code"><div class="mx-code"><div class="mx-code__top"><strong>C13</strong><span>SYS / 21</span></div><div class="mx-code__name">PARETO CONTRIBUTION</div><div class="mx-code__state"><span class="mx-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>THRESHOLD</div></div></div>
     <div><h1 class="chart-title">前三款商品贡献近四分之三，应优先保障供给</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / PARETO</span><span>DATA / 06I</span><span data-state>STATE / READY</span></div></div>
     <span class="mx-header-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </header>
-  <section class="chart-body pm-direct-body"><svg class="pm-direct-field" viewBox="0 0 1172 500" role="img" aria-label="前三款商品贡献近四分之三，应优先保障供给" style="--pm-lock-delay:980ms;--pm-lock-delay-brief:608ms;--pm-lock-delay-story:1764ms"><g class="pm-data-field-layer"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >13 / PARETO CONTRIBUTION</text>
-<line x1="276" y1="410" x2="1126" y2="410" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--delay-brief:30ms;--delay-story:110ms"/>
-<path d="M 310 152 H 377.67 L 383.67 158 V 410 H 316 L 310 404 Z" class="signal-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:220ms;--dx:0px;--dy:24px;--delay-brief:110ms;--delay-story:420ms"/>
-<text x="346.83" y="142" class="value" text-anchor="middle" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:700ms;--dx:0px;--dy:0px;--delay-brief:400ms;--delay-story:1320ms">286</text>
-<text x="346.83" y="436" class="index muted" text-anchor="middle" font-size="12" >SKU-01</text>
-<path d="M 451.67 216.95 H 519.33 L 525.33 222.95 V 410 H 457.67 L 451.67 404 Z" class="signal-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:295ms;--dx:0px;--dy:24px;--delay-brief:148ms;--delay-story:555ms"/>
-<text x="488.5" y="206.95" class="value" text-anchor="middle" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:750ms;--dx:0px;--dy:0px;--delay-brief:428ms;--delay-story:1420ms">214</text>
-<text x="488.5" y="436" class="index muted" text-anchor="middle" font-size="12" >SKU-02</text>
-<path d="M 593.33 269.27 H 661 L 667 275.27 V 410 H 599.33 L 593.33 404 Z" class="signal-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:370ms;--dx:0px;--dy:24px;--delay-brief:186ms;--delay-story:690ms"/>
-<text x="630.17" y="259.27" class="value" text-anchor="middle" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:800ms;--dx:0px;--dy:0px;--delay-brief:456ms;--delay-story:1520ms">156</text>
-<text x="630.17" y="436" class="index muted" text-anchor="middle" font-size="12" >SKU-03</text>
-<path d="M 735 317.99 H 802.67 L 808.67 323.99 V 410 H 741 L 735 404 Z" class="signal-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:445ms;--dx:0px;--dy:24px;--delay-brief:224ms;--delay-story:825ms"/>
-<text x="771.83" y="307.99" class="value" text-anchor="middle" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:850ms;--dx:0px;--dy:0px;--delay-brief:484ms;--delay-story:1620ms">102</text>
-<text x="771.83" y="436" class="index muted" text-anchor="middle" font-size="12" >SKU-04</text>
-<path d="M 876.67 343.24 H 944.33 L 950.33 349.24 V 410 H 882.67 L 876.67 404 Z" class="data-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:520ms;--dx:0px;--dy:24px;--delay-brief:262ms;--delay-story:960ms"/>
-<text x="913.5" y="333.24" class="value" text-anchor="middle" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:900ms;--dx:0px;--dy:0px;--delay-brief:512ms;--delay-story:1720ms">74</text>
-<text x="913.5" y="436" class="index muted" text-anchor="middle" font-size="12" >SKU-05</text>
-<path d="M 1018.33 366.7 H 1086 L 1092 372.7 V 410 H 1024.33 L 1018.33 404 Z" class="data-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:595ms;--dx:0px;--dy:24px;--delay-brief:300ms;--delay-story:1095ms"/>
-<text x="1055.17" y="356.7" class="value" text-anchor="middle" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:950ms;--dx:0px;--dy:0px;--delay-brief:540ms;--delay-story:1820ms">48</text>
-<text x="1055.17" y="436" class="index muted" text-anchor="middle" font-size="12" >SKU-06</text>
-<line x1="276" y1="146" x2="1126" y2="146" class="rail" pathLength="1" data-motion="align" style="--delay:180ms;--dx:0px;--dy:0px;--delay-brief:80ms;--delay-story:280ms"/>
-<text x="1126" y="138" class="index signal-text" text-anchor="end" font-size="12" >80%</text>
-<path d="M 346.83 302.75 L 488.50 222.50 L 630.17 164.00 L 771.83 125.75 L 913.50 98.00 L 1055.17 80.00" class="signal-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:720ms;--dx:0px;--dy:0px;--duration:620ms;--delay-brief:420ms;--delay-story:1420ms;--duration-brief:420ms;--duration-story:980ms"/>
-<g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1510ms;--dx:-8px;--dy:0px;--delay-brief:900ms;--delay-story:2920ms">
-<path d="M 0 76 H 182 L 190 84 V 170 H 8 L 0 162 Z" class="panel-stroke" />
-<text x="14" y="97" class="index muted" text-anchor="start" font-size="12" >P-13</text>
-<text x="176" y="97" class="index signal-text" text-anchor="end" font-size="12" >CORE</text>
-<text x="14" y="131" class="value" text-anchor="start" font-size="28" font-weight="650" >TOP 4</text>
-<text x="14" y="153" class="muted" text-anchor="start" font-size="13" >贡献 86.1%</text>
-</g></g></svg></section>
+  <section class="chart-body pm-embedded-body">
+    <svg class="pm-data-field pm-embedded-field" viewBox="0 0 1172 500" role="img" aria-label="前三款商品贡献近四分之三，应优先保障供给" style="--pm-evidence-delay:820ms;--pm-evidence-delay-brief:500ms;--pm-evidence-delay-story:1580ms;--pm-lock-delay:1160ms;--pm-lock-delay-brief:720ms;--pm-lock-delay-story:2260ms"><g class="pm-data-field-layer"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >13 / EMBEDDED PARETO FIELD</text>
+<line x1="72" y1="410" x2="1128" y2="410" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--delay-brief:30ms;--delay-story:110ms"/>
+<line x1="72" y1="146" x2="1128" y2="146" class="rail" pathLength="1" data-motion="align" style="--delay:180ms;--dx:0px;--dy:0px;--delay-brief:80ms;--delay-story:280ms"/>
+<text x="1128" y="138" class="index signal-text" text-anchor="end" font-size="12" >80%</text></g><g class="pm-plot-layer"><path d="M 114.24 152 H 199.76 L 205.76 158 V 410 H 120.24 L 114.24 404 Z" class="signal-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:220ms;--dx:0px;--dy:24px;--delay-brief:110ms;--delay-story:420ms"/>
+<text x="160" y="142" class="value" text-anchor="middle" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:700ms;--dx:0px;--dy:0px;--delay-brief:400ms;--delay-story:1320ms">286</text>
+<text x="160" y="436" class="index muted" text-anchor="middle" font-size="12" >SKU-01</text>
+<path d="M 290.24 216.95 H 375.76 L 381.76 222.95 V 410 H 296.24 L 290.24 404 Z" class="signal-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:295ms;--dx:0px;--dy:24px;--delay-brief:148ms;--delay-story:555ms"/>
+<text x="336" y="206.95" class="value" text-anchor="middle" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:750ms;--dx:0px;--dy:0px;--delay-brief:428ms;--delay-story:1420ms">214</text>
+<text x="336" y="436" class="index muted" text-anchor="middle" font-size="12" >SKU-02</text>
+<path d="M 466.24 269.27 H 551.76 L 557.76 275.27 V 410 H 472.24 L 466.24 404 Z" class="signal-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:370ms;--dx:0px;--dy:24px;--delay-brief:186ms;--delay-story:690ms"/>
+<text x="512" y="259.27" class="value" text-anchor="middle" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:800ms;--dx:0px;--dy:0px;--delay-brief:456ms;--delay-story:1520ms">156</text>
+<text x="512" y="436" class="index muted" text-anchor="middle" font-size="12" >SKU-03</text>
+<path d="M 642.24 317.99 H 727.76 L 733.76 323.99 V 410 H 648.24 L 642.24 404 Z" class="signal-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:445ms;--dx:0px;--dy:24px;--delay-brief:224ms;--delay-story:825ms"/>
+<text x="688" y="307.99" class="value" text-anchor="middle" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:850ms;--dx:0px;--dy:0px;--delay-brief:484ms;--delay-story:1620ms">102</text>
+<text x="688" y="436" class="index muted" text-anchor="middle" font-size="12" >SKU-04</text>
+<path d="M 818.24 343.24 H 903.76 L 909.76 349.24 V 410 H 824.24 L 818.24 404 Z" class="data-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:520ms;--dx:0px;--dy:24px;--delay-brief:262ms;--delay-story:960ms"/>
+<text x="864" y="333.24" class="value" text-anchor="middle" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:900ms;--dx:0px;--dy:0px;--delay-brief:512ms;--delay-story:1720ms">74</text>
+<text x="864" y="436" class="index muted" text-anchor="middle" font-size="12" >SKU-05</text>
+<path d="M 994.24 366.7 H 1079.76 L 1085.76 372.7 V 410 H 1000.24 L 994.24 404 Z" class="data-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:595ms;--dx:0px;--dy:24px;--delay-brief:300ms;--delay-story:1095ms"/>
+<text x="1040" y="356.7" class="value" text-anchor="middle" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:950ms;--dx:0px;--dy:0px;--delay-brief:540ms;--delay-story:1820ms">48</text>
+<text x="1040" y="436" class="index muted" text-anchor="middle" font-size="12" >SKU-06</text>
+<path d="M 160.00 302.75 L 336.00 222.50 L 512.00 164.00 L 688.00 125.75 L 864.00 98.00 L 1040.00 80.00" class="signal-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:720ms;--dx:0px;--dy:0px;--duration:620ms;--delay-brief:420ms;--delay-story:1420ms;--duration-brief:420ms;--duration-story:980ms"/></g><g class="pm-local-evidence" aria-label="E13 local evidence"><path d="M 722 210 H 934 L 942 218 V 286 H 730 L 722 278 Z" class="panel-stroke" />
+<text x="736" y="228" class="index muted" text-anchor="start" font-size="10" >E13 / 80%</text>
+<text x="928" y="228" class="index signal-text" text-anchor="end" font-size="10" >CORE</text>
+<text x="736" y="262" class="value signal-text" text-anchor="start" font-size="25" font-weight="700" >TOP 4</text>
+<text x="928" y="259" class="muted" text-anchor="end" font-size="11" >累计 86.1%</text>
+<rect x="932" y="244" width="8" height="8" rx="0" class="pm-socket-signal" /></g><g class="pm-target-lock"><path d="M 676.0 137.75000000000006 V 113.75000000000006 H 700.0" class="pm-focus-corner" />
+<path d="M 700.0 127.75000000000006 L 722.0 248" class="pm-lock-cross" />
+<rect x="683" y="120.75" width="10" height="10" rx="0" class="pm-socket-signal" />
+<text x="688" y="107.75" class="pm-address pm-address-signal" text-anchor="middle" font-size="10" >T04 / 80%</text></g></svg>
+  </section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" data-code="R" title="重播">↻</button><button type="button" data-action="pause" data-code="H" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" data-code="S" title="切换明暗">◐</button></nav>
 </main>
@@ -213,7 +223,7 @@
   const scales={brief:0.72,standard:1.0,story:1.8};
   const scale=scales[profile]||1;
   const macroProfiles={brief:{fieldDelay:25,fieldDuration:420,plotDelay:180,plotDuration:360,lockDuration:220},standard:{fieldDelay:40,fieldDuration:680,plotDelay:320,plotDuration:620,lockDuration:260},story:{fieldDelay:60,fieldDuration:900,plotDelay:480,plotDuration:780,lockDuration:320}};
-  const stagedMacroProfiles={...macroProfiles,standard:{...macroProfiles.standard,fieldDelay:30,lockDuration:300}};
+  const stagedMacroProfiles={...macroProfiles,standard:{...macroProfiles.standard,fieldDelay:30,lockDuration:300,evidenceDuration:360},brief:{...macroProfiles.brief,evidenceDuration:280},story:{...macroProfiles.story,evidenceDuration:440}};
   const activeMacroProfiles=root.querySelector('.pm-plot-layer')?stagedMacroProfiles:macroProfiles;
   const macro=activeMacroProfiles[profile]||activeMacroProfiles.standard;
   root.style.setProperty('--pm-field-delay',macro.fieldDelay+'ms');
@@ -221,10 +231,20 @@
   root.style.setProperty('--pm-plot-delay',macro.plotDelay+'ms');
   root.style.setProperty('--pm-plot-duration',macro.plotDuration+'ms');
   root.style.setProperty('--pm-lock-duration',macro.lockDuration+'ms');
+  root.style.setProperty('--pm-evidence-duration',(macro.evidenceDuration||360)+'ms');
   const directField=root.querySelector('.pm-direct-field');
   if(directField){
     const profileLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay-'+profile));
     const standardLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay'))||980;
+    root.style.setProperty('--pm-active-lock-delay',(Number.isFinite(profileLock)?profileLock:standardLock)+'ms');
+  }
+  const embeddedField=root.querySelector('.pm-embedded-field');
+  if(embeddedField){
+    const profileEvidence=parseFloat(embeddedField.style.getPropertyValue('--pm-evidence-delay-'+profile));
+    const standardEvidence=parseFloat(embeddedField.style.getPropertyValue('--pm-evidence-delay'))||760;
+    const profileLock=parseFloat(embeddedField.style.getPropertyValue('--pm-lock-delay-'+profile));
+    const standardLock=parseFloat(embeddedField.style.getPropertyValue('--pm-lock-delay'))||1080;
+    root.style.setProperty('--pm-active-evidence-delay',(Number.isFinite(profileEvidence)?profileEvidence:standardEvidence)+'ms');
     root.style.setProperty('--pm-active-lock-delay',(Number.isFinite(profileLock)?profileLock:standardLock)+'ms');
   }
   const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);

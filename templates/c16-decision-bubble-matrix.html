@@ -137,17 +137,25 @@
   svg .pm-address { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }
   svg .pm-address-signal { fill:var(--signal); }
   svg .pm-focus-corner { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
-  [data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] [data-motion] { animation:none!important; }
+  [data-motion-system="presentation-v2.1"] [data-motion] { animation:none!important; }
   @keyframes pm-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pm-plot-enter { from { opacity:0; transform:translate3d(0,10px,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pm-lock-settle { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:scale(1); } }
-  .pm-data-field-layer,.pm-plot-layer,.pm-target-lock { transform-box:fill-box; transform-origin:center; }
+  @keyframes pm-evidence-enter { from { opacity:0; transform:translate3d(-5px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
+  .pm-data-field-layer,.pm-plot-layer,.pm-local-evidence,.pm-target-lock { transform-box:fill-box; transform-origin:center; }
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer { animation:pm-field-enter var(--pm-field-duration,680ms) cubic-bezier(.22,.72,.18,1) var(--pm-field-delay,40ms) both; will-change:transform,opacity; }
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer { animation:pm-plot-enter var(--pm-plot-duration,620ms) cubic-bezier(.22,.72,.18,1) var(--pm-plot-delay,320ms) both; will-change:transform,opacity; }
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,980ms)) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer { animation:pm-field-enter var(--pm-field-duration,680ms) cubic-bezier(.22,.72,.18,1) var(--pm-field-delay,40ms) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer { animation:pm-plot-enter var(--pm-plot-duration,620ms) cubic-bezier(.22,.72,.18,1) var(--pm-plot-delay,300ms) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence { animation:pm-evidence-enter var(--pm-evidence-duration,360ms) cubic-bezier(.22,.72,.18,1) var(--pm-active-evidence-delay,var(--pm-evidence-delay,760ms)) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,1080ms)) both; will-change:transform,opacity; }
   .motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation-play-state:paused!important; }
+  .motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation-play-state:paused!important; }
   .is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { will-change:auto; }
+  .is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { will-change:auto; }
   @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:none!important; } }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:none!important; } }
   [data-interface="precision-v2.1"] [data-motion] { animation:none!important; }
   @keyframes pi-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pi-evidence-enter { from { opacity:0; transform:translate3d(-5px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
@@ -163,41 +171,43 @@
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1100" data-total-standard="1900" data-total-story="3500" data-mode="editorial" data-choreography="quadrant-lock" data-motion-system="legacy" data-presentation-carrier="direct" data-presentation-target="embedded">
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1100" data-total-standard="1900" data-total-story="3500" data-mode="editorial" data-choreography="quadrant-lock" data-motion-system="presentation-v2.1" data-presentation-carrier="embedded" data-presentation-target="embedded">
   <header class="chart-header">
     <div class="chart-code"><div class="mx-code"><div class="mx-code__top"><strong>C16</strong><span>SYS / 21</span></div><div class="mx-code__name">DECISION BUBBLE MATRIX</div><div class="mx-code__state"><span class="mx-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>PRIORITY</div></div></div>
     <div><h1 class="chart-title">爆款 A 兼具高流量与高转化，应扩大资源投入</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / QUADRANT</span><span>DATA / 05I</span><span data-state>STATE / READY</span></div></div>
     <span class="mx-header-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </header>
-  <section class="chart-body pm-direct-body"><svg class="pm-direct-field" viewBox="0 0 1172 500" role="img" aria-label="爆款 A 兼具高流量与高转化，应扩大资源投入" style="--pm-lock-delay:980ms;--pm-lock-delay-brief:608ms;--pm-lock-delay-story:1764ms"><g class="pm-data-field-layer"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >16 / DECISION BUBBLE MATRIX</text>
-<line x1="276" y1="420" x2="1118" y2="420" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--delay-brief:30ms;--delay-story:110ms"/>
-<line x1="276" y1="74" x2="276" y2="420" class="rail-strong" pathLength="1" data-motion="align" style="--delay:90ms;--dx:0px;--dy:0px;--delay-brief:40ms;--delay-story:140ms"/>
-<line x1="697" y1="74" x2="697" y2="420" class="grid" />
-<line x1="276" y1="247" x2="1118" y2="247" class="grid" />
+  <section class="chart-body pm-embedded-body">
+    <svg class="pm-data-field pm-embedded-field" viewBox="0 0 1172 500" role="img" aria-label="爆款 A 兼具高流量与高转化，应扩大资源投入" style="--pm-evidence-delay:780ms;--pm-evidence-delay-brief:470ms;--pm-evidence-delay-story:1520ms;--pm-lock-delay:1120ms;--pm-lock-delay-brief:680ms;--pm-lock-delay-story:2180ms"><g class="pm-data-field-layer"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >16 / EMBEDDED DECISION FIELD</text>
+<line x1="82" y1="420" x2="1118" y2="420" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--delay-brief:30ms;--delay-story:110ms"/>
+<line x1="82" y1="74" x2="82" y2="420" class="rail-strong" pathLength="1" data-motion="align" style="--delay:90ms;--dx:0px;--dy:0px;--delay-brief:40ms;--delay-story:140ms"/>
+<line x1="600" y1="74" x2="600" y2="420" class="grid" />
+<line x1="82" y1="247" x2="1118" y2="247" class="grid" />
 <text x="1118" y="448" class="index muted" text-anchor="end" font-size="12" >X / 规模或收益 →</text>
-<text x="276" y="62" class="index muted" text-anchor="start" font-size="12" >Y / 效率或质量 ↑</text>
-<circle cx="969.73" cy="160.5" r="40" class="signal-fill" data-motion="dock" data-choreo="pin" style="--delay:300ms;--dx:0px;--dy:18px;--delay-brief:150ms;--delay-story:560ms"/>
-<text x="969.73" y="164.5" class="index on-signal" text-anchor="middle" font-size="12" >01</text>
-<text x="1017.73" y="116.5" class="label" text-anchor="start" font-size="13" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:720ms;--dx:0px;--dy:0px;--delay-brief:430ms;--delay-story:1380ms">爆款 A</text>
-<circle cx="735.96" cy="122.06" r="33.05" class="cat-1" data-motion="dock" data-choreo="pin" style="--delay:410ms;--dx:0px;--dy:18px;--delay-brief:208ms;--delay-story:780ms"/>
-<text x="735.96" y="126.06" class="index on-fill" text-anchor="middle" font-size="12" >02</text>
-<text x="777.01" y="85" class="label" text-anchor="start" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:790ms;--dx:0px;--dy:0px;--delay-brief:470ms;--delay-story:1530ms">潜力 B</text>
-<circle cx="1036.52" cy="338.31" r="36.07" class="cat-1" data-motion="dock" data-choreo="pin" style="--delay:520ms;--dx:0px;--dy:18px;--delay-brief:266ms;--delay-story:1000ms"/>
-<text x="1036.52" y="342.31" class="index on-fill" text-anchor="middle" font-size="12" >03</text>
-<text x="1080.59" y="298.23" class="label" text-anchor="start" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:860ms;--dx:0px;--dy:0px;--delay-brief:510ms;--delay-story:1680ms">引流 C</text>
-<circle cx="535.59" cy="285.44" r="28.25" class="cat-1" data-motion="dock" data-choreo="pin" style="--delay:630ms;--dx:0px;--dy:18px;--delay-brief:324ms;--delay-story:1220ms"/>
-<text x="535.59" y="289.44" class="index on-fill" text-anchor="middle" font-size="12" >04</text>
-<text x="571.84" y="253.19" class="label" text-anchor="start" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:930ms;--dx:0px;--dy:0px;--delay-brief:550ms;--delay-story:1830ms">观察 D</text>
-<circle cx="357.48" cy="371.94" r="24.39" class="cat-1" data-motion="dock" data-choreo="pin" style="--delay:740ms;--dx:0px;--dy:18px;--delay-brief:382ms;--delay-story:1440ms"/>
-<text x="357.48" y="375.94" class="index on-fill" text-anchor="middle" font-size="12" >05</text>
-<text x="389.87" y="343.56" class="label" text-anchor="start" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:1000ms;--dx:0px;--dy:0px;--delay-brief:590ms;--delay-story:1980ms">长尾 E</text>
-<g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1580ms;--dx:-8px;--dy:0px;--delay-brief:900ms;--delay-story:3020ms">
-<path d="M 0 82 H 212 L 220 90 V 176 H 8 L 0 168 Z" class="panel-stroke" />
-<text x="14" y="103" class="index muted" text-anchor="start" font-size="12" >D-16</text>
-<text x="206" y="103" class="index signal-text" text-anchor="end" font-size="12" >PRIORITY</text>
-<text x="14" y="137" class="value" text-anchor="start" font-size="28" font-weight="650" >爆款 A</text>
-<text x="14" y="159" class="muted" text-anchor="start" font-size="13" >综合位置最优</text>
-</g></g></svg></section>
+<text x="82" y="62" class="index muted" text-anchor="start" font-size="12" >Y / 效率或质量 ↑</text></g><g class="pm-plot-layer"><circle cx="935.56" cy="160.5" r="40" class="signal-fill" data-motion="dock" data-choreo="pin" style="--delay:300ms;--dx:0px;--dy:18px;--delay-brief:150ms;--delay-story:560ms"/>
+<text x="935.56" y="164.5" class="index on-signal" text-anchor="middle" font-size="12" >01</text>
+<text x="983.56" y="116.5" class="label" text-anchor="start" font-size="13" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:720ms;--dx:0px;--dy:0px;--delay-brief:430ms;--delay-story:1380ms">爆款 A</text>
+<circle cx="647.94" cy="122.06" r="33.05" class="cat-1" data-motion="dock" data-choreo="pin" style="--delay:410ms;--dx:0px;--dy:18px;--delay-brief:208ms;--delay-story:780ms"/>
+<text x="647.94" y="126.06" class="index on-fill" text-anchor="middle" font-size="12" >02</text>
+<text x="688.99" y="85" class="label" text-anchor="start" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:790ms;--dx:0px;--dy:0px;--delay-brief:470ms;--delay-story:1530ms">潜力 B</text>
+<circle cx="1017.74" cy="338.31" r="36.07" class="cat-1" data-motion="dock" data-choreo="pin" style="--delay:520ms;--dx:0px;--dy:18px;--delay-brief:266ms;--delay-story:1000ms"/>
+<text x="1017.74" y="342.31" class="index on-fill" text-anchor="middle" font-size="12" >03</text>
+<text x="1061.81" y="298.23" class="label" text-anchor="start" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:860ms;--dx:0px;--dy:0px;--delay-brief:510ms;--delay-story:1680ms">引流 C</text>
+<circle cx="401.4" cy="285.44" r="28.25" class="cat-1" data-motion="dock" data-choreo="pin" style="--delay:630ms;--dx:0px;--dy:18px;--delay-brief:324ms;--delay-story:1220ms"/>
+<text x="401.4" y="289.44" class="index on-fill" text-anchor="middle" font-size="12" >04</text>
+<text x="437.65" y="253.19" class="label" text-anchor="start" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:930ms;--dx:0px;--dy:0px;--delay-brief:550ms;--delay-story:1830ms">观察 D</text>
+<circle cx="182.26" cy="371.94" r="24.39" class="cat-1" data-motion="dock" data-choreo="pin" style="--delay:740ms;--dx:0px;--dy:18px;--delay-brief:382ms;--delay-story:1440ms"/>
+<text x="182.26" y="375.94" class="index on-fill" text-anchor="middle" font-size="12" >05</text>
+<text x="214.64" y="343.56" class="label" text-anchor="start" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:1000ms;--dx:0px;--dy:0px;--delay-brief:590ms;--delay-story:1980ms">长尾 E</text></g><g class="pm-local-evidence" aria-label="E16 local evidence"><path d="M 633.56 205.5 H 857.56 L 865.56 213.5 V 281.5 H 641.56 L 633.56 273.5 Z" class="panel-stroke" />
+<text x="647.56" y="223.5" class="index muted" text-anchor="start" font-size="10" >E16 / QUAD</text>
+<text x="851.56" y="223.5" class="index signal-text" text-anchor="end" font-size="10" >PRIORITY</text>
+<text x="647.56" y="257.5" class="value signal-text" text-anchor="start" font-size="25" font-weight="700" >爆款 A</text>
+<text x="851.56" y="254.5" class="muted" text-anchor="end" font-size="11" >综合位置最优</text>
+<rect x="855.56" y="239.5" width="8" height="8" rx="0" class="pm-socket-signal" /></g><g class="pm-target-lock"><circle cx="935.56" cy="160.5" r="48" class="pm-lock-ring" />
+<path d="M 935.563194077208 160.49999999999994 L 865.563194077208 243.49999999999994" class="pm-lock-cross" />
+<rect x="930.56" y="155.5" width="10" height="10" rx="0" class="pm-socket-signal" />
+<text x="935.56" y="224.5" class="pm-address pm-address-signal" text-anchor="middle" font-size="10" >Q01 / LEADER</text></g></svg>
+  </section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" data-code="R" title="重播">↻</button><button type="button" data-action="pause" data-code="H" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" data-code="S" title="切换明暗">◐</button></nav>
 </main>
@@ -212,7 +222,7 @@
   const scales={brief:0.72,standard:1.0,story:1.8};
   const scale=scales[profile]||1;
   const macroProfiles={brief:{fieldDelay:25,fieldDuration:420,plotDelay:180,plotDuration:360,lockDuration:220},standard:{fieldDelay:40,fieldDuration:680,plotDelay:320,plotDuration:620,lockDuration:260},story:{fieldDelay:60,fieldDuration:900,plotDelay:480,plotDuration:780,lockDuration:320}};
-  const stagedMacroProfiles={...macroProfiles,standard:{...macroProfiles.standard,fieldDelay:30,lockDuration:300}};
+  const stagedMacroProfiles={...macroProfiles,standard:{...macroProfiles.standard,fieldDelay:30,lockDuration:300,evidenceDuration:360},brief:{...macroProfiles.brief,evidenceDuration:280},story:{...macroProfiles.story,evidenceDuration:440}};
   const activeMacroProfiles=root.querySelector('.pm-plot-layer')?stagedMacroProfiles:macroProfiles;
   const macro=activeMacroProfiles[profile]||activeMacroProfiles.standard;
   root.style.setProperty('--pm-field-delay',macro.fieldDelay+'ms');
@@ -220,10 +230,20 @@
   root.style.setProperty('--pm-plot-delay',macro.plotDelay+'ms');
   root.style.setProperty('--pm-plot-duration',macro.plotDuration+'ms');
   root.style.setProperty('--pm-lock-duration',macro.lockDuration+'ms');
+  root.style.setProperty('--pm-evidence-duration',(macro.evidenceDuration||360)+'ms');
   const directField=root.querySelector('.pm-direct-field');
   if(directField){
     const profileLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay-'+profile));
     const standardLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay'))||980;
+    root.style.setProperty('--pm-active-lock-delay',(Number.isFinite(profileLock)?profileLock:standardLock)+'ms');
+  }
+  const embeddedField=root.querySelector('.pm-embedded-field');
+  if(embeddedField){
+    const profileEvidence=parseFloat(embeddedField.style.getPropertyValue('--pm-evidence-delay-'+profile));
+    const standardEvidence=parseFloat(embeddedField.style.getPropertyValue('--pm-evidence-delay'))||760;
+    const profileLock=parseFloat(embeddedField.style.getPropertyValue('--pm-lock-delay-'+profile));
+    const standardLock=parseFloat(embeddedField.style.getPropertyValue('--pm-lock-delay'))||1080;
+    root.style.setProperty('--pm-active-evidence-delay',(Number.isFinite(profileEvidence)?profileEvidence:standardEvidence)+'ms');
     root.style.setProperty('--pm-active-lock-delay',(Number.isFinite(profileLock)?profileLock:standardLock)+'ms');
   }
   const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);

@@ -244,6 +244,13 @@ class EmbeddedEvidence:
     evidence_svg: str
     foreground_svg: str
     lock_delay: int = 980
+    plot_svg: str = ""
+    evidence_delay: int = 760
+    evidence_delay_brief: int | None = None
+    evidence_delay_story: int | None = None
+    lock_delay_brief: int | None = None
+    lock_delay_story: int | None = None
+    compiled_motion: bool = False
     mode: str = field(init=False, default="embedded")
 
 
@@ -354,7 +361,8 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
     embedded = presentation if isinstance(presentation, EmbeddedEvidence) else None
     direct = presentation if isinstance(presentation, DirectCanvas) else None
     compiled_direct = bool(direct and direct.compiled_motion)
-    motion_system = "presentation-v2.1" if compiled_direct else ("precision-v2.1" if interface else "legacy")
+    compiled_embedded = bool(embedded and embedded.compiled_motion)
+    motion_system = "presentation-v2.1" if compiled_direct or compiled_embedded else ("precision-v2.1" if interface else "legacy")
     html_interface = ' data-interface="precision-v2.1"' if interface else ""
     root_interface = ' data-interface="precision-v2.1"' if interface else ""
     if interface:
@@ -368,8 +376,13 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
     <svg class="pi-data-field" viewBox="{fmt(interface.plot_x)} 0 {fmt(plot_width)} {H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="{esc(page.title)}" style="--pi-lock-delay:{interface.lock_delay}ms">{page.svg}<g class="pi-overlay pi-overlay--foreground">{interface.foreground_svg}</g></svg>
   </section>'''
     elif embedded:
+        plot_layer = f'<g class="pm-plot-layer">{embedded.plot_svg}</g>' if embedded.plot_svg else ""
+        evidence_brief = embedded.evidence_delay_brief if embedded.evidence_delay_brief is not None else round(embedded.evidence_delay * .62)
+        evidence_story = embedded.evidence_delay_story if embedded.evidence_delay_story is not None else round(embedded.evidence_delay * 1.8)
+        lock_brief = embedded.lock_delay_brief if embedded.lock_delay_brief is not None else round(embedded.lock_delay * .62)
+        lock_story = embedded.lock_delay_story if embedded.lock_delay_story is not None else round(embedded.lock_delay * 1.8)
         body_markup = f'''<section class="chart-body pm-embedded-body">
-    <svg class="pm-data-field" viewBox="0 0 {W} {H}" role="img" aria-label="{esc(page.title)}" style="--pm-lock-delay:{embedded.lock_delay}ms">{page.svg}<g class="pm-local-evidence" aria-label="{esc(embedded.evidence_id)} local evidence">{embedded.evidence_svg}</g><g class="pm-target-lock">{embedded.foreground_svg}</g></svg>
+    <svg class="pm-data-field pm-embedded-field" viewBox="0 0 {W} {H}" role="img" aria-label="{esc(page.title)}" style="--pm-evidence-delay:{embedded.evidence_delay}ms;--pm-evidence-delay-brief:{evidence_brief}ms;--pm-evidence-delay-story:{evidence_story}ms;--pm-lock-delay:{embedded.lock_delay}ms;--pm-lock-delay-brief:{lock_brief}ms;--pm-lock-delay-story:{lock_story}ms"><g class="pm-data-field-layer">{page.svg}</g>{plot_layer}<g class="pm-local-evidence" aria-label="{esc(embedded.evidence_id)} local evidence">{embedded.evidence_svg}</g><g class="pm-target-lock">{embedded.foreground_svg}</g></svg>
   </section>'''
     else:
         foreground = f'<g class="pm-target-lock">{presentation.foreground_svg}</g>' if presentation.foreground_svg else ""
@@ -502,17 +515,25 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   svg .pm-address {{ font-family:{index_font}; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }}
   svg .pm-address-signal {{ fill:var(--signal); }}
   svg .pm-focus-corner {{ fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }}
-  [data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] [data-motion] {{ animation:none!important; }}
+  [data-motion-system="presentation-v2.1"] [data-motion] {{ animation:none!important; }}
   @keyframes pm-field-enter {{ from {{ opacity:.18; transform:translate3d(-7px,0,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
   @keyframes pm-plot-enter {{ from {{ opacity:0; transform:translate3d(0,10px,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
   @keyframes pm-lock-settle {{ from {{ opacity:0; transform:scale(.96); }} to {{ opacity:1; transform:scale(1); }} }}
-  .pm-data-field-layer,.pm-plot-layer,.pm-target-lock {{ transform-box:fill-box; transform-origin:center; }}
+  @keyframes pm-evidence-enter {{ from {{ opacity:0; transform:translate3d(-5px,0,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
+  .pm-data-field-layer,.pm-plot-layer,.pm-local-evidence,.pm-target-lock {{ transform-box:fill-box; transform-origin:center; }}
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer {{ animation:pm-field-enter var(--pm-field-duration,680ms) {precision_motion['ease']} var(--pm-field-delay,40ms) both; will-change:transform,opacity; }}
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer {{ animation:pm-plot-enter var(--pm-plot-duration,620ms) {precision_motion['ease']} var(--pm-plot-delay,320ms) both; will-change:transform,opacity; }}
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,980ms)) both; will-change:transform,opacity; }}
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer {{ animation:pm-field-enter var(--pm-field-duration,680ms) {precision_motion['ease']} var(--pm-field-delay,40ms) both; will-change:transform,opacity; }}
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer {{ animation:pm-plot-enter var(--pm-plot-duration,620ms) {precision_motion['ease']} var(--pm-plot-delay,300ms) both; will-change:transform,opacity; }}
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence {{ animation:pm-evidence-enter var(--pm-evidence-duration,360ms) {precision_motion['ease']} var(--pm-active-evidence-delay,var(--pm-evidence-delay,760ms)) both; will-change:transform,opacity; }}
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,1080ms)) both; will-change:transform,opacity; }}
   .motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ animation-play-state:paused!important; }}
+  .motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ animation-play-state:paused!important; }}
   .is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ will-change:auto; }}
+  .is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ will-change:auto; }}
   @media (prefers-reduced-motion:reduce) {{ .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ animation:none!important; }} }}
+  @media (prefers-reduced-motion:reduce) {{ .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ animation:none!important; }} }}
   [data-interface="precision-v2.1"] [data-motion] {{ animation:none!important; }}
   @keyframes pi-field-enter {{ from {{ opacity:.18; transform:translate3d(-7px,0,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
   @keyframes pi-evidence-enter {{ from {{ opacity:0; transform:translate3d(-5px,0,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
@@ -549,7 +570,7 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   const scales={{brief:{motion_tokens['profiles']['brief']['fallbackScale']},standard:{motion_tokens['profiles']['standard']['fallbackScale']},story:{motion_tokens['profiles']['story']['fallbackScale']}}};
   const scale=scales[profile]||1;
   const macroProfiles={{brief:{{fieldDelay:25,fieldDuration:420,plotDelay:180,plotDuration:360,lockDuration:220}},standard:{{fieldDelay:40,fieldDuration:680,plotDelay:320,plotDuration:620,lockDuration:260}},story:{{fieldDelay:60,fieldDuration:900,plotDelay:480,plotDuration:780,lockDuration:320}}}};
-  const stagedMacroProfiles={{...macroProfiles,standard:{{...macroProfiles.standard,fieldDelay:30,lockDuration:300}}}};
+  const stagedMacroProfiles={{...macroProfiles,standard:{{...macroProfiles.standard,fieldDelay:30,lockDuration:300,evidenceDuration:360}},brief:{{...macroProfiles.brief,evidenceDuration:280}},story:{{...macroProfiles.story,evidenceDuration:440}}}};
   const activeMacroProfiles=root.querySelector('.pm-plot-layer')?stagedMacroProfiles:macroProfiles;
   const macro=activeMacroProfiles[profile]||activeMacroProfiles.standard;
   root.style.setProperty('--pm-field-delay',macro.fieldDelay+'ms');
@@ -557,10 +578,20 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   root.style.setProperty('--pm-plot-delay',macro.plotDelay+'ms');
   root.style.setProperty('--pm-plot-duration',macro.plotDuration+'ms');
   root.style.setProperty('--pm-lock-duration',macro.lockDuration+'ms');
+  root.style.setProperty('--pm-evidence-duration',(macro.evidenceDuration||360)+'ms');
   const directField=root.querySelector('.pm-direct-field');
   if(directField){{
     const profileLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay-'+profile));
     const standardLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay'))||980;
+    root.style.setProperty('--pm-active-lock-delay',(Number.isFinite(profileLock)?profileLock:standardLock)+'ms');
+  }}
+  const embeddedField=root.querySelector('.pm-embedded-field');
+  if(embeddedField){{
+    const profileEvidence=parseFloat(embeddedField.style.getPropertyValue('--pm-evidence-delay-'+profile));
+    const standardEvidence=parseFloat(embeddedField.style.getPropertyValue('--pm-evidence-delay'))||760;
+    const profileLock=parseFloat(embeddedField.style.getPropertyValue('--pm-lock-delay-'+profile));
+    const standardLock=parseFloat(embeddedField.style.getPropertyValue('--pm-lock-delay'))||1080;
+    root.style.setProperty('--pm-active-evidence-delay',(Number.isFinite(profileEvidence)?profileEvidence:standardEvidence)+'ms');
     root.style.setProperty('--pm-active-lock-delay',(Number.isFinite(profileLock)?profileLock:standardLock)+'ms');
   }}
   const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);

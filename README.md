@@ -143,7 +143,7 @@ npx playwright install chromium
 node scripts/validate.mjs .
 ```
 
-当前基线：展示模式映射 `13/13`、三载体与 A 组迁移 `13/13`、边界渲染 `103/103`，浏览器、静态降级、动效与布局检查 `238/238`。其中包含 10 张 Direct Canvas 的三宏层帧预算、24 张图的“结论铭牌—关键图形”碰撞扫描，以及浅色/深色双表面的填充数据标签对比度检查；GitHub Actions 会在每次推送和 Pull Request 中重新执行这些检查。
+当前基线：展示模式映射 `13/13`、三载体与 A+B 组迁移 `16/16`、边界渲染 `103/103`，浏览器、静态降级、动效与布局检查 `256/256`。其中包含 10 张 Direct Canvas 的三宏层帧预算、9 张 Embedded Evidence 的四宏层帧预算、24 张图的证据—关键图形碰撞扫描，以及浅色/深色双表面的填充数据标签对比度检查；GitHub Actions 会在每次推送和 Pull Request 中重新执行这些检查。
 
 ## Contributing
 

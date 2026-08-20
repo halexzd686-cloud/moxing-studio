@@ -16,7 +16,7 @@ These primitives are authoring semantics, not a requirement to animate every mar
 Production playback is selected from the chart's presentation mode, not from visual preference:
 
 - **A / Direct Canvas:** `DATA_FIELD → RELATIONSHIP → TARGET_LOCK`, exactly 3 macro layers.
-- **B / Embedded Evidence:** `DATA_FIELD → RELATIONSHIP → LOCAL_EVIDENCE → TARGET_LOCK`, maximum 4 macro layers.
+- **B / Embedded Evidence:** `DATA_FIELD → RELATIONSHIP → LOCAL_EVIDENCE → TARGET_LOCK`, exactly 4 compiled macro layers in production.
 - **C / Evidence Interface:** `DATA_FIELD → EVIDENCE_BAY → TERMINAL → TARGET_LOCK`, maximum 4 macro layers.
 
 The complete plot enters as one composited `DATA_FIELD` layer. It absorbs `ALIGN`, `DOCK`, and ordinary repeated marks. A separate relationship carrier is allowed only for a genuine trace, route, or matrix address. Do not animate individual bars, cells, candles, glyphs, labels, or repeated nodes.

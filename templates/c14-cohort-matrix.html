@@ -137,17 +137,25 @@
   svg .pm-address { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }
   svg .pm-address-signal { fill:var(--signal); }
   svg .pm-focus-corner { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
-  [data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] [data-motion] { animation:none!important; }
+  [data-motion-system="presentation-v2.1"] [data-motion] { animation:none!important; }
   @keyframes pm-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pm-plot-enter { from { opacity:0; transform:translate3d(0,10px,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pm-lock-settle { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:scale(1); } }
-  .pm-data-field-layer,.pm-plot-layer,.pm-target-lock { transform-box:fill-box; transform-origin:center; }
+  @keyframes pm-evidence-enter { from { opacity:0; transform:translate3d(-5px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
+  .pm-data-field-layer,.pm-plot-layer,.pm-local-evidence,.pm-target-lock { transform-box:fill-box; transform-origin:center; }
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer { animation:pm-field-enter var(--pm-field-duration,680ms) cubic-bezier(.22,.72,.18,1) var(--pm-field-delay,40ms) both; will-change:transform,opacity; }
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer { animation:pm-plot-enter var(--pm-plot-duration,620ms) cubic-bezier(.22,.72,.18,1) var(--pm-plot-delay,320ms) both; will-change:transform,opacity; }
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,980ms)) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer { animation:pm-field-enter var(--pm-field-duration,680ms) cubic-bezier(.22,.72,.18,1) var(--pm-field-delay,40ms) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer { animation:pm-plot-enter var(--pm-plot-duration,620ms) cubic-bezier(.22,.72,.18,1) var(--pm-plot-delay,300ms) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence { animation:pm-evidence-enter var(--pm-evidence-duration,360ms) cubic-bezier(.22,.72,.18,1) var(--pm-active-evidence-delay,var(--pm-evidence-delay,760ms)) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,1080ms)) both; will-change:transform,opacity; }
   .motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation-play-state:paused!important; }
+  .motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation-play-state:paused!important; }
   .is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { will-change:auto; }
+  .is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { will-change:auto; }
   @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:none!important; } }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:none!important; } }
   [data-interface="precision-v2.1"] [data-motion] { animation:none!important; }
   @keyframes pi-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pi-evidence-enter { from { opacity:0; transform:translate3d(-5px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
@@ -163,13 +171,14 @@
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1200" data-total-standard="2200" data-total-story="4100" data-mode="editorial" data-choreography="cohort-seating" data-motion-system="legacy" data-presentation-carrier="direct" data-presentation-target="embedded">
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1200" data-total-standard="2200" data-total-story="4100" data-mode="editorial" data-choreography="cohort-seating" data-motion-system="presentation-v2.1" data-presentation-carrier="embedded" data-presentation-target="embedded">
   <header class="chart-header">
     <div class="chart-code"><div class="mx-code"><div class="mx-code__top"><strong>C14</strong><span>SYS / 21</span></div><div class="mx-code__name">COHORT MATRIX</div><div class="mx-code__state"><span class="mx-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>BEST.LOCK</div></div></div>
     <div><h1 class="chart-title">新客次月复购持续改善，五月队列达到 52%</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / COHORT</span><span>DATA / 05R · 06C</span><span data-state>STATE / READY</span></div></div>
     <span class="mx-header-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </header>
-  <section class="chart-body pm-direct-body"><svg class="pm-direct-field" viewBox="0 0 1172 500" role="img" aria-label="新客次月复购持续改善，五月队列达到 52%" style="--pm-lock-delay:980ms;--pm-lock-delay-brief:608ms;--pm-lock-delay-story:1764ms"><g class="pm-data-field-layer"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >14 / COHORT MATRIX</text>
+  <section class="chart-body pm-embedded-body">
+    <svg class="pm-data-field pm-embedded-field" viewBox="0 0 1172 500" role="img" aria-label="新客次月复购持续改善，五月队列达到 52%" style="--pm-evidence-delay:900ms;--pm-evidence-delay-brief:540ms;--pm-evidence-delay-story:1740ms;--pm-lock-delay:1240ms;--pm-lock-delay-brief:760ms;--pm-lock-delay-story:2420ms"><g class="pm-data-field-layer"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >14 / EMBEDDED COHORT FIELD</text>
 <line x1="260" y1="62" x2="1110" y2="62" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--delay-brief:30ms;--delay-story:110ms"/>
 <text x="330.83" y="52" class="index muted" text-anchor="middle" font-size="12" >首月</text>
 <text x="472.5" y="52" class="index muted" text-anchor="middle" font-size="12" >M+1</text>
@@ -177,8 +186,11 @@
 <text x="755.83" y="52" class="index muted" text-anchor="middle" font-size="12" >M+3</text>
 <text x="897.5" y="52" class="index muted" text-anchor="middle" font-size="12" >M+4</text>
 <text x="1039.17" y="52" class="index muted" text-anchor="middle" font-size="12" >M+5</text>
-<text x="0" y="121.96" class="index muted" text-anchor="start" font-size="12" >2026-01</text>
-<rect x="263" y="89" width="135.67" height="52" rx="0" class="data-fill" data-motion="dock" data-choreo="field-seat" style="--delay:220ms;--dx:0px;--dy:12px;--delay-brief:100ms;--delay-story:420ms"/>
+<text x="198" y="121.96" class="index muted" text-anchor="end" font-size="12" >2026-01</text>
+<text x="198" y="179.96" class="index muted" text-anchor="end" font-size="12" >2026-02</text>
+<text x="198" y="237.96" class="index muted" text-anchor="end" font-size="12" >2026-03</text>
+<text x="198" y="295.96" class="index muted" text-anchor="end" font-size="12" >2026-04</text>
+<text x="198" y="353.96" class="index muted" text-anchor="end" font-size="12" >2026-05</text></g><g class="pm-plot-layer"><rect x="263" y="89" width="135.67" height="52" rx="0" class="data-fill" data-motion="dock" data-choreo="field-seat" style="--delay:220ms;--dx:0px;--dy:12px;--delay-brief:100ms;--delay-story:420ms"/>
 <text x="330.83" y="121.96" class="on-fill" text-anchor="middle" font-size="13" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:470ms;--dx:0px;--dy:0px;--delay-brief:270ms;--delay-story:760ms">100%</text>
 <rect x="404.67" y="89" width="135.67" height="52" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:265ms;--dx:0px;--dy:12px;--delay-brief:120ms;--delay-story:510ms"/>
 <text x="472.5" y="121.96" class="on-fill" text-anchor="middle" font-size="13" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:515ms;--dx:0px;--dy:0px;--delay-brief:292ms;--delay-story:850ms">42%</text>
@@ -190,7 +202,6 @@
 <text x="897.5" y="121.96" class="value" text-anchor="middle" font-size="13" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:650ms;--dx:0px;--dy:0px;--delay-brief:360ms;--delay-story:1120ms">22%</text>
 <rect x="971.33" y="89" width="135.67" height="52" rx="0" class="panel-stroke" data-motion="dock" data-choreo="field-seat" style="--delay:445ms;--dx:0px;--dy:12px;--delay-brief:200ms;--delay-story:870ms"/>
 <text x="1039.17" y="121.96" class="value" text-anchor="middle" font-size="13" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:695ms;--dx:0px;--dy:0px;--delay-brief:382ms;--delay-story:1210ms">19%</text>
-<text x="0" y="179.96" class="index muted" text-anchor="start" font-size="12" >2026-02</text>
 <rect x="263" y="147" width="135.67" height="52" rx="0" class="data-fill" data-motion="dock" data-choreo="field-seat" style="--delay:310ms;--dx:0px;--dy:12px;--delay-brief:140ms;--delay-story:580ms"/>
 <text x="330.83" y="179.96" class="on-fill" text-anchor="middle" font-size="13" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:560ms;--dx:0px;--dy:0px;--delay-brief:315ms;--delay-story:940ms">100%</text>
 <rect x="404.67" y="147" width="135.67" height="52" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:355ms;--dx:0px;--dy:12px;--delay-brief:160ms;--delay-story:670ms"/>
@@ -201,7 +212,6 @@
 <text x="755.83" y="179.96" class="value" text-anchor="middle" font-size="13" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:695ms;--dx:0px;--dy:0px;--delay-brief:382ms;--delay-story:1210ms">28%</text>
 <rect x="829.67" y="147" width="135.67" height="52" rx="0" class="panel-stroke" data-motion="dock" data-choreo="field-seat" style="--delay:490ms;--dx:0px;--dy:12px;--delay-brief:220ms;--delay-story:940ms"/>
 <text x="897.5" y="179.96" class="value" text-anchor="middle" font-size="13" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:740ms;--dx:0px;--dy:0px;--delay-brief:405ms;--delay-story:1300ms">24%</text>
-<text x="0" y="237.96" class="index muted" text-anchor="start" font-size="12" >2026-03</text>
 <rect x="263" y="205" width="135.67" height="52" rx="0" class="data-fill" data-motion="dock" data-choreo="field-seat" style="--delay:400ms;--dx:0px;--dy:12px;--delay-brief:180ms;--delay-story:740ms"/>
 <text x="330.83" y="237.96" class="on-fill" text-anchor="middle" font-size="13" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:650ms;--dx:0px;--dy:0px;--delay-brief:360ms;--delay-story:1120ms">100%</text>
 <rect x="404.67" y="205" width="135.67" height="52" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:445ms;--dx:0px;--dy:12px;--delay-brief:200ms;--delay-story:830ms"/>
@@ -210,25 +220,26 @@
 <text x="614.17" y="237.96" class="value" text-anchor="middle" font-size="13" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:740ms;--dx:0px;--dy:0px;--delay-brief:405ms;--delay-story:1300ms">35%</text>
 <rect x="688" y="205" width="135.67" height="52" rx="0" class="panel-stroke" data-motion="dock" data-choreo="field-seat" style="--delay:535ms;--dx:0px;--dy:12px;--delay-brief:240ms;--delay-story:1010ms"/>
 <text x="755.83" y="237.96" class="value" text-anchor="middle" font-size="13" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:785ms;--dx:0px;--dy:0px;--delay-brief:427ms;--delay-story:1390ms">30%</text>
-<text x="0" y="295.96" class="index muted" text-anchor="start" font-size="12" >2026-04</text>
 <rect x="263" y="263" width="135.67" height="52" rx="0" class="data-fill" data-motion="dock" data-choreo="field-seat" style="--delay:490ms;--dx:0px;--dy:12px;--delay-brief:220ms;--delay-story:900ms"/>
 <text x="330.83" y="295.96" class="on-fill" text-anchor="middle" font-size="13" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:740ms;--dx:0px;--dy:0px;--delay-brief:405ms;--delay-story:1300ms">100%</text>
 <rect x="404.67" y="263" width="135.67" height="52" rx="0" class="cat-1" data-motion="dock" data-choreo="field-seat" style="--delay:535ms;--dx:0px;--dy:12px;--delay-brief:240ms;--delay-story:990ms"/>
 <text x="472.5" y="295.96" class="on-fill" text-anchor="middle" font-size="13" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:785ms;--dx:0px;--dy:0px;--delay-brief:427ms;--delay-story:1390ms">49%</text>
 <rect x="546.33" y="263" width="135.67" height="52" rx="0" class="panel-stroke" data-motion="dock" data-choreo="field-seat" style="--delay:580ms;--dx:0px;--dy:12px;--delay-brief:260ms;--delay-story:1080ms"/>
 <text x="614.17" y="295.96" class="value" text-anchor="middle" font-size="13" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:830ms;--dx:0px;--dy:0px;--delay-brief:450ms;--delay-story:1480ms">38%</text>
-<text x="0" y="353.96" class="index muted" text-anchor="start" font-size="12" >2026-05</text>
 <rect x="263" y="321" width="135.67" height="52" rx="0" class="data-fill" data-motion="dock" data-choreo="field-seat" style="--delay:580ms;--dx:0px;--dy:12px;--delay-brief:260ms;--delay-story:1060ms"/>
 <text x="330.83" y="353.96" class="on-fill" text-anchor="middle" font-size="13" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:830ms;--dx:0px;--dy:0px;--delay-brief:450ms;--delay-story:1480ms">100%</text>
 <rect x="404.67" y="321" width="135.67" height="52" rx="0" class="signal-fill" data-motion="dock" data-choreo="field-seat" style="--delay:625ms;--dx:0px;--dy:12px;--delay-brief:280ms;--delay-story:1150ms"/>
-<text x="472.5" y="353.96" class="on-signal" text-anchor="middle" font-size="13" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:875ms;--dx:0px;--dy:0px;--delay-brief:472ms;--delay-story:1570ms">52%</text>
-<g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1740ms;--dx:-8px;--dy:0px;--delay-brief:980ms;--delay-story:3280ms">
-<path d="M 0 350 H 212 L 220 358 V 444 H 8 L 0 436 Z" class="panel-stroke" />
-<text x="14" y="371" class="index muted" text-anchor="start" font-size="12" >C-14</text>
-<text x="206" y="371" class="index signal-text" text-anchor="end" font-size="12" >BEST</text>
-<text x="14" y="405" class="value" text-anchor="start" font-size="28" font-weight="650" >52%</text>
-<text x="14" y="427" class="muted" text-anchor="start" font-size="13" >2026-05 / M+1</text>
-</g></g></svg></section>
+<text x="472.5" y="353.96" class="on-signal" text-anchor="middle" font-size="13" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:875ms;--dx:0px;--dy:0px;--delay-brief:472ms;--delay-story:1570ms">52%</text></g><g class="pm-local-evidence" aria-label="E14 local evidence"><path d="M 658.5 313 H 886.5 L 894.5 321 V 389 H 666.5 L 658.5 381 Z" class="panel-stroke" />
+<text x="672.5" y="331" class="index muted" text-anchor="start" font-size="10" >E14 / M+1</text>
+<text x="880.5" y="331" class="index signal-text" text-anchor="end" font-size="10" >BEST</text>
+<text x="672.5" y="365" class="value signal-text" text-anchor="start" font-size="25" font-weight="700" >52%</text>
+<text x="880.5" y="362" class="muted" text-anchor="end" font-size="11" >2026-05 / M+1</text>
+<rect x="884.5" y="347" width="8" height="8" rx="0" class="pm-socket-signal" /></g><g class="pm-target-lock"><line x1="235" y1="347" x2="658.5" y2="347" class="pm-lock-cross" />
+<line x1="472.5" y1="70" x2="472.5" y2="388" class="pm-lock-cross" />
+<path d="M 399.6666666666667 329.0 V 316.0 H 412.6666666666667 M 532.3333333333334 316.0 H 545.3333333333334 V 329.0 M 545.3333333333334 365.0 V 378.0 H 532.3333333333334 M 412.6666666666667 378.0 H 399.6666666666667 V 365.0" class="pm-focus-corner" />
+<path d="M 545.3333333333334 347.0 H 658.5" class="pm-lock-cross" />
+<text x="472.5" y="396" class="pm-address pm-address-signal" text-anchor="middle" font-size="10" >R05 / C02</text></g></svg>
+  </section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" data-code="R" title="重播">↻</button><button type="button" data-action="pause" data-code="H" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" data-code="S" title="切换明暗">◐</button></nav>
 </main>
@@ -243,7 +254,7 @@
   const scales={brief:0.72,standard:1.0,story:1.8};
   const scale=scales[profile]||1;
   const macroProfiles={brief:{fieldDelay:25,fieldDuration:420,plotDelay:180,plotDuration:360,lockDuration:220},standard:{fieldDelay:40,fieldDuration:680,plotDelay:320,plotDuration:620,lockDuration:260},story:{fieldDelay:60,fieldDuration:900,plotDelay:480,plotDuration:780,lockDuration:320}};
-  const stagedMacroProfiles={...macroProfiles,standard:{...macroProfiles.standard,fieldDelay:30,lockDuration:300}};
+  const stagedMacroProfiles={...macroProfiles,standard:{...macroProfiles.standard,fieldDelay:30,lockDuration:300,evidenceDuration:360},brief:{...macroProfiles.brief,evidenceDuration:280},story:{...macroProfiles.story,evidenceDuration:440}};
   const activeMacroProfiles=root.querySelector('.pm-plot-layer')?stagedMacroProfiles:macroProfiles;
   const macro=activeMacroProfiles[profile]||activeMacroProfiles.standard;
   root.style.setProperty('--pm-field-delay',macro.fieldDelay+'ms');
@@ -251,10 +262,20 @@
   root.style.setProperty('--pm-plot-delay',macro.plotDelay+'ms');
   root.style.setProperty('--pm-plot-duration',macro.plotDuration+'ms');
   root.style.setProperty('--pm-lock-duration',macro.lockDuration+'ms');
+  root.style.setProperty('--pm-evidence-duration',(macro.evidenceDuration||360)+'ms');
   const directField=root.querySelector('.pm-direct-field');
   if(directField){
     const profileLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay-'+profile));
     const standardLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay'))||980;
+    root.style.setProperty('--pm-active-lock-delay',(Number.isFinite(profileLock)?profileLock:standardLock)+'ms');
+  }
+  const embeddedField=root.querySelector('.pm-embedded-field');
+  if(embeddedField){
+    const profileEvidence=parseFloat(embeddedField.style.getPropertyValue('--pm-evidence-delay-'+profile));
+    const standardEvidence=parseFloat(embeddedField.style.getPropertyValue('--pm-evidence-delay'))||760;
+    const profileLock=parseFloat(embeddedField.style.getPropertyValue('--pm-lock-delay-'+profile));
+    const standardLock=parseFloat(embeddedField.style.getPropertyValue('--pm-lock-delay'))||1080;
+    root.style.setProperty('--pm-active-evidence-delay',(Number.isFinite(profileEvidence)?profileEvidence:standardEvidence)+'ms');
     root.style.setProperty('--pm-active-lock-delay',(Number.isFinite(profileLock)?profileLock:standardLock)+'ms');
   }
   const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);

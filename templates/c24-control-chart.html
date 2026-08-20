@@ -137,17 +137,25 @@
   svg .pm-address { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }
   svg .pm-address-signal { fill:var(--signal); }
   svg .pm-focus-corner { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
-  [data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] [data-motion] { animation:none!important; }
+  [data-motion-system="presentation-v2.1"] [data-motion] { animation:none!important; }
   @keyframes pm-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pm-plot-enter { from { opacity:0; transform:translate3d(0,10px,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pm-lock-settle { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:scale(1); } }
-  .pm-data-field-layer,.pm-plot-layer,.pm-target-lock { transform-box:fill-box; transform-origin:center; }
+  @keyframes pm-evidence-enter { from { opacity:0; transform:translate3d(-5px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
+  .pm-data-field-layer,.pm-plot-layer,.pm-local-evidence,.pm-target-lock { transform-box:fill-box; transform-origin:center; }
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer { animation:pm-field-enter var(--pm-field-duration,680ms) cubic-bezier(.22,.72,.18,1) var(--pm-field-delay,40ms) both; will-change:transform,opacity; }
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer { animation:pm-plot-enter var(--pm-plot-duration,620ms) cubic-bezier(.22,.72,.18,1) var(--pm-plot-delay,320ms) both; will-change:transform,opacity; }
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,980ms)) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer { animation:pm-field-enter var(--pm-field-duration,680ms) cubic-bezier(.22,.72,.18,1) var(--pm-field-delay,40ms) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer { animation:pm-plot-enter var(--pm-plot-duration,620ms) cubic-bezier(.22,.72,.18,1) var(--pm-plot-delay,300ms) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence { animation:pm-evidence-enter var(--pm-evidence-duration,360ms) cubic-bezier(.22,.72,.18,1) var(--pm-active-evidence-delay,var(--pm-evidence-delay,760ms)) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,1080ms)) both; will-change:transform,opacity; }
   .motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation-play-state:paused!important; }
+  .motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation-play-state:paused!important; }
   .is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { will-change:auto; }
+  .is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { will-change:auto; }
   @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:none!important; } }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:none!important; } }
   [data-interface="precision-v2.1"] [data-motion] { animation:none!important; }
   @keyframes pi-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pi-evidence-enter { from { opacity:0; transform:translate3d(-5px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
@@ -163,53 +171,54 @@
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1100" data-total-standard="1900" data-total-story="3500" data-mode="editorial" data-choreography="control-lock" data-motion-system="legacy" data-presentation-carrier="direct" data-presentation-target="embedded">
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1100" data-total-standard="1900" data-total-story="3500" data-mode="editorial" data-choreography="control-lock" data-motion-system="presentation-v2.1" data-presentation-carrier="embedded" data-presentation-target="embedded">
   <header class="chart-header">
     <div class="chart-code"><div class="mx-code"><div class="mx-code__top"><strong>C24</strong><span>SYS / 21</span></div><div class="mx-code__name">CONTROL CHART</div><div class="mx-code__state"><span class="mx-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>ALARM.LOCK</div></div></div>
     <div><h1 class="chart-title">第十二期突破控制上限，应立即排查特殊原因</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / CONTROL</span><span>DATA / 12T</span><span data-state>STATE / READY</span></div></div>
     <span class="mx-header-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </header>
-  <section class="chart-body pm-direct-body"><svg class="pm-direct-field" viewBox="0 0 1172 500" role="img" aria-label="第十二期突破控制上限，应立即排查特殊原因" style="--pm-lock-delay:980ms;--pm-lock-delay-brief:608ms;--pm-lock-delay-story:1764ms"><g class="pm-data-field-layer"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >24 / CONTROL CHART</text>
-<line x1="276" y1="414" x2="1118" y2="414" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--delay-brief:30ms;--delay-story:110ms"/>
-<line x1="276" y1="153" x2="1118" y2="153" class="signal-stroke" pathLength="1" data-motion="align" style="--delay:150ms;--dx:0px;--dy:0px;--delay-brief:70ms;--delay-story:240ms"/>
-<text x="1118" y="146" class="index signal-text" text-anchor="end" font-size="12" >UCL 60</text>
-<line x1="276" y1="263.77" x2="1118" y2="263.77" class="rail" pathLength="1" data-motion="align" style="--delay:150ms;--dx:0px;--dy:0px;--delay-brief:70ms;--delay-story:240ms"/>
-<text x="1118" y="256.77" class="index muted" text-anchor="end" font-size="12" >CENTER 52</text>
-<line x1="276" y1="374.54" x2="1118" y2="374.54" class="signal-stroke" pathLength="1" data-motion="align" style="--delay:150ms;--dx:0px;--dy:0px;--delay-brief:70ms;--delay-story:240ms"/>
-<text x="1118" y="367.54" class="index signal-text" text-anchor="end" font-size="12" >LCL 44</text>
-<path d="M 276.00 277.62 L 352.55 319.15 L 429.09 249.92 L 505.64 305.31 L 582.18 263.77 L 658.73 222.23 L 735.27 333.00 L 811.82 236.08 L 888.36 180.69 L 964.91 291.46 L 1041.45 263.77 L 1118.00 111.46" class="data-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:360ms;--dx:0px;--dy:0px;--duration:680ms;--delay-brief:190ms;--delay-story:700ms;--duration-brief:440ms;--duration-story:1040ms"/>
-<circle cx="276" cy="277.62" r="4" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:620ms;--dx:0px;--dy:14px;--delay-brief:350ms;--delay-story:1220ms"/>
-<text x="276" y="441" class="index muted" text-anchor="middle" font-size="12" >01</text>
-<circle cx="352.55" cy="319.15" r="4" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:675ms;--dx:0px;--dy:14px;--delay-brief:378ms;--delay-story:1330ms"/>
-<text x="352.55" y="441" class="index muted" text-anchor="middle" font-size="12" >02</text>
-<circle cx="429.09" cy="249.92" r="4" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:730ms;--dx:0px;--dy:14px;--delay-brief:406ms;--delay-story:1440ms"/>
-<text x="429.09" y="441" class="index muted" text-anchor="middle" font-size="12" >03</text>
-<circle cx="505.64" cy="305.31" r="4" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:785ms;--dx:0px;--dy:14px;--delay-brief:434ms;--delay-story:1550ms"/>
-<text x="505.64" y="441" class="index muted" text-anchor="middle" font-size="12" >04</text>
-<circle cx="582.18" cy="263.77" r="4" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:840ms;--dx:0px;--dy:14px;--delay-brief:462ms;--delay-story:1660ms"/>
-<text x="582.18" y="441" class="index muted" text-anchor="middle" font-size="12" >05</text>
-<circle cx="658.73" cy="222.23" r="4" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:895ms;--dx:0px;--dy:14px;--delay-brief:490ms;--delay-story:1770ms"/>
-<text x="658.73" y="441" class="index muted" text-anchor="middle" font-size="12" >06</text>
-<circle cx="735.27" cy="333" r="4" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:950ms;--dx:0px;--dy:14px;--delay-brief:518ms;--delay-story:1880ms"/>
-<text x="735.27" y="441" class="index muted" text-anchor="middle" font-size="12" >07</text>
-<circle cx="811.82" cy="236.08" r="4" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:1005ms;--dx:0px;--dy:14px;--delay-brief:546ms;--delay-story:1990ms"/>
-<text x="811.82" y="441" class="index muted" text-anchor="middle" font-size="12" >08</text>
-<circle cx="888.36" cy="180.69" r="4" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:1060ms;--dx:0px;--dy:14px;--delay-brief:574ms;--delay-story:2100ms"/>
-<text x="888.36" y="441" class="index muted" text-anchor="middle" font-size="12" >09</text>
-<circle cx="964.91" cy="291.46" r="4" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:1115ms;--dx:0px;--dy:14px;--delay-brief:602ms;--delay-story:2210ms"/>
-<text x="964.91" y="441" class="index muted" text-anchor="middle" font-size="12" >10</text>
-<circle cx="1041.45" cy="263.77" r="4" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:1170ms;--dx:0px;--dy:14px;--delay-brief:630ms;--delay-story:2320ms"/>
-<text x="1041.45" y="441" class="index muted" text-anchor="middle" font-size="12" >11</text>
-<circle cx="1118" cy="111.46" r="7" class="signal-fill" data-motion="dock" data-choreo="pin" style="--delay:1225ms;--dx:0px;--dy:14px;--delay-brief:658ms;--delay-story:2430ms"/>
-<text x="1118" y="441" class="index muted" text-anchor="middle" font-size="12" >12</text>
-<path d="M 1105.0 98.4615384615384 V 84.4615384615384 H 1121.0" class="signal-stroke" pathLength="1" data-motion="lock" data-choreo="alarm" style="--delay:1635ms;--dx:0px;--dy:0px;--delay-brief:938ms;--delay-story:3150ms"/>
-<g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1580ms;--dx:-8px;--dy:0px;--delay-brief:900ms;--delay-story:3020ms">
-<path d="M 0 82 H 202 L 210 90 V 176 H 8 L 0 168 Z" class="panel-stroke" />
-<text x="14" y="103" class="index muted" text-anchor="start" font-size="12" >Q-24</text>
-<text x="196" y="103" class="index signal-text" text-anchor="end" font-size="12" >ALARM</text>
-<text x="14" y="137" class="value" text-anchor="start" font-size="28" font-weight="650" >1</text>
-<text x="14" y="159" class="muted" text-anchor="start" font-size="13" >超出控制界限</text>
-</g></g></svg></section>
+  <section class="chart-body pm-embedded-body">
+    <svg class="pm-data-field pm-embedded-field" viewBox="0 0 1172 500" role="img" aria-label="第十二期突破控制上限，应立即排查特殊原因" style="--pm-evidence-delay:780ms;--pm-evidence-delay-brief:470ms;--pm-evidence-delay-story:1520ms;--pm-lock-delay:1100ms;--pm-lock-delay-brief:670ms;--pm-lock-delay-story:2140ms"><g class="pm-data-field-layer"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >24 / EMBEDDED CONTROL FIELD</text>
+<line x1="86" y1="414" x2="920" y2="414" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--delay-brief:30ms;--delay-story:110ms"/>
+<line x1="86" y1="153" x2="920" y2="153" class="signal-stroke" pathLength="1" data-motion="align" style="--delay:150ms;--dx:0px;--dy:0px;--delay-brief:70ms;--delay-story:240ms"/>
+<text x="912" y="146" class="index signal-text" text-anchor="end" font-size="12" >UCL 60</text>
+<line x1="86" y1="263.77" x2="920" y2="263.77" class="rail" pathLength="1" data-motion="align" style="--delay:150ms;--dx:0px;--dy:0px;--delay-brief:70ms;--delay-story:240ms"/>
+<text x="912" y="256.77" class="index muted" text-anchor="end" font-size="12" >CENTER 52</text>
+<line x1="86" y1="374.54" x2="920" y2="374.54" class="signal-stroke" pathLength="1" data-motion="align" style="--delay:150ms;--dx:0px;--dy:0px;--delay-brief:70ms;--delay-story:240ms"/>
+<text x="912" y="367.54" class="index signal-text" text-anchor="end" font-size="12" >LCL 44</text></g><g class="pm-plot-layer"><path d="M 86.00 277.62 L 161.82 319.15 L 237.64 249.92 L 313.45 305.31 L 389.27 263.77 L 465.09 222.23 L 540.91 333.00 L 616.73 236.08 L 692.55 180.69 L 768.36 291.46 L 844.18 263.77 L 920.00 111.46" class="data-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:360ms;--dx:0px;--dy:0px;--duration:680ms;--delay-brief:190ms;--delay-story:700ms;--duration-brief:440ms;--duration-story:1040ms"/>
+<circle cx="86" cy="277.62" r="4" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:620ms;--dx:0px;--dy:14px;--delay-brief:350ms;--delay-story:1220ms"/>
+<text x="86" y="441" class="index muted" text-anchor="middle" font-size="12" >01</text>
+<circle cx="161.82" cy="319.15" r="4" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:675ms;--dx:0px;--dy:14px;--delay-brief:378ms;--delay-story:1330ms"/>
+<text x="161.82" y="441" class="index muted" text-anchor="middle" font-size="12" >02</text>
+<circle cx="237.64" cy="249.92" r="4" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:730ms;--dx:0px;--dy:14px;--delay-brief:406ms;--delay-story:1440ms"/>
+<text x="237.64" y="441" class="index muted" text-anchor="middle" font-size="12" >03</text>
+<circle cx="313.45" cy="305.31" r="4" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:785ms;--dx:0px;--dy:14px;--delay-brief:434ms;--delay-story:1550ms"/>
+<text x="313.45" y="441" class="index muted" text-anchor="middle" font-size="12" >04</text>
+<circle cx="389.27" cy="263.77" r="4" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:840ms;--dx:0px;--dy:14px;--delay-brief:462ms;--delay-story:1660ms"/>
+<text x="389.27" y="441" class="index muted" text-anchor="middle" font-size="12" >05</text>
+<circle cx="465.09" cy="222.23" r="4" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:895ms;--dx:0px;--dy:14px;--delay-brief:490ms;--delay-story:1770ms"/>
+<text x="465.09" y="441" class="index muted" text-anchor="middle" font-size="12" >06</text>
+<circle cx="540.91" cy="333" r="4" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:950ms;--dx:0px;--dy:14px;--delay-brief:518ms;--delay-story:1880ms"/>
+<text x="540.91" y="441" class="index muted" text-anchor="middle" font-size="12" >07</text>
+<circle cx="616.73" cy="236.08" r="4" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:1005ms;--dx:0px;--dy:14px;--delay-brief:546ms;--delay-story:1990ms"/>
+<text x="616.73" y="441" class="index muted" text-anchor="middle" font-size="12" >08</text>
+<circle cx="692.55" cy="180.69" r="4" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:1060ms;--dx:0px;--dy:14px;--delay-brief:574ms;--delay-story:2100ms"/>
+<text x="692.55" y="441" class="index muted" text-anchor="middle" font-size="12" >09</text>
+<circle cx="768.36" cy="291.46" r="4" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:1115ms;--dx:0px;--dy:14px;--delay-brief:602ms;--delay-story:2210ms"/>
+<text x="768.36" y="441" class="index muted" text-anchor="middle" font-size="12" >10</text>
+<circle cx="844.18" cy="263.77" r="4" class="data-fill" data-motion="dock" data-choreo="pin" style="--delay:1170ms;--dx:0px;--dy:14px;--delay-brief:630ms;--delay-story:2320ms"/>
+<text x="844.18" y="441" class="index muted" text-anchor="middle" font-size="12" >11</text>
+<circle cx="920" cy="111.46" r="7" class="signal-fill" data-motion="dock" data-choreo="pin" style="--delay:1225ms;--dx:0px;--dy:14px;--delay-brief:658ms;--delay-story:2430ms"/>
+<text x="920" y="441" class="index muted" text-anchor="middle" font-size="12" >12</text></g><g class="pm-local-evidence" aria-label="E24 local evidence"><path d="M 946 92 H 1144 L 1152 100 V 168 H 954 L 946 160 Z" class="panel-stroke" />
+<text x="960" y="110" class="index muted" text-anchor="start" font-size="10" >E24 / LIMIT</text>
+<text x="1138" y="110" class="index signal-text" text-anchor="end" font-size="10" >ALARM</text>
+<text x="960" y="144" class="value signal-text" text-anchor="start" font-size="25" font-weight="700" >1</text>
+<text x="1138" y="141" class="muted" text-anchor="end" font-size="11" >超出控制界限</text>
+<rect x="1142" y="126" width="8" height="8" rx="0" class="pm-socket-signal" /></g><g class="pm-target-lock"><path d="M 906.0 125.4615384615384 V 97.4615384615384 H 934.0" class="pm-focus-corner" />
+<path d="M 928.0 111.4615384615384 H 946" class="pm-lock-cross" />
+<rect x="915" y="106.46" width="10" height="10" rx="0" class="pm-socket-signal" />
+<text x="920" y="91.46" class="pm-address pm-address-signal" text-anchor="middle" font-size="10" >P12 / LIMIT</text></g></svg>
+  </section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" data-code="R" title="重播">↻</button><button type="button" data-action="pause" data-code="H" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" data-code="S" title="切换明暗">◐</button></nav>
 </main>
@@ -224,7 +233,7 @@
   const scales={brief:0.72,standard:1.0,story:1.8};
   const scale=scales[profile]||1;
   const macroProfiles={brief:{fieldDelay:25,fieldDuration:420,plotDelay:180,plotDuration:360,lockDuration:220},standard:{fieldDelay:40,fieldDuration:680,plotDelay:320,plotDuration:620,lockDuration:260},story:{fieldDelay:60,fieldDuration:900,plotDelay:480,plotDuration:780,lockDuration:320}};
-  const stagedMacroProfiles={...macroProfiles,standard:{...macroProfiles.standard,fieldDelay:30,lockDuration:300}};
+  const stagedMacroProfiles={...macroProfiles,standard:{...macroProfiles.standard,fieldDelay:30,lockDuration:300,evidenceDuration:360},brief:{...macroProfiles.brief,evidenceDuration:280},story:{...macroProfiles.story,evidenceDuration:440}};
   const activeMacroProfiles=root.querySelector('.pm-plot-layer')?stagedMacroProfiles:macroProfiles;
   const macro=activeMacroProfiles[profile]||activeMacroProfiles.standard;
   root.style.setProperty('--pm-field-delay',macro.fieldDelay+'ms');
@@ -232,10 +241,20 @@
   root.style.setProperty('--pm-plot-delay',macro.plotDelay+'ms');
   root.style.setProperty('--pm-plot-duration',macro.plotDuration+'ms');
   root.style.setProperty('--pm-lock-duration',macro.lockDuration+'ms');
+  root.style.setProperty('--pm-evidence-duration',(macro.evidenceDuration||360)+'ms');
   const directField=root.querySelector('.pm-direct-field');
   if(directField){
     const profileLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay-'+profile));
     const standardLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay'))||980;
+    root.style.setProperty('--pm-active-lock-delay',(Number.isFinite(profileLock)?profileLock:standardLock)+'ms');
+  }
+  const embeddedField=root.querySelector('.pm-embedded-field');
+  if(embeddedField){
+    const profileEvidence=parseFloat(embeddedField.style.getPropertyValue('--pm-evidence-delay-'+profile));
+    const standardEvidence=parseFloat(embeddedField.style.getPropertyValue('--pm-evidence-delay'))||760;
+    const profileLock=parseFloat(embeddedField.style.getPropertyValue('--pm-lock-delay-'+profile));
+    const standardLock=parseFloat(embeddedField.style.getPropertyValue('--pm-lock-delay'))||1080;
+    root.style.setProperty('--pm-active-evidence-delay',(Number.isFinite(profileEvidence)?profileEvidence:standardEvidence)+'ms');
     root.style.setProperty('--pm-active-lock-delay',(Number.isFinite(profileLock)?profileLock:standardLock)+'ms');
   }
   const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);

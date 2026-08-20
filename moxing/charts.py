@@ -10,6 +10,7 @@ from .core import (
     ChartArtwork,
     ChartPage,
     DirectCanvas,
+    EmbeddedEvidence,
     EvidenceInterface,
     PRESENTATION_TARGETS,
     circle,
@@ -291,6 +292,61 @@ def _direct_artwork(
             foreground_svg="\n".join(lock_parts),
             plot_svg="\n".join(plot_parts),
             lock_delay=lock_delay,
+            lock_delay_brief=lock_delay_brief,
+            lock_delay_story=lock_delay_story,
+            compiled_motion=True,
+        ),
+    )
+
+
+def _local_evidence(
+    x: float,
+    y: float,
+    width: float,
+    evidence_id: str,
+    state: str,
+    value: str,
+    note: str,
+    *,
+    height: float = 76,
+) -> str:
+    """Compact B-mode evidence capsule for a verified whitespace anchor."""
+    return "\n".join([
+        path(cut_rect_path(x, y, width, height, 8), cls="panel-stroke"),
+        text(x + 14, y + 18, evidence_id, cls="index muted", size=10),
+        text(x + width - 14, y + 18, state.upper(), cls="index signal-text", anchor="end", size=10),
+        text(x + 14, y + 52, value, cls="value signal-text", size=25, weight=700),
+        text(x + width - 14, y + 49, note, cls="muted", anchor="end", size=11),
+        rect(x + width - 10, y + height / 2 - 4, 8, 8, cls="pm-socket-signal"),
+    ])
+
+
+def _embedded_artwork(
+    field_parts: list[str],
+    plot_parts: list[str],
+    evidence_parts: list[str],
+    lock_parts: list[str],
+    *,
+    evidence_id: str,
+    evidence_delay: int,
+    lock_delay: int,
+    evidence_delay_brief: int,
+    evidence_delay_story: int,
+    lock_delay_brief: int,
+    lock_delay_story: int,
+) -> ChartArtwork:
+    """Compile a B-mode chart into field/relationship/local-evidence/lock layers."""
+    return ChartArtwork(
+        svg="\n".join(field_parts),
+        presentation=EmbeddedEvidence(
+            evidence_id=evidence_id,
+            evidence_svg="\n".join(evidence_parts),
+            foreground_svg="\n".join(lock_parts),
+            plot_svg="\n".join(plot_parts),
+            evidence_delay=evidence_delay,
+            lock_delay=lock_delay,
+            evidence_delay_brief=evidence_delay_brief,
+            evidence_delay_story=evidence_delay_story,
             lock_delay_brief=lock_delay_brief,
             lock_delay_story=lock_delay_story,
             compiled_motion=True,
@@ -1083,7 +1139,7 @@ def build_c12(data: Any) -> str | ChartArtwork:
     )
 
 
-def build_c13(data: Any) -> str:
+def build_c13(data: Any) -> str | ChartArtwork:
     items = sorted([item for item in _valid_series(data) if item["value"] >= 0], key=lambda item: item["value"], reverse=True)[:10]
     if not items or sum(item["value"] for item in items) <= 0:
         return no_data()
@@ -1095,10 +1151,14 @@ def build_c13(data: Any) -> str:
         cumulative.append(running / total * 100)
         if cumulative[-1] >= 80 and threshold == len(items) - 1:
             threshold = index
-    x0, x1, y0, y1 = PLOT_LEFT_WITH_EVIDENCE, 1126, 80, 410
+    x0, x1, y0, y1 = 72, 1128, 80, 410
     band = (x1 - x0) / len(items)
     maximum = max(item["value"] for item in items)
-    parts = [text(0, 28, "13 / PARETO CONTRIBUTION", cls="index muted", size=13), line(x0, y1, x1, y1, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
+    field_parts = [
+        text(0, 28, "13 / EMBEDDED PARETO FIELD", cls="index muted", size=13),
+        line(x0, y1, x1, y1, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}'),
+    ]
+    plot_parts: list[str] = []
     curve = []
     for index, item in enumerate(items):
         width = band * .52
@@ -1106,22 +1166,31 @@ def build_c13(data: Any) -> str:
         x = x0 + band * index + (band - width) / 2
         y = y1 - height
         curve.append((x + width / 2, _scale(cumulative[index], 0, 100, y1, y0)))
-        parts += [
+        plot_parts += [
             path(cut_rect_path(x, y, width, height, 6), cls="signal-fill" if index <= threshold else "data-fill", extra=motion("dock", 220 + index * 75, dy=24, brief=110 + index * 38, story=420 + index * 135, choreo="rail-rise")),
             text(x + width / 2, y - 10, format_num(item["value"]), cls="value", anchor="middle", size=13, extra=motion("lock", 700 + index * 50, brief=400 + index * 28, story=1320 + index * 100, choreo="readout")),
             text(x + width / 2, y1 + 26, item["label"], cls="index muted", anchor="middle", size=12),
         ]
     y80 = _scale(80, 0, 100, y1, y0)
-    parts += [
+    target_x, target_y = curve[threshold]
+    evidence_x = min(858, target_x + 34)
+    evidence_y = min(300, max(210, target_y + 70))
+    field_parts += [
         line(x0, y80, x1, y80, cls="rail", extra=f'pathLength="1" {motion("align", 180, brief=80, story=280)}'),
         text(x1, y80 - 8, "80%", cls="index signal-text", anchor="end", size=12),
-        path(_polyline(curve), cls="signal-stroke", extra=f'pathLength="1" {motion("route", 720, brief=420, story=1420, duration=620, duration_brief=420, duration_story=980, choreo="trace")}'),
-        evidence_plate(0, 76, "P-13", "CORE", f"TOP {threshold + 1}", f"贡献 {cumulative[threshold]:.1f}%", delay=1510, width=190, brief=900, story=2920, choreo="alarm"),
     ]
-    return "\n".join(parts)
+    plot_parts.append(path(_polyline(curve), cls="signal-stroke", extra=f'pathLength="1" {motion("route", 720, brief=420, story=1420, duration=620, duration_brief=420, duration_story=980, choreo="trace")}'))
+    evidence_parts = [_local_evidence(evidence_x, evidence_y, 220, "E13 / 80%", "CORE", f"TOP {threshold + 1}", f"累计 {cumulative[threshold]:.1f}%")]
+    lock_parts = [
+        path(f"M {target_x-12} {target_y+12} V {target_y-12} H {target_x+12}", cls="pm-focus-corner"),
+        path(f"M {target_x+12} {target_y+2} L {evidence_x} {evidence_y+38}", cls="pm-lock-cross"),
+        rect(target_x - 5, target_y - 5, 10, 10, cls="pm-socket-signal"),
+        text(target_x, target_y - 18, f"T{threshold + 1:02d} / 80%", cls="pm-address pm-address-signal", anchor="middle", size=10),
+    ]
+    return _embedded_artwork(field_parts, plot_parts, evidence_parts, lock_parts, evidence_id="E13", evidence_delay=820, lock_delay=1160, evidence_delay_brief=500, evidence_delay_story=1580, lock_delay_brief=720, lock_delay_story=2260)
 
 
-def build_c14(data: Any) -> str:
+def build_c14(data: Any) -> str | ChartArtwork:
     columns = data.get("columns", []) if isinstance(data, dict) else []
     rows = data.get("rows", []) if isinstance(data, dict) else []
     valid = [row for row in rows[:8] if isinstance(row, dict) and str(row.get("label", "")).strip() and isinstance(row.get("values"), list)]
@@ -1131,27 +1200,40 @@ def build_c14(data: Any) -> str:
     x0, y0 = 260, 86
     cell_w = 850 / len(columns)
     cell_h = min(58, 320 / len(valid))
-    parts = [text(0, 28, "14 / COHORT MATRIX", cls="index muted", size=13), line(x0, 62, x0 + cell_w * len(columns), 62, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
+    field_parts = [text(0, 28, "14 / EMBEDDED COHORT FIELD", cls="index muted", size=13), line(x0, 62, x0 + cell_w * len(columns), 62, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
+    plot_parts: list[str] = []
     for col, label in enumerate(columns):
-        parts.append(text(x0 + cell_w * (col + .5), 52, label, cls="index muted", anchor="middle", size=12))
-    best = (0.0, "—", "—")
+        field_parts.append(text(x0 + cell_w * (col + .5), 52, label, cls="index muted", anchor="middle", size=12))
+    best = (0.0, "—", "—", 0, 0)
     for row_i, row in enumerate(valid):
         y = y0 + row_i * cell_h
-        parts.append(text(0, y + cell_h * .62, row["label"], cls="index muted", size=12))
+        field_parts.append(text(198, y + cell_h * .62, row["label"], cls="index muted", anchor="end", size=12))
         for col, value in enumerate(row["values"][:len(columns)]):
             if not is_number(value):
                 continue
             x = x0 + col * cell_w
             cls = "signal-fill" if value >= 50 and col > 0 else ("data-fill" if value >= 75 else "cat-1" if value >= 40 else "panel-stroke")
             delay = 220 + row_i * 90 + col * 45
-            parts += [
+            plot_parts += [
                 rect(x + 3, y + 3, cell_w - 6, cell_h - 6, cls=cls, extra=motion("dock", delay, dy=12, brief=100 + row_i * 40 + col * 20, story=420 + row_i * 160 + col * 90, choreo="field-seat")),
                 text(x + cell_w / 2, y + cell_h * .62, f"{value:.0f}%", cls=_contrast_text_class(cls), anchor="middle", size=13, weight=650, extra=motion("lock", delay + 250, brief=delay // 2 + 160, story=delay * 2 + 320, choreo="readout")),
             ]
             if col > 0 and value > best[0]:
-                best = (value, row["label"], columns[col])
-    parts.append(evidence_plate(0, 350, "C-14", "BEST", f"{best[0]:.0f}%", f"{best[1]} / {best[2]}", delay=1740, width=220, brief=980, story=3280, choreo="alarm"))
-    return "\n".join(parts)
+                best = (value, row["label"], columns[col], row_i, col)
+    target_x = x0 + cell_w * (best[4] + .5)
+    target_y = y0 + cell_h * (best[3] + .5)
+    evidence_x, evidence_y = min(860, target_x + 186), min(374, target_y - 34)
+    evidence_parts = [_local_evidence(evidence_x, evidence_y, 236, "E14 / M+1", "BEST", f"{best[0]:.0f}%", f"{best[1]} / {best[2]}")]
+    left, right = target_x - cell_w / 2 - 2, target_x + cell_w / 2 + 2
+    top, bottom, arm = target_y - cell_h / 2 - 2, target_y + cell_h / 2 + 2, min(13, cell_h * .25)
+    lock_parts = [
+        line(235, target_y, evidence_x, target_y, cls="pm-lock-cross"),
+        line(target_x, 70, target_x, bottom + 10, cls="pm-lock-cross"),
+        path(f"M {left} {top+arm} V {top} H {left+arm} M {right-arm} {top} H {right} V {top+arm} M {right} {bottom-arm} V {bottom} H {right-arm} M {left+arm} {bottom} H {left} V {bottom-arm}", cls="pm-focus-corner"),
+        path(f"M {right} {target_y} H {evidence_x}", cls="pm-lock-cross"),
+        text(target_x, bottom + 18, f"R{best[3]+1:02d} / C{best[4]+1:02d}", cls="pm-address pm-address-signal", anchor="middle", size=10),
+    ]
+    return _embedded_artwork(field_parts, plot_parts, evidence_parts, lock_parts, evidence_id="E14", evidence_delay=900, lock_delay=1240, evidence_delay_brief=540, evidence_delay_story=1740, lock_delay_brief=760, lock_delay_story=2420)
 
 
 def build_c15(data: Any) -> str | ChartArtwork:
@@ -1225,72 +1307,116 @@ def build_c15(data: Any) -> str | ChartArtwork:
     )
 
 
-def build_c16(data: Any) -> str:
+def build_c16(data: Any) -> str | ChartArtwork:
     items = [item for item in data[:12] if isinstance(item, dict) and str(item.get("label", "")).strip() and all(is_number(item.get(key)) for key in ("x", "y", "size")) and item["size"] >= 0] if isinstance(data, list) else []
     if not items:
         return no_data()
     x_values, y_values = [item["x"] for item in items], [item["y"] for item in items]
     x_low, x_high, y_low, y_high = min(x_values), max(x_values), min(y_values), max(y_values)
     x_pad, y_pad = max((x_high - x_low) * .12, 1), max((y_high - y_low) * .15, 1)
-    x0, x1, y0, y1 = PLOT_LEFT_WITH_EVIDENCE, 1118, 74, 420
+    x0, x1, y0, y1 = 82, 1118, 74, 420
     mid_x, mid_y = (x_low + x_high) / 2, (y_low + y_high) / 2
     x_mid, y_mid = _scale(mid_x, x_low - x_pad, x_high + x_pad, x0, x1), _scale(mid_y, y_low - y_pad, y_high + y_pad, y1, y0)
     leader = max(range(len(items)), key=lambda i: items[i]["x"] * items[i]["y"])
     max_size = max(item["size"] for item in items) or 1
-    parts = [
-        text(0, 28, "16 / DECISION BUBBLE MATRIX", cls="index muted", size=13),
+    field_parts = [
+        text(0, 28, "16 / EMBEDDED DECISION FIELD", cls="index muted", size=13),
         line(x0, y1, x1, y1, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}'),
         line(x0, y0, x0, y1, cls="rail-strong", extra=f'pathLength="1" {motion("align", 90, brief=40, story=140)}'),
         line(x_mid, y0, x_mid, y1, cls="grid"), line(x0, y_mid, x1, y_mid, cls="grid"),
         text(x1, y1 + 28, "X / 规模或收益 →", cls="index muted", anchor="end", size=12),
         text(x0, y0 - 12, "Y / 效率或质量 ↑", cls="index muted", size=12),
     ]
+    plot_parts: list[str] = []
+    positions: list[tuple[float, float, float]] = []
+    for item in items:
+        px = _scale(item["x"], x_low - x_pad, x_high + x_pad, x0, x1)
+        py = _scale(item["y"], y_low - y_pad, y_high + y_pad, y1, y0)
+        positions.append((px, py, 12 + 28 * math.sqrt(item["size"] / max_size)))
     for index, item in enumerate(items):
-        x = _scale(item["x"], x_low - x_pad, x_high + x_pad, x0, x1)
-        y = _scale(item["y"], y_low - y_pad, y_high + y_pad, y1, y0)
-        radius = 12 + 28 * math.sqrt(item["size"] / max_size)
+        x, y, radius = positions[index]
         fill_cls = "signal-fill" if index == leader else "cat-1"
-        parts += [
+        plot_parts += [
             circle(x, y, radius, cls=fill_cls, extra=motion("dock", 300 + index * 110, dy=18, brief=150 + index * 58, story=560 + index * 220, choreo="pin")),
             text(x, y + 4, f"{index + 1:02d}", cls=f"index {_contrast_text_class(fill_cls)}", anchor="middle", size=12),
             text(x + radius + 8, y - radius - 4, item["label"], size=13, weight=650 if index == leader else None, extra=motion("lock", 720 + index * 70, brief=430 + index * 40, story=1380 + index * 150, choreo="readout")),
         ]
-    parts.append(evidence_plate(0, 82, "D-16", "PRIORITY", items[leader]["label"], "综合位置最优", delay=1580, width=220, brief=900, story=3020, choreo="alarm"))
-    return "\n".join(parts)
+    capsule_w, capsule_h = 232, 76
+    target_x, target_y, target_r = positions[leader]
+    raw_candidates = [
+        (target_x - capsule_w - 70, target_y - capsule_h - 45),
+        (target_x - capsule_w - 70, target_y + 45),
+        (target_x + 70, target_y - capsule_h - 45),
+        (target_x + 70, target_y + 45),
+    ]
+    candidates = [(min(878, max(96, x)), min(330, max(92, y))) for x, y in raw_candidates]
+    def clearance(candidate: tuple[float, float]) -> float:
+        left, top = candidate
+        right, bottom = left + capsule_w, top + capsule_h
+        gaps = []
+        for px, py, radius in positions:
+            dx = max(left - px, 0, px - right)
+            dy = max(top - py, 0, py - bottom)
+            gaps.append(math.hypot(dx, dy) - radius)
+        return min(gaps)
+    safe_candidates = [candidate for candidate in candidates if clearance(candidate) >= 12]
+    pool = safe_candidates or candidates
+    evidence_x, evidence_y = min(pool, key=lambda candidate: math.hypot(candidate[0] + capsule_w / 2 - target_x, candidate[1] + capsule_h / 2 - target_y))
+    dock_x = evidence_x if target_x < evidence_x else evidence_x + capsule_w
+    dock_y = evidence_y + capsule_h / 2
+    evidence_parts = [_local_evidence(evidence_x, evidence_y, capsule_w, "E16 / QUAD", "PRIORITY", items[leader]["label"], "综合位置最优")]
+    lock_parts = [
+        circle(target_x, target_y, target_r + 8, cls="pm-lock-ring"),
+        path(f"M {target_x} {target_y} L {dock_x} {dock_y}", cls="pm-lock-cross"),
+        rect(target_x - 5, target_y - 5, 10, 10, cls="pm-socket-signal"),
+        text(target_x, target_y + target_r + 24, f"Q{leader+1:02d} / LEADER", cls="pm-address pm-address-signal", anchor="middle", size=10),
+    ]
+    return _embedded_artwork(field_parts, plot_parts, evidence_parts, lock_parts, evidence_id="E16", evidence_delay=780, lock_delay=1120, evidence_delay_brief=470, evidence_delay_story=1520, lock_delay_brief=680, lock_delay_story=2180)
 
 
-def build_c17(data: Any) -> str:
+def build_c17(data: Any) -> str | ChartArtwork:
     items = [item for item in data[:20] if isinstance(item, dict) and str(item.get("date", "")).strip() and all(is_number(item.get(key)) for key in ("open", "high", "low", "close", "volume")) and item["high"] >= max(item["open"], item["close"], item["low"])] if isinstance(data, list) else []
     if not items:
         return no_data()
     low, high = min(item["low"] for item in items), max(item["high"] for item in items)
     volume_max = max(item["volume"] for item in items) or 1
-    x0, x1, price_top, price_bottom, volume_bottom = PLOT_LEFT_WITH_EVIDENCE, 1118, 64, 338, 432
+    x0, x1, price_top, price_bottom, volume_bottom = 84, 908, 64, 338, 432
     band = (x1 - x0) / len(items)
     y = lambda value: _scale(value, low, high, price_bottom, price_top)
-    parts = [text(0, 28, "17 / MARKET CANDLES", cls="index muted", size=13), line(x0, price_bottom, x1, price_bottom, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}'), line(x0, volume_bottom, x1, volume_bottom, cls="rail")]
+    field_parts = [text(0, 28, "17 / EMBEDDED MARKET FIELD", cls="index muted", size=13), line(x0, price_bottom, x1, price_bottom, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}'), line(x0, volume_bottom, x1, volume_bottom, cls="rail")]
+    plot_parts: list[str] = []
     for tick in range(5):
         value = low + (high - low) * tick / 4
         yy = y(value)
-        parts += [line(x0, yy, x1, yy, cls="grid"), text(x0 - 18, yy + 4, f"{value:.1f}", cls="index muted", anchor="end", size=12)]
+        field_parts += [line(x0, yy, x1, yy, cls="grid"), text(x0 - 18, yy + 4, f"{value:.1f}", cls="index muted", anchor="end", size=12)]
     for index, item in enumerate(items):
         cx = x0 + band * (index + .5)
         up = item["close"] >= item["open"]
         body_top, body_bottom = min(y(item["open"]), y(item["close"])), max(y(item["open"]), y(item["close"]))
         cls = "signal-fill" if up else "data-fill"
         delay = 220 + index * 105
-        parts += [
+        plot_parts += [
             line(cx, y(item["high"]), cx, y(item["low"]), cls="signal-stroke" if up else "data-stroke", extra=motion("align", delay, brief=110 + index * 50, story=420 + index * 210)),
             rect(cx - min(19, band * .24), body_top, min(38, band * .48), max(3, body_bottom - body_top), cls=cls, extra=motion("dock", delay + 120, dy=16, brief=delay // 2 + 80, story=delay * 2 + 180, choreo="field-seat")),
             rect(cx - min(15, band * .20), volume_bottom - 70 * item["volume"] / volume_max, min(30, band * .40), 70 * item["volume"] / volume_max, cls="secondary-fill", extra=motion("dock", delay + 80, dy=12, brief=delay // 2, story=delay * 2, choreo="rail-rise")),
             text(cx, volume_bottom + 22, item["date"], cls="index muted", anchor="middle", size=12),
         ]
     change = (items[-1]["close"] / items[0]["open"] - 1) * 100 if items[0]["open"] else 0
-    parts.append(evidence_plate(0, 78, "M-17", "CHANGE", f"{change:+.1f}%", "区间开盘至收盘", delay=1680, width=220, brief=960, story=3220, choreo="alarm"))
-    return "\n".join(parts)
+    breakout = max(range(len(items)), key=lambda index: items[index]["high"])
+    target_x = x0 + band * (breakout + .5)
+    target_y = y(items[breakout]["high"])
+    evidence_x, evidence_y = 934, min(286, max(82, target_y - 24))
+    evidence_parts = [_local_evidence(evidence_x, evidence_y, 218, "E17 / BREAK", "CHANGE", f"{change:+.1f}%", "开盘至收盘")]
+    lock_parts = [
+        path(f"M {target_x-12} {target_y+12} V {target_y-12} H {target_x+12}", cls="pm-focus-corner"),
+        path(f"M {target_x+12} {target_y} H {evidence_x}", cls="pm-lock-cross"),
+        rect(target_x - 5, target_y - 5, 10, 10, cls="pm-socket-signal"),
+        text(target_x, target_y - 18, f"B{breakout+1:02d} / HIGH", cls="pm-address pm-address-signal", anchor="middle", size=10),
+    ]
+    return _embedded_artwork(field_parts, plot_parts, evidence_parts, lock_parts, evidence_id="E17", evidence_delay=840, lock_delay=1180, evidence_delay_brief=510, evidence_delay_story=1620, lock_delay_brief=720, lock_delay_story=2300)
 
 
-def build_c18(data: Any) -> str:
+def build_c18(data: Any) -> str | ChartArtwork:
     labels = data.get("labels", []) if isinstance(data, dict) else []
     values = data.get("values", []) if isinstance(data, dict) else []
     if not labels or len(labels) != len(values) or not all(is_number(value) and value > 0 for value in values):
@@ -1301,25 +1427,38 @@ def build_c18(data: Any) -> str:
         dd = value / peak - 1
         drawdowns.append(dd)
         max_dd = min(max_dd, dd)
-    x0, x1, top, split, bottom = PLOT_LEFT_WITH_EVIDENCE, 1118, 66, 294, 430
+    x0, x1, top, split, bottom = 80, 1120, 66, 258, 438
     xs = [_scale(i, 0, max(1, len(values) - 1), x0, x1) for i in range(len(values))]
-    perf = [(x, _scale(value, min(values), max(values), split - 24, top)) for x, value in zip(xs, values)]
-    under = [(x, _scale(dd, max_dd if max_dd < 0 else -1, 0, bottom, split + 28)) for x, dd in zip(xs, drawdowns)]
-    area = [(x0, split + 28)] + under + [(x1, split + 28)]
-    parts = [
-        text(0, 28, "18 / PERFORMANCE DRAWDOWN", cls="index muted", size=13),
-        line(x0, split, x1, split, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}'),
+    perf = [(x, _scale(value, min(values), max(values), split - 48, top)) for x, value in zip(xs, values)]
+    under = [(x, _scale(dd, max_dd if max_dd < 0 else -1, 0, bottom, split + 48)) for x, dd in zip(xs, drawdowns)]
+    area = [(x0, split + 48)] + under + [(x1, split + 48)]
+    field_parts = [
+        text(0, 28, "18 / EMBEDDED DRAWDOWN FIELD", cls="index muted", size=13),
+        text(x0, top - 10, "累计净值", cls="index muted", size=12), text(x0, split + 68, "回撤区间", cls="index muted", size=12),
+        text(x0, bottom + 22, labels[0], cls="index muted", size=12), text(x1, bottom + 22, labels[-1], cls="index muted", anchor="end", size=12),
+    ]
+    plot_parts = [
         path(_polyline(perf), cls="data-stroke", extra=f'pathLength="1" {motion("route", 260, brief=130, story=500, duration=720, duration_brief=460, duration_story=1100, choreo="trace")}'),
         polygon(area, cls="cat-1", extra=motion("dock", 740, dy=12, brief=420, story=1480, choreo="band-fill")),
         path(_polyline(under), cls="signal-stroke", extra=f'pathLength="1" {motion("route", 820, brief=480, story=1640, duration=620, duration_brief=420, duration_story=980, choreo="trace")}'),
-        text(x0, top - 10, "累计净值", cls="index muted", size=12), text(x0, split + 48, "回撤区间", cls="index muted", size=12),
-        text(x0, bottom + 22, labels[0], cls="index muted", size=12), text(x1, bottom + 22, labels[-1], cls="index muted", anchor="end", size=12),
-        evidence_plate(0, 80, "R-18", "MAX DD", f"{max_dd * 100:.1f}%", "历史最大回撤", delay=1540, width=210, brief=880, story=2940, choreo="alarm"),
     ]
-    return "\n".join(parts)
+    target_index = min(range(len(drawdowns)), key=lambda index: drawdowns[index])
+    target_x, target_y = under[target_index]
+    evidence_x, evidence_y = min(820, max(250, target_x - 96)), 218
+    field_parts += [
+        line(x0, split, evidence_x - 12, split, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}'),
+        line(evidence_x + 226, split, x1, split, cls="rail-strong", extra=f'pathLength="1" {motion("align", 95, brief=45, story=145)}'),
+    ]
+    evidence_parts = [_local_evidence(evidence_x, evidence_y, 214, "E18 / RISK", "MAX DD", f"{max_dd * 100:.1f}%", "历史最大回撤", height=70)]
+    lock_parts = [
+        path(f"M {target_x} {target_y-8} V {evidence_y+70}", cls="pm-lock-cross"),
+        rect(target_x - 5, target_y - 5, 10, 10, cls="pm-socket-signal"),
+        text(target_x + 10, target_y + 16, f"D{target_index+1:02d}", cls="pm-address pm-address-signal", size=10),
+    ]
+    return _embedded_artwork(field_parts, plot_parts, evidence_parts, lock_parts, evidence_id="E18", evidence_delay=820, lock_delay=1150, evidence_delay_brief=500, evidence_delay_story=1580, lock_delay_brief=700, lock_delay_story=2240)
 
 
-def build_c19(data: Any) -> str:
+def build_c19(data: Any) -> str | ChartArtwork:
     labels = data.get("maturities", []) if isinstance(data, dict) else []
     raw = data.get("series", []) if isinstance(data, dict) else []
     series = [item for item in raw[:3] if isinstance(item, dict) and isinstance(item.get("values"), list) and len(item["values"]) == len(labels) and all(is_number(value) for value in item["values"])]
@@ -1328,22 +1467,36 @@ def build_c19(data: Any) -> str:
     all_values = [value for item in series for value in item["values"]]
     low, high = min(all_values), max(all_values)
     pad = max((high - low) * .18, .1)
-    x0, x1, y0, y1 = PLOT_LEFT_WITH_EVIDENCE, 1118, 76, 408
-    parts = [text(0, 28, "19 / YIELD CURVE", cls="index muted", size=13), line(x0, y1, x1, y1, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
+    x0, x1, y0, y1 = 86, 920, 76, 408
+    field_parts = [text(0, 28, "19 / EMBEDDED YIELD FIELD", cls="index muted", size=13), line(x0, y1, x1, y1, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
+    plot_parts: list[str] = []
     for tick in range(5):
         yy = y1 - (y1 - y0) * tick / 4
         value = low - pad + (high - low + 2 * pad) * tick / 4
-        parts += [line(x0, yy, x1, yy, cls="grid"), text(x0 - 18, yy + 4, f"{value:.2f}%", cls="index muted", anchor="end", size=12)]
+        field_parts += [line(x0, yy, x1, yy, cls="grid"), text(x0 - 18, yy + 4, f"{value:.2f}%", cls="index muted", anchor="end", size=12)]
     for index, item in enumerate(series):
         points = [(_scale(i, 0, len(labels) - 1, x0, x1), _scale(value, low - pad, high + pad, y1, y0)) for i, value in enumerate(item["values"])]
-        parts += [path(_polyline(points), cls="signal-stroke" if index == 0 else "secondary-stroke", extra=f'pathLength="1" {motion("route", 280 + index * 180, brief=140 + index * 100, story=520 + index * 420, duration=650, duration_brief=420, duration_story=980, choreo="trace")}'), text(x1, points[-1][1] - 10 - index * 18, item.get("name", f"系列{index + 1}"), cls="index signal-text" if index == 0 else "index muted", anchor="end", size=12, extra=motion("lock", 980 + index * 180, brief=580 + index * 100, story=1920 + index * 360, choreo="readout"))]
+        plot_parts.append(path(_polyline(points), cls="signal-stroke" if index == 0 else "secondary-stroke", extra=f'pathLength="1" {motion("route", 280 + index * 180, brief=140 + index * 100, story=520 + index * 420, duration=650, duration_brief=420, duration_story=980, choreo="trace")}'))
         for point in points:
-            parts.append(circle(point[0], point[1], 4 if index == 0 else 3, cls="signal-fill" if index == 0 else "data-fill", extra=motion("dock", 520 + index * 120, brief=290 + index * 70, story=980 + index * 280, choreo="pin")))
+            plot_parts.append(circle(point[0], point[1], 4 if index == 0 else 3, cls="signal-fill" if index == 0 else "data-fill", extra=motion("dock", 520 + index * 120, brief=290 + index * 70, story=980 + index * 280, choreo="pin")))
+    for index, item in enumerate(series):
+        legend_y = 92 + index * 24
+        field_parts += [
+            line(724, legend_y, 756, legend_y, cls="signal-stroke" if index == 0 else "secondary-stroke"),
+            text(768, legend_y + 4, item.get("name", f"系列{index + 1}"), cls="index signal-text" if index == 0 else "index muted", size=12),
+        ]
     for index, label in enumerate(labels):
-        parts.append(text(_scale(index, 0, len(labels) - 1, x0, x1), y1 + 28, label, cls="index muted", anchor="middle", size=12))
+        field_parts.append(text(_scale(index, 0, len(labels) - 1, x0, x1), y1 + 28, label, cls="index muted", anchor="middle", size=12))
     slope = series[0]["values"][-1] - series[0]["values"][0]
-    parts.append(evidence_plate(0, 82, "Y-19", "SLOPE", f"{slope:+.2f}pp", "长端减短端", delay=1480, width=210, brief=850, story=2820, choreo="alarm"))
-    return "\n".join(parts)
+    target_y = _scale(series[0]["values"][-1], low - pad, high + pad, y1, y0)
+    evidence_x, evidence_y = 946, min(314, max(86, target_y - 38))
+    evidence_parts = [_local_evidence(evidence_x, evidence_y, 206, "E19 / LONG", "SLOPE", f"{slope:+.2f}pp", "长端减短端")]
+    lock_parts = [
+        path(f"M {x1+5} {target_y} H {evidence_x}", cls="pm-lock-cross"),
+        rect(x1 - 5, target_y - 5, 10, 10, cls="pm-socket-signal"),
+        text(x1, target_y + 22, "L08 / END", cls="pm-address pm-address-signal", anchor="end", size=10),
+    ]
+    return _embedded_artwork(field_parts, plot_parts, evidence_parts, lock_parts, evidence_id="E19", evidence_delay=760, lock_delay=1080, evidence_delay_brief=460, evidence_delay_story=1480, lock_delay_brief=660, lock_delay_story=2100)
 
 
 def _matrix_data(data: Any, row_key: str = "rows") -> tuple[list[str], list[str], list[list[float]]]:
@@ -1422,7 +1575,7 @@ def _percentile(values: list[float], ratio: float) -> float:
     return values[low] + (values[high] - values[low]) * (position - low)
 
 
-def build_c21(data: Any) -> str:
+def build_c21(data: Any) -> str | ChartArtwork:
     values = sorted(value for value in data if is_number(value)) if isinstance(data, list) else []
     if len(values) < 2:
         return no_data()
@@ -1432,25 +1585,36 @@ def build_c21(data: Any) -> str:
     for value in values:
         index = min(bins - 1, int((value - low) / (high - low or 1) * bins))
         counts[index] += 1
-    x0, x1, top, base = PLOT_LEFT_WITH_EVIDENCE, 1118, 84, 336
+    x0, x1, top, base = 76, 1118, 84, 336
     band = (x1 - x0) / bins
     maximum = max(counts)
-    parts = [text(0, 28, "21 / DISTRIBUTION PROFILE", cls="index muted", size=13), line(x0, base, x1, base, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
+    field_parts = [text(0, 28, "21 / EMBEDDED DISTRIBUTION FIELD", cls="index muted", size=13), line(x0, base, x1, base, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
+    plot_parts: list[str] = []
     for index, count in enumerate(counts):
         height = count / maximum * (base - top)
         x = x0 + index * band + 3
-        parts += [rect(x, base - height, band - 6, height, cls="signal-fill" if count == maximum else "data-fill", extra=motion("dock", 240 + index * 80, dy=24, brief=120 + index * 42, story=440 + index * 150, choreo="rail-rise")), text(x + (band - 6) / 2, base - height - 10, count, cls="index muted", anchor="middle", size=12)]
+        plot_parts += [rect(x, base - height, band - 6, height, cls="signal-fill" if count == maximum else "data-fill", extra=motion("dock", 240 + index * 80, dy=24, brief=120 + index * 42, story=440 + index * 150, choreo="rail-rise")), text(x + (band - 6) / 2, base - height - 10, count, cls="index muted", anchor="middle", size=12)]
     q1, median, q3 = _percentile(values, .25), _percentile(values, .5), _percentile(values, .75)
     pos = lambda value: _scale(value, low, high, x0, x1)
     box_y = 394
-    parts += [
+    plot_parts += [
         line(pos(low), box_y, pos(high), box_y, cls="rail", extra=f'pathLength="1" {motion("align", 650, brief=380, story=1280)}'),
         rect(pos(q1), box_y - 22, max(4, pos(q3) - pos(q1)), 44, cls="panel-stroke", extra=motion("dock", 820, dx=-16, brief=480, story=1580, choreo="interlock")),
         line(pos(median), box_y - 28, pos(median), box_y + 28, cls="signal-stroke", extra=motion("lock", 1120, brief=650, story=2180, choreo="alarm")),
-        text(x0, 446, format_num(low), cls="index muted", size=12), text(x1, 446, format_num(high), cls="index muted", anchor="end", size=12),
-        evidence_plate(0, 82, "D-21", "MEDIAN", format_num(median), f"IQR {format_num(q3 - q1)}", delay=1480, width=200, brief=850, story=2840, choreo="readout"),
     ]
-    return "\n".join(parts)
+    field_parts += [text(x0, 446, format_num(low), cls="index muted", size=12), text(x1, 446, format_num(high), cls="index muted", anchor="end", size=12)]
+    tail_count = sum(value > q3 for value in values)
+    tail_index = min(bins - 1, max(0, int((q3 - low) / (high - low or 1) * bins)))
+    target_x = x0 + band * (tail_index + .5)
+    target_y = base - counts[tail_index] / maximum * (base - top)
+    evidence_x, evidence_y = min(870, max(650, target_x + 34)), 92
+    evidence_parts = [_local_evidence(evidence_x, evidence_y, 230, "E21 / TAIL", "CHECK", str(tail_count), f"> Q3 {format_num(q3)}")]
+    lock_parts = [
+        path(f"M {target_x} {target_y-8} L {evidence_x} {evidence_y+38}", cls="pm-lock-cross"),
+        rect(target_x - 5, target_y - 5, 10, 10, cls="pm-socket-signal"),
+        text(target_x, target_y - 16, f"B{tail_index+1:02d} / TAIL", cls="pm-address pm-address-signal", anchor="middle", size=10),
+    ]
+    return _embedded_artwork(field_parts, plot_parts, evidence_parts, lock_parts, evidence_id="E21", evidence_delay=780, lock_delay=1110, evidence_delay_brief=470, evidence_delay_story=1520, lock_delay_brief=680, lock_delay_story=2160)
 
 
 def build_c22(data: Any) -> str | ChartArtwork:
@@ -1501,7 +1665,7 @@ def build_c22(data: Any) -> str | ChartArtwork:
     )
 
 
-def build_c23(data: Any) -> str:
+def build_c23(data: Any) -> str | ChartArtwork:
     if not isinstance(data, dict):
         return no_data()
     labels, actual, forecast, lower, upper = (data.get(key, []) for key in ("labels", "actual", "forecast", "lower", "upper"))
@@ -1510,7 +1674,7 @@ def build_c23(data: Any) -> str:
     all_values = actual + lower + upper
     low, high = min(all_values), max(all_values)
     pad = max((high - low) * .12, 1)
-    x0, x1, y0, y1 = PLOT_LEFT_WITH_EVIDENCE, 1118, 72, 414
+    x0, x1, y0, y1 = 86, 920, 72, 414
     xs = [_scale(index, 0, len(labels) - 1, x0, x1) for index in range(len(labels))]
     y = lambda value: _scale(value, low - pad, high + pad, y1, y0)
     split = len(actual) - 1
@@ -1519,24 +1683,34 @@ def build_c23(data: Any) -> str:
     upper_points = [(xs[split + index], y(value)) for index, value in enumerate(upper)]
     lower_points = [(xs[split + index], y(value)) for index, value in enumerate(lower)]
     band = upper_points + list(reversed(lower_points))
-    parts = [
-        text(0, 28, "23 / FORECAST FAN", cls="index muted", size=13),
+    field_parts = [
+        text(0, 28, "23 / EMBEDDED FORECAST FIELD", cls="index muted", size=13),
         line(x0, y1, x1, y1, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}'),
         line(xs[split], y0, xs[split], y1, cls="rail", extra=motion("align", 160, brief=70, story=250)),
         text(xs[split], y0 - 10, "FORECAST →", cls="index signal-text", size=12),
+    ]
+    plot_parts = [
         polygon(band, cls="cat-1", extra=motion("dock", 520, dx=-20, brief=300, story=1020, choreo="band-fill")),
         path(_polyline(actual_points), cls="data-stroke", extra=f'pathLength="1" {motion("route", 240, brief=120, story=460, duration=600, duration_brief=380, duration_story=900, choreo="trace")}'),
         path(_polyline(forecast_points), cls="signal-stroke", extra=f'pathLength="1" {motion("route", 760, brief=440, story=1480, duration=650, duration_brief=420, duration_story=980, choreo="trace")}'),
     ]
     for index, label in enumerate(labels):
         if index in {0, split, len(labels) - 1}:
-            parts.append(text(xs[index], y1 + 28, label, cls="index muted", anchor="middle", size=12))
+            field_parts.append(text(xs[index], y1 + 28, label, cls="index muted", anchor="middle", size=12))
     uncertainty = upper[-1] - lower[-1]
-    parts.append(evidence_plate(0, 82, "F-23", "RANGE", format_num(uncertainty), "末期预测区间宽度", delay=1580, width=226, brief=900, story=3040, choreo="alarm"))
-    return "\n".join(parts)
+    target_x, target_y = forecast_points[-1]
+    evidence_x, evidence_y = 946, min(318, max(96, target_y - 38))
+    evidence_parts = [_local_evidence(evidence_x, evidence_y, 206, "E23 / RANGE", "WIDTH", format_num(uncertainty), "末期预测区间")]
+    lock_parts = [
+        path(f"M {target_x+5} {target_y} H {evidence_x}", cls="pm-lock-cross"),
+        path(f"M {target_x} {upper_points[-1][1]} V {lower_points[-1][1]}", cls="pm-lock-cross"),
+        rect(target_x - 5, target_y - 5, 10, 10, cls="pm-socket-signal"),
+        text(target_x, lower_points[-1][1] + 20, "F10 / RANGE", cls="pm-address pm-address-signal", anchor="end", size=10),
+    ]
+    return _embedded_artwork(field_parts, plot_parts, evidence_parts, lock_parts, evidence_id="E23", evidence_delay=820, lock_delay=1150, evidence_delay_brief=500, evidence_delay_story=1580, lock_delay_brief=700, lock_delay_story=2240)
 
 
-def build_c24(data: Any) -> str:
+def build_c24(data: Any) -> str | ChartArtwork:
     if not isinstance(data, dict):
         return no_data()
     labels, values = data.get("labels", []), data.get("values", [])
@@ -1545,23 +1719,31 @@ def build_c24(data: Any) -> str:
         return no_data()
     low, high = min(min(values), lcl), max(max(values), ucl)
     pad = max((high - low) * .15, 1)
-    x0, x1, y0, y1 = PLOT_LEFT_WITH_EVIDENCE, 1118, 72, 414
+    x0, x1, y0, y1 = 86, 920, 72, 414
     xs = [_scale(index, 0, max(1, len(values) - 1), x0, x1) for index in range(len(values))]
     y = lambda value: _scale(value, low - pad, high + pad, y1, y0)
     points = [(x, y(value)) for x, value in zip(xs, values)]
     breaches = [index for index, value in enumerate(values) if value > ucl or value < lcl]
-    parts = [text(0, 28, "24 / CONTROL CHART", cls="index muted", size=13), line(x0, y1, x1, y1, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
+    field_parts = [text(0, 28, "24 / EMBEDDED CONTROL FIELD", cls="index muted", size=13), line(x0, y1, x1, y1, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
+    plot_parts: list[str] = []
     for label, value, cls in (("UCL", ucl, "signal-stroke"), ("CENTER", center, "rail"), ("LCL", lcl, "signal-stroke")):
         yy = y(value)
-        parts += [line(x0, yy, x1, yy, cls=cls, extra=f'pathLength="1" {motion("align", 150, brief=70, story=240)}'), text(x1, yy - 7, f"{label} {format_num(value)}", cls="index signal-text" if label != "CENTER" else "index muted", anchor="end", size=12)]
-    parts.append(path(_polyline(points), cls="data-stroke", extra=f'pathLength="1" {motion("route", 360, brief=190, story=700, duration=680, duration_brief=440, duration_story=1040, choreo="trace")}'))
+        field_parts += [line(x0, yy, x1, yy, cls=cls, extra=f'pathLength="1" {motion("align", 150, brief=70, story=240)}'), text(x1 - 8, yy - 7, f"{label} {format_num(value)}", cls="index signal-text" if label != "CENTER" else "index muted", anchor="end", size=12)]
+    plot_parts.append(path(_polyline(points), cls="data-stroke", extra=f'pathLength="1" {motion("route", 360, brief=190, story=700, duration=680, duration_brief=440, duration_story=1040, choreo="trace")}'))
     for index, ((x, yy), value) in enumerate(zip(points, values)):
         alarm = index in breaches
-        parts += [circle(x, yy, 7 if alarm else 4, cls="signal-fill" if alarm else "data-fill", extra=motion("dock", 620 + index * 55, dy=14, brief=350 + index * 28, story=1220 + index * 110, choreo="pin")), text(x, y1 + 27, labels[index], cls="index muted", anchor="middle", size=12)]
-        if alarm:
-            parts.append(path(f"M {x-13} {yy-13} V {yy-27} H {x+3}", cls="signal-stroke", extra=f'pathLength="1" {motion("lock", 1250 + index * 35, brief=740 + index * 18, story=2380 + index * 70, choreo="alarm")}'))
-    parts.append(evidence_plate(0, 82, "Q-24", "ALARM", str(len(breaches)), "超出控制界限", delay=1580, width=210, brief=900, story=3020, choreo="alarm"))
-    return "\n".join(parts)
+        plot_parts += [circle(x, yy, 7 if alarm else 4, cls="signal-fill" if alarm else "data-fill", extra=motion("dock", 620 + index * 55, dy=14, brief=350 + index * 28, story=1220 + index * 110, choreo="pin")), text(x, y1 + 27, labels[index], cls="index muted", anchor="middle", size=12)]
+    target_index = breaches[-1] if breaches else max(range(len(values)), key=lambda index: abs(values[index] - center))
+    target_x, target_y = points[target_index]
+    evidence_x, evidence_y = 946, min(314, max(92, target_y - 38))
+    evidence_parts = [_local_evidence(evidence_x, evidence_y, 206, "E24 / LIMIT", "ALARM", str(len(breaches)), "超出控制界限")]
+    lock_parts = [
+        path(f"M {target_x-14} {target_y+14} V {target_y-14} H {target_x+14}", cls="pm-focus-corner"),
+        path(f"M {target_x+8} {target_y} H {evidence_x}", cls="pm-lock-cross"),
+        rect(target_x - 5, target_y - 5, 10, 10, cls="pm-socket-signal"),
+        text(target_x, target_y - 20, f"P{target_index+1:02d} / LIMIT", cls="pm-address pm-address-signal", anchor="middle", size=10),
+    ]
+    return _embedded_artwork(field_parts, plot_parts, evidence_parts, lock_parts, evidence_id="E24", evidence_delay=780, lock_delay=1100, evidence_delay_brief=470, evidence_delay_story=1520, lock_delay_brief=670, lock_delay_story=2140)
 
 
 BUILDERS: dict[str, Callable[[Any], str | ChartArtwork]] = {

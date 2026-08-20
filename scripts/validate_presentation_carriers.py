@@ -32,6 +32,7 @@ def main() -> None:
     }
     interface_ids = {"C3", "C6", "C8", "C15", "C22"}
     direct_a_ids = {"C1", "C2", "C4", "C5", "C7", "C9", "C10", "C11", "C12", "C20"}
+    embedded_b_ids = {"C13", "C14", "C16", "C17", "C18", "C19", "C21", "C23", "C24"}
 
     legacy_spec = PrecisionInterface("E00", "0 0 10 10", 0, 100, "", "")
     legacy_artwork = ChartArtwork("<g></g>", precision=legacy_spec)
@@ -44,7 +45,7 @@ def main() -> None:
         footer="Probe",
         svg="<g></g>",
         data={},
-        presentation=EmbeddedEvidence("E14", "<g></g>", "<g></g>"),
+        presentation=EmbeddedEvidence("E14", "<g></g>", "<g></g>", plot_svg="<g></g>", compiled_motion=True),
         presentation_target="embedded",
     )
     embedded_html = html_page(embedded_page)
@@ -53,13 +54,16 @@ def main() -> None:
         "all charts declare an active carrier": set(active) == set(CHARTS) and set(active.values()) <= {"direct", "embedded", "interface"},
         "all charts declare approved targets": targets == PRESENTATION_TARGETS,
         "current rollout leaves only approved C charts on interface": {chart_id for chart_id, mode in active.items() if mode == "interface"} == interface_ids,
-        "current rollout activates direct across the remaining charts": {chart_id for chart_id, mode in active.items() if mode == "direct"} == set(CHARTS) - interface_ids,
-        "current rollout activates no embedded production chart": "embedded" not in active.values(),
+        "A group activates direct carrier": {chart_id for chart_id, mode in active.items() if mode == "direct"} == direct_a_ids,
+        "B group activates embedded carrier": {chart_id for chart_id, mode in active.items() if mode == "embedded"} == embedded_b_ids,
         "interface markup remains compatible": all('data-interface="precision-v2.1"' in rendered[chart_id] and 'class="chart-body pi-split-body"' in rendered[chart_id] for chart_id in interface_ids),
-        "direct markup has no split bay": all('<section class="chart-body pi-split-body">' not in rendered[chart_id] and 'class="chart-body pm-direct-body"' in rendered[chart_id] for chart_id in set(CHARTS) - interface_ids),
+        "direct markup has no split bay": all('<section class="chart-body pi-split-body">' not in rendered[chart_id] and 'class="chart-body pm-direct-body"' in rendered[chart_id] for chart_id in direct_a_ids),
         "A direct charts use three compiled macro layers": all('data-motion-system="presentation-v2.1"' in rendered[chart_id] and 'class="pm-data-field-layer"' in rendered[chart_id] and 'class="pm-plot-layer"' in rendered[chart_id] and 'class="pm-target-lock"' in rendered[chart_id] for chart_id in direct_a_ids),
         "A direct charts contain no evidence container": all('evidence bay' not in rendered[chart_id] and 'class="evidence-plate"' not in rendered[chart_id] and 'class="pm-local-evidence"' not in rendered[chart_id] for chart_id in direct_a_ids),
         "embedded carrier renders full-width local evidence": 'class="chart-body pm-embedded-body"' in embedded_html and 'class="pm-local-evidence"' in embedded_html and '<section class="chart-body pi-split-body">' not in embedded_html,
+        "embedded positional lock delay remains compatible": EmbeddedEvidence("E14", "", "", 740).lock_delay == 740,
+        "B embedded charts use four compiled macro layers": all('data-motion-system="presentation-v2.1"' in rendered[chart_id] and 'class="pm-data-field-layer"' in rendered[chart_id] and 'class="pm-plot-layer"' in rendered[chart_id] and 'class="pm-local-evidence"' in rendered[chart_id] and 'class="pm-target-lock"' in rendered[chart_id] for chart_id in embedded_b_ids),
+        "B embedded charts contain no detached evidence plate": all('class="pi-evidence-bay"' not in rendered[chart_id] and 'class="evidence-plate"' not in rendered[chart_id] for chart_id in embedded_b_ids),
         "legacy PrecisionInterface name aliases EvidenceInterface": PrecisionInterface is EvidenceInterface,
         "legacy ChartArtwork precision argument resolves to interface carrier": legacy_artwork.presentation is legacy_spec and legacy_artwork.presentation.mode == "interface",
         "conflicting carrier arguments fail closed": conflict_fails(),

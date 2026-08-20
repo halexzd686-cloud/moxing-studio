@@ -22,6 +22,11 @@ const directA = new Set([
   "c10-decision-interface.html", "c11-sector-lock.html", "c12-metric-small-multiples.html",
   "c20-sensitivity-matrix.html",
 ]);
+const embeddedB = new Set([
+  "c13-pareto-contribution.html", "c14-cohort-matrix.html", "c16-decision-bubble-matrix.html",
+  "c17-market-candles.html", "c18-performance-drawdown.html", "c19-yield-curve.html",
+  "c21-distribution-profile.html", "c23-forecast-fan.html", "c24-control-chart.html",
+]);
 const exemplars = {
   "c01-structural-rank.html": { family: "rail-rise", cue: "rail-rise", animation: "pm-field-enter", direct: true, directLayers: 3 },
   "c02-ranked-rail.html": { family: "ranked-rail", cue: "rail-slide", animation: "pm-field-enter", direct: true, directLayers: 3 },
@@ -35,18 +40,18 @@ const exemplars = {
   "c10-decision-interface.html": { family: "decision-readout", cue: "readout", animation: "pm-field-enter", direct: true, directLayers: 3 },
   "c11-sector-lock.html": { family: "sector-lock", cue: "field-seat", animation: "pm-field-enter", direct: true, directLayers: 3 },
   "c12-metric-small-multiples.html": { family: "metric-pulse", cue: "trace", animation: "pm-field-enter", direct: true, directLayers: 3 },
-  "c13-pareto-contribution.html": { family: "pareto-routing", cue: "rail-rise", animation: "mx-rail-rise" },
-  "c14-cohort-matrix.html": { family: "cohort-seating", cue: "field-seat", animation: "mx-field-seat" },
+  "c13-pareto-contribution.html": { family: "pareto-routing", cue: "rail-rise", animation: "pm-field-enter", embedded: true, embeddedLayers: 4 },
+  "c14-cohort-matrix.html": { family: "cohort-seating", cue: "field-seat", animation: "pm-field-enter", embedded: true, embeddedLayers: 4 },
   "c15-commerce-flow.html": { family: "flow-routing", cue: "trace", animation: "pi-field-enter", precision: true },
-  "c16-decision-bubble-matrix.html": { family: "quadrant-lock", cue: "pin", animation: "mx-pin" },
-  "c17-market-candles.html": { family: "market-build", cue: "field-seat", animation: "mx-field-seat" },
-  "c18-performance-drawdown.html": { family: "drawdown-routing", cue: "trace", animation: "mx-route" },
-  "c19-yield-curve.html": { family: "curve-routing", cue: "trace", animation: "mx-route" },
+  "c16-decision-bubble-matrix.html": { family: "quadrant-lock", cue: "pin", animation: "pm-field-enter", embedded: true, embeddedLayers: 4 },
+  "c17-market-candles.html": { family: "market-build", cue: "field-seat", animation: "pm-field-enter", embedded: true, embeddedLayers: 4 },
+  "c18-performance-drawdown.html": { family: "drawdown-routing", cue: "trace", animation: "pm-field-enter", embedded: true, embeddedLayers: 4 },
+  "c19-yield-curve.html": { family: "curve-routing", cue: "trace", animation: "pm-field-enter", embedded: true, embeddedLayers: 4 },
   "c20-sensitivity-matrix.html": { family: "matrix-seating", cue: "field-seat", animation: "pm-field-enter", direct: true, directLayers: 3 },
-  "c21-distribution-profile.html": { family: "distribution-build", cue: "rail-rise", animation: "mx-rail-rise" },
+  "c21-distribution-profile.html": { family: "distribution-build", cue: "rail-rise", animation: "pm-field-enter", embedded: true, embeddedLayers: 4 },
   "c22-correlation-matrix.html": { family: "matrix-seating", cue: "field-seat", animation: "pi-field-enter", precision: true },
-  "c23-forecast-fan.html": { family: "forecast-routing", cue: "trace", animation: "mx-route" },
-  "c24-control-chart.html": { family: "control-lock", cue: "trace", animation: "mx-route" },
+  "c23-forecast-fan.html": { family: "forecast-routing", cue: "trace", animation: "pm-field-enter", embedded: true, embeddedLayers: 4 },
+  "c24-control-chart.html": { family: "control-lock", cue: "trace", animation: "pm-field-enter", embedded: true, embeddedLayers: 4 },
 };
 const failures = [];
 const checks = [];
@@ -114,6 +119,7 @@ for (const [file, expected] of Object.entries(exemplars)) {
   if (!source.includes(`data-choreo="${expected.cue}"`)) fail(scope, `missing ${expected.cue} cue`);
   if (expected.precision && (!source.includes('data-motion-system="precision-v2.1"') || !source.includes('class="chart-body pi-split-body"') || !source.includes('class="pi-evidence-bay"') || !source.includes('class="pi-data-field"') || !source.includes('class="pi-bay-terminal"') || !source.includes('pi-overlay--foreground'))) fail(scope, "approved precision-interface contract incomplete");
   if (expected.direct && (!source.includes('data-motion-system="presentation-v2.1"') || !source.includes('data-presentation-carrier="direct"') || !source.includes('class="pm-data-field-layer"') || !source.includes('class="pm-plot-layer"') || !source.includes('class="pm-target-lock"') || source.includes('class="pi-evidence-bay"'))) fail(scope, "approved direct-canvas contract incomplete");
+  if (expected.embedded && (!source.includes('data-motion-system="presentation-v2.1"') || !source.includes('data-presentation-carrier="embedded"') || !source.includes('class="pm-data-field-layer"') || !source.includes('class="pm-plot-layer"') || !source.includes('class="pm-local-evidence"') || !source.includes('class="pm-target-lock"') || source.includes('class="pi-evidence-bay"'))) fail(scope, "approved embedded-evidence contract incomplete");
   const explicit = source.match(new RegExp(`data-choreo="${expected.cue}"[^>]*style="([^"]+)"`))?.[1] || "";
   if (!explicit.includes("--delay-brief:") || !explicit.includes("--delay-story:")) fail(scope, "cue lacks independent profile timing");
   if (!failures.some((item) => item.scope === scope)) pass(scope, `${expected.family} with independent profile timing`);
@@ -126,6 +132,15 @@ for (const file of directA) {
   if (!source.includes('class="pm-target-lock"') || !source.includes('pm-address-signal')) fail(scope, "missing local target lock");
   if (source.includes("evidence bay") || source.includes('class="evidence-plate"') || source.includes('class="pm-local-evidence"')) fail(scope, "detached evidence remains");
   if (!failures.some((item) => item.scope === scope)) pass(scope, "full-width field with local target lock");
+}
+
+for (const file of embeddedB) {
+  const source = fs.readFileSync(path.join(templatesDir, file), "utf8");
+  const scope = `embedded:${file}`;
+  if (!source.includes('data-presentation-carrier="embedded"') || !source.includes('data-presentation-target="embedded"')) fail(scope, "embedded carrier/target mismatch");
+  if (!source.includes('class="pm-local-evidence"') || !source.includes('class="pm-target-lock"') || !source.includes('pm-address-signal')) fail(scope, "local evidence or target lock missing");
+  if (source.includes('class="pi-evidence-bay"') || source.includes('class="evidence-plate"')) fail(scope, "detached evidence container remains");
+  if (!failures.some((item) => item.scope === scope)) pass(scope, "full-width field with embedded local evidence");
 }
 
 for (const [file, expected] of Object.entries(precisionSpecs)) {
@@ -251,6 +266,37 @@ for (const file of Object.keys(precisionSpecs)) {
   await context.close();
 }
 
+for (const file of embeddedB) {
+  const context = await browser.newContext({ viewport: { width: 1280, height: 720 }, reducedMotion: "no-preference" });
+  const page = await context.newPage();
+  await page.goto(`${pathToFileURL(path.join(templatesDir, file)).href}?motion=brief&autoplay=off`, { waitUntil: "load" });
+  const frameState = await page.evaluate(() => new Promise((resolve) => {
+    window.Moxing.replay();
+    const gaps = [];
+    let previous = performance.now();
+    const sample = (now) => {
+      gaps.push(now - previous);
+      previous = now;
+      if (gaps.length < 50) { requestAnimationFrame(sample); return; }
+      const ordered = [...gaps].sort((a, b) => a - b);
+      resolve({
+        carrier: document.querySelector('.pm-embedded-field')?.tagName,
+        p95: ordered[Math.floor(ordered.length * .95)],
+        over28: gaps.filter((gap) => gap > 28).length,
+        running: document.getAnimations().filter((item) => item.playState === "running").length,
+        layers: document.querySelectorAll('.pm-data-field-layer,.pm-plot-layer,.pm-local-evidence,.pm-target-lock').length,
+        legacy: [...document.querySelectorAll('[data-motion]')].filter((item) => getComputedStyle(item).animationName !== "none").length,
+      });
+    };
+    requestAnimationFrame(sample);
+  }));
+  const scope = `embedded-performance:${file}`;
+  const expectedLayers = 4;
+  if (frameState.carrier !== "svg" && frameState.carrier !== "SVG" || frameState.p95 > 28 || frameState.over28 > 3 || frameState.running > expectedLayers || frameState.layers !== expectedLayers || frameState.legacy) fail(scope, JSON.stringify(frameState));
+  else pass(scope, `embedded carrier p95 ${frameState.p95.toFixed(1)}ms; ${frameState.layers} layers; legacy idle`);
+  await context.close();
+}
+
 for (const file of directA) {
   const context = await browser.newContext({ viewport: { width: 1280, height: 720 }, reducedMotion: "no-preference" });
   const page = await context.newPage();
@@ -295,22 +341,23 @@ for (const [file, expected] of Object.entries(exemplars)) {
     await page.goto(`${pathToFileURL(path.join(templatesDir, file)).href}?motion=${profile}`, { waitUntil: "load" });
     await page.evaluate(() => window.Moxing.replay());
     await page.waitForTimeout(50);
-    observed[profile] = await page.evaluate(({ cue, precision, direct }) => {
-      const element = document.querySelector(precision ? '.pi-data-field' : direct ? '.pm-data-field-layer' : `[data-choreo="${cue}"]`);
-      const lock = document.querySelector(precision ? '.pi-lock-ring,.pi-focus-corner' : direct ? '.pm-target-lock' : '[data-choreo="alarm"]');
+    observed[profile] = await page.evaluate(({ cue, precision, direct, embedded }) => {
+      const compiled = direct || embedded;
+      const element = document.querySelector(precision ? '.pi-data-field' : compiled ? '.pm-data-field-layer' : `[data-choreo="${cue}"]`);
+      const lock = document.querySelector(precision ? '.pi-lock-ring,.pi-focus-corner' : compiled ? '.pm-target-lock' : '[data-choreo="alarm"]');
       const style = element ? getComputedStyle(element) : null;
       const lockStyle = lock ? getComputedStyle(lock) : null;
       return {
         profile: window.Moxing?.profile,
         duration: window.Moxing?.duration,
-        delay: element ? (precision || direct ? Number.parseFloat(style.animationDelay) * 1000 : Number.parseFloat(element.style.getPropertyValue("--active-delay"))) : null,
-        lockDelay: lock ? (precision || direct ? Number.parseFloat(lockStyle.animationDelay) * 1000 : Number.parseFloat(lock.style.getPropertyValue("--active-delay"))) : null,
+        delay: element ? (precision || compiled ? Number.parseFloat(style.animationDelay) * 1000 : Number.parseFloat(element.style.getPropertyValue("--active-delay"))) : null,
+        lockDelay: lock ? (precision || compiled ? Number.parseFloat(lockStyle.animationDelay) * 1000 : Number.parseFloat(lock.style.getPropertyValue("--active-delay"))) : null,
         animation: style?.animationName,
         running: document.getAnimations().filter((item) => item.playState === "running").length,
-        layers: document.querySelectorAll(direct ? ".pm-data-field-layer,.pm-plot-layer,.pm-target-lock" : ".pi-data-field,.pi-evidence-bay,.pi-bay-terminal,.pi-lock-ring,.pi-focus-corner").length,
+        layers: document.querySelectorAll(direct ? ".pm-data-field-layer,.pm-plot-layer,.pm-target-lock" : embedded ? ".pm-data-field-layer,.pm-plot-layer,.pm-local-evidence,.pm-target-lock" : ".pi-data-field,.pi-evidence-bay,.pi-bay-terminal,.pi-lock-ring,.pi-focus-corner").length,
         legacy: [...document.querySelectorAll("[data-motion]")].filter((item) => getComputedStyle(item).animationName !== "none").length,
       };
-    }, { cue: expected.cue, precision: Boolean(expected.precision), direct: Boolean(expected.direct) });
+    }, { cue: expected.cue, precision: Boolean(expected.precision), direct: Boolean(expected.direct), embedded: Boolean(expected.embedded) });
     await page.evaluate(() => window.Moxing.settle());
   }
   const scope = `profiles:${file}`;
@@ -319,9 +366,11 @@ for (const [file, expected] of Object.entries(exemplars)) {
     if (state.profile !== profile) fail(scope, `${profile} runtime reported ${state.profile}`);
     if (state.duration < minimum || state.duration > maximum) fail(scope, `${profile} duration ${state.duration}`);
     if (state.animation !== expected.animation) fail(scope, `${profile} animation ${state.animation}`);
-    if (!expected.direct && state.running < 3) fail(scope, `${profile} only ${state.running} active animations`);
+    if (!expected.direct && !expected.embedded && state.running < 3) fail(scope, `${profile} only ${state.running} active animations`);
     const directLayers = expected.directLayers || 2;
     if (expected.direct && (state.running !== directLayers || state.layers !== directLayers || state.legacy)) fail(scope, `${profile} direct layers ${state.running}/${state.layers}; legacy=${state.legacy}`);
+    const embeddedLayers = expected.embeddedLayers || 4;
+    if (expected.embedded && (state.running !== embeddedLayers || state.layers !== embeddedLayers || state.legacy)) fail(scope, `${profile} embedded layers ${state.running}/${state.layers}; legacy=${state.legacy}`);
     if (expected.precision && (state.running > 4 || state.layers !== 4)) fail(scope, `${profile} precision layers ${state.running}/${state.layers}`);
   }
   const briefRatio = observed.brief.delay / observed.standard.delay;
@@ -357,23 +406,37 @@ const collisionPage = await collisionContext.newPage();
 for (const file of chartFiles) {
   await collisionPage.goto(`${pathToFileURL(path.join(templatesDir, file)).href}?motion=off`, { waitUntil: "load" });
   const collisions = await collisionPage.evaluate(() => {
-    const plates = [...document.querySelectorAll(".evidence-plate")];
+    const plates = [...document.querySelectorAll(".evidence-plate,.pm-local-evidence")];
     const geometry = [...document.querySelectorAll([
       "line.rail-strong",
       "path.data-stroke", "path.signal-stroke", "path.secondary-stroke",
       "rect.data-fill", "rect.signal-fill", "rect.secondary-fill", "rect.cat-1",
       "circle.data-fill", "circle.signal-fill", "circle.secondary-fill", "circle.cat-1",
       "polygon.data-fill", "polygon.signal-fill", "polygon.secondary-fill", "polygon.cat-1",
-    ].join(","))].filter((element) => !element.closest(".evidence-plate"));
+    ].join(","))].filter((element) => !element.closest(".evidence-plate,.pm-local-evidence"));
     const overlaps = (a, b) => (
       a.x <= b.x + b.width && a.x + a.width >= b.x
       && a.y <= b.y + b.height && a.y + a.height >= b.y
     );
+    const pathTouches = (element, plateBox) => {
+      if (element.tagName.toLowerCase() !== "path" || typeof element.getTotalLength !== "function") return null;
+      const length = element.getTotalLength();
+      const matrix = element.getScreenCTM();
+      if (!matrix || !Number.isFinite(length)) return false;
+      const padding = 3;
+      for (let index = 0; index <= 96; index += 1) {
+        const local = element.getPointAtLength(length * index / 96);
+        const point = new DOMPoint(local.x, local.y).matrixTransform(matrix);
+        if (point.x >= plateBox.left - padding && point.x <= plateBox.right + padding && point.y >= plateBox.top - padding && point.y <= plateBox.bottom + padding) return true;
+      }
+      return false;
+    };
     return plates.flatMap((plate, plateIndex) => {
       const plateBox = plate.getBoundingClientRect();
       return geometry.flatMap((element, geometryIndex) => {
         const box = element.getBoundingClientRect();
-        if (!overlaps(plateBox, box)) return [];
+        const sampled = pathTouches(element, plateBox);
+        if (sampled === false || sampled === null && !overlaps(plateBox, box)) return [];
         return [{ plate: plateIndex, geometry: geometryIndex, tag: element.tagName, className: element.getAttribute("class") || "" }];
       });
     });
