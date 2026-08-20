@@ -50,6 +50,7 @@ node scripts/export-motion.mjs chart.html chart.mp4 brief
 - 面积和半径编码使用平方根换算。不得使用 3D、装饰渐变、玻璃拟态、霓虹光晕、双 Y 轴或彩虹色。
 - 标题至少 30px；轴与正文至少 14px；数据标签至少 16px；来源至少 12px。
 - 点阵字体只用于编号、时间码、比例和状态，不用于长中文或正文。
+- 使用共享 Precision Interface 头部：零补位编号、短英文族名、FAMILY/DATA/STATE 元数据与三键控制坞；这些元素服务于识别和状态，不得挤压中文结论。
 - 保持离线可用，不加载在线字体、CDN 或外部图表库。
 
 ## Delivery check

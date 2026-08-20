@@ -1,12 +1,12 @@
 # Moxing Studio v2 — Handoff
 
-> Updated: 2026-08-19
+> Updated: 2026-08-20
 >
-> Branch: `v2.0.3-readability`
+> Branch: `codex/v2.1-production-rollout`
 >
-> Status: v2.0.3 readability candidate; header separation and adaptive filled-mark labels implemented
+> Status: v2.1 production rollout phase 1; approved Precision Interface shell is generated across C1–C24
 >
-> Visual review: approved on 2026-08-19
+> Visual review: four representative prototypes approved on 2026-08-20; full production gallery awaits review
 
 ## Product contract
 
@@ -15,6 +15,7 @@
 - Inline vanilla JavaScript schedules `ALIGN`, `DOCK`, `ROUTE`, and `LOCK`.
 - `brief`, `standard`, and `story` timing profiles share one motion grammar.
 - Light/dark surfaces share one structural identity.
+- All chart contracts share the approved zero-padded device address, live data-shape metadata, calibration ticks, and coded control dock.
 - Repository templates link local fonts; custom deliverables embed fonts by default.
 
 ## Architecture
@@ -59,6 +60,7 @@ If Playwright is installed outside the project, set `MOXING_PLAYWRIGHT_PATH`. Se
 
 - 103 boundary render cases pass.
 - 206 browser/static/motion/layout/readability checks pass; see `docs/previews/qa-report.json`.
+- The approved four-chart Precision Interface Lab passes 17 focused layout, motion-layer, and narrow-viewport checks.
 - All 24 templates render with and without JavaScript.
 - Reduced-motion mode settles immediately.
 - No external runtime requests.
@@ -72,6 +74,7 @@ The reusable data contracts, numerical formatting, boundary cases, browser detec
 
 ## Next maintenance steps
 
-1. Keep new top-left evidence plates inside the reserved annotation lane.
-2. Extend the critical-geometry selector when a new SVG mark family is introduced.
-3. Run boundary and browser QA before every release.
+1. Review the phase-1 production gallery before migrating family-level evidence bays, ports, and target locks.
+2. Migrate family-level components in bounded batches; do not copy prototype DOM patches into individual templates.
+3. Keep new top-left evidence plates inside the reserved annotation lane and extend the critical-geometry selector for new mark families.
+4. Run boundary, browser, and Precision Interface Lab QA before every release.

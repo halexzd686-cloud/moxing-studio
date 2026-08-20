@@ -19,6 +19,15 @@ The internal metaphor is precise joinery. Public-facing language uses **Structur
 3. **Evidence plate** — annotations use a numbered, ordered plate: index, state, value, explanation.
 4. **Lock mark** — the single oxide signal identifies the conclusion, target, turning point, or risk.
 
+## Precision interface shell
+
+- The shared shell carries roughly 40% precision-device character while chart geometry, Chinese editorial hierarchy, and data honesty remain unmistakably Moxing.
+- Every chart uses a zero-padded device address, short family/state codes, one FAMILY/DATA/STATE row, sparse calibration ticks, and a three-cell control dock.
+- Interface metadata is generated from the active chart contract and live data shape; it must not be decorative or claim a fixed record count.
+- Keep the identifier block and Chinese conclusion in separate grid columns with at least 24 px visible separation.
+- Do not copy Nothing product glyphs, logos, type treatments, or ornamental dot fields. The resemblance comes from restraint, device hierarchy, and purposeful micro-structure.
+- Evidence bays, ports, and target locks are family-level components. Add them only when they clarify a real relationship and preserve the chart's plotting area.
+
 ## Composition
 
 - Use an asymmetric 16:9 composition by default. Reserve 24–36% of the canvas for the conclusion or evidence column when the chart benefits from it.

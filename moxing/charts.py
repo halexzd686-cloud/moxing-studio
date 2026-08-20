@@ -194,30 +194,30 @@ DEFAULTS: dict[str, Any] = {
 
 
 CHARTS = {
-    "C1": {"slug": "structural-rank", "name": "Structural Rank", "title": "华东规模领先，优势来自稳定增长"},
-    "C2": {"slug": "ranked-rail", "name": "Ranked Rail", "title": "华东服务评分居首，区域差距仍可控"},
-    "C3": {"slug": "signal-trend", "name": "Signal Trend", "title": "增长在下半年加速，年末达到新高"},
-    "C4": {"slug": "composition-field", "name": "Composition Field", "title": "自然搜索贡献最大，前三渠道占比达 86%"},
-    "C5": {"slug": "composition-bands", "name": "Composition Bands", "title": "产品 A 持续扩张，结构集中度提高"},
-    "C6": {"slug": "ledger-steps", "name": "Ledger Steps", "title": "新增和续约抵消流失，期末净增 160"},
-    "C7": {"slug": "milestone-lanes", "name": "Milestone Lanes", "title": "核心开发进入中段，测试窗口即将开启"},
-    "C8": {"slug": "stage-channel", "name": "Stage Channel", "title": "付费转化是主瓶颈，续约质量相对稳定"},
-    "C9": {"slug": "metric-lockup", "name": "Metric Lockup", "title": "经常性收入同比增长 23.8%，完成目标 85.7%"},
-    "C10": {"slug": "decision-interface", "name": "Decision Interface", "title": "华东营收领先，华南是唯一同比下滑区域"},
-    "C11": {"slug": "sector-lock", "name": "Sector Lock", "title": "服饰贡献近四成，是当前结构的核心支点"},
-    "C12": {"slug": "metric-small-multiples", "name": "Metric Small Multiples", "title": "增长质量同步改善，规模提升并未推高退款率"},
-    "C13": {"slug": "pareto-contribution", "name": "Pareto Contribution", "title": "前三款商品贡献近四分之三，应优先保障供给"},
-    "C14": {"slug": "cohort-matrix", "name": "Cohort Matrix", "title": "新客次月复购持续改善，五月队列达到 52%"},
-    "C15": {"slug": "commerce-flow", "name": "Commerce Flow", "title": "商品详情到加购流失最大，是成交链路首要修复点"},
-    "C16": {"slug": "decision-bubble-matrix", "name": "Decision Bubble Matrix", "title": "爆款 A 兼具高流量与高转化，应扩大资源投入"},
-    "C17": {"slug": "market-candles", "name": "Market Candles", "title": "价格放量突破前高，短期趋势转强"},
-    "C18": {"slug": "performance-drawdown", "name": "Performance Drawdown", "title": "累计收益创新高，最大回撤控制在 6.3%"},
-    "C19": {"slug": "yield-curve", "name": "Yield Curve", "title": "曲线整体上移且保持陡峭，期限溢价继续扩张"},
-    "C20": {"slug": "sensitivity-matrix", "name": "Sensitivity Matrix", "title": "增长与毛利率同时改善时，估值弹性显著放大"},
-    "C21": {"slug": "distribution-profile", "name": "Distribution Profile", "title": "数据主体集中在 15–25，右侧长尾需要单独核查"},
-    "C22": {"slug": "correlation-matrix", "name": "Correlation Matrix", "title": "营收与毛利高度同向，投放与复购呈弱负相关"},
-    "C23": {"slug": "forecast-fan", "name": "Forecast Fan", "title": "基准预测继续增长，远期区间明显扩大"},
-    "C24": {"slug": "control-chart", "name": "Control Chart", "title": "第十二期突破控制上限，应立即排查特殊原因"},
+    "C1": {"slug": "structural-rank", "name": "Structural Rank", "title": "华东规模领先，优势来自稳定增长", "family": "RANK", "state": "LEADER.LOCK"},
+    "C2": {"slug": "ranked-rail", "name": "Ranked Rail", "title": "华东服务评分居首，区域差距仍可控", "family": "RANK", "state": "TOP.LOCK"},
+    "C3": {"slug": "signal-trend", "name": "Signal Trend", "title": "增长在下半年加速，年末达到新高", "family": "ROUTE", "state": "TRACE.LOCK"},
+    "C4": {"slug": "composition-field", "name": "Composition Field", "title": "自然搜索贡献最大，前三渠道占比达 86%", "family": "FIELD", "state": "SHARE.LOCK"},
+    "C5": {"slug": "composition-bands", "name": "Composition Bands", "title": "产品 A 持续扩张，结构集中度提高", "family": "BAND", "state": "MIX.LOCK"},
+    "C6": {"slug": "ledger-steps", "name": "Ledger Steps", "title": "新增和续约抵消流失，期末净增 160", "family": "LEDGER", "state": "NET.LOCK"},
+    "C7": {"slug": "milestone-lanes", "name": "Milestone Lanes", "title": "核心开发进入中段，测试窗口即将开启", "family": "TIMELINE", "state": "ACTIVE.LOCK"},
+    "C8": {"slug": "stage-channel", "name": "Stage Channel", "title": "付费转化是主瓶颈，续约质量相对稳定", "family": "STAGE", "state": "BOTTLENECK"},
+    "C9": {"slug": "metric-lockup", "name": "Metric Lockup", "title": "经常性收入同比增长 23.8%，完成目标 85.7%", "family": "METRIC", "state": "TARGET.LOCK"},
+    "C10": {"slug": "decision-interface", "name": "Decision Interface", "title": "华东营收领先，华南是唯一同比下滑区域", "family": "DECISION", "state": "RISK.LOCK"},
+    "C11": {"slug": "sector-lock", "name": "Sector Lock", "title": "服饰贡献近四成，是当前结构的核心支点", "family": "SECTOR", "state": "LEADER.LOCK"},
+    "C12": {"slug": "metric-small-multiples", "name": "Metric Small Multiples", "title": "增长质量同步改善，规模提升并未推高退款率", "family": "METRIC", "state": "PULSE.READY"},
+    "C13": {"slug": "pareto-contribution", "name": "Pareto Contribution", "title": "前三款商品贡献近四分之三，应优先保障供给", "family": "PARETO", "state": "THRESHOLD"},
+    "C14": {"slug": "cohort-matrix", "name": "Cohort Matrix", "title": "新客次月复购持续改善，五月队列达到 52%", "family": "COHORT", "state": "BEST.LOCK"},
+    "C15": {"slug": "commerce-flow", "name": "Commerce Flow", "title": "商品详情到加购流失最大，是成交链路首要修复点", "family": "PORT", "state": "LEAK.LOCK"},
+    "C16": {"slug": "decision-bubble-matrix", "name": "Decision Bubble Matrix", "title": "爆款 A 兼具高流量与高转化，应扩大资源投入", "family": "QUADRANT", "state": "PRIORITY"},
+    "C17": {"slug": "market-candles", "name": "Market Candles", "title": "价格放量突破前高，短期趋势转强", "family": "MARKET", "state": "CHANGE.LOCK"},
+    "C18": {"slug": "performance-drawdown", "name": "Performance Drawdown", "title": "累计收益创新高，最大回撤控制在 6.3%", "family": "RISK", "state": "DRAWDOWN"},
+    "C19": {"slug": "yield-curve", "name": "Yield Curve", "title": "曲线整体上移且保持陡峭，期限溢价继续扩张", "family": "CURVE", "state": "SLOPE.LOCK"},
+    "C20": {"slug": "sensitivity-matrix", "name": "Sensitivity Matrix", "title": "增长与毛利率同时改善时，估值弹性显著放大", "family": "MATRIX", "state": "UPSIDE.LOCK"},
+    "C21": {"slug": "distribution-profile", "name": "Distribution Profile", "title": "数据主体集中在 15–25，右侧长尾需要单独核查", "family": "DISTRIBUTION", "state": "MEDIAN.LOCK"},
+    "C22": {"slug": "correlation-matrix", "name": "Correlation Matrix", "title": "营收与毛利高度同向，投放与复购呈弱负相关", "family": "MATRIX", "state": "PAIR.LOCK"},
+    "C23": {"slug": "forecast-fan", "name": "Forecast Fan", "title": "基准预测继续增长，远期区间明显扩大", "family": "FORECAST", "state": "RANGE.LOCK"},
+    "C24": {"slug": "control-chart", "name": "Control Chart", "title": "第十二期突破控制上限，应立即排查特殊原因", "family": "CONTROL", "state": "ALARM.LOCK"},
 }
 
 CHOREOGRAPHIES = {
@@ -1184,6 +1184,36 @@ BUILDERS: dict[str, Callable[[Any], str]] = {
 }
 
 
+def _data_signature(data: Any) -> str:
+    """Summarise the live contract shape without exposing or inventing values."""
+    if isinstance(data, list):
+        return f"{len(data):02d}I"
+    if not isinstance(data, dict):
+        return "00I"
+
+    rows = data.get("rows")
+    columns = data.get("columns")
+    if isinstance(rows, list) and isinstance(columns, list):
+        return f"{len(rows):02d}R · {len(columns):02d}C"
+
+    nodes = data.get("nodes")
+    links = data.get("links")
+    if isinstance(nodes, list) and isinstance(links, list):
+        return f"{len(nodes):02d}N · {len(links):02d}R"
+
+    axis = next((data.get(key) for key in ("labels", "categories", "maturities") if isinstance(data.get(key), list)), None)
+    series = data.get("series")
+    if isinstance(axis, list):
+        if isinstance(series, list):
+            return f"{len(axis):02d}T · {len(series):02d}S"
+        return f"{len(axis):02d}T"
+
+    items = data.get("items")
+    if isinstance(items, list):
+        return f"{len(items):02d}I"
+    return f"{len(data):02d}F"
+
+
 def render_chart(
     chart_id: str,
     data: Any | None = None,
@@ -1209,6 +1239,9 @@ def render_chart(
         footer=footer,
         svg=BUILDERS[key](source),
         data=source,
+        family=meta["family"],
+        data_signature=_data_signature(source),
+        interface_state=meta["state"],
         total_ms=1900 if key in {"C3", "C7", "C8"} else 1750,
         profile_totals=PROFILE_TOTALS.get(key, {}),
         choreography=CHOREOGRAPHIES.get(key, "structural"),

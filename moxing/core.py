@@ -224,6 +224,9 @@ class ChartPage:
     footer: str
     svg: str
     data: Any
+    family: str = "STRUCT"
+    data_signature: str = "—"
+    interface_state: str = "READY"
     total_ms: int = 1800
     profile_totals: dict[str, int] = field(default_factory=dict)
     choreography: str = "structural"
@@ -270,8 +273,11 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
     title_font = TOKENS["typography"]["title"]
     text_font = TOKENS["typography"]["text"]
     index_font = TOKENS["typography"]["index"]
+    interface_tokens = TOKENS["interface"]
     motion_tokens = TOKENS["motion"]
     font_css = _font_face_css(embed_fonts)
+    display_code = f"C{int(page.chart_id[1:]):02d}" if page.chart_id[1:].isdigit() else page.chart_id
+    header_ticks = "<i></i>" * 16
     return f"""<!DOCTYPE html>
 <html lang=\"zh-CN\" data-surface=\"{esc(page.surface)}\">
 <head>
@@ -284,11 +290,27 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   * {{ box-sizing:border-box; }}
   html,body {{ width:1280px; height:720px; margin:0; overflow:hidden; background:var(--bg); color:var(--ink); }}
   body {{ font-family:{text_font}; -webkit-font-smoothing:antialiased; }}
-  .chart-container {{ width:1280px; height:720px; padding:38px 54px 28px; display:grid; grid-template-rows:124px 1fr 28px; position:relative; background:var(--bg); }}
-  .chart-header {{ display:grid; grid-template-columns:170px minmax(0,1fr); column-gap:30px; align-items:start; border-top:1.5px solid var(--ink); padding:12px 122px 0 0; }}
-  .chart-code {{ font-family:{index_font}; font-size:14px; font-weight:650; font-variation-settings:'ROND' 0,'wght' 650; letter-spacing:.055em; color:var(--matrix-strong); }}
+  .chart-container {{ width:1280px; height:720px; padding:38px 54px 28px; display:grid; grid-template-rows:{interface_tokens['headerHeight']}px 1fr 28px; position:relative; background:var(--bg); }}
+  .chart-header {{ display:grid; grid-template-columns:{interface_tokens['codeWidth']}px minmax(0,1fr); column-gap:{interface_tokens['headerGap']}px; align-items:start; border-top:1.5px solid var(--ink); padding:10px 122px 0 0; position:relative; }}
+  .chart-code {{ align-self:start; font-family:{index_font}; font-variation-settings:'ROND' 0,'wght' 650; letter-spacing:.055em; color:var(--matrix-strong); }}
+  .mx-code {{ height:84px; display:grid; grid-template-rows:20px 1fr 18px; border-left:2px solid var(--ink); padding-left:12px; position:relative; }}
+  .mx-code::after {{ content:""; position:absolute; left:-2px; bottom:0; width:18px; height:2px; background:var(--signal); }}
+  .mx-code__top,.mx-code__state {{ display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:11px; color:var(--matrix-strong); font-weight:700; }}
+  .mx-code__top strong {{ font-size:14px; color:var(--matrix-strong); font-weight:720; }}
+  .mx-code__name {{ align-self:center; max-width:138px; font-size:12px; line-height:1.2; color:var(--matrix-strong); }}
+  .mx-code__state {{ justify-content:flex-start; color:var(--signal); }}
+  .mx-dots {{ display:grid; grid-template-columns:repeat(3,3px); grid-auto-rows:3px; gap:2px; margin-right:3px; }}
+  .mx-dots i {{ display:block; width:3px; height:3px; background:var(--matrix-quiet); }}
+  .mx-dots i:last-child {{ background:var(--signal); }}
   .chart-title {{ margin:0; font-family:{title_font}; font-size:34px; line-height:1.18; font-weight:700; letter-spacing:.01em; }}
   .chart-subtitle {{ margin-top:8px; color:var(--muted); font-size:14px; }}
+  .mx-meta {{ margin-top:7px; display:flex; align-items:center; gap:{interface_tokens['metaGap']}px; font-family:{index_font}; font-size:11px; font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.075em; color:var(--matrix-strong); }}
+  .mx-meta span {{ display:flex; align-items:center; gap:6px; white-space:nowrap; }}
+  .mx-meta span::before {{ content:""; display:block; width:5px; height:5px; border:1px solid currentColor; }}
+  .mx-meta span[data-state]::before {{ background:var(--signal); border-color:var(--signal); }}
+  .mx-header-ticks {{ position:absolute; right:123px; top:-1px; height:7px; display:flex; align-items:start; gap:5px; }}
+  .mx-header-ticks i {{ display:block; width:1px; height:4px; background:var(--rail); }}
+  .mx-header-ticks i:nth-child(4n) {{ height:7px; background:var(--signal); }}
   .chart-body {{ min-height:0; }}
   svg {{ display:block; width:100%; height:100%; overflow:visible; }}
   svg text {{ font-family:{text_font}; fill:var(--ink); }}
@@ -320,8 +342,11 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   .chart-footer .mark {{ font-family:{index_font}; color:var(--matrix-quiet); font-weight:600; font-variation-settings:'ROND' 0,'wght' 600; letter-spacing:.07em; }}
   [data-mode=\"brief\"] .evidence-plate {{ display:none; }}
   [data-mode=\"brief\"] svg .grid {{ opacity:.62; }}
-  .motion-controls {{ position:absolute; right:54px; top:48px; display:flex; gap:6px; z-index:5; }}
-  .motion-controls button {{ width:30px; height:30px; border:1px solid var(--rail); background:var(--bg); color:var(--ink); font-family:{index_font}; cursor:pointer; padding:0; }}
+  .motion-controls {{ position:absolute; right:54px; top:48px; display:grid; grid-template-columns:repeat(3,{interface_tokens['controlCell']}px); gap:0; z-index:5; border:1px solid var(--rail); clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px)); background:var(--bg); }}
+  .motion-controls::before {{ content:"CTRL / 03"; position:absolute; right:0; top:-16px; font-family:{index_font}; font-size:9px; letter-spacing:.08em; color:var(--matrix-quiet); }}
+  .motion-controls button {{ width:{interface_tokens['controlCell']}px; height:36px; border:0; border-left:1px solid var(--rail); background:var(--bg); color:var(--ink); font-family:{index_font}; cursor:pointer; padding:0; position:relative; }}
+  .motion-controls button:first-child {{ border-left:0; }}
+  .motion-controls button::after {{ content:attr(data-code); position:absolute; right:3px; bottom:1px; font-size:7px; color:var(--matrix-quiet); letter-spacing:.04em; }}
   .motion-controls button:hover {{ border-color:var(--signal); color:var(--signal); }}
   [data-motion] {{ transform-box:fill-box; transform-origin:center; }}
   @keyframes mx-align {{ from {{ opacity:0; stroke-dashoffset:1; }} to {{ opacity:1; stroke-dashoffset:0; }} }}
@@ -356,12 +381,13 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
 <body>
 <main class=\"chart-container\" id=\"moxing-chart\" data-total=\"{page.total_ms}\" data-total-brief=\"{page.profile_totals.get('brief', round(page.total_ms * .68))}\" data-total-standard=\"{page.profile_totals.get('standard', page.total_ms)}\" data-total-story=\"{page.profile_totals.get('story', round(page.total_ms * 1.8))}\" data-mode=\"{esc(page.mode)}\" data-choreography=\"{esc(page.choreography)}\">
   <header class=\"chart-header\">
-    <div class=\"chart-code\">{esc(page.chart_id)} / {esc(page.public_name.upper())}</div>
-    <div><h1 class=\"chart-title\">{esc(page.title)}</h1><div class=\"chart-subtitle\">{esc(page.subtitle)}</div></div>
+    <div class=\"chart-code\"><div class=\"mx-code\"><div class=\"mx-code__top\"><strong>{esc(display_code)}</strong><span>SYS / 21</span></div><div class=\"mx-code__name\">{esc(page.public_name.upper())}</div><div class=\"mx-code__state\"><span class=\"mx-dots\" aria-hidden=\"true\"><i></i><i></i><i></i><i></i><i></i><i></i></span>{esc(page.interface_state)}</div></div></div>
+    <div><h1 class=\"chart-title\">{esc(page.title)}</h1><div class=\"chart-subtitle\">{esc(page.subtitle)}</div><div class=\"mx-meta\"><span>FAMILY / {esc(page.family)}</span><span>DATA / {esc(page.data_signature)}</span><span data-state>STATE / READY</span></div></div>
+    <span class=\"mx-header-ticks\" aria-hidden=\"true\">{header_ticks}</span>
   </header>
   <section class=\"chart-body\"><svg viewBox=\"0 0 {W} {H}\" role=\"img\" aria-label=\"{esc(page.title)}\">{page.svg}</svg></section>
   <footer class=\"chart-footer\"><span>{esc(page.footer)}</span><span class=\"mark\">MOXING / STRUCTURAL INTERFACE</span></footer>
-  <nav class=\"motion-controls\" aria-label=\"动画控制\"><button type=\"button\" data-action=\"replay\" title=\"重播\">↻</button><button type=\"button\" data-action=\"pause\" title=\"暂停或继续\">Ⅱ</button><button type=\"button\" data-action=\"surface\" title=\"切换明暗\">◐</button></nav>
+  <nav class=\"motion-controls\" aria-label=\"动画控制\"><button type=\"button\" data-action=\"replay\" data-code=\"R\" title=\"重播\">↻</button><button type=\"button\" data-action=\"pause\" data-code=\"H\" title=\"暂停或继续\">Ⅱ</button><button type=\"button\" data-action=\"surface\" data-code=\"S\" title=\"切换明暗\">◐</button></nav>
 </main>
 <script type=\"application/json\" id=\"moxing-data\">{data_json.replace('</', '<\\/')}</script>
 <script>

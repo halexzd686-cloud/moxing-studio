@@ -87,6 +87,9 @@ for (const file of chartFiles) {
   if (/(?:src|href)\s*=\s*["']https?:\/\//i.test(source) || /url\(\s*["']?https?:\/\//i.test(source)) fail(scope, "external runtime URL");
   if (/paper|boardroom|mori|dawn/i.test(source)) fail(scope, "legacy theme residue");
   if (!/<h1\b[^>]*class="chart-title"[^>]*>[^<]+<\/h1>/i.test(source)) fail(scope, "missing conclusion title");
+  if (!source.includes('class="mx-code"') || !source.includes('class="mx-meta"') || !source.includes('class="mx-header-ticks"')) fail(scope, "missing precision interface shell");
+  if (!/class="mx-code__top"><strong>C\d{2}<\/strong>/.test(source)) fail(scope, "chart identifier is not zero-padded");
+  if ((source.match(/data-code="[RHS]"/g) || []).length !== 3) fail(scope, "control dock codes incomplete");
   if (!failures.some((item) => item.scope === scope)) pass(scope, "v2 static contract");
 }
 
@@ -137,6 +140,12 @@ async function inspect(file, javaScriptEnabled) {
       shapes: document.querySelectorAll("svg path,svg rect,svg circle,svg line,svg polygon").length,
       api: Boolean(window.Moxing),
       surface: document.documentElement.dataset.surface,
+      precisionShell: {
+        code: document.querySelectorAll(".mx-code").length,
+        meta: document.querySelectorAll(".mx-meta span").length,
+        ticks: document.querySelectorAll(".mx-header-ticks i").length,
+        controls: document.querySelectorAll(".motion-controls button[data-code]").length,
+      },
       headerGap: (() => { const code = document.querySelector(".chart-code"); const title = document.querySelector(".chart-title"); if (!code || !title) return -1; const range = document.createRange(); range.selectNodeContents(code); return title.getBoundingClientRect().left - range.getBoundingClientRect().right; })(),
       titleOverflow: (() => { const title = document.querySelector(".chart-title"); const header = document.querySelector(".chart-header"); if (!title || !header) return true; const range = document.createRange(); range.selectNodeContents(title); const textBox = range.getBoundingClientRect(); const titleBox = title.getBoundingClientRect(); const headerBox = header.getBoundingClientRect(); return textBox.right > titleBox.right + .5 || textBox.bottom > headerBox.bottom + .5; })(),
       overflow: document.body.scrollWidth > 1280 || document.body.scrollHeight > 720,
@@ -147,6 +156,7 @@ async function inspect(file, javaScriptEnabled) {
   if (state.overflow) fail(scope, "page overflow");
   if (state.titleOverflow) fail(scope, "conclusion title overflow");
   if (state.headerGap < 24) fail(scope, `header gap ${state.headerGap.toFixed(1)}px`);
+  if (state.precisionShell.code !== 1 || state.precisionShell.meta !== 3 || state.precisionShell.ticks !== 16 || state.precisionShell.controls !== 3) fail(scope, `precision shell ${JSON.stringify(state.precisionShell)}`);
   if (javaScriptEnabled && !state.api) fail(scope, "runtime API missing");
   if (consoleErrors.length || pageErrors.length || external.length) fail(scope, [...consoleErrors, ...pageErrors, ...external].join(" | "));
   if (!failures.some((item) => item.scope === scope)) pass(scope, javaScriptEnabled ? "runtime and locked frame" : "static fallback");

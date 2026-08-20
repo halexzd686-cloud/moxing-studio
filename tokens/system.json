@@ -1,5 +1,5 @@
 {
-  "version": "2.0",
+  "version": "2.1",
   "surfaces": {
     "light": {
       "bg": "#F2F3EF",
@@ -45,6 +45,15 @@
     "cut": 8,
     "stroke": 1.5,
     "strokeStrong": 2.25
+  },
+  "interface": {
+    "system": "precision-device",
+    "headerHeight": 132,
+    "codeWidth": 170,
+    "headerGap": 30,
+    "metaGap": 18,
+    "controlCell": 38,
+    "evidenceBay": {"width": 220, "gap": 28}
   },
   "motion": {
     "profiles": {

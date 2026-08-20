@@ -142,9 +142,11 @@
     stylesheet.href = variantCss;
     doc.head.append(stylesheet);
 
+    const titleBlock = doc.querySelector(".chart-title").parentElement;
+    titleBlock.querySelector(".mx-meta")?.remove();
+    header.querySelector(".mx-header-ticks")?.remove();
     code.innerHTML = `<div class="pi-code"><div class="pi-code__top"><strong>${spec.code}</strong><span>SYS / 21</span></div><div class="pi-code__name">${spec.name}</div><div class="pi-code__state"><span class="pi-dots" aria-hidden="true">${"<i></i>".repeat(6)}</span>${spec.state}</div></div>`;
 
-    const titleBlock = doc.querySelector(".chart-title").parentElement;
     const meta = doc.createElement("div");
     meta.className = "pi-meta";
     meta.innerHTML = `<span>FAMILY / ${spec.family}</span><span>DATA / ${spec.data}</span><span data-state>STATE / READY</span>`;
