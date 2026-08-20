@@ -4,7 +4,7 @@
 >
 > Branch: `codex/v2.1-production-rollout`
 >
-> Status: v2.1 production rollout phase 1; approved Precision Interface shell is generated across C1–C24
+> Status: v2.1 production rollout phase 2; macro scene runtime is implemented on C3/C8/C15/C22 for review
 >
 > Visual review: four representative prototypes approved on 2026-08-20; full production gallery awaits review
 
@@ -12,7 +12,7 @@
 
 - Canonical canvas: 1280×720, responsive scale through SVG/viewer.
 - Final geometry is generated in Python and remains readable without JavaScript.
-- Inline vanilla JavaScript schedules `ALIGN`, `DOCK`, `ROUTE`, and `LOCK`.
+- `ALIGN`, `DOCK`, `ROUTE`, and `LOCK` remain authoring semantics; the production canaries compile them into `DATA_FIELD`, `EVIDENCE_BAY`, and `TERMINAL_LOCK`.
 - `brief`, `standard`, and `story` timing profiles share one motion grammar.
 - Light/dark surfaces share one structural identity.
 - All chart contracts share the approved zero-padded device address, live data-shape metadata, calibration ticks, and coded control dock.
@@ -59,7 +59,7 @@ If Playwright is installed outside the project, set `MOXING_PLAYWRIGHT_PATH`. Se
 ## Current QA
 
 - 103 boundary render cases pass.
-- 206 browser/static/motion/layout/readability checks pass; see `docs/previews/qa-report.json`.
+- 208 browser/static/motion/layout/readability/gallery-scheduling checks pass; see `docs/previews/qa-report.json`.
 - The approved four-chart Precision Interface Lab passes 17 focused layout, motion-layer, and narrow-viewport checks.
 - All 24 templates render with and without JavaScript.
 - Reduced-motion mode settles immediately.
@@ -74,7 +74,7 @@ The reusable data contracts, numerical formatting, boundary cases, browser detec
 
 ## Next maintenance steps
 
-1. Review the phase-1 production gallery before migrating family-level evidence bays, ports, and target locks.
-2. Migrate family-level components in bounded batches; do not copy prototype DOM patches into individual templates.
+1. Review C3, C8, C15, and C22 macro motion in the production gallery.
+2. After approval, migrate C1–C10, C11–C16, C17–C20, and C21–C24 in bounded batches.
 3. Keep new top-left evidence plates inside the reserved annotation lane and extend the critical-geometry selector for new mark families.
 4. Run boundary, browser, and Precision Interface Lab QA before every release.

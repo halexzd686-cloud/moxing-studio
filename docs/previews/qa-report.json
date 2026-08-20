@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T04:16:45.303Z",
+  "generatedAt": "2026-08-20T04:51:53.296Z",
   "status": "passed",
   "checks": [
     {
@@ -460,7 +460,7 @@
     },
     {
       "scope": "motion",
-      "message": "19 deterministic animations active"
+      "message": "3 macro animations active; legacy marks idle"
     },
     {
       "scope": "motion",
@@ -825,6 +825,14 @@
     {
       "scope": "gallery",
       "message": "24 compact v2 cards"
+    },
+    {
+      "scope": "gallery-motion",
+      "message": "4 visible iframes animating; offscreen idle"
+    },
+    {
+      "scope": "gallery-replay",
+      "message": "canary replay reuses iframe and stays within macro layer budget"
     }
   ],
   "failures": []

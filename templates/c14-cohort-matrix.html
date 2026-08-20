@@ -113,10 +113,21 @@
   .motion-enabled.is-playing [data-choreo="alarm"] { animation-name:mx-alarm; }
   .motion-enabled.is-paused [data-motion] { animation-play-state:paused!important; }
   @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing [data-motion] { animation:none!important; } }
+  [data-motion-system="macro-v2.1"] [data-motion]:not([data-scene]) { animation:none!important; }
+  [data-scene] { transform-box:fill-box; transform-origin:center; }
+  @keyframes mx-scene-field { from { opacity:0; transform:translate3d(0,10px,0); } to { opacity:1; transform:translate3d(0,0,0); } }
+  @keyframes mx-scene-evidence { from { opacity:0; transform:translate3d(-10px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
+  @keyframes mx-scene-lock { 0% { opacity:0; transform:scale(.94); } 72% { opacity:1; transform:scale(1.018); } 100% { opacity:1; transform:scale(1); } }
+  .motion-enabled.is-playing[data-motion-system="macro-v2.1"] [data-scene="data-field"] { will-change:transform,opacity; animation:mx-scene-field var(--scene-duration) cubic-bezier(.2,.72,.18,1) var(--scene-delay) both; }
+  .motion-enabled.is-playing[data-motion-system="macro-v2.1"] [data-scene="evidence-bay"] { will-change:transform,opacity; animation:mx-scene-evidence var(--scene-duration) cubic-bezier(.2,.72,.18,1) var(--scene-delay) both; }
+  .motion-enabled.is-playing[data-motion-system="macro-v2.1"] [data-scene="terminal-lock"] { will-change:transform,opacity; animation:mx-scene-lock var(--scene-duration) cubic-bezier(.2,.72,.18,1) var(--scene-delay) both; }
+  .motion-enabled.is-paused[data-motion-system="macro-v2.1"] [data-scene] { animation-play-state:paused!important; }
+  .is-complete[data-motion-system="macro-v2.1"] [data-scene] { will-change:auto; }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-motion-system="macro-v2.1"] [data-scene] { animation:none!important; } }
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1200" data-total-standard="2200" data-total-story="4100" data-mode="editorial" data-choreography="cohort-seating">
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1200" data-total-standard="2200" data-total-story="4100" data-mode="editorial" data-choreography="cohort-seating" data-motion-system="legacy">
   <header class="chart-header">
     <div class="chart-code"><div class="mx-code"><div class="mx-code__top"><strong>C14</strong><span>SYS / 21</span></div><div class="mx-code__name">COHORT MATRIX</div><div class="mx-code__state"><span class="mx-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>BEST.LOCK</div></div></div>
     <div><h1 class="chart-title">新客次月复购持续改善，五月队列达到 52%</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / COHORT</span><span>DATA / 05R · 06C</span><span data-state>STATE / READY</span></div></div>
@@ -175,7 +186,7 @@
 <text x="330.83" y="353.96" class="on-fill" text-anchor="middle" font-size="13" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:830ms;--dx:0px;--dy:0px;--delay-brief:450ms;--delay-story:1480ms">100%</text>
 <rect x="404.67" y="321" width="135.67" height="52" rx="0" class="signal-fill" data-motion="dock" data-choreo="field-seat" style="--delay:625ms;--dx:0px;--dy:12px;--delay-brief:280ms;--delay-story:1150ms"/>
 <text x="472.5" y="353.96" class="on-signal" text-anchor="middle" font-size="13" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:875ms;--dx:0px;--dy:0px;--delay-brief:472ms;--delay-story:1570ms">52%</text>
-<g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1740ms;--dx:-8px;--dy:0px;--delay-brief:980ms;--delay-story:3280ms">
+<g class="evidence-plate" data-scene="evidence-bay" data-motion="lock" data-choreo="alarm" style="--delay:1740ms;--dx:-8px;--dy:0px;--delay-brief:980ms;--delay-story:3280ms">
 <path d="M 0 350 H 212 L 220 358 V 444 H 8 L 0 436 Z" class="panel-stroke" />
 <text x="14" y="371" class="index muted" text-anchor="start" font-size="12" >C-14</text>
 <text x="206" y="371" class="index signal-text" text-anchor="end" font-size="12" >BEST</text>
@@ -197,6 +208,8 @@
   const scale=scales[profile]||1;
   const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);
   const total=Number(root.dataset[profileKey]||root.dataset.total||1800);
+  const macro=root.dataset.motionSystem==='macro-v2.1';
+  const sceneTimings={"brief":{"data-field":{"delay":0,"duration":650},"evidence-bay":{"delay":300,"duration":450},"terminal-lock":{"delay":620,"duration":260}},"standard":{"data-field":{"delay":0,"duration":850},"evidence-bay":{"delay":450,"duration":600},"terminal-lock":{"delay":820,"duration":380}},"story":{"data-field":{"delay":0,"duration":1450},"evidence-bay":{"delay":850,"duration":1150},"terminal-lock":{"delay":1700,"duration":650}}};
   const baseDuration={align:220,dock:620,route:520,lock:280};
   root.querySelectorAll('[data-motion]').forEach(el=>{
     const rawDelay=parseFloat(el.style.getPropertyValue('--delay'))||0;
@@ -206,13 +219,18 @@
     el.style.setProperty('--active-delay',Math.round(Number.isFinite(profileDelay)?profileDelay:rawDelay*scale)+'ms');
     el.style.setProperty('--active-duration',Math.round(Number.isFinite(profileDuration)?profileDuration:rawDuration*scale)+'ms');
   });
-  let timer=0;
-  const settle=()=>{ clearTimeout(timer); root.classList.remove('is-playing','is-paused'); root.classList.add('is-complete'); };
+  if(macro) root.querySelectorAll('[data-scene]').forEach(el=>{
+    const timing=sceneTimings[profile]?.[el.dataset.scene]||{delay:0,duration:300};
+    el.style.setProperty('--scene-delay',timing.delay+'ms');
+    el.style.setProperty('--scene-duration',timing.duration+'ms');
+  });
+  let timer=0,frame=0;
+  const settle=()=>{ clearTimeout(timer); cancelAnimationFrame(frame); root.classList.remove('is-playing','is-paused'); root.classList.add('is-complete'); const b=root.querySelector('[data-action=pause]'); if(b)b.textContent='Ⅱ'; };
   const replay=()=>{
-    clearTimeout(timer); root.classList.remove('is-playing','is-complete','is-paused'); void root.offsetWidth;
+    clearTimeout(timer); cancelAnimationFrame(frame); root.classList.remove('is-playing','is-complete','is-paused');
     if(reduce){settle();return;}
-    root.style.setProperty('--motion-scale',scale); root.classList.add('motion-enabled','is-playing');
-    timer=setTimeout(settle,total+120);
+    root.style.setProperty('--motion-scale',scale); root.classList.add('motion-enabled');
+    frame=requestAnimationFrame(()=>{frame=requestAnimationFrame(()=>{root.classList.add('is-playing');timer=setTimeout(settle,total+120);});});
   };
   const pause=()=>{ root.classList.toggle('is-paused'); const b=root.querySelector('[data-action=pause]'); b.textContent=root.classList.contains('is-paused')?'▶':'Ⅱ'; };
   root.querySelector('[data-action=replay]').addEventListener('click',replay);
@@ -220,7 +238,7 @@
   root.querySelector('[data-action=surface]').addEventListener('click',()=>{ const html=document.documentElement; html.dataset.surface=html.dataset.surface==='dark'?'light':'dark'; });
   if(params.get('theme')==='dark') document.documentElement.dataset.surface='dark';
   window.Moxing={replay,settle,setSurface:(v)=>document.documentElement.dataset.surface=v,profile,duration:total,ready:Promise.resolve()};
-  if(reduce) settle();
+  if(reduce||params.get('autoplay')==='off') settle();
   else if('IntersectionObserver'in window){ const io=new IntersectionObserver(e=>{if(e[0].isIntersecting){io.disconnect();replay();}},{threshold:.35});io.observe(root); }
   else replay();
 })();

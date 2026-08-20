@@ -200,7 +200,11 @@ def evidence_plate(
         text(x + 14, y + 55, value, cls="value", size=28, weight=650),
         text(x + 14, y + 77, note, cls="muted", size=13),
     ]
-    return group(children, cls="evidence-plate", extra=motion("lock", delay, dx=-8, brief=brief, story=story, choreo=choreo))
+    return group(
+        children,
+        cls="evidence-plate",
+        extra=f'data-scene="evidence-bay" {motion("lock", delay, dx=-8, brief=brief, story=story, choreo=choreo)}',
+    )
 
 
 def no_data(message: str = "暂无可用数据") -> str:
@@ -212,6 +216,13 @@ def no_data(message: str = "暂无可用数据") -> str:
         ],
         cls="empty-state",
     )
+
+
+@dataclass
+class SceneContract:
+    """Scene-level motion ownership for the production renderer."""
+
+    system: str = "macro-v2.1"
 
 
 @dataclass
@@ -232,6 +243,7 @@ class ChartPage:
     choreography: str = "structural"
     surface: str = "light"
     mode: str = "editorial"
+    scene: SceneContract | None = None
 
 
 def _surface_css(name: str, values: dict[str, Any]) -> str:
@@ -278,6 +290,10 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
     font_css = _font_face_css(embed_fonts)
     display_code = f"C{int(page.chart_id[1:]):02d}" if page.chart_id[1:].isdigit() else page.chart_id
     header_ticks = "<i></i>" * 16
+    motion_system = page.scene.system if page.scene else "legacy"
+    scene_svg = f'<g data-scene="data-field">{page.svg}</g>' if page.scene else page.svg
+    state_scene = ' data-scene="terminal-lock"' if page.scene else ""
+    scene_timings = json.dumps(motion_tokens.get("scenes", {}), separators=(",", ":"))
     return f"""<!DOCTYPE html>
 <html lang=\"zh-CN\" data-surface=\"{esc(page.surface)}\">
 <head>
@@ -376,16 +392,27 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   .motion-enabled.is-playing [data-choreo=\"alarm\"] {{ animation-name:mx-alarm; }}
   .motion-enabled.is-paused [data-motion] {{ animation-play-state:paused!important; }}
   @media (prefers-reduced-motion:reduce) {{ .motion-enabled.is-playing [data-motion] {{ animation:none!important; }} }}
+  [data-motion-system="macro-v2.1"] [data-motion]:not([data-scene]) {{ animation:none!important; }}
+  [data-scene] {{ transform-box:fill-box; transform-origin:center; }}
+  @keyframes mx-scene-field {{ from {{ opacity:0; transform:translate3d(0,10px,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
+  @keyframes mx-scene-evidence {{ from {{ opacity:0; transform:translate3d(-10px,0,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
+  @keyframes mx-scene-lock {{ 0% {{ opacity:0; transform:scale(.94); }} 72% {{ opacity:1; transform:scale(1.018); }} 100% {{ opacity:1; transform:scale(1); }} }}
+  .motion-enabled.is-playing[data-motion-system="macro-v2.1"] [data-scene="data-field"] {{ will-change:transform,opacity; animation:mx-scene-field var(--scene-duration) {motion_tokens['sceneEase']} var(--scene-delay) both; }}
+  .motion-enabled.is-playing[data-motion-system="macro-v2.1"] [data-scene="evidence-bay"] {{ will-change:transform,opacity; animation:mx-scene-evidence var(--scene-duration) {motion_tokens['sceneEase']} var(--scene-delay) both; }}
+  .motion-enabled.is-playing[data-motion-system="macro-v2.1"] [data-scene="terminal-lock"] {{ will-change:transform,opacity; animation:mx-scene-lock var(--scene-duration) {motion_tokens['sceneEase']} var(--scene-delay) both; }}
+  .motion-enabled.is-paused[data-motion-system="macro-v2.1"] [data-scene] {{ animation-play-state:paused!important; }}
+  .is-complete[data-motion-system="macro-v2.1"] [data-scene] {{ will-change:auto; }}
+  @media (prefers-reduced-motion:reduce) {{ .motion-enabled.is-playing[data-motion-system="macro-v2.1"] [data-scene] {{ animation:none!important; }} }}
 </style>
 </head>
 <body>
-<main class=\"chart-container\" id=\"moxing-chart\" data-total=\"{page.total_ms}\" data-total-brief=\"{page.profile_totals.get('brief', round(page.total_ms * .68))}\" data-total-standard=\"{page.profile_totals.get('standard', page.total_ms)}\" data-total-story=\"{page.profile_totals.get('story', round(page.total_ms * 1.8))}\" data-mode=\"{esc(page.mode)}\" data-choreography=\"{esc(page.choreography)}\">
+<main class=\"chart-container\" id=\"moxing-chart\" data-total=\"{page.total_ms}\" data-total-brief=\"{page.profile_totals.get('brief', round(page.total_ms * .68))}\" data-total-standard=\"{page.profile_totals.get('standard', page.total_ms)}\" data-total-story=\"{page.profile_totals.get('story', round(page.total_ms * 1.8))}\" data-mode=\"{esc(page.mode)}\" data-choreography=\"{esc(page.choreography)}\" data-motion-system=\"{esc(motion_system)}\">
   <header class=\"chart-header\">
     <div class=\"chart-code\"><div class=\"mx-code\"><div class=\"mx-code__top\"><strong>{esc(display_code)}</strong><span>SYS / 21</span></div><div class=\"mx-code__name\">{esc(page.public_name.upper())}</div><div class=\"mx-code__state\"><span class=\"mx-dots\" aria-hidden=\"true\"><i></i><i></i><i></i><i></i><i></i><i></i></span>{esc(page.interface_state)}</div></div></div>
-    <div><h1 class=\"chart-title\">{esc(page.title)}</h1><div class=\"chart-subtitle\">{esc(page.subtitle)}</div><div class=\"mx-meta\"><span>FAMILY / {esc(page.family)}</span><span>DATA / {esc(page.data_signature)}</span><span data-state>STATE / READY</span></div></div>
+    <div><h1 class=\"chart-title\">{esc(page.title)}</h1><div class=\"chart-subtitle\">{esc(page.subtitle)}</div><div class=\"mx-meta\"><span>FAMILY / {esc(page.family)}</span><span>DATA / {esc(page.data_signature)}</span><span data-state{state_scene}>STATE / READY</span></div></div>
     <span class=\"mx-header-ticks\" aria-hidden=\"true\">{header_ticks}</span>
   </header>
-  <section class=\"chart-body\"><svg viewBox=\"0 0 {W} {H}\" role=\"img\" aria-label=\"{esc(page.title)}\">{page.svg}</svg></section>
+  <section class=\"chart-body\"><svg viewBox=\"0 0 {W} {H}\" role=\"img\" aria-label=\"{esc(page.title)}\">{scene_svg}</svg></section>
   <footer class=\"chart-footer\"><span>{esc(page.footer)}</span><span class=\"mark\">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class=\"motion-controls\" aria-label=\"动画控制\"><button type=\"button\" data-action=\"replay\" data-code=\"R\" title=\"重播\">↻</button><button type=\"button\" data-action=\"pause\" data-code=\"H\" title=\"暂停或继续\">Ⅱ</button><button type=\"button\" data-action=\"surface\" data-code=\"S\" title=\"切换明暗\">◐</button></nav>
 </main>
@@ -401,6 +428,8 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   const scale=scales[profile]||1;
   const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);
   const total=Number(root.dataset[profileKey]||root.dataset.total||1800);
+  const macro=root.dataset.motionSystem==='macro-v2.1';
+  const sceneTimings={scene_timings};
   const baseDuration={{align:{motion_tokens['align']},dock:{motion_tokens['dock']},route:{motion_tokens['route']},lock:{motion_tokens['lock']}}};
   root.querySelectorAll('[data-motion]').forEach(el=>{{
     const rawDelay=parseFloat(el.style.getPropertyValue('--delay'))||0;
@@ -410,13 +439,18 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
     el.style.setProperty('--active-delay',Math.round(Number.isFinite(profileDelay)?profileDelay:rawDelay*scale)+'ms');
     el.style.setProperty('--active-duration',Math.round(Number.isFinite(profileDuration)?profileDuration:rawDuration*scale)+'ms');
   }});
-  let timer=0;
-  const settle=()=>{{ clearTimeout(timer); root.classList.remove('is-playing','is-paused'); root.classList.add('is-complete'); }};
+  if(macro) root.querySelectorAll('[data-scene]').forEach(el=>{{
+    const timing=sceneTimings[profile]?.[el.dataset.scene]||{{delay:0,duration:300}};
+    el.style.setProperty('--scene-delay',timing.delay+'ms');
+    el.style.setProperty('--scene-duration',timing.duration+'ms');
+  }});
+  let timer=0,frame=0;
+  const settle=()=>{{ clearTimeout(timer); cancelAnimationFrame(frame); root.classList.remove('is-playing','is-paused'); root.classList.add('is-complete'); const b=root.querySelector('[data-action=pause]'); if(b)b.textContent='Ⅱ'; }};
   const replay=()=>{{
-    clearTimeout(timer); root.classList.remove('is-playing','is-complete','is-paused'); void root.offsetWidth;
+    clearTimeout(timer); cancelAnimationFrame(frame); root.classList.remove('is-playing','is-complete','is-paused');
     if(reduce){{settle();return;}}
-    root.style.setProperty('--motion-scale',scale); root.classList.add('motion-enabled','is-playing');
-    timer=setTimeout(settle,total+120);
+    root.style.setProperty('--motion-scale',scale); root.classList.add('motion-enabled');
+    frame=requestAnimationFrame(()=>{{frame=requestAnimationFrame(()=>{{root.classList.add('is-playing');timer=setTimeout(settle,total+120);}});}});
   }};
   const pause=()=>{{ root.classList.toggle('is-paused'); const b=root.querySelector('[data-action=pause]'); b.textContent=root.classList.contains('is-paused')?'▶':'Ⅱ'; }};
   root.querySelector('[data-action=replay]').addEventListener('click',replay);
@@ -424,7 +458,7 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   root.querySelector('[data-action=surface]').addEventListener('click',()=>{{ const html=document.documentElement; html.dataset.surface=html.dataset.surface==='dark'?'light':'dark'; }});
   if(params.get('theme')==='dark') document.documentElement.dataset.surface='dark';
   window.Moxing={{replay,settle,setSurface:(v)=>document.documentElement.dataset.surface=v,profile,duration:total,ready:Promise.resolve()}};
-  if(reduce) settle();
+  if(reduce||params.get('autoplay')==='off') settle();
   else if('IntersectionObserver'in window){{ const io=new IntersectionObserver(e=>{{if(e[0].isIntersecting){{io.disconnect();replay();}}}},{{threshold:.35}});io.observe(root); }}
   else replay();
 }})();

@@ -65,6 +65,24 @@
     "dock": 620,
     "route": 520,
     "lock": 280,
-    "ease": "cubic-bezier(.22,.78,.22,1)"
+    "ease": "cubic-bezier(.22,.78,.22,1)",
+    "sceneEase": "cubic-bezier(.2,.72,.18,1)",
+    "scenes": {
+      "brief": {
+        "data-field": {"delay": 0, "duration": 650},
+        "evidence-bay": {"delay": 300, "duration": 450},
+        "terminal-lock": {"delay": 620, "duration": 260}
+      },
+      "standard": {
+        "data-field": {"delay": 0, "duration": 850},
+        "evidence-bay": {"delay": 450, "duration": 600},
+        "terminal-lock": {"delay": 820, "duration": 380}
+      },
+      "story": {
+        "data-field": {"delay": 0, "duration": 1450},
+        "evidence-bay": {"delay": 850, "duration": 1150},
+        "terminal-lock": {"delay": 1700, "duration": 650}
+      }
+    }
   }
 }

@@ -8,6 +8,7 @@ from .core import (
     H,
     W,
     ChartPage,
+    SceneContract,
     circle,
     cut_rect_path,
     evidence_plate,
@@ -1184,6 +1185,11 @@ BUILDERS: dict[str, Callable[[Any], str]] = {
 }
 
 
+# Canary charts use the scene-level motion runtime before it is expanded to all
+# families. SVG builders remain responsible only for complete final geometry.
+SCENE_CONTRACTS = {chart_id: SceneContract() for chart_id in ("C3", "C8", "C15", "C22")}
+
+
 def _data_signature(data: Any) -> str:
     """Summarise the live contract shape without exposing or inventing values."""
     if isinstance(data, list):
@@ -1247,5 +1253,6 @@ def render_chart(
         choreography=CHOREOGRAPHIES.get(key, "structural"),
         surface=surface if surface in {"light", "dark"} else "light",
         mode=mode if mode in {"brief", "editorial"} else "editorial",
+        scene=SCENE_CONTRACTS.get(key),
     )
     return html_page(page, embed_fonts=embed_fonts)

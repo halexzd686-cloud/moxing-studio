@@ -1,15 +1,27 @@
 # Motion System
 
-## Sequence
+## Semantic sequence
 
-Every chart composes four primitives in this order:
+Every chart interprets its structure through four semantic primitives:
 
 1. `ALIGN` — establish datum, scale, and anchors.
 2. `DOCK` — assemble data components into the structure.
 3. `ROUTE` — reveal relationships along time, dependency, or flow.
 4. `LOCK` — attach the conclusion and leave the signal mark in its final position.
 
-Typical total duration is 1.4–1.8 seconds; dense band, ledger, and milestone views may extend to 2.2 seconds. Motion explains structure; it must not delay access to the result.
+These primitives are authoring semantics, not a requirement to animate every mark. Production playback compiles them into a small scene graph so motion explains structure without producing dozens of simultaneous animations.
+
+## Production scene graph
+
+The default runtime order is:
+
+1. `DATA_FIELD` — the complete plot enters as one composited layer. It absorbs `ALIGN`, `DOCK`, and ordinary routing marks.
+2. `EVIDENCE_BAY` — the reserved evidence plate enters after the field is readable.
+3. `TERMINAL_LOCK` — the header state or one decisive signal locks the conclusion.
+
+One `PRIMARY_ROUTE` layer may be added only when a single path is essential to reading time, dependency, or flow. A chart must run no more than four scene animations at once. Do not animate individual bars, cells, glyphs, labels, or repeated nodes in the production scene graph.
+
+C3, C8, C15, and C22 are the production canaries for `macro-v2.1`. Other families retain the legacy primitive runtime until their static and motion review is complete.
 
 ## Profiles
 
@@ -53,6 +65,8 @@ Do not apply a family because its movement looks attractive. Select it from the 
 - JavaScript only schedules states; it does not compute essential layout.
 - Without JavaScript, the final locked state is immediately visible.
 - First viewport entry plays once. Controls provide replay and pause/resume.
+- A gallery must disable iframe autoplay, start only visible charts, and call the existing runtime for replay instead of reloading the iframe.
+- Replay restarts on consecutive animation frames; do not force synchronous layout with `offsetWidth`.
 - Honour `prefers-reduced-motion`; show the final state without staged motion.
 - Use deterministic delays. Do not use random motion, bounce, elastic easing, or endless loops.
 - Animation ends in a readable still frame suitable for SVG/PNG export.

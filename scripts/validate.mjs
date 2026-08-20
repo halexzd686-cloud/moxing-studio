@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /** Moxing Studio v2 structural, motion, fallback, and visual validation. */
 import fs from "node:fs";
+import http from "node:http";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
@@ -11,26 +12,26 @@ const chartFiles = fs.readdirSync(templatesDir).filter((file) => /^c\d{2}-.*\.ht
 const exemplars = {
   "c01-structural-rank.html": { family: "rail-rise", cue: "rail-rise", animation: "mx-rail-rise" },
   "c02-ranked-rail.html": { family: "ranked-rail", cue: "rail-slide", animation: "mx-rail-slide" },
-  "c03-signal-trend.html": { family: "path-trace", cue: "trace", animation: "mx-route" },
+  "c03-signal-trend.html": { family: "path-trace", cue: "trace", animation: "mx-scene-field", macro: true },
   "c04-composition-field.html": { family: "field-aggregation", cue: "field-seat", animation: "mx-field-seat" },
   "c05-composition-bands.html": { family: "band-routing", cue: "band-fill", animation: "mx-band-fill" },
   "c06-ledger-steps.html": { family: "ledger-interlock", cue: "field-seat", animation: "mx-field-seat" },
   "c07-milestone-lanes.html": { family: "milestone-routing", cue: "interlock", animation: "mx-interlock" },
-  "c08-stage-channel.html": { family: "stage-interlock", cue: "interlock", animation: "mx-interlock" },
+  "c08-stage-channel.html": { family: "stage-interlock", cue: "interlock", animation: "mx-scene-field", macro: true },
   "c09-metric-lockup.html": { family: "metric-readout", cue: "readout", animation: "mx-readout" },
   "c10-decision-interface.html": { family: "decision-readout", cue: "readout", animation: "mx-readout" },
   "c11-sector-lock.html": { family: "sector-lock", cue: "field-seat", animation: "mx-field-seat" },
   "c12-metric-small-multiples.html": { family: "metric-pulse", cue: "trace", animation: "mx-route" },
   "c13-pareto-contribution.html": { family: "pareto-routing", cue: "rail-rise", animation: "mx-rail-rise" },
   "c14-cohort-matrix.html": { family: "cohort-seating", cue: "field-seat", animation: "mx-field-seat" },
-  "c15-commerce-flow.html": { family: "flow-routing", cue: "trace", animation: "mx-route" },
+  "c15-commerce-flow.html": { family: "flow-routing", cue: "trace", animation: "mx-scene-field", macro: true },
   "c16-decision-bubble-matrix.html": { family: "quadrant-lock", cue: "pin", animation: "mx-pin" },
   "c17-market-candles.html": { family: "market-build", cue: "field-seat", animation: "mx-field-seat" },
   "c18-performance-drawdown.html": { family: "drawdown-routing", cue: "trace", animation: "mx-route" },
   "c19-yield-curve.html": { family: "curve-routing", cue: "trace", animation: "mx-route" },
   "c20-sensitivity-matrix.html": { family: "matrix-seating", cue: "field-seat", animation: "mx-field-seat" },
   "c21-distribution-profile.html": { family: "distribution-build", cue: "rail-rise", animation: "mx-rail-rise" },
-  "c22-correlation-matrix.html": { family: "matrix-seating", cue: "field-seat", animation: "mx-field-seat" },
+  "c22-correlation-matrix.html": { family: "matrix-seating", cue: "field-seat", animation: "mx-scene-field", macro: true },
   "c23-forecast-fan.html": { family: "forecast-routing", cue: "trace", animation: "mx-route" },
   "c24-control-chart.html": { family: "control-lock", cue: "trace", animation: "mx-route" },
 };
@@ -98,6 +99,7 @@ for (const [file, expected] of Object.entries(exemplars)) {
   const scope = `choreography:${file}`;
   if (!source.includes(`data-choreography="${expected.family}"`)) fail(scope, `missing ${expected.family} family`);
   if (!source.includes(`data-choreo="${expected.cue}"`)) fail(scope, `missing ${expected.cue} cue`);
+  if (expected.macro && (!source.includes('data-motion-system="macro-v2.1"') || !source.includes('data-scene="data-field"') || !source.includes('data-scene="evidence-bay"') || !source.includes('data-scene="terminal-lock"'))) fail(scope, "macro scene contract incomplete");
   const explicit = source.match(new RegExp(`data-choreo="${expected.cue}"[^>]*style="([^"]+)"`))?.[1] || "";
   if (!explicit.includes("--delay-brief:") || !explicit.includes("--delay-story:")) fail(scope, "cue lacks independent profile timing");
   if (!failures.some((item) => item.scope === scope)) pass(scope, `${expected.family} with independent profile timing`);
@@ -173,9 +175,13 @@ const motionPage = await motionContext.newPage();
 await motionPage.goto(pathToFileURL(path.join(templatesDir, "c03-signal-trend.html")).href, { waitUntil: "load" });
 await motionPage.evaluate(() => window.Moxing.replay());
 await motionPage.waitForTimeout(100);
-const activeMotion = await motionPage.evaluate(() => document.getAnimations().filter((item) => item.playState === "running").length);
-if (activeMotion < 3) fail("motion", `only ${activeMotion} active animations`);
-else pass("motion", `${activeMotion} deterministic animations active`);
+const activeMotion = await motionPage.evaluate(() => ({
+  running: document.getAnimations().filter((item) => item.playState === "running").length,
+  scenes: document.querySelectorAll("[data-scene]").length,
+  legacy: [...document.querySelectorAll("[data-motion]")].filter((item) => getComputedStyle(item).animationName !== "none" && !item.hasAttribute("data-scene")).length,
+}));
+if (activeMotion.running < 3 || activeMotion.running > 4 || activeMotion.scenes !== 3 || activeMotion.legacy) fail("motion", JSON.stringify(activeMotion));
+else pass("motion", `${activeMotion.running} macro animations active; legacy marks idle`);
 await motionPage.evaluate(() => window.Moxing.setSurface("dark"));
 const darkSurface = await motionPage.evaluate(() => document.documentElement.dataset.surface);
 if (darkSurface !== "dark") fail("motion", "dark surface toggle failed");
@@ -194,19 +200,21 @@ for (const [file, expected] of Object.entries(exemplars)) {
   for (const profile of ["brief", "standard", "story"]) {
     await page.goto(`${pathToFileURL(path.join(templatesDir, file)).href}?motion=${profile}`, { waitUntil: "load" });
     await page.evaluate(() => window.Moxing.replay());
-    observed[profile] = await page.evaluate((cue) => {
-      const element = document.querySelector(`[data-choreo="${cue}"]`);
-      const lock = document.querySelector('[data-choreo="alarm"]');
+    await page.waitForTimeout(50);
+    observed[profile] = await page.evaluate(({ cue, macro }) => {
+      const element = document.querySelector(macro ? '[data-scene="data-field"]' : `[data-choreo="${cue}"]`);
+      const lock = document.querySelector(macro ? '[data-scene="terminal-lock"]' : '[data-choreo="alarm"]');
       const style = element ? getComputedStyle(element) : null;
       return {
         profile: window.Moxing?.profile,
         duration: window.Moxing?.duration,
-        delay: element ? Number.parseFloat(element.style.getPropertyValue("--active-delay")) : null,
-        lockDelay: lock ? Number.parseFloat(lock.style.getPropertyValue("--active-delay")) : null,
+        delay: element ? Number.parseFloat(element.style.getPropertyValue(macro ? "--scene-delay" : "--active-delay")) : null,
+        lockDelay: lock ? Number.parseFloat(lock.style.getPropertyValue(macro ? "--scene-delay" : "--active-delay")) : null,
         animation: style?.animationName,
         running: document.getAnimations().filter((item) => item.playState === "running").length,
+        scenes: document.querySelectorAll("[data-scene]").length,
       };
-    }, expected.cue);
+    }, { cue: expected.cue, macro: Boolean(expected.macro) });
     await page.evaluate(() => window.Moxing.settle());
   }
   const scope = `profiles:${file}`;
@@ -216,6 +224,7 @@ for (const [file, expected] of Object.entries(exemplars)) {
     if (state.duration < minimum || state.duration > maximum) fail(scope, `${profile} duration ${state.duration}`);
     if (state.animation !== expected.animation) fail(scope, `${profile} animation ${state.animation}`);
     if (state.running < 3) fail(scope, `${profile} only ${state.running} active animations`);
+    if (expected.macro && (state.running > 4 || state.scenes !== 3)) fail(scope, `${profile} macro layers ${state.running}/${state.scenes}`);
   }
   const briefRatio = observed.brief.delay / observed.standard.delay;
   const storyRatio = observed.story.delay / observed.standard.delay;
@@ -377,13 +386,44 @@ for (const file of ["c01-structural-rank.html", "c03-signal-trend.html", "c05-co
   pass(`preview:${file}`, "locked preview exported");
 }
 
+const galleryServer = http.createServer((request, response) => {
+  const pathname = decodeURIComponent(new URL(request.url, "http://localhost").pathname).replace(/^\/+/, "");
+  const target = path.resolve(templatesDir, pathname || "gallery.html");
+  if (!target.startsWith(`${templatesDir}${path.sep}`) || !fs.existsSync(target)) { response.writeHead(404).end(); return; }
+  response.writeHead(200, { "Content-Type": target.endsWith(".html") ? "text/html; charset=utf-8" : "application/octet-stream" });
+  fs.createReadStream(target).pipe(response);
+});
+await new Promise((resolve) => galleryServer.listen(0, "127.0.0.1", resolve));
+const galleryPort = galleryServer.address().port;
 const galleryContext = await browser.newContext({ viewport: { width: 1440, height: 900 } });
 const galleryPage = await galleryContext.newPage();
-await galleryPage.goto(pathToFileURL(path.join(templatesDir, "gallery.html")).href, { waitUntil: "load" });
+await galleryPage.goto(`http://127.0.0.1:${galleryPort}/gallery.html`, { waitUntil: "load" });
 const galleryCards = await galleryPage.locator(".card").count();
 if (galleryCards !== 24) fail("gallery", `${galleryCards} cards`);
 else pass("gallery", "24 compact v2 cards");
+await galleryPage.waitForTimeout(180);
+const galleryMotion = await galleryPage.evaluate(() => {
+  const active = [...document.querySelectorAll("iframe")].filter((frame) => {
+    try { return frame.contentDocument?.getAnimations().some((item) => item.playState === "running"); } catch { return false; }
+  });
+  const offscreen = active.filter((frame) => { const box = frame.closest(".card").getBoundingClientRect(); return box.bottom <= 0 || box.top >= innerHeight; });
+  return { active: active.length, offscreen: offscreen.length };
+});
+if (galleryMotion.offscreen) fail("gallery-motion", JSON.stringify(galleryMotion));
+else pass("gallery-motion", `${galleryMotion.active} visible iframes animating; offscreen idle`);
+const canaryFrame = galleryPage.locator('[data-chart="C3"] iframe');
+await galleryPage.locator('[data-chart="C3"]').scrollIntoViewIfNeeded();
+await galleryPage.waitForFunction(() => Boolean(document.querySelector('[data-chart="C3"] iframe')?.contentWindow?.Moxing));
+await canaryFrame.evaluate((frame) => frame.contentWindow.Moxing.settle());
+const beforeReplay = await canaryFrame.getAttribute("src");
+await galleryPage.locator('[data-chart="C3"] [data-replay]').evaluate((button) => button.click());
+await galleryPage.waitForTimeout(80);
+const afterReplay = await canaryFrame.getAttribute("src");
+const canaryRunning = await canaryFrame.evaluate((frame) => frame.contentDocument?.getAnimations().filter((item) => item.playState === "running").length || 0);
+if (beforeReplay !== afterReplay || canaryRunning < 3 || canaryRunning > 4) fail("gallery-replay", JSON.stringify({ beforeReplay, afterReplay, canaryRunning }));
+else pass("gallery-replay", "canary replay reuses iframe and stays within macro layer budget");
 await galleryContext.close();
+await new Promise((resolve) => galleryServer.close(resolve));
 await browser.close();
 
 const report = { generatedAt: new Date().toISOString(), status: failures.length ? "failed" : "passed", checks, failures };

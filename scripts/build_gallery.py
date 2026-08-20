@@ -23,7 +23,7 @@ def main() -> None:
         cards.append(
             f"""<article class="card" data-chart="{chart_id}" data-domain="{domain}">
   <div class="card-head"><span>{chart_id} / {meta['name']}</span><button type="button" data-replay>REPLAY</button></div>
-  <div class="frame"><iframe title="{meta['name']}" loading="lazy" src="{filename}?motion=brief"></iframe></div>
+  <div class="frame"><iframe title="{meta['name']}" loading="lazy" src="{filename}?motion=brief&autoplay=off"></iframe></div>
 </article>"""
         )
     html = f"""<!DOCTYPE html>
@@ -44,10 +44,14 @@ main{{width:min(1480px,94vw);margin:30px auto 70px;display:grid;grid-template-co
 <script>
 const frames=[...document.querySelectorAll('iframe')];const motion=document.getElementById('motion');let dark=false;
 function fit(){{document.querySelectorAll('.frame').forEach(box=>{{const frame=box.querySelector('iframe');frame.style.transform=`scale(${{box.clientWidth/1280}})`}})}}
-function update(frame){{frame.src=frame.src.split('?')[0]+`?motion=${{motion.value}}&theme=${{dark?'dark':'light'}}`}}
+function update(frame){{frame.dataset.played='';frame.src=frame.src.split('?')[0]+`?motion=${{motion.value}}&theme=${{dark?'dark':'light'}}&autoplay=off`}}
+function getApi(frame){{try{{return frame.contentWindow?.Moxing}}catch{{return null}}}}
+function replay(frame){{const api=getApi(frame);if(api)api.replay();else update(frame)}}
 motion.addEventListener('change',()=>frames.forEach(update));document.getElementById('surface').addEventListener('click',e=>{{dark=!dark;e.target.textContent=dark?'LIGHT':'DARK';frames.forEach(update)}});
 document.querySelectorAll('[data-filter]').forEach(button=>button.addEventListener('click',()=>{{document.querySelectorAll('[data-filter]').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));document.querySelectorAll('.card').forEach(card=>card.hidden=button.dataset.filter!=='all'&&card.dataset.domain!==button.dataset.filter);fit()}}));
-document.querySelectorAll('[data-replay]').forEach(button=>button.addEventListener('click',()=>update(button.closest('.card').querySelector('iframe'))));addEventListener('resize',fit);fit();
+document.querySelectorAll('[data-replay]').forEach(button=>button.addEventListener('click',()=>replay(button.closest('.card').querySelector('iframe'))));
+const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{{const frame=entry.target.querySelector('iframe'),api=getApi(frame);if(entry.isIntersecting&&!frame.dataset.played){{frame.dataset.played='1';if(api)replay(frame);else frame.addEventListener('load',()=>replay(frame),{{once:true}})}}else if(!entry.isIntersecting)api?.settle()}}),{{threshold:.28}});
+document.querySelectorAll('.card').forEach(card=>observer.observe(card));addEventListener('resize',fit);fit();
 </script></body></html>"""
     target = ROOT / "templates" / "gallery.html"
     target.write_text(html, encoding="utf-8")
