@@ -127,7 +127,7 @@ const mobile=matchMedia('(max-width:900px)');
 let dark=false;
 let activeViewerSource='';
 
-function configuredSource(raw){const path=raw.split('?')[0];return `${path}?motion=${motion.value}&theme=${dark?'dark':'light'}&autoplay=off&build=responsive-v2.1`}
+function configuredSource(raw){const path=raw.split('?')[0];return `${path}?motion=${motion.value}&theme=${dark?'dark':'light'}&autoplay=off&build=continuity-v1`}
 function getApi(frame){try{return frame.contentWindow?.Moxing}catch{return null}}
 function settle(frame){getApi(frame)?.settle()}
 function frameVisible(frame){const box=frame.closest('.card').getBoundingClientRect();return box.bottom>0&&box.top<innerHeight}

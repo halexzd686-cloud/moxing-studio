@@ -233,15 +233,21 @@ const activeMotion = await motionPage.evaluate(() => {
   const running = document.getAnimations().filter((item) => item.playState === "running");
   const macroSelector = ".pi-data-field,.pi-evidence-bay,.pi-bay-terminal,.pi-lock-ring,.pi-focus-corner";
   const activeMarks = [...document.querySelectorAll("[data-motion]")].filter((item) => getComputedStyle(item).animationName !== "none");
+  const root = document.querySelector(".chart-container");
+  const field = document.querySelector(".pi-data-field");
+  const trace = document.querySelector('[data-choreo="trace"]');
   return {
     macroRunning: running.filter((item) => item.effect?.target?.matches?.(macroSelector)).length,
     layers: document.querySelectorAll(macroSelector).length,
     traceMarks: activeMarks.filter((item) => ["trace", "pin"].includes(item.dataset.choreo)).length,
     unexpectedMarks: activeMarks.filter((item) => !["trace", "pin"].includes(item.dataset.choreo)).length,
+    revision: root?.dataset.motionRevision,
+    fieldOpacity: Number.parseFloat(field ? getComputedStyle(field).opacity : "0"),
+    traceOffset: Number.parseFloat(trace ? getComputedStyle(trace).strokeDashoffset : "0"),
   };
 });
-if (activeMotion.macroRunning < 3 || activeMotion.macroRunning > 4 || activeMotion.layers !== 4 || !activeMotion.traceMarks || activeMotion.unexpectedMarks) fail("motion", JSON.stringify(activeMotion));
-else pass("motion", `${activeMotion.macroRunning} macro animations with continuous line trace`);
+if (activeMotion.revision !== "continuity-v1" || activeMotion.layers !== 4 || !activeMotion.traceMarks || activeMotion.unexpectedMarks || activeMotion.fieldOpacity < .99 || activeMotion.macroRunning > 4) fail("motion", JSON.stringify(activeMotion));
+else pass("motion", `${activeMotion.macroRunning} auxiliary animations with continuous line trace`);
 await motionPage.evaluate(() => window.Moxing.setSurface("dark"));
 const darkSurface = await motionPage.evaluate(() => document.documentElement.dataset.surface);
 if (darkSurface !== "dark") fail("motion", "dark surface toggle failed");
@@ -252,7 +258,7 @@ const replayContinuity = await motionPage.evaluate(() => new Promise((resolve) =
   const field = document.querySelector('.pi-data-field');
   const trace = document.querySelector('[data-choreo="trace"]');
   const read = () => ({
-    preparing: root.classList.contains('is-preparing'),
+    rewinding: root.classList.contains('is-rewinding'),
     playing: root.classList.contains('is-playing'),
     complete: root.classList.contains('is-complete'),
     fieldOpacity: Number.parseFloat(getComputedStyle(field).opacity),
@@ -266,8 +272,8 @@ const replayContinuity = await motionPage.evaluate(() => new Promise((resolve) =
     requestAnimationFrame(() => resolve({ immediate, firstFrame }));
   });
 }));
-if (!replayContinuity.immediate.preparing || replayContinuity.immediate.complete || replayContinuity.immediate.fieldOpacity > .7 || replayContinuity.immediate.traceOffset < .9 || !replayContinuity.firstFrame.playing || replayContinuity.firstFrame.preparing || replayContinuity.firstFrame.fieldTransform !== "none") fail("motion-continuity", JSON.stringify(replayContinuity));
-else pass("motion-continuity", "replay enters the prepared first frame without exposing the final frame");
+if (replayContinuity.immediate.complete || (!replayContinuity.immediate.rewinding && !replayContinuity.immediate.playing) || replayContinuity.immediate.fieldOpacity < .99 || replayContinuity.immediate.traceOffset < 0 || replayContinuity.immediate.traceOffset > 1 || replayContinuity.firstFrame.complete || replayContinuity.firstFrame.fieldOpacity < .99 || replayContinuity.firstFrame.fieldTransform !== "none") fail("motion-continuity", JSON.stringify(replayContinuity));
+else pass("motion-continuity", "replay keeps the data field stable through rewind and play handoff");
 await motionContext.close();
 
 for (const file of Object.keys(precisionSpecs)) {

@@ -2,9 +2,9 @@
 
 > Updated: 2026-08-20
 >
-> Branch: `codex/v2.1-production-rollout`
+> Branch: `codex/v2.1-motion-repair`
 >
-> Status: A / Direct Canvas, B / Embedded Evidence, C / Evidence Interface, responsive Gallery, continuous replay, and semantic lock intensity complete
+> Status: A / Direct Canvas, B / Embedded Evidence, C / Evidence Interface, responsive Gallery, and continuity-v1 replay repair complete on the review branch
 >
 > Visual review: C1 Direct Canvas, C14 Embedded Evidence, and C6 Evidence Interface approved on 2026-08-20
 
@@ -14,10 +14,11 @@
 - Final geometry is generated in Python and remains readable without JavaScript.
 - `ALIGN`, `DOCK`, `ROUTE`, and `LOCK` remain authoring semantics; production compiles them into 2–4 macro carriers selected independently from layout mode.
 - `LOCK` resolves to `implicit`, `micro`, or `explicit`; it is a semantic terminal state and no longer requires an ornament on every chart.
-- Replay uses an `is-preparing` first-frame contract plus a single atomic playback handoff. Whole SVG carriers do not translate; C3/C12/C18/C19/C23/C24 use true ordered path traces.
+- Replay uses a visible `is-rewinding` → `is-playing` handoff. Static structure and data-field brightness remain stable; C3/C12/C18/C19/C23/C24 use stable normalized dash paths with a continuous reverse/forward trace. SVG `<g>` layers do not use clip-path transitions.
 - A / Direct Canvas preserves the full plot; B / Embedded Evidence uses verified natural whitespace; C / Evidence Interface reserves a 220px side bay and 28px safety gap.
 - Approved mapping: A = C1/C2/C4/C5/C7/C9/C10/C11/C12/C20; B = C13/C14/C16/C17/C18/C19/C21/C23/C24; C = C3/C6/C8/C15/C22.
 - `brief`, `standard`, and `story` timing profiles share one motion grammar.
+- Continuity revision `continuity-v1` groups charts into `trace-overlay`, `data-reveal`, and `evidence-interface` strategies; Gallery iframe URLs use a new build key to avoid stale template cache.
 - Light/dark surfaces share one structural identity.
 - All chart contracts share the approved zero-padded device address, live data-shape metadata, calibration ticks, and coded control dock.
 - Repository templates link local fonts; custom deliverables embed fonts by default.
@@ -72,6 +73,7 @@ If Playwright is installed outside the project, set `MOXING_PLAYWRIGHT_PATH`. Se
 - 103 boundary render cases pass.
 - 262 browser/static/motion/layout/readability/gallery-scheduling/frame-pacing/mobile-viewer checks pass; see `docs/previews/qa-report.json`.
 - The presentation mapping passes 14 checks and the three-carrier A+B+C architecture passes 21 checks.
+- The continuity repair passes 103 boundary cases, 14 presentation-mode checks, 21 carrier checks, 24/24 static template checks, and dynamic replay samples for C3/C12/C18/C19/C23/C24 with stable field opacity and active trace animation.
 - All ten A charts contain no side bay or detached evidence card; they compile to `DATA_FIELD → RELATIONSHIP → [TARGET_LOCK]` with 2–3 macro layers.
 - All nine B charts use the full-width Embedded Evidence carrier and compile to `DATA_FIELD → RELATIONSHIP → LOCAL_EVIDENCE → [TARGET_LOCK]` with 3–4 macro layers.
 - Their evidence capsules occupy chart-specific natural whitespace: threshold, triangular matrix void, empty quadrant, chart endpoint, panel gap, or distribution tail. No B chart uses a detached left evidence plate.

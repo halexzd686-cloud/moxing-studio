@@ -375,12 +375,20 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
     compiled_direct = bool(direct and direct.compiled_motion)
     compiled_embedded = bool(embedded and embedded.compiled_motion)
     motion_system = "presentation-v2.1" if compiled_direct or compiled_embedded else ("precision-v2.1" if interface else "legacy")
+    motion_revision = "continuity-v1" if motion_system != "legacy" else "legacy"
+    motion_strategy = (
+        "trace-overlay"
+        if page.line_trace
+        else "evidence-interface"
+        if interface
+        else "data-reveal"
+    )
     html_interface = ' data-interface="precision-v2.1"' if interface else ""
     root_interface = ' data-interface="precision-v2.1"' if interface else ""
     if interface:
         plot_width = interface.plot_right - interface.plot_x
         body_markup = f'''<section class="chart-body pi-split-body">
-    <aside class="pi-evidence-bay" aria-label="{esc(interface.evidence_id)} evidence bay" style="--pi-terminal-delay:{max(0, interface.lock_delay - 120)}ms">
+    <aside class="pi-evidence-bay" aria-label="{esc(interface.evidence_id)} evidence bay" style="--pi-evidence-delay:{precision_motion['evidence']['delay']}ms;--pi-terminal-delay:{max(0, interface.lock_delay - 120)}ms">
       <span class="pi-evidence-bay__label">EVIDENCE / BAY</span>
       <svg class="pi-evidence-svg" viewBox="{esc(interface.evidence_viewbox)}" aria-hidden="true">{interface.evidence_svg}</svg>
       <div class="pi-bay-terminal"><span>{esc(interface.evidence_id)}</span><i></i><b></b></div>
@@ -576,6 +584,32 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   .is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.is-complete[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ will-change:auto; }}
   @media (prefers-reduced-motion:reduce) {{ .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ animation:none!important; }} }}
   @media (prefers-reduced-motion:reduce) {{ .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ animation:none!important; }} }}
+  /* continuity-v1: keep the instrument visible while only its data rewinds and replays. */
+  @keyframes mx-continuity-reveal {{ from {{ transform:scaleX(.975); }} to {{ transform:scaleX(1); }} }}
+  @keyframes mx-continuity-rewind {{ from {{ transform:scaleX(1); }} to {{ transform:scaleX(.975); }} }}
+  @keyframes mx-continuity-trace-rewind {{ from {{ stroke-dashoffset:0; }} to {{ stroke-dashoffset:1; }} }}
+  @keyframes mx-continuity-evidence-reveal {{ from {{ opacity:.84; transform:translateX(-6px); }} to {{ opacity:1; transform:translateX(0); }} }}
+  @keyframes mx-continuity-evidence-rewind {{ from {{ opacity:1; transform:translateX(0); }} to {{ opacity:.84; transform:translateX(-6px); }} }}
+  [data-motion-revision="continuity-v1"] .pm-data-field-layer,
+  [data-motion-revision="continuity-v1"] .pm-plot-layer {{ opacity:1!important; animation:none!important; transform:scaleX(1); will-change:auto; }}
+  .motion-enabled.is-rewinding[data-motion-revision="continuity-v1"] .pm-data-field-layer {{ opacity:1!important; animation:none!important; }}
+  .motion-enabled.is-playing[data-motion-revision="continuity-v1"][data-motion-strategy="data-reveal"] .pm-plot-layer {{ animation:mx-continuity-reveal var(--pm-plot-duration,360ms) {precision_motion['ease']} var(--pm-plot-delay,0ms) both!important; will-change:clip-path; }}
+  .motion-enabled.is-rewinding[data-motion-revision="continuity-v1"][data-motion-strategy="data-reveal"] .pm-plot-layer {{ animation:mx-continuity-rewind var(--pm-rewind-duration,120ms) {precision_motion['ease']} both!important; will-change:clip-path; }}
+  .motion-enabled.is-playing[data-motion-revision="continuity-v1"][data-motion-strategy="trace-overlay"] .pm-plot-layer {{ animation:none!important; transform:scaleX(1); }}
+  .motion-enabled.is-rewinding[data-motion-revision="continuity-v1"][data-motion-strategy="trace-overlay"] .pm-plot-layer {{ animation:none!important; transform:scaleX(1); }}
+  [data-motion-revision="continuity-v1"][data-line-trace="true"] [data-choreo="trace"] {{ stroke-dasharray:1; stroke-dashoffset:0; }}
+  .motion-enabled.is-rewinding[data-motion-revision="continuity-v1"][data-line-trace="true"] [data-choreo="trace"] {{ animation:mx-continuity-trace-rewind var(--pm-rewind-duration,120ms) linear both!important; }}
+  .motion-enabled.is-playing[data-motion-revision="continuity-v1"][data-line-trace="true"] [data-choreo="trace"] {{ stroke-dasharray:1; animation:mx-compiled-trace var(--active-duration,var(--duration,720ms)) linear var(--active-delay,var(--delay,0ms)) both!important; }}
+  .motion-enabled.is-playing[data-motion-revision="continuity-v1"][data-line-trace="true"] [data-choreo="pin"] {{ animation:mx-compiled-pin var(--active-duration,var(--duration,220ms)) {precision_motion['ease']} var(--active-delay,var(--delay,0ms)) both!important; }}
+  .motion-enabled.is-paused[data-motion-revision="continuity-v1"] .pm-plot-layer,
+  .motion-enabled.is-paused[data-motion-revision="continuity-v1"] [data-choreo="trace"],
+  .motion-enabled.is-paused[data-motion-revision="continuity-v1"] [data-choreo="pin"] {{ animation-play-state:paused!important; }}
+  @media (prefers-reduced-motion:reduce) {{
+    [data-motion-revision="continuity-v1"] .pm-data-field-layer,
+    [data-motion-revision="continuity-v1"] .pm-plot-layer,
+    [data-motion-revision="continuity-v1"] [data-choreo="trace"],
+    [data-motion-revision="continuity-v1"] [data-choreo="pin"] {{ animation:none!important; stroke-dasharray:1; stroke-dashoffset:0; }}
+  }}
   [data-interface="precision-v2.1"] [data-motion] {{ animation:none!important; }}
   @keyframes pi-field-enter {{ from {{ opacity:.58; }} to {{ opacity:1; }} }}
   @keyframes pi-evidence-enter {{ from {{ opacity:0; }} to {{ opacity:1; }} }}
@@ -593,10 +627,26 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   .motion-enabled.is-preparing[data-interface="precision-v2.1"] .pi-focus-corner {{ opacity:0; }}
   .is-complete[data-interface="precision-v2.1"] .pi-data-field,.is-complete[data-interface="precision-v2.1"] .pi-evidence-bay {{ will-change:auto; }}
   @media (prefers-reduced-motion:reduce) {{ .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-data-field,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-evidence-bay,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-bay-terminal,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-lock-ring,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-focus-corner {{ animation:none!important; }} }}
+  /* Interface mode shares the same continuity contract, but keeps its side rail as the only macro reveal. */
+  .motion-enabled[data-motion-revision="continuity-v1"] .pi-data-field {{ opacity:1!important; animation:none!important; }}
+  .motion-enabled[data-motion-revision="continuity-v1"] .pi-evidence-bay {{ opacity:1!important; transform:translateX(0); animation:none!important; will-change:auto; }}
+  .motion-enabled.is-rewinding[data-motion-revision="continuity-v1"][data-motion-strategy="evidence-interface"] .pi-evidence-bay {{ animation:mx-continuity-evidence-rewind var(--pm-rewind-duration,120ms) {precision_motion['ease']} both!important; will-change:opacity,transform; }}
+  .motion-enabled.is-playing[data-motion-revision="continuity-v1"][data-motion-strategy="evidence-interface"] .pi-evidence-bay {{ animation:mx-continuity-evidence-reveal var(--pm-evidence-duration,280ms) {precision_motion['ease']} var(--pi-evidence-delay,0ms) both!important; will-change:opacity,transform; }}
+  .motion-enabled.is-rewinding[data-motion-revision="continuity-v1"] .pi-bay-terminal {{ animation:none!important; opacity:.2!important; }}
+  .motion-enabled.is-rewinding[data-motion-revision="continuity-v1"] .pi-lock-ring,
+  .motion-enabled.is-rewinding[data-motion-revision="continuity-v1"] .pi-focus-corner {{ animation:none!important; opacity:0!important; }}
+  .motion-enabled.is-paused[data-motion-revision="continuity-v1"] .pi-evidence-bay,
+  .motion-enabled.is-paused[data-motion-revision="continuity-v1"] .pi-bay-terminal,
+  .motion-enabled.is-paused[data-motion-revision="continuity-v1"] .pi-lock-ring,
+  .motion-enabled.is-paused[data-motion-revision="continuity-v1"] .pi-focus-corner {{ animation-play-state:paused!important; }}
+  @media (prefers-reduced-motion:reduce) {{
+    .motion-enabled[data-motion-revision="continuity-v1"] .pi-data-field,
+    .motion-enabled[data-motion-revision="continuity-v1"] .pi-evidence-bay {{ animation:none!important; transform:none; opacity:1!important; }}
+  }}
 </style>
 </head>
 <body>
-<main class=\"chart-container\" id=\"moxing-chart\" data-total=\"{page.total_ms}\" data-total-brief=\"{page.profile_totals.get('brief', round(page.total_ms * .68))}\" data-total-standard=\"{page.profile_totals.get('standard', page.total_ms)}\" data-total-story=\"{page.profile_totals.get('story', round(page.total_ms * 1.8))}\" data-mode=\"{esc(page.mode)}\" data-choreography=\"{esc(page.choreography)}\" data-motion-system=\"{esc(motion_system)}\" data-presentation-carrier=\"{esc(carrier_name)}\" data-presentation-target=\"{esc(page.presentation_target)}\" data-lock-mode=\"{esc(lock_mode)}\" data-line-trace=\"{'true' if page.line_trace else 'false'}\"{root_interface}>
+<main class=\"chart-container\" id=\"moxing-chart\" data-total=\"{page.total_ms}\" data-total-brief=\"{page.profile_totals.get('brief', round(page.total_ms * .68))}\" data-total-standard=\"{page.profile_totals.get('standard', page.total_ms)}\" data-total-story=\"{page.profile_totals.get('story', round(page.total_ms * 1.8))}\" data-mode=\"{esc(page.mode)}\" data-choreography=\"{esc(page.choreography)}\" data-motion-system=\"{esc(motion_system)}\" data-motion-revision=\"{esc(motion_revision)}\" data-motion-strategy=\"{esc(motion_strategy)}\" data-presentation-carrier=\"{esc(carrier_name)}\" data-presentation-target=\"{esc(page.presentation_target)}\" data-lock-mode=\"{esc(lock_mode)}\" data-line-trace=\"{'true' if page.line_trace else 'false'}\"{root_interface}>
   <header class=\"chart-header\">
     <div class=\"chart-code\"><div class=\"mx-code\"><div class=\"mx-code__top\"><strong>{esc(display_code)}</strong><span>SYS / 21</span></div><div class=\"mx-code__name\">{esc(page.public_name.upper())}</div><div class=\"mx-code__state\"><span class=\"mx-dots\" aria-hidden=\"true\"><i></i><i></i><i></i><i></i><i></i><i></i></span>{esc(page.interface_state)}</div></div></div>
     <div><h1 class=\"chart-title\">{esc(page.title)}</h1><div class=\"chart-subtitle\">{esc(page.subtitle)}</div><div class=\"mx-meta\"><span>FAMILY / {esc(page.family)}</span><span>DATA / {esc(page.data_signature)}</span><span data-state>STATE / READY</span></div></div>
@@ -652,21 +702,29 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
     el.style.setProperty('--active-delay',Math.round(Number.isFinite(profileDelay)?profileDelay:rawDelay*scale)+'ms');
     el.style.setProperty('--active-duration',Math.round(Number.isFinite(profileDuration)?profileDuration:rawDuration*scale)+'ms');
   }});
-  let timer=0,frame=0;
-  const settle=()=>{{ clearTimeout(timer); cancelAnimationFrame(frame); root.classList.remove('is-playing','is-paused','is-preparing'); root.classList.add('is-complete'); const b=root.querySelector('[data-action=pause]'); if(b)b.textContent='Ⅱ'; }};
+  let timer=0,frame=0,rewindTimer=0;
+  const rewindDuration=Math.round(120*Math.max(.72,scale));
+  root.style.setProperty('--pm-rewind-duration',rewindDuration+'ms');
+  const settle=()=>{{ clearTimeout(timer); clearTimeout(rewindTimer); cancelAnimationFrame(frame); root.classList.remove('is-playing','is-paused','is-preparing','is-rewinding'); root.classList.add('is-complete'); const b=root.querySelector('[data-action=pause]'); if(b)b.textContent='Ⅱ'; }};
   const replay=()=>{{
-    clearTimeout(timer); cancelAnimationFrame(frame); root.classList.remove('is-playing','is-complete','is-paused');
+    clearTimeout(timer); clearTimeout(rewindTimer); cancelAnimationFrame(frame); root.classList.remove('is-playing','is-complete','is-paused','is-preparing','is-rewinding');
     if(reduce){{settle();return;}}
-    root.style.setProperty('--motion-scale',scale); root.classList.add('motion-enabled','is-preparing');
+    root.style.setProperty('--motion-scale',scale); root.classList.add('motion-enabled','is-rewinding');
     void root.offsetWidth;
-    frame=requestAnimationFrame(()=>{{root.classList.add('is-playing');root.classList.remove('is-preparing');timer=setTimeout(settle,total+120);}});
+    rewindTimer=setTimeout(()=>{{
+      frame=requestAnimationFrame(()=>{{
+        root.classList.remove('is-rewinding');
+        root.classList.add('is-playing');
+        timer=setTimeout(settle,total+120);
+      }});
+    }},rewindDuration);
   }};
   const pause=()=>{{ root.classList.toggle('is-paused'); const b=root.querySelector('[data-action=pause]'); b.textContent=root.classList.contains('is-paused')?'▶':'Ⅱ'; }};
   root.querySelector('[data-action=replay]').addEventListener('click',replay);
   root.querySelector('[data-action=pause]').addEventListener('click',pause);
   root.querySelector('[data-action=surface]').addEventListener('click',()=>{{ const html=document.documentElement; html.dataset.surface=html.dataset.surface==='dark'?'light':'dark'; }});
   if(params.get('theme')==='dark') document.documentElement.dataset.surface='dark';
-  window.Moxing={{replay,settle,setSurface:(v)=>document.documentElement.dataset.surface=v,profile,duration:total,ready:Promise.resolve()}};
+  window.Moxing={{replay,settle,setSurface:(v)=>document.documentElement.dataset.surface=v,profile,duration:total+rewindDuration,rewindDuration,ready:Promise.resolve()}};
   if(reduce||params.get('autoplay')==='off') settle();
   else if('IntersectionObserver'in window){{ const io=new IntersectionObserver(e=>{{if(e[0].isIntersecting){{io.disconnect();replay();}}}},{{threshold:.35}});io.observe(root); }}
   else replay();
