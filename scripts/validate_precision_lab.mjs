@@ -46,11 +46,13 @@ for (const chartId of chartIds) {
       code: doc?.querySelector(".pi-code")?.textContent.trim(),
       meta: doc?.querySelectorAll(".pi-meta span").length,
       overlay: doc?.querySelectorAll(".pi-overlay").length,
-      route: doc?.querySelectorAll(".pi-evidence-route, .pi-evidence-route-accent").length,
+      terminalLead: doc?.querySelectorAll(".pi-terminal-lead").length,
+      terminalNode: doc?.querySelectorAll(".pi-terminal-node").length,
+      targetLock: doc?.querySelectorAll(".pi-lock-ring, .pi-focus-corner").length,
       controls: doc?.querySelectorAll(".motion-controls button").length,
     };
   }, chartId);
-  if (state.ready === "true" && state.precision === "lab" && state.code?.includes(chartId.toUpperCase()) && state.meta === 3 && state.overlay === 2 && state.route === 2 && state.controls === 3) {
+  if (state.ready === "true" && state.precision === "lab" && state.code?.includes(chartId.toUpperCase()) && state.meta === 3 && state.overlay === 2 && state.terminalLead === 1 && state.terminalNode === 1 && state.targetLock >= 1 && state.controls === 3) {
     pass(`${chartId} instrument contract`, JSON.stringify(state));
   } else {
     fail(`${chartId} instrument contract`, JSON.stringify(state));
@@ -86,22 +88,31 @@ else fail("export-safe controls", JSON.stringify(exportState));
 await page.locator('[data-lab-action="output"]').click();
 await page.locator('[data-lab-action="surface"]').click();
 await page.locator('[data-lab-action="view"]').click();
-await page.waitForTimeout(1750);
+await page.waitForTimeout(250);
 const view = await page.getAttribute("body", "data-view");
 if (view === "grid") pass("four-up comparison view");
 else fail("four-up comparison view", `view=${view}`);
+const gridMotion = await page.evaluate(() => [...document.querySelectorAll("iframe")].map((frame) => ({
+  view: frame.contentDocument.documentElement.dataset.labView,
+  playing: frame.contentDocument.querySelector(".chart-container")?.classList.contains("is-playing"),
+})));
+if (gridMotion.every(({ view: frameView, playing }) => frameView === "grid" && !playing)) pass("grid remains static", JSON.stringify(gridMotion));
+else fail("grid remains static", JSON.stringify(gridMotion));
 await page.screenshot({ path: path.join(previewDir, "lab-grid-light.png"), fullPage: true });
 
 await page.locator('[data-lab-action="replay"]').click();
+await page.waitForTimeout(80);
 const animationState = await page.evaluate(() => [...document.querySelectorAll("iframe")].map((frame) => {
   const doc = frame.contentDocument;
-  const route = doc.querySelector(".pi-evidence-route");
+  const terminal = doc.querySelector(".pi-terminal-lead");
   return {
+    view: doc.documentElement.dataset.labView,
     playing: doc.querySelector(".chart-container")?.classList.contains("is-playing"),
-    routeAnimation: route ? getComputedStyle(route).animationName : "missing",
+    terminalAnimation: terminal ? getComputedStyle(terminal).animationName : "missing",
   };
 }));
-if (animationState.every(({ playing, routeAnimation }) => playing && routeAnimation === "pi-route-grow")) pass("precision replay choreography", JSON.stringify(animationState));
+const playingFrames = animationState.filter(({ playing }) => playing);
+if (playingFrames.length === 1 && playingFrames[0].view === "focus" && playingFrames[0].terminalAnimation === "pi-terminal-send") pass("single-frame precision replay", JSON.stringify(animationState));
 else fail("precision replay choreography", JSON.stringify(animationState));
 
 if (errors.length === 0) pass("runtime errors", "none");

@@ -9,9 +9,10 @@ This branch-only lab tests the agreed **60% Moxing / 40% precision-device** visu
 - Rails, sockets, ports, and mechanical lock points are structural and data-bound.
 - Dot-matrix texture remains limited to identifiers and state metadata.
 - Light industrial-drawing surface is the default; dark is the instrument companion.
-- Evidence routes grow from the chart lock point to the evidence plate.
+- Evidence plates and chart lock points use paired local terminals; no long route crosses the data field.
 - The segmented control dock is visible in-browser and hidden in export state.
 - Motion remains short, mechanical, and deterministic.
+- Grid view is a static comparison surface; replay enters focus view and animates one chart only.
 
 ## Prototype coverage
 
@@ -19,6 +20,12 @@ This branch-only lab tests the agreed **60% Moxing / 40% precision-device** visu
 - C08: stage modules installed on a datum rail.
 - C15: commerce nodes with explicit input/output ports.
 - C22: addressable matrix with a mechanical focus bracket.
+
+## Collision and motion policy
+
+- A chart only supplies a source terminal coordinate, a target lock coordinate, and a shared evidence ID.
+- The paired ID, signal color, and timed handshake communicate the relationship without obstacle routing.
+- Hidden and grid-view iframes are settled, so SVG motion is never multiplied across four scaled canvases.
 
 ## Review URL
 

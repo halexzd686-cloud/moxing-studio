@@ -58,7 +58,7 @@ button{font:inherit}
 .prototype-caption{height:34px;display:flex;justify-content:space-between;align-items:start;border-top:1px solid var(--lab-line);padding-top:7px;color:var(--lab-muted)}
 .prototype-caption span{font-size:11px;color:var(--lab-signal)}
 .prototype-caption p{margin:0;font-size:12px;letter-spacing:.02em}
-.frame-viewport{position:relative;width:100%;overflow:hidden;background:#F2F3EF;border:1px solid var(--lab-line)}
+.frame-viewport{position:relative;width:100%;overflow:hidden;background:#F2F3EF;border:1px solid var(--lab-line);contain:layout paint}
 .frame-stage{width:1280px;height:720px;margin:0 auto;transform-origin:top left}
 .frame-stage iframe{display:block;width:1280px;height:720px;border:0;background:#F2F3EF}
 body[data-surface="dark"] .frame-viewport{background:#151714}

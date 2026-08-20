@@ -29,8 +29,9 @@ html[data-output="export"] .motion-controls{display:none!important}
 
 html[data-precision="lab"] .evidence-plate .panel-stroke{stroke:var(--ink);stroke-width:1.2}
 html[data-precision="lab"] .evidence-plate::selection{background:transparent}
-svg .pi-evidence-route{fill:none;stroke:var(--rail);stroke-width:1.25;vector-effect:non-scaling-stroke}
-svg .pi-evidence-route-accent{fill:none;stroke:var(--signal);stroke-width:2;vector-effect:non-scaling-stroke}
+svg .pi-terminal-lead{fill:none;stroke:var(--rail);stroke-width:1.25;vector-effect:non-scaling-stroke}
+svg .pi-terminal-node{fill:var(--bg);stroke:var(--signal);stroke-width:1.5;vector-effect:non-scaling-stroke}
+svg .pi-terminal-id{font-family:'Doto','Cascadia Mono',monospace;fill:var(--signal);font-weight:750;font-variation-settings:'ROND' 0,'wght' 750;letter-spacing:.06em}
 svg .pi-socket{fill:var(--bg);stroke:var(--ink);stroke-width:1.5;vector-effect:non-scaling-stroke}
 svg .pi-socket-signal{fill:var(--signal);stroke:var(--on-signal);stroke-width:1;vector-effect:non-scaling-stroke}
 svg .pi-lock-ring{fill:none;stroke:var(--signal);stroke-width:2;vector-effect:non-scaling-stroke}
@@ -39,11 +40,14 @@ svg .pi-address{font-family:'Doto','Cascadia Mono',monospace;fill:var(--matrix-s
 svg .pi-address-signal{fill:var(--signal)}
 svg .pi-focus-corner{fill:none;stroke:var(--signal);stroke-width:2;vector-effect:non-scaling-stroke}
 
-@keyframes pi-route-grow{from{opacity:0;stroke-dashoffset:1}to{opacity:1;stroke-dashoffset:0}}
+@keyframes pi-terminal-send{from{opacity:0;stroke-dashoffset:1}to{opacity:1;stroke-dashoffset:0}}
+@keyframes pi-terminal-id-on{from{opacity:0}to{opacity:1}}
 @keyframes pi-socket-seat{0%{opacity:0;transform:scale(.3)}72%{opacity:1;transform:scale(1.15)}100%{opacity:1;transform:scale(1)}}
 @keyframes pi-lock-pulse{0%{opacity:0;transform:scale(.45)}70%{opacity:1;transform:scale(1.12)}100%{opacity:1;transform:scale(1)}}
-.motion-enabled.is-playing .pi-evidence-route{stroke-dasharray:1;animation:pi-route-grow 420ms linear 1260ms both}
-.motion-enabled.is-playing .pi-evidence-route-accent{stroke-dasharray:1;animation:pi-route-grow 260ms linear 1560ms both}
+.motion-enabled.is-playing .pi-terminal-lead{stroke-dasharray:1;animation:pi-terminal-send 180ms linear 1180ms both}
+.motion-enabled.is-playing .pi-terminal-node{animation:pi-lock-pulse 200ms cubic-bezier(.22,.78,.22,1) 1320ms both;transform-box:fill-box;transform-origin:center}
+.motion-enabled.is-playing .pi-terminal-id{animation:pi-terminal-id-on 140ms linear 1380ms both}
 .motion-enabled.is-playing .pi-socket{animation:pi-socket-seat 240ms cubic-bezier(.22,.78,.22,1) var(--pi-delay,180ms) both;transform-box:fill-box;transform-origin:center}
-.motion-enabled.is-playing .pi-socket-signal,.motion-enabled.is-playing .pi-lock-ring,.motion-enabled.is-playing .pi-focus-corner{animation:pi-lock-pulse 280ms cubic-bezier(.22,.78,.22,1) 1540ms both;transform-box:fill-box;transform-origin:center}
-@media (prefers-reduced-motion:reduce){.motion-enabled.is-playing .pi-evidence-route,.motion-enabled.is-playing .pi-evidence-route-accent,.motion-enabled.is-playing .pi-socket,.motion-enabled.is-playing .pi-socket-signal,.motion-enabled.is-playing .pi-lock-ring,.motion-enabled.is-playing .pi-focus-corner{animation:none!important}}
+.motion-enabled.is-playing .pi-socket-signal,.motion-enabled.is-playing .pi-lock-ring,.motion-enabled.is-playing .pi-focus-corner{animation:pi-lock-pulse 260ms cubic-bezier(.22,.78,.22,1) 1500ms both;transform-box:fill-box;transform-origin:center}
+html[data-lab-view="grid"] .motion-enabled.is-playing [data-motion],html[data-lab-view="grid"] .motion-enabled.is-playing .pi-terminal-lead,html[data-lab-view="grid"] .motion-enabled.is-playing .pi-terminal-node,html[data-lab-view="grid"] .motion-enabled.is-playing .pi-terminal-id,html[data-lab-view="grid"] .motion-enabled.is-playing .pi-socket,html[data-lab-view="grid"] .motion-enabled.is-playing .pi-socket-signal,html[data-lab-view="grid"] .motion-enabled.is-playing .pi-lock-ring,html[data-lab-view="grid"] .motion-enabled.is-playing .pi-focus-corner{animation:none!important}
+@media (prefers-reduced-motion:reduce){.motion-enabled.is-playing .pi-terminal-lead,.motion-enabled.is-playing .pi-terminal-node,.motion-enabled.is-playing .pi-terminal-id,.motion-enabled.is-playing .pi-socket,.motion-enabled.is-playing .pi-socket-signal,.motion-enabled.is-playing .pi-lock-ring,.motion-enabled.is-playing .pi-focus-corner{animation:none!important}}
