@@ -23,7 +23,7 @@ def main() -> None:
         cards.append(
             f"""<article class="card" data-chart="{chart_id}" data-domain="{domain}">
   <div class="card-head"><span>{chart_id} / {meta['name']}</span><button type="button" data-replay>REPLAY</button></div>
-  <div class="frame"><iframe title="{meta['name']}" loading="lazy" src="{filename}?motion=brief&autoplay=off"></iframe></div>
+  <div class="frame"><iframe title="{meta['name']}" loading="lazy" src="{filename}?motion=brief&autoplay=off&build=macro-v2.1.1"></iframe></div>
 </article>"""
         )
     html = f"""<!DOCTYPE html>
@@ -44,7 +44,7 @@ main{{width:min(1480px,94vw);margin:30px auto 70px;display:grid;grid-template-co
 <script>
 const frames=[...document.querySelectorAll('iframe')];const motion=document.getElementById('motion');let dark=false;
 function fit(){{document.querySelectorAll('.frame').forEach(box=>{{const frame=box.querySelector('iframe');frame.style.transform=`scale(${{box.clientWidth/1280}})`}})}}
-function update(frame){{frame.dataset.played='';frame.src=frame.src.split('?')[0]+`?motion=${{motion.value}}&theme=${{dark?'dark':'light'}}&autoplay=off`}}
+function update(frame){{frame.dataset.played='';frame.src=frame.src.split('?')[0]+`?motion=${{motion.value}}&theme=${{dark?'dark':'light'}}&autoplay=off&build=macro-v2.1.1`}}
 function getApi(frame){{try{{return frame.contentWindow?.Moxing}}catch{{return null}}}}
 function replay(frame){{const api=getApi(frame);if(api)api.replay();else update(frame)}}
 motion.addEventListener('change',()=>frames.forEach(update));document.getElementById('surface').addEventListener('click',e=>{{dark=!dark;e.target.textContent=dark?'LIGHT':'DARK';frames.forEach(update)}});

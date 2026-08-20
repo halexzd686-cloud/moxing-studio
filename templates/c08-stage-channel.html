@@ -114,7 +114,9 @@
   .motion-enabled.is-paused [data-motion] { animation-play-state:paused!important; }
   @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing [data-motion] { animation:none!important; } }
   [data-motion-system="macro-v2.1"] [data-motion]:not([data-scene]) { animation:none!important; }
-  [data-scene] { transform-box:fill-box; transform-origin:center; }
+  [data-scene] { transform-origin:center; }
+  svg [data-scene] { transform-box:fill-box; }
+  .chart-body[data-scene="data-field"] { contain:layout paint; isolation:isolate; backface-visibility:hidden; transform:translateZ(0); }
   @keyframes mx-scene-field { from { opacity:0; transform:translate3d(0,10px,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes mx-scene-evidence { from { opacity:0; transform:translate3d(-10px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes mx-scene-lock { 0% { opacity:0; transform:scale(.94); } 72% { opacity:1; transform:scale(1.018); } 100% { opacity:1; transform:scale(1); } }
@@ -133,7 +135,7 @@
     <div><h1 class="chart-title">付费转化是主瓶颈，续约质量相对稳定</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / STAGE</span><span>DATA / 05I</span><span data-state data-scene="terminal-lock">STATE / READY</span></div></div>
     <span class="mx-header-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </header>
-  <section class="chart-body"><svg viewBox="0 0 1172 500" role="img" aria-label="付费转化是主瓶颈，续约质量相对稳定"><g data-scene="data-field"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >08 / STAGE INTERLOCK</text>
+  <section class="chart-body" data-scene="data-field"><svg viewBox="0 0 1172 500" role="img" aria-label="付费转化是主瓶颈，续约质量相对稳定"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >08 / STAGE INTERLOCK</text>
 <g class="evidence-plate" data-scene="evidence-bay" data-motion="lock" data-choreo="readout" style="--delay:1600ms;--dx:-8px;--dy:0px;--delay-brief:960ms;--delay-story:3040ms">
 <path d="M 0 74 H 222 L 230 82 V 168 H 8 L 0 160 Z" class="panel-stroke" />
 <text x="14" y="95" class="index muted" text-anchor="start" font-size="12" >S-01</text>
@@ -179,7 +181,7 @@
 <line x1="1047.2" y1="186.57" x2="1047.2" y2="313.42" class="rail" data-motion="align" style="--delay:330ms;--dx:0px;--dy:0px;--delay-brief:141ms;--delay-story:540ms"/>
 <line x1="933.6" y1="250" x2="995.2" y2="250" class="rail" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:1010ms;--dx:0px;--dy:0px;--duration:180ms;--delay-brief:570ms;--delay-story:1980ms;--duration-brief:140ms;--duration-story:360ms"/>
 <text x="964.4" y="234" class="muted index" text-anchor="middle" font-size="12" data-motion="lock" data-choreo="readout" style="--delay:1200ms;--dx:0px;--dy:0px;--delay-brief:705ms;--delay-story:2360ms">−24%</text>
-<line x1="302" y1="420" x2="1130" y2="420" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--duration:240ms;--delay-brief:30ms;--delay-story:100ms;--duration-brief:150ms;--duration-story:320ms"/></g></svg></section>
+<line x1="302" y1="420" x2="1130" y2="420" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--duration:240ms;--delay-brief:30ms;--delay-story:100ms;--duration-brief:150ms;--duration-story:320ms"/></svg></section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" data-code="R" title="重播">↻</button><button type="button" data-action="pause" data-code="H" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" data-code="S" title="切换明暗">◐</button></nav>
 </main>

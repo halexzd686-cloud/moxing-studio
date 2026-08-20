@@ -114,7 +114,9 @@
   .motion-enabled.is-paused [data-motion] { animation-play-state:paused!important; }
   @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing [data-motion] { animation:none!important; } }
   [data-motion-system="macro-v2.1"] [data-motion]:not([data-scene]) { animation:none!important; }
-  [data-scene] { transform-box:fill-box; transform-origin:center; }
+  [data-scene] { transform-origin:center; }
+  svg [data-scene] { transform-box:fill-box; }
+  .chart-body[data-scene="data-field"] { contain:layout paint; isolation:isolate; backface-visibility:hidden; transform:translateZ(0); }
   @keyframes mx-scene-field { from { opacity:0; transform:translate3d(0,10px,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes mx-scene-evidence { from { opacity:0; transform:translate3d(-10px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes mx-scene-lock { 0% { opacity:0; transform:scale(.94); } 72% { opacity:1; transform:scale(1.018); } 100% { opacity:1; transform:scale(1); } }
@@ -133,7 +135,7 @@
     <div><h1 class="chart-title">商品详情到加购流失最大，是成交链路首要修复点</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / PORT</span><span>DATA / 05N · 04R</span><span data-state data-scene="terminal-lock">STATE / READY</span></div></div>
     <span class="mx-header-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </header>
-  <section class="chart-body"><svg viewBox="0 0 1172 500" role="img" aria-label="商品详情到加购流失最大，是成交链路首要修复点"><g data-scene="data-field"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >15 / COMMERCE FLOW</text>
+  <section class="chart-body" data-scene="data-field"><svg viewBox="0 0 1172 500" role="img" aria-label="商品详情到加购流失最大，是成交链路首要修复点"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >15 / COMMERCE FLOW</text>
 <line x1="276" y1="442" x2="1130" y2="442" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--delay-brief:30ms;--delay-story:110ms"/>
 <path d="M 388.0 195.0 C 459.3333333333333 195.0 459.3333333333333 270.0 530.6666666666666 270.0" class="secondary-stroke" stroke-width="14.0" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:320ms;--dx:0px;--dy:0px;--duration:480ms;--delay-brief:160ms;--delay-story:620ms;--duration-brief:300ms;--duration-story:760ms"/>
 <path d="M 388.0 345.0 C 459.3333333333333 345.0 459.3333333333333 270.0 530.6666666666666 270.0" class="secondary-stroke" stroke-width="12.0" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:440ms;--dx:0px;--dy:0px;--duration:480ms;--delay-brief:225ms;--delay-story:860ms;--duration-brief:300ms;--duration-story:760ms"/>
@@ -160,7 +162,7 @@
 <text x="186" y="107" class="index signal-text" text-anchor="end" font-size="12" >LEAK</text>
 <text x="14" y="141" class="value" text-anchor="start" font-size="28" font-weight="650" >1,710</text>
 <text x="14" y="163" class="muted" text-anchor="start" font-size="13" >最小有效流量</text>
-</g></g></svg></section>
+</g></svg></section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" data-code="R" title="重播">↻</button><button type="button" data-action="pause" data-code="H" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" data-code="S" title="切换明暗">◐</button></nav>
 </main>

@@ -114,7 +114,9 @@
   .motion-enabled.is-paused [data-motion] { animation-play-state:paused!important; }
   @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing [data-motion] { animation:none!important; } }
   [data-motion-system="macro-v2.1"] [data-motion]:not([data-scene]) { animation:none!important; }
-  [data-scene] { transform-box:fill-box; transform-origin:center; }
+  [data-scene] { transform-origin:center; }
+  svg [data-scene] { transform-box:fill-box; }
+  .chart-body[data-scene="data-field"] { contain:layout paint; isolation:isolate; backface-visibility:hidden; transform:translateZ(0); }
   @keyframes mx-scene-field { from { opacity:0; transform:translate3d(0,10px,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes mx-scene-evidence { from { opacity:0; transform:translate3d(-10px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes mx-scene-lock { 0% { opacity:0; transform:scale(.94); } 72% { opacity:1; transform:scale(1.018); } 100% { opacity:1; transform:scale(1); } }
@@ -133,7 +135,7 @@
     <div><h1 class="chart-title">增长在下半年加速，年末达到新高</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / ROUTE</span><span>DATA / 12T · 02S</span><span data-state data-scene="terminal-lock">STATE / READY</span></div></div>
     <span class="mx-header-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </header>
-  <section class="chart-body"><svg viewBox="0 0 1172 500" role="img" aria-label="增长在下半年加速，年末达到新高"><g data-scene="data-field"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >03 / PATH ROUTING</text>
+  <section class="chart-body" data-scene="data-field"><svg viewBox="0 0 1172 500" role="img" aria-label="增长在下半年加速，年末达到新高"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >03 / PATH ROUTING</text>
 <g class="evidence-plate" data-scene="evidence-bay" data-motion="lock" data-choreo="readout" style="--delay:1540ms;--dx:-8px;--dy:0px;--delay-brief:1020ms;--delay-story:2820ms">
 <path d="M 0 74 H 222 L 230 82 V 168 H 8 L 0 160 Z" class="panel-stroke" />
 <text x="14" y="95" class="index muted" text-anchor="start" font-size="12" >T-01</text>
@@ -169,7 +171,7 @@
 <circle cx="292" cy="378.06" r="3.5" class="hollow" data-motion="dock" data-choreo="pin" style="--delay:480ms;--dx:0px;--dy:10px;--duration:220ms;--delay-brief:260ms;--delay-story:830ms;--duration-brief:150ms;--duration-story:260ms"/>
 <circle cx="1126" cy="234.24" r="3.5" class="hollow" data-motion="dock" data-choreo="pin" style="--delay:1280ms;--dx:0px;--dy:10px;--duration:220ms;--delay-brief:860ms;--delay-story:2080ms;--duration-brief:150ms;--duration-story:260ms"/>
 <line x1="1126" y1="103.94" x2="1126" y2="74" class="rail" pathLength="1" data-motion="align" style="--delay:1220ms;--dx:0px;--dy:0px;--delay-brief:820ms;--delay-story:2140ms"/>
-<text x="1126" y="64" class="index signal-text" text-anchor="middle" font-size="12" data-motion="lock" data-choreo="alarm" style="--delay:1400ms;--dx:0px;--dy:0px;--delay-brief:950ms;--delay-story:2480ms">PEAK / 12月</text></g></svg></section>
+<text x="1126" y="64" class="index signal-text" text-anchor="middle" font-size="12" data-motion="lock" data-choreo="alarm" style="--delay:1400ms;--dx:0px;--dy:0px;--delay-brief:950ms;--delay-story:2480ms">PEAK / 12月</text></svg></section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" data-code="R" title="重播">↻</button><button type="button" data-action="pause" data-code="H" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" data-code="S" title="切换明暗">◐</button></nav>
 </main>

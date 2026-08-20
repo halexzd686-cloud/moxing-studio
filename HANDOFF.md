@@ -59,7 +59,7 @@ If Playwright is installed outside the project, set `MOXING_PLAYWRIGHT_PATH`. Se
 ## Current QA
 
 - 103 boundary render cases pass.
-- 208 browser/static/motion/layout/readability/gallery-scheduling checks pass; see `docs/previews/qa-report.json`.
+- 212 browser/static/motion/layout/readability/gallery-scheduling/frame-pacing checks pass; see `docs/previews/qa-report.json`.
 - The approved four-chart Precision Interface Lab passes 17 focused layout, motion-layer, and narrow-viewport checks.
 - All 24 templates render with and without JavaScript.
 - Reduced-motion mode settles immediately.

@@ -114,7 +114,9 @@
   .motion-enabled.is-paused [data-motion] { animation-play-state:paused!important; }
   @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing [data-motion] { animation:none!important; } }
   [data-motion-system="macro-v2.1"] [data-motion]:not([data-scene]) { animation:none!important; }
-  [data-scene] { transform-box:fill-box; transform-origin:center; }
+  [data-scene] { transform-origin:center; }
+  svg [data-scene] { transform-box:fill-box; }
+  .chart-body[data-scene="data-field"] { contain:layout paint; isolation:isolate; backface-visibility:hidden; transform:translateZ(0); }
   @keyframes mx-scene-field { from { opacity:0; transform:translate3d(0,10px,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes mx-scene-evidence { from { opacity:0; transform:translate3d(-10px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes mx-scene-lock { 0% { opacity:0; transform:scale(.94); } 72% { opacity:1; transform:scale(1.018); } 100% { opacity:1; transform:scale(1); } }
@@ -133,7 +135,7 @@
     <div><h1 class="chart-title">营收与毛利高度同向，投放与复购呈弱负相关</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / MATRIX</span><span>DATA / 05T</span><span data-state data-scene="terminal-lock">STATE / READY</span></div></div>
     <span class="mx-header-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </header>
-  <section class="chart-body"><svg viewBox="0 0 1172 500" role="img" aria-label="营收与毛利高度同向，投放与复购呈弱负相关"><g data-scene="data-field"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >22 / CORRELATION MATRIX</text>
+  <section class="chart-body" data-scene="data-field"><svg viewBox="0 0 1172 500" role="img" aria-label="营收与毛利高度同向，投放与复购呈弱负相关"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >22 / CORRELATION MATRIX</text>
 <line x1="300" y1="52" x2="650" y2="52" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--delay-brief:30ms;--delay-story:110ms"/>
 <text x="335" y="42" class="index muted" text-anchor="middle" font-size="12" >营收</text>
 <text x="0" y="113.4" class="index muted" text-anchor="start" font-size="12" >营收</text>
@@ -201,7 +203,7 @@
 <text x="216" y="367" class="index signal-text" text-anchor="end" font-size="12" >STRONG</text>
 <text x="14" y="401" class="value" text-anchor="start" font-size="28" font-weight="650" >+0.84</text>
 <text x="14" y="423" class="muted" text-anchor="start" font-size="13" >毛利 × 营收</text>
-</g></g></svg></section>
+</g></svg></section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" data-code="R" title="重播">↻</button><button type="button" data-action="pause" data-code="H" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" data-code="S" title="切换明暗">◐</button></nav>
 </main>

@@ -99,7 +99,7 @@ for (const [file, expected] of Object.entries(exemplars)) {
   const scope = `choreography:${file}`;
   if (!source.includes(`data-choreography="${expected.family}"`)) fail(scope, `missing ${expected.family} family`);
   if (!source.includes(`data-choreo="${expected.cue}"`)) fail(scope, `missing ${expected.cue} cue`);
-  if (expected.macro && (!source.includes('data-motion-system="macro-v2.1"') || !source.includes('data-scene="data-field"') || !source.includes('data-scene="evidence-bay"') || !source.includes('data-scene="terminal-lock"'))) fail(scope, "macro scene contract incomplete");
+  if (expected.macro && (!source.includes('data-motion-system="macro-v2.1"') || !/<section class="chart-body" data-scene="data-field">/.test(source) || !source.includes('data-scene="evidence-bay"') || !source.includes('data-scene="terminal-lock"'))) fail(scope, "macro scene contract incomplete or data field is not on the HTML compositor layer");
   const explicit = source.match(new RegExp(`data-choreo="${expected.cue}"[^>]*style="([^"]+)"`))?.[1] || "";
   if (!explicit.includes("--delay-brief:") || !explicit.includes("--delay-story:")) fail(scope, "cue lacks independent profile timing");
   if (!failures.some((item) => item.scope === scope)) pass(scope, `${expected.family} with independent profile timing`);
@@ -187,6 +187,36 @@ const darkSurface = await motionPage.evaluate(() => document.documentElement.dat
 if (darkSurface !== "dark") fail("motion", "dark surface toggle failed");
 else pass("motion", "dark surface toggle");
 await motionContext.close();
+
+for (const file of ["c03-signal-trend.html", "c08-stage-channel.html", "c15-commerce-flow.html", "c22-correlation-matrix.html"]) {
+  const context = await browser.newContext({ viewport: { width: 1280, height: 720 }, reducedMotion: "no-preference" });
+  const page = await context.newPage();
+  await page.goto(`${pathToFileURL(path.join(templatesDir, file)).href}?motion=brief&autoplay=off`, { waitUntil: "load" });
+  const frameState = await page.evaluate(() => new Promise((resolve) => {
+    window.Moxing.replay();
+    const gaps = [];
+    let previous = performance.now();
+    const sample = (now) => {
+      gaps.push(now - previous);
+      previous = now;
+      if (gaps.length < 50) { requestAnimationFrame(sample); return; }
+      const ordered = [...gaps].sort((a, b) => a - b);
+      const field = document.querySelector('[data-scene="data-field"]');
+      resolve({
+        carrier: field?.tagName,
+        p95: ordered[Math.floor(ordered.length * .95)],
+        over28: gaps.filter((gap) => gap > 28).length,
+        running: document.getAnimations().filter((item) => item.playState === "running").length,
+        legacy: [...document.querySelectorAll('[data-motion]:not([data-scene])')].filter((item) => getComputedStyle(item).animationName !== "none").length,
+      });
+    };
+    requestAnimationFrame(sample);
+  }));
+  const scope = `macro-performance:${file}`;
+  if (frameState.carrier !== "SECTION" || frameState.p95 > 28 || frameState.over28 > 1 || frameState.running > 4 || frameState.legacy) fail(scope, JSON.stringify(frameState));
+  else pass(scope, `HTML compositor p95 ${frameState.p95.toFixed(1)}ms; ${frameState.running} layers; legacy idle`);
+  await context.close();
+}
 
 const profileRanges = {
   brief: [900, 1200],

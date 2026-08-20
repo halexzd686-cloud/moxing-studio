@@ -291,7 +291,8 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
     display_code = f"C{int(page.chart_id[1:]):02d}" if page.chart_id[1:].isdigit() else page.chart_id
     header_ticks = "<i></i>" * 16
     motion_system = page.scene.system if page.scene else "legacy"
-    scene_svg = f'<g data-scene="data-field">{page.svg}</g>' if page.scene else page.svg
+    scene_svg = page.svg
+    body_scene = ' data-scene="data-field"' if page.scene else ""
     state_scene = ' data-scene="terminal-lock"' if page.scene else ""
     scene_timings = json.dumps(motion_tokens.get("scenes", {}), separators=(",", ":"))
     return f"""<!DOCTYPE html>
@@ -393,7 +394,9 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   .motion-enabled.is-paused [data-motion] {{ animation-play-state:paused!important; }}
   @media (prefers-reduced-motion:reduce) {{ .motion-enabled.is-playing [data-motion] {{ animation:none!important; }} }}
   [data-motion-system="macro-v2.1"] [data-motion]:not([data-scene]) {{ animation:none!important; }}
-  [data-scene] {{ transform-box:fill-box; transform-origin:center; }}
+  [data-scene] {{ transform-origin:center; }}
+  svg [data-scene] {{ transform-box:fill-box; }}
+  .chart-body[data-scene="data-field"] {{ contain:layout paint; isolation:isolate; backface-visibility:hidden; transform:translateZ(0); }}
   @keyframes mx-scene-field {{ from {{ opacity:0; transform:translate3d(0,10px,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
   @keyframes mx-scene-evidence {{ from {{ opacity:0; transform:translate3d(-10px,0,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
   @keyframes mx-scene-lock {{ 0% {{ opacity:0; transform:scale(.94); }} 72% {{ opacity:1; transform:scale(1.018); }} 100% {{ opacity:1; transform:scale(1); }} }}
@@ -412,7 +415,7 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
     <div><h1 class=\"chart-title\">{esc(page.title)}</h1><div class=\"chart-subtitle\">{esc(page.subtitle)}</div><div class=\"mx-meta\"><span>FAMILY / {esc(page.family)}</span><span>DATA / {esc(page.data_signature)}</span><span data-state{state_scene}>STATE / READY</span></div></div>
     <span class=\"mx-header-ticks\" aria-hidden=\"true\">{header_ticks}</span>
   </header>
-  <section class=\"chart-body\"><svg viewBox=\"0 0 {W} {H}\" role=\"img\" aria-label=\"{esc(page.title)}\">{scene_svg}</svg></section>
+  <section class=\"chart-body\"{body_scene}><svg viewBox=\"0 0 {W} {H}\" role=\"img\" aria-label=\"{esc(page.title)}\">{scene_svg}</svg></section>
   <footer class=\"chart-footer\"><span>{esc(page.footer)}</span><span class=\"mark\">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class=\"motion-controls\" aria-label=\"动画控制\"><button type=\"button\" data-action=\"replay\" data-code=\"R\" title=\"重播\">↻</button><button type=\"button\" data-action=\"pause\" data-code=\"H\" title=\"暂停或继续\">Ⅱ</button><button type=\"button\" data-action=\"surface\" data-code=\"S\" title=\"切换明暗\">◐</button></nav>
 </main>

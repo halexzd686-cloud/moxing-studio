@@ -21,6 +21,8 @@ The default runtime order is:
 
 One `PRIMARY_ROUTE` layer may be added only when a single path is essential to reading time, dependency, or flow. A chart must run no more than four scene animations at once. Do not animate individual bars, cells, glyphs, labels, or repeated nodes in the production scene graph.
 
+`DATA_FIELD` belongs on the HTML chart-body compositor layer, not on a full-SVG `<g>`. Isolate that carrier with paint containment so a complex SVG is rasterized once and reused during transform/opacity playback. Small evidence and lock groups may remain inside SVG.
+
 C3, C8, C15, and C22 are the production canaries for `macro-v2.1`. Other families retain the legacy primitive runtime until their static and motion review is complete.
 
 ## Profiles

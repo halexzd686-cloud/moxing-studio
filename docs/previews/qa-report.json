@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T04:51:53.296Z",
+  "generatedAt": "2026-08-20T05:07:21.794Z",
   "status": "passed",
   "checks": [
     {
@@ -465,6 +465,22 @@
     {
       "scope": "motion",
       "message": "dark surface toggle"
+    },
+    {
+      "scope": "macro-performance:c03-signal-trend.html",
+      "message": "HTML compositor p95 7.1ms; 3 layers; legacy idle"
+    },
+    {
+      "scope": "macro-performance:c08-stage-channel.html",
+      "message": "HTML compositor p95 7.3ms; 3 layers; legacy idle"
+    },
+    {
+      "scope": "macro-performance:c15-commerce-flow.html",
+      "message": "HTML compositor p95 7.3ms; 3 layers; legacy idle"
+    },
+    {
+      "scope": "macro-performance:c22-correlation-matrix.html",
+      "message": "HTML compositor p95 7.1ms; 3 layers; legacy idle"
     },
     {
       "scope": "profiles:c01-structural-rank.html",
