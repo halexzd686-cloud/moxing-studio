@@ -28,6 +28,14 @@ The internal metaphor is precise joinery. Public-facing language uses **Structur
 - Do not copy Nothing product glyphs, logos, type treatments, or ornamental dot fields. The resemblance comes from restraint, device hierarchy, and purposeful micro-structure.
 - Evidence bays, ports, and target locks are family-level components. Add them only when they clarify a real relationship and preserve the chart's plotting area.
 
+## Presentation modes
+
+- **A / Direct Canvas** preserves the complete plotting field and uses only a local lock when the conclusion is already visible.
+- **B / Embedded Evidence** places one compact evidence capsule in verified natural whitespace when a derived relationship needs explanation.
+- **C / Evidence Interface** reserves a separate evidence bay only when the reasoning chain needs its own reading surface.
+- Layout mode and motion grammar are independent. Do not add a bay, terminal, scan, or route merely to increase the device-like appearance.
+- The approved C1–C24 defaults and decision boundaries live in [presentation-modes.md](presentation-modes.md).
+
 ## Composition
 
 - Use an asymmetric 16:9 composition by default. Reserve 24–36% of the canvas for the conclusion or evidence column when the chart benefits from it.

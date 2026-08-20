@@ -50,6 +50,8 @@ The 24 public contracts intentionally map to nine maintainable geometry families
 - The conclusion title, unit/time context, and source remain visible in the locked frame.
 - Prefer an existing family and data schema. Add a new ID only when industry usage is established and the decision question cannot be expressed honestly by an existing contract.
 
-## Modes
+## Density and presentation
 
 Start with `brief` and `editorial`. Both use the same data contract and shape grammar; editorial mode adds reading furniture and evidence plates.
+
+Density does not select the evidence layout. Choose A / B / C presentation independently using [presentation-modes.md](presentation-modes.md); do not infer a side bay merely because `editorial` is active.

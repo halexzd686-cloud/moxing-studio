@@ -11,20 +11,19 @@ Every chart interprets its structure through four semantic primitives:
 
 These primitives are authoring semantics, not a requirement to animate every mark. Production playback compiles them into a small interface sequence so motion explains structure without producing dozens of simultaneous animations.
 
-## Production precision sequence
+## Production presentation sequences
 
-The default runtime order is:
+Production playback is selected from the chart's presentation mode, not from visual preference:
 
-1. `DATA_FIELD` — the complete plot enters as one composited layer. It absorbs `ALIGN`, `DOCK`, and ordinary routing marks.
-2. `EVIDENCE_BAY` — the reserved evidence plate enters after the field is readable.
-3. `TERMINAL` — the evidence ID completes its short local handshake.
-4. `TARGET_LOCK` — one decisive ring or focus bracket locks the conclusion.
+- **A / Direct Canvas:** `DATA_FIELD → TARGET_LOCK`, normally 2–3 macro layers.
+- **B / Embedded Evidence:** `DATA_FIELD → RELATIONSHIP → LOCAL_EVIDENCE → TARGET_LOCK`, maximum 4 macro layers.
+- **C / Evidence Interface:** `DATA_FIELD → EVIDENCE_BAY → TERMINAL → TARGET_LOCK`, maximum 4 macro layers.
 
-A chart must run no more than four precision animations at once. Do not animate individual bars, cells, glyphs, labels, or repeated nodes in the production sequence.
+The complete plot enters as one composited `DATA_FIELD` layer. It absorbs `ALIGN`, `DOCK`, and ordinary repeated marks. A separate relationship carrier is allowed only for a genuine trace, route, or matrix address. Do not animate individual bars, cells, candles, glyphs, labels, or repeated nodes.
 
-`DATA_FIELD` is the cropped plot SVG inside the HTML split body. Isolate that carrier with paint containment so complex geometry is rasterized once and reused during transform/opacity playback. The evidence plate belongs to its own SVG in the side bay; only ports, addresses, and the target lock remain in the plot foreground.
+Only C mode uses the cropped split body. Its evidence plate belongs to an independent SVG in the 220px side bay; only ports, addresses, and the target lock remain in the plot foreground. B mode keeps the full plot and docks one local capsule in verified natural whitespace. A mode keeps the full plot and adds no evidence container.
 
-C3, C8, C15, and C22 remain the approved visual canaries for `precision-v2.1`. The complete foundation family C1–C10 now shares their production carrier, side-bay separation, terminal overlays, and four-layer motion ceiling. C11–C14, C16–C21, C23, and C24 retain the legacy primitive runtime until their bounded-batch review is complete.
+The approved visual baselines are C1 for A, C14 for B, and C6 for C. The complete mapping and migration order live in [presentation-modes.md](presentation-modes.md). The previous rule that applied the side bay to the complete foundation family is retired.
 
 ## Profiles
 

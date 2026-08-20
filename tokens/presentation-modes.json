@@ -1,0 +1,37 @@
+{
+  "version": "1.0",
+  "status": "approved",
+  "approvedPrototypes": {"A": "C1", "B": "C14", "C": "C6"},
+  "modes": {
+    "A": {"name": "Direct Canvas", "carrier": "direct", "maxMotionLayers": 3},
+    "B": {"name": "Embedded Evidence", "carrier": "embedded", "maxMotionLayers": 4},
+    "C": {"name": "Evidence Interface", "carrier": "interface", "maxMotionLayers": 4}
+  },
+  "motionGrammars": ["assemble", "trace", "route", "scan", "readout"],
+  "charts": [
+    {"id": "C1", "mode": "A", "motion": "assemble", "evidence": "leader-lock", "batch": "A1", "risk": "low"},
+    {"id": "C2", "mode": "A", "motion": "assemble", "evidence": "top-rank-lock", "batch": "A1", "risk": "medium"},
+    {"id": "C3", "mode": "C", "motion": "trace", "evidence": "side-bay-latest-peak", "batch": "C1", "risk": "low"},
+    {"id": "C4", "mode": "A", "motion": "assemble", "evidence": "dominant-share-lock", "batch": "A1", "risk": "low"},
+    {"id": "C5", "mode": "A", "motion": "route", "evidence": "latest-mix-lock", "batch": "A1", "risk": "medium"},
+    {"id": "C6", "mode": "C", "motion": "route", "evidence": "side-bay-net-change", "batch": "C1", "risk": "low"},
+    {"id": "C7", "mode": "A", "motion": "route", "evidence": "active-lane-lock", "batch": "A1", "risk": "medium"},
+    {"id": "C8", "mode": "C", "motion": "route", "evidence": "side-bay-bottleneck", "batch": "C1", "risk": "low"},
+    {"id": "C9", "mode": "A", "motion": "readout", "evidence": "hero-metric-lock", "batch": "A1", "risk": "low"},
+    {"id": "C10", "mode": "A", "motion": "readout", "evidence": "local-risk-lock", "batch": "A1", "risk": "low"},
+    {"id": "C11", "mode": "A", "motion": "assemble", "evidence": "dominant-sector-lock", "batch": "A2", "risk": "low"},
+    {"id": "C12", "mode": "A", "motion": "trace", "evidence": "end-state-locks", "batch": "A2", "risk": "medium"},
+    {"id": "C13", "mode": "B", "motion": "route", "evidence": "embedded-threshold-capsule", "batch": "B1", "risk": "medium"},
+    {"id": "C14", "mode": "B", "motion": "scan", "evidence": "embedded-triangular-whitespace", "batch": "B1", "risk": "medium"},
+    {"id": "C15", "mode": "C", "motion": "route", "evidence": "side-bay-leak-path", "batch": "C1", "risk": "high"},
+    {"id": "C16", "mode": "B", "motion": "assemble", "evidence": "embedded-quadrant-capsule", "batch": "B1", "risk": "medium"},
+    {"id": "C17", "mode": "B", "motion": "assemble", "evidence": "embedded-breakout-capsule", "batch": "B2", "risk": "high"},
+    {"id": "C18", "mode": "B", "motion": "trace", "evidence": "embedded-panel-gap", "batch": "B2", "risk": "high"},
+    {"id": "C19", "mode": "B", "motion": "trace", "evidence": "embedded-curve-end", "batch": "B2", "risk": "medium"},
+    {"id": "C20", "mode": "A", "motion": "scan", "evidence": "selected-cell-lock", "batch": "A2", "risk": "medium"},
+    {"id": "C21", "mode": "B", "motion": "assemble", "evidence": "embedded-tail-capsule", "batch": "B2", "risk": "medium"},
+    {"id": "C22", "mode": "C", "motion": "scan", "evidence": "side-bay-pair", "batch": "C1", "risk": "medium"},
+    {"id": "C23", "mode": "B", "motion": "trace", "evidence": "embedded-range-end", "batch": "B2", "risk": "high"},
+    {"id": "C24", "mode": "B", "motion": "trace", "evidence": "embedded-exception-capsule", "batch": "B2", "risk": "medium"}
+  ]
+}

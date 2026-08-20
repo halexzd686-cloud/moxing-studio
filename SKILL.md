@@ -11,11 +11,12 @@ description: 生成具有结构装配动画和静态降级能力的中文商业�
 
 1. 按数据形状、行业问题、标签长度和阅读速度选择 C1–C24。读取 [references/chart-contracts.md](references/chart-contracts.md) 获取契约、家族复用与选型边界。
    需要可复制输入时，从 `examples/data/` 选择对应 ID 的 JSON；这些示例由 `scripts/export_examples.py` 从受测试保护的默认数据生成。
-2. 选择 `brief` 或 `editorial`。汇报默认 `brief`；文章、网页或需要解释证据时使用 `editorial`。需要动画时再选 `brief`、`standard` 或 `story` 时间轴，三者不是简单倍速。
-3. 默认使用冷白画布。用户明确要求深色、发布展示或仪器感时使用 `dark`。
-4. 标题写判断，不写图型名。单位、时间范围、口径和来源进入副标题或底行。
-5. 用 `scripts/render.py` 生成独立 HTML；需要图片或视频时再调用导出脚本。
-6. 按本文和相关参考文件自检后交付。
+2. 按结论是否能直接读取、图内是否存在稳定留白、推导链是否需要独立呈现，选择 A / B / C 展示模式。读取 [references/presentation-modes.md](references/presentation-modes.md) 获取 C1–C24 的默认映射、证据边界与迁移规则。
+3. 选择 `brief` 或 `editorial`。汇报默认 `brief`；文章、网页或需要解释证据时使用 `editorial`。需要动画时再选 `brief`、`standard` 或 `story` 时间轴，三者不是简单倍速。
+4. 默认使用冷白画布。用户明确要求深色、发布展示或仪器感时使用 `dark`。
+5. 标题写判断，不写图型名。单位、时间范围、口径和来源进入副标题或底行。
+6. 用 `scripts/render.py` 生成独立 HTML；需要图片或视频时再调用导出脚本。
+7. 按本文和相关参考文件自检后交付。
 
 视觉或构图判断不明确时读取 [references/visual-charter.md](references/visual-charter.md)。修改动画、节奏或触发方式时读取 [references/motion-system.md](references/motion-system.md)。
 
@@ -44,7 +45,7 @@ node scripts/export-motion.mjs chart.html chart.mp4 brief
 
 - 最终 SVG 几何在生成阶段完成。JavaScript只编排动画，不计算核心布局。
 - 禁用 JavaScript 或启用减少动态效果时，直接显示完整锁定状态。
-- 动画语义按 `ALIGN → DOCK → ROUTE → LOCK` 解释真实结构；Precision Interface 生产播放编译为“数据场 → 证据仓 → 本地终端 → 目标锁定”，总计不超过四层，不逐柱、逐格或逐字符播放。
+- 动画语义按 `ALIGN → DOCK → ROUTE → LOCK` 解释真实结构；生产播放依据 A / B / C 展示模式编译为 2–4 个宏观层。只有 C 模式使用“数据场 → 证据仓 → 本地终端 → 目标锁定”，不得把它全局套用到所有图表。
 - 全图只有一个氧化橙红锁定结论。多系列最多四种低饱和功能色，并提供形状、填充或线型第二通道。
 - 柱、条和长度编码必须从零开始。趋势图可使用清楚标注的非零范围，但不得暗示从基线起算的量级。
 - 面积和半径编码使用平方根换算。不得使用 3D、装饰渐变、玻璃拟态、霓虹光晕、双 Y 轴或彩虹色。

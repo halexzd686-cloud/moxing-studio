@@ -4,16 +4,17 @@
 >
 > Branch: `codex/v2.1-production-rollout`
 >
-> Status: v2.1 production rollout phase 3; the complete foundation family C1–C10 plus approved canaries C15/C22 use the shared Precision Interface contract
+> Status: A/B/C presentation architecture approved; production templates still contain the earlier partial full-bay rollout and await bounded migration
 >
-> Visual review: four representative prototypes approved on 2026-08-20; foundation batch C1/C2/C4/C5/C6/C7/C9/C10 awaits review
+> Visual review: C1 Direct Canvas, C14 Embedded Evidence, and C6 Evidence Interface approved on 2026-08-20
 
 ## Product contract
 
 - Canonical canvas: 1280×720, responsive scale through SVG/viewer.
 - Final geometry is generated in Python and remains readable without JavaScript.
-- `ALIGN`, `DOCK`, `ROUTE`, and `LOCK` remain authoring semantics; production canaries compile them into `DATA_FIELD`, `EVIDENCE_BAY`, `TERMINAL`, and one `TARGET_LOCK`.
-- C1–C10, C15, and C22 render the evidence plate in a true 220px side bay, keep a 28px safety gap, and crop the plot SVG at a chart-specific origin.
+- `ALIGN`, `DOCK`, `ROUTE`, and `LOCK` remain authoring semantics; production compiles them into 2–4 macro carriers selected independently from layout mode.
+- A / Direct Canvas preserves the full plot; B / Embedded Evidence uses verified natural whitespace; C / Evidence Interface reserves a 220px side bay and 28px safety gap.
+- Approved mapping: A = C1/C2/C4/C5/C7/C9/C10/C11/C12/C20; B = C13/C14/C16/C17/C18/C19/C21/C23/C24; C = C3/C6/C8/C15/C22.
 - `brief`, `standard`, and `story` timing profiles share one motion grammar.
 - Light/dark surfaces share one structural identity.
 - All chart contracts share the approved zero-padded device address, live data-shape metadata, calibration ticks, and coded control dock.
@@ -28,8 +29,10 @@ moxing/
 references/
 ├── visual-charter.md
 ├── motion-system.md
+├── presentation-modes.md
 └── chart-contracts.md
 tokens/system.json   semantic colour, type, geometry, and motion tokens
+tokens/presentation-modes.json   approved C1–C24 layout/motion mapping
 assets/fonts/        subset WOFF2 and OFL licences
 scripts/
 ├── render.py
@@ -75,7 +78,8 @@ The reusable data contracts, numerical formatting, boundary cases, browser detec
 
 ## Next maintenance steps
 
-1. Review the foundation batch C1/C2/C4/C5/C6/C7/C9/C10 in the production gallery; C3/C8/C15/C22 remain the approved visual baseline.
-2. After approval, migrate C11–C16 excluding C15, then C17–C20, then C21–C24 excluding C22 in bounded batches.
-3. Migrate new charts through the shared `ChartArtwork` / `PrecisionInterface` contract; do not duplicate Lab DOM-patching code or reconnect the side bay across the plot.
-4. Run boundary, browser, and Precision Interface Lab QA before every release.
+1. Implement explicit `direct | embedded | interface` carriers without changing chart geometry or final static states.
+2. Migrate A1 C1/C2/C4/C5/C7/C9/C10, then A2 C11/C12/C20.
+3. Migrate B1 C13/C14/C16, then B2 C17/C18/C19/C21/C23/C24; verify every local evidence anchor against critical geometry.
+4. Consolidate batch C1 (C3/C6/C8/C15/C22) on the shared full-interface carrier without changing their approved compositions.
+5. Run `python scripts/validate_presentation_modes.py` plus boundary, browser, and Lab QA before each batch is accepted.
