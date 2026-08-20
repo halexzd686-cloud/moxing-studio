@@ -3,10 +3,7 @@
   const specs = {
     c03: {
       code: "C03", name: "SIGNAL / TREND", family: "ROUTE", data: "12T · 2S", state: "TRACE.LOCK",
-      background: `
-        <path d="M 230 120 H 258" pathLength="1" class="pi-terminal-lead" />
-        <rect x="254" y="116" width="8" height="8" class="pi-terminal-node" />
-        <text x="266" y="124" font-size="9" class="pi-terminal-id">E03</text>`,
+      evidence: { id: "E03", viewBox: "0 64 230 114", plotX: 248, lockDelay: 1280 },
       foreground: `
         <rect x="286" y="325.67" width="12" height="12" class="pi-socket" style="--pi-delay:180ms" />
         <circle cx="1126" cy="115.94" r="14" class="pi-lock-ring" />
@@ -15,10 +12,7 @@
     },
     c08: {
       code: "C08", name: "STAGE / CHANNEL", family: "STAGE", data: "05M · 04L", state: "BOTTLENECK",
-      background: `
-        <path d="M 230 146 H 270" pathLength="1" class="pi-terminal-lead" />
-        <rect x="266" y="142" width="8" height="8" class="pi-terminal-node" />
-        <text x="278" y="150" font-size="9" class="pi-terminal-id">E08</text>`,
+      evidence: { id: "E08", viewBox: "0 64 230 114", plotX: 280, lockDelay: 1180 },
       foreground: `
         <rect x="380.8" y="416" width="8" height="8" class="pi-socket" style="--pi-delay:180ms" /><text x="384.8" y="443" text-anchor="middle" font-size="9" class="pi-address">S1</text>
         <rect x="546.4" y="416" width="8" height="8" class="pi-socket" style="--pi-delay:300ms" /><text x="550.4" y="443" text-anchor="middle" font-size="9" class="pi-address">S2</text>
@@ -30,10 +24,7 @@
     },
     c15: {
       code: "C15", name: "COMMERCE / FLOW", family: "PORT", data: "05N · 04R", state: "LEAK.LOCK",
-      background: `
-        <path d="M 200 142 H 242" pathLength="1" class="pi-terminal-lead" />
-        <rect x="238" y="138" width="8" height="8" class="pi-terminal-node" />
-        <text x="250" y="146" font-size="9" class="pi-terminal-id">E15</text>`,
+      evidence: { id: "E15", viewBox: "0 76 200 114", plotX: 250, lockDelay: 1100 },
       foreground: `
         <rect x="384" y="191" width="8" height="8" class="pi-socket" style="--pi-delay:180ms" />
         <rect x="384" y="341" width="8" height="8" class="pi-socket" style="--pi-delay:260ms" />
@@ -47,10 +38,7 @@
     },
     c22: {
       code: "C22", name: "ADDRESS / MATRIX", family: "MATRIX", data: "05×05", state: "PAIR.LOCK",
-      background: `
-        <path d="M 230 392 H 270" pathLength="1" class="pi-terminal-lead" />
-        <rect x="266" y="388" width="8" height="8" class="pi-terminal-node" />
-        <text x="278" y="396" font-size="9" class="pi-terminal-id">E22</text>`,
+      evidence: { id: "E22", viewBox: "0 336 230 114", plotX: 255, lockDelay: 980 },
       foreground: `
         <text x="335" y="65" text-anchor="middle" font-size="9" class="pi-address">C1</text><text x="405" y="65" text-anchor="middle" font-size="9" class="pi-address pi-address-signal">C2</text><text x="475" y="65" text-anchor="middle" font-size="9" class="pi-address">C3</text><text x="545" y="65" text-anchor="middle" font-size="9" class="pi-address">C4</text><text x="615" y="65" text-anchor="middle" font-size="9" class="pi-address">C5</text>
         <text x="286" y="109" text-anchor="end" font-size="9" class="pi-address">R1</text><text x="286" y="179" text-anchor="end" font-size="9" class="pi-address pi-address-signal">R2</text><text x="286" y="249" text-anchor="end" font-size="9" class="pi-address">R3</text><text x="286" y="319" text-anchor="end" font-size="9" class="pi-address">R4</text><text x="286" y="389" text-anchor="end" font-size="9" class="pi-address">R5</text>
@@ -68,6 +56,58 @@
     group.setAttribute("class", className);
     group.innerHTML = markup;
     return group;
+  }
+
+  function buildEvidenceBay(doc, svg, spec, key) {
+    const chartBody = svg.parentElement;
+    const plate = svg.querySelector(".evidence-plate");
+    if (!chartBody || !plate) return;
+
+    const bay = doc.createElement("aside");
+    bay.className = "pi-evidence-bay";
+    bay.setAttribute("aria-label", `${spec.evidence.id} evidence bay`);
+    bay.style.setProperty("--pi-terminal-delay", `${Math.max(0, spec.evidence.lockDelay - 120)}ms`);
+
+    const bayLabel = doc.createElement("span");
+    bayLabel.className = "pi-evidence-bay__label";
+    bayLabel.textContent = "EVIDENCE / BAY";
+
+    const plateSvg = doc.createElementNS("http://www.w3.org/2000/svg", "svg");
+    plateSvg.setAttribute("class", "pi-evidence-svg");
+    plateSvg.setAttribute("viewBox", spec.evidence.viewBox);
+    plateSvg.setAttribute("aria-hidden", "true");
+    plateSvg.append(plate);
+
+    const terminal = doc.createElement("div");
+    terminal.className = "pi-bay-terminal";
+    terminal.innerHTML = `<span>${spec.evidence.id}</span><i></i><b></b>`;
+
+    bay.append(bayLabel, plateSvg, terminal);
+    chartBody.classList.add("pi-split-body");
+    chartBody.insertBefore(bay, svg);
+    svg.classList.add("pi-data-field");
+    svg.setAttribute("viewBox", `${spec.evidence.plotX} 0 ${1172 - spec.evidence.plotX} 500`);
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+
+    if (key === "c22") {
+      [...svg.querySelectorAll("text.index.muted")].forEach((text) => {
+        const x = Number.parseFloat(text.getAttribute("x"));
+        const y = Number.parseFloat(text.getAttribute("y"));
+        if (x === 0 && y > 50) {
+          text.setAttribute("x", "288");
+          text.setAttribute("text-anchor", "end");
+        }
+      });
+    }
+  }
+
+  function optimizeMotion(doc, key) {
+    doc.querySelectorAll("[data-motion]").forEach((element) => {
+      element.removeAttribute("data-motion");
+      element.removeAttribute("data-choreo");
+      ["--delay", "--duration", "--dx", "--dy", "--delay-brief", "--delay-story"].forEach((property) => element.style.removeProperty(property));
+    });
+    doc.documentElement.style.setProperty("--pi-lock-delay", `${specs[key].evidence.lockDelay}ms`);
   }
 
   function instrument(frame) {
@@ -108,9 +148,9 @@
     const controlCodes = { replay: "R", pause: "H", surface: "S" };
     controls.querySelectorAll("button").forEach((button) => { button.dataset.code = controlCodes[button.dataset.action]; });
 
-    const background = svgGroup(doc, "pi-overlay pi-overlay--background", spec.background);
+    buildEvidenceBay(doc, svg, spec, key);
+    optimizeMotion(doc, key);
     const foreground = svgGroup(doc, "pi-overlay pi-overlay--foreground", spec.foreground);
-    svg.insertBefore(background, svg.children[1] || null);
     svg.append(foreground);
 
     frame.contentWindow.Moxing?.setSurface(state.surface);
@@ -148,7 +188,13 @@
     const scaleKey = scale.toFixed(5);
     if (stage.dataset.scale === scaleKey) return;
     stage.dataset.scale = scaleKey;
-    stage.style.transform = `scale(${scaleKey})`;
+    if (CSS.supports("zoom", "1")) {
+      stage.style.zoom = scaleKey;
+      stage.style.transform = "none";
+    } else {
+      stage.style.zoom = "1";
+      stage.style.transform = `scale(${scaleKey})`;
+    }
     viewport.style.height = `${720 * scale}px`;
   }
   function rescaleAll() { document.querySelectorAll(".frame-viewport").forEach(rescale); }

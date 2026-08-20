@@ -46,13 +46,18 @@ for (const chartId of chartIds) {
       code: doc?.querySelector(".pi-code")?.textContent.trim(),
       meta: doc?.querySelectorAll(".pi-meta span").length,
       overlay: doc?.querySelectorAll(".pi-overlay").length,
-      terminalLead: doc?.querySelectorAll(".pi-terminal-lead").length,
-      terminalNode: doc?.querySelectorAll(".pi-terminal-node").length,
+      evidenceBay: doc?.querySelectorAll(".pi-evidence-bay").length,
+      bayPlate: doc?.querySelectorAll(".pi-evidence-bay .evidence-plate").length,
+      plateInDataField: doc?.querySelectorAll(".pi-data-field .evidence-plate").length,
+      terminal: doc?.querySelectorAll(".pi-bay-terminal").length,
       targetLock: doc?.querySelectorAll(".pi-lock-ring, .pi-focus-corner").length,
+      legacyMotion: doc?.querySelectorAll("[data-motion]").length,
+      motionLayers: doc?.querySelectorAll("[data-pi-motion]").length,
+      dataViewBoxX: Number.parseFloat(doc?.querySelector(".pi-data-field")?.getAttribute("viewBox") || "0"),
       controls: doc?.querySelectorAll(".motion-controls button").length,
     };
   }, chartId);
-  if (state.ready === "true" && state.precision === "lab" && state.code?.includes(chartId.toUpperCase()) && state.meta === 3 && state.overlay === 2 && state.terminalLead === 1 && state.terminalNode === 1 && state.targetLock >= 1 && state.controls === 3) {
+  if (state.ready === "true" && state.precision === "lab" && state.code?.includes(chartId.toUpperCase()) && state.meta === 3 && state.overlay === 1 && state.evidenceBay === 1 && state.bayPlate === 1 && state.plateInDataField === 0 && state.terminal === 1 && state.targetLock >= 1 && state.legacyMotion === 0 && state.motionLayers <= 24 && state.dataViewBoxX > 0 && state.controls === 3) {
     pass(`${chartId} instrument contract`, JSON.stringify(state));
   } else {
     fail(`${chartId} instrument contract`, JSON.stringify(state));
@@ -104,7 +109,7 @@ await page.locator('[data-lab-action="replay"]').click();
 await page.waitForTimeout(80);
 const animationState = await page.evaluate(() => [...document.querySelectorAll("iframe")].map((frame) => {
   const doc = frame.contentDocument;
-  const terminal = doc.querySelector(".pi-terminal-lead");
+  const terminal = doc.querySelector(".pi-bay-terminal");
   return {
     view: doc.documentElement.dataset.labView,
     playing: doc.querySelector(".chart-container")?.classList.contains("is-playing"),
@@ -112,8 +117,60 @@ const animationState = await page.evaluate(() => [...document.querySelectorAll("
   };
 }));
 const playingFrames = animationState.filter(({ playing }) => playing);
-if (playingFrames.length === 1 && playingFrames[0].view === "focus" && playingFrames[0].terminalAnimation === "pi-terminal-send") pass("single-frame precision replay", JSON.stringify(animationState));
+if (playingFrames.length === 1 && playingFrames[0].view === "focus" && playingFrames[0].terminalAnimation === "pi-terminal-handshake") pass("single-frame precision replay", JSON.stringify(animationState));
 else fail("precision replay choreography", JSON.stringify(animationState));
+
+await page.setViewportSize({ width: 824, height: 1018 });
+await page.locator('[data-chart="c22"]').click();
+await page.waitForTimeout(80);
+const narrowGeometry = await page.evaluate(() => {
+  const frame = document.querySelector('[data-prototype="c22"] iframe');
+  const doc = frame?.contentDocument;
+  const bay = doc?.querySelector('.pi-evidence-bay')?.getBoundingClientRect();
+  const field = doc?.querySelector('.pi-data-field')?.getBoundingClientRect();
+  const stage = document.querySelector('[data-prototype="c22"] .frame-stage');
+  return {
+    gap: bay && field ? Math.round((field.left - bay.right) * 10) / 10 : -1,
+    overflow: doc ? getComputedStyle(doc.querySelector('.pi-data-field')).overflow : 'missing',
+    scaleMethod: stage && getComputedStyle(stage).zoom !== '1' ? 'zoom' : 'transform',
+  };
+});
+if (narrowGeometry.gap >= 24 && narrowGeometry.overflow === "hidden") pass("narrow evidence separation", JSON.stringify(narrowGeometry));
+else fail("narrow evidence separation", JSON.stringify(narrowGeometry));
+
+const cadence = await page.evaluate(async () => {
+  const frame = document.querySelector('[data-prototype="c22"] iframe');
+  const win = frame.contentWindow;
+  const doc = frame.contentDocument;
+  win.Moxing.replay();
+  await new Promise((resolve) => win.requestAnimationFrame(resolve));
+  const runningAnimations = doc.getAnimations().filter((animation) => animation.playState === 'running').length;
+  const stamps = [];
+  const startedAt = win.performance.now();
+  await new Promise((resolve) => {
+    const sample = (time) => {
+      stamps.push(time);
+      if (time - startedAt < 1450) win.requestAnimationFrame(sample);
+      else resolve();
+    };
+    win.requestAnimationFrame(sample);
+  });
+  const deltas = stamps.slice(1).map((time, index) => time - stamps[index]);
+  const ordered = [...deltas].sort((a, b) => a - b);
+  const percentile = (ratio) => ordered[Math.min(ordered.length - 1, Math.floor(ordered.length * ratio))] || 0;
+  return {
+    frames: stamps.length,
+    runningAnimations,
+    medianMs: Math.round(percentile(.5) * 10) / 10,
+    p95Ms: Math.round(percentile(.95) * 10) / 10,
+    longFrames: deltas.filter((delta) => delta > 28).length,
+  };
+});
+if (cadence.runningAnimations <= 5) pass("replay motion-layer budget", JSON.stringify(cadence));
+else fail("replay motion-layer budget", JSON.stringify(cadence));
+if (cadence.frames >= 70 && cadence.p95Ms <= 24 && cadence.longFrames <= 3) pass("narrow replay cadence", JSON.stringify(cadence));
+else fail("narrow replay cadence", JSON.stringify(cadence));
+await page.screenshot({ path: path.join(previewDir, "lab-narrow-c22.png"), fullPage: true });
 
 if (errors.length === 0) pass("runtime errors", "none");
 else fail("runtime errors", errors.join(" | "));
