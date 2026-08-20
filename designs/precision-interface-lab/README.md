@@ -1,6 +1,6 @@
 # Moxing Precision Interface Lab
 
-This branch-only lab tests the agreed **60% Moxing / 40% precision-device** visual direction without overriding the 24 production templates.
+This approved lab freezes the agreed **60% Moxing / 40% precision-device** visual direction without overriding the 24 production templates.
 
 ## Locked decisions
 
@@ -34,4 +34,4 @@ This branch-only lab tests the agreed **60% Moxing / 40% precision-device** visu
 
 `http://127.0.0.1:4400/designs/precision-interface-lab/index.html`
 
-Production rollout is intentionally out of scope until the user approves this lab.
+Approved on 2026-08-20. Production rollout proceeds separately so the reusable renderer can absorb the system without copying prototype-only DOM patches into 24 templates.
