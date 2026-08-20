@@ -57,7 +57,7 @@ def main() -> None:
         "A1 activates no embedded production chart": "embedded" not in active.values(),
         "interface markup remains compatible": all('data-interface="precision-v2.1"' in rendered[chart_id] and 'class="chart-body pi-split-body"' in rendered[chart_id] for chart_id in interface_ids),
         "direct markup has no split bay": all('<section class="chart-body pi-split-body">' not in rendered[chart_id] and 'class="chart-body pm-direct-body"' in rendered[chart_id] for chart_id in set(CHARTS) - interface_ids),
-        "A1 direct charts use compiled macro motion": all('data-motion-system="presentation-v2.1"' in rendered[chart_id] and 'class="pm-data-field-layer"' in rendered[chart_id] and 'class="pm-target-lock"' in rendered[chart_id] for chart_id in direct_a1_ids),
+        "A1 direct charts use compiled macro motion": all('data-motion-system="presentation-v2.1"' in rendered[chart_id] and 'class="pm-data-field-layer"' in rendered[chart_id] and 'class="pm-target-lock"' in rendered[chart_id] for chart_id in direct_a1_ids) and 'class="pm-plot-layer"' in rendered["C1"],
         "A1 direct charts contain no evidence container": all('evidence bay' not in rendered[chart_id] and 'class="evidence-plate"' not in rendered[chart_id] and 'class="pm-local-evidence"' not in rendered[chart_id] for chart_id in direct_a1_ids),
         "embedded carrier renders full-width local evidence": 'class="chart-body pm-embedded-body"' in embedded_html and 'class="pm-local-evidence"' in embedded_html and '<section class="chart-body pi-split-body">' not in embedded_html,
         "legacy PrecisionInterface name aliases EvidenceInterface": PrecisionInterface is EvidenceInterface,

@@ -228,6 +228,7 @@ class DirectCanvas:
     """Full-width chart carrier with no detached evidence container."""
 
     foreground_svg: str = ""
+    plot_svg: str = ""
     lock_delay: int = 980
     lock_delay_brief: int | None = None
     lock_delay_story: int | None = None
@@ -372,12 +373,13 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   </section>'''
     else:
         foreground = f'<g class="pm-target-lock">{presentation.foreground_svg}</g>' if presentation.foreground_svg else ""
+        plot_layer = f'<g class="pm-plot-layer">{presentation.plot_svg}</g>' if direct and direct.plot_svg else ""
         direct_style = ""
         if direct:
             brief_delay = direct.lock_delay_brief if direct.lock_delay_brief is not None else round(direct.lock_delay * .62)
             story_delay = direct.lock_delay_story if direct.lock_delay_story is not None else round(direct.lock_delay * 1.8)
             direct_style = f' style="--pm-lock-delay:{direct.lock_delay}ms;--pm-lock-delay-brief:{brief_delay}ms;--pm-lock-delay-story:{story_delay}ms"'
-        body_markup = f'<section class="chart-body pm-direct-body"><svg class="pm-direct-field" viewBox="0 0 {W} {H}" role="img" aria-label="{esc(page.title)}"{direct_style}><g class="pm-data-field-layer">{page.svg}</g>{foreground}</svg></section>'
+        body_markup = f'<section class="chart-body pm-direct-body"><svg class="pm-direct-field" viewBox="0 0 {W} {H}" role="img" aria-label="{esc(page.title)}"{direct_style}><g class="pm-data-field-layer">{page.svg}</g>{plot_layer}{foreground}</svg></section>'
     return f"""<!DOCTYPE html>
 <html lang=\"zh-CN\" data-surface=\"{esc(page.surface)}\"{html_interface}>
 <head>
@@ -502,13 +504,15 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   svg .pm-focus-corner {{ fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }}
   [data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] [data-motion] {{ animation:none!important; }}
   @keyframes pm-field-enter {{ from {{ opacity:.18; transform:translate3d(-7px,0,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
+  @keyframes pm-plot-enter {{ from {{ opacity:0; transform:translate3d(0,10px,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
   @keyframes pm-lock-settle {{ from {{ opacity:0; transform:scale(.96); }} to {{ opacity:1; transform:scale(1); }} }}
-  .pm-data-field-layer,.pm-target-lock {{ transform-box:fill-box; transform-origin:center; }}
+  .pm-data-field-layer,.pm-plot-layer,.pm-target-lock {{ transform-box:fill-box; transform-origin:center; }}
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer {{ animation:pm-field-enter var(--pm-field-duration,680ms) {precision_motion['ease']} var(--pm-field-delay,40ms) both; will-change:transform,opacity; }}
+  .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer {{ animation:pm-plot-enter var(--pm-plot-duration,620ms) {precision_motion['ease']} var(--pm-plot-delay,320ms) both; will-change:transform,opacity; }}
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,980ms)) both; will-change:transform,opacity; }}
-  .motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ animation-play-state:paused!important; }}
-  .is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ will-change:auto; }}
-  @media (prefers-reduced-motion:reduce) {{ .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ animation:none!important; }} }}
+  .motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ animation-play-state:paused!important; }}
+  .is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ will-change:auto; }}
+  @media (prefers-reduced-motion:reduce) {{ .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ animation:none!important; }} }}
   [data-interface="precision-v2.1"] [data-motion] {{ animation:none!important; }}
   @keyframes pi-field-enter {{ from {{ opacity:.18; transform:translate3d(-7px,0,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
   @keyframes pi-evidence-enter {{ from {{ opacity:0; transform:translate3d(-5px,0,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
@@ -544,10 +548,14 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   const profile=['brief','standard','story'].includes(requestedProfile)?requestedProfile:'standard';
   const scales={{brief:{motion_tokens['profiles']['brief']['fallbackScale']},standard:{motion_tokens['profiles']['standard']['fallbackScale']},story:{motion_tokens['profiles']['story']['fallbackScale']}}};
   const scale=scales[profile]||1;
-  const macroProfiles={{brief:{{fieldDelay:25,fieldDuration:420,lockDuration:220}},standard:{{fieldDelay:40,fieldDuration:680,lockDuration:260}},story:{{fieldDelay:60,fieldDuration:900,lockDuration:320}}}};
-  const macro=macroProfiles[profile]||macroProfiles.standard;
+  const macroProfiles={{brief:{{fieldDelay:25,fieldDuration:420,plotDelay:180,plotDuration:360,lockDuration:220}},standard:{{fieldDelay:40,fieldDuration:680,plotDelay:320,plotDuration:620,lockDuration:260}},story:{{fieldDelay:60,fieldDuration:900,plotDelay:480,plotDuration:780,lockDuration:320}}}};
+  const stagedMacroProfiles={{...macroProfiles,standard:{{...macroProfiles.standard,fieldDelay:30,lockDuration:300}}}};
+  const activeMacroProfiles=root.querySelector('.pm-plot-layer')?stagedMacroProfiles:macroProfiles;
+  const macro=activeMacroProfiles[profile]||activeMacroProfiles.standard;
   root.style.setProperty('--pm-field-delay',macro.fieldDelay+'ms');
   root.style.setProperty('--pm-field-duration',macro.fieldDuration+'ms');
+  root.style.setProperty('--pm-plot-delay',macro.plotDelay+'ms');
+  root.style.setProperty('--pm-plot-duration',macro.plotDuration+'ms');
   root.style.setProperty('--pm-lock-duration',macro.lockDuration+'ms');
   const directField=root.querySelector('.pm-direct-field');
   if(directField){{

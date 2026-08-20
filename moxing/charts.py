@@ -281,38 +281,74 @@ def build_c1(data: Any) -> str | ChartArtwork:
         return no_data()
     max_value = max(max(item["value"], 0) for item in items) or 1
     top = max(range(len(items)), key=lambda index: items[index]["value"])
-    x0, x1, baseline, top_y = 92, 1128, 426, 88
-    parts = [line(x0, baseline, x1, baseline, cls="rail-strong", extra=f'pathLength="1" {motion("align", 80, brief=40, story=120, duration=240, duration_brief=150, duration_story=320)}')]
+    x0, x1, baseline, grid_top = 92, 1128, 424, 124
+
+    raw_step = max_value / 3
+    magnitude = 10 ** math.floor(math.log10(raw_step))
+    normalized = raw_step / magnitude
+    step = next(candidate for candidate in (1, 1.5, 2, 2.5, 4, 5, 10) if normalized <= candidate) * magnitude
+    axis_max = step * 3
+
+    field_parts = [
+        text(0, 28, "01 / DIRECT RANK FIELD", cls="index muted", size=12),
+        line(x0, baseline, x1, baseline, cls="rail-strong", extra=f'pathLength="1" {motion("align", 80, brief=40, story=120, duration=240, duration_brief=150, duration_story=320)}'),
+    ]
+    for tick in range(4):
+        y = baseline - (baseline - grid_top) * tick / 3
+        if tick:
+            field_parts.append(line(x0, y, x1, y, cls="grid", extra=motion("align", 110 + tick * 40, brief=60 + tick * 22, story=170 + tick * 60)))
+        field_parts.append(text(74, y + 4, format_num(step * tick), cls="index muted", anchor="end", size=12))
+
+    center_start, center_end = 212, 980
+    if len(items) == 1:
+        centers_x = [(center_start + center_end) / 2]
+        width = 128
+    else:
+        spacing = (center_end - center_start) / (len(items) - 1)
+        centers_x = [center_start + spacing * index for index in range(len(items))]
+        width = min(128, spacing * .67)
+
+    plot_parts: list[str] = []
     centers: list[tuple[float, float]] = []
-    for tick in range(6):
-        x = x0 + (x1 - x0) * tick / 5
-        parts += [line(x, baseline - 8, x, baseline + 8, cls="rail", extra=motion("align", 120 + tick * 35, brief=70 + tick * 18, story=180 + tick * 48)), text(x, 466, format_num(max_value * tick / 5), cls="muted index", anchor="middle", size=12)]
-    band = (x1 - x0) / len(items)
-    width = min(78, band * 0.56)
     for index, item in enumerate(items):
-        height = max(2, max(0, item["value"]) / max_value * (baseline - top_y))
-        x = x0 + band * index + (band - width) / 2
+        height = max(2, max(0, item["value"]) / axis_max * (baseline - grid_top))
+        x = centers_x[index] - width / 2
         y = baseline - height
-        cls = "signal-fill" if index == top else ("data-fill" if index < 3 else "secondary-fill")
+        cls = "signal-fill" if index == top else ("data-fill" if index <= 1 else f"cat-{min(3, index - 1)}")
         centers.append((x + width / 2, y))
         shape = path(cut_rect_path(x, y, width, height, 7), cls=cls, extra=motion("dock", 320 + index * 95, dy=42, brief=170 + index * 52, story=520 + index * 160, duration=520, duration_brief=340, duration_story=760, choreo="rail-rise"))
-        seam = line(x + width * .5, baseline, x + width * .5, baseline + 11, cls="rail", extra=motion("align", 590 + index * 55, brief=360 + index * 30, story=1080 + index * 120))
-        parts += [shape, seam, text(x + width / 2, y - 13, format_num(item["value"]), cls="value", anchor="middle", size=15, weight=650, extra=motion("lock", 930 + index * 52, brief=520 + index * 32, story=1540 + index * 118, choreo="readout")), text(x + width / 2, baseline + 30, item["label"], cls="muted", anchor="middle", size=13)]
-        if index == top:
-            parts += [path(f"M {x-7} {y+18} V {y-7} H {x+18}", cls="signal-stroke", extra=f'pathLength="1" {motion("lock", 1240, brief=700, story=2250, choreo="alarm")}')]
-    overlay = []
-    for index, (cx, _top_y) in enumerate(centers):
-        signal = index == top
-        overlay.append(rect(cx - 4, baseline - 4, 8, 8, cls="pm-socket-signal" if signal else "pm-socket"))
+        if height >= 46:
+            value_y = min(baseline - 12, y + 37)
+            value_cls = f"value {_contrast_text_class(cls)}"
+        else:
+            value_y = y - 10
+            value_cls = "value"
+        plot_parts += [
+            shape,
+            text(x + width / 2, value_y, format_num(item["value"]), cls=value_cls, anchor="middle", size=15, weight=700, extra=motion("lock", 930 + index * 52, brief=520 + index * 32, story=1540 + index * 118, choreo="readout")),
+            text(x + width / 2, 460, item["label"], cls="muted", anchor="middle", size=13),
+        ]
+
     target_x, target_y = centers[top]
-    overlay += [
-        circle(target_x, target_y, 13, cls="pm-lock-ring"),
-        path(f"M {target_x-18} {target_y} H {target_x-11} M {target_x+11} {target_y} H {target_x+18}", cls="pm-lock-cross"),
-        text(target_x, target_y - 24, f"R{top + 1:02d} / TOP", cls="pm-address pm-address-signal", anchor="middle", size=10),
+    target_left = target_x - width / 2
+    target_right = target_x + width / 2
+    target_height = baseline - target_y
+    bracket_y = round(max(56, target_y - (52 if target_height < 46 else 28)), 2)
+    lock_parts = [
+        rect(target_x - 8, baseline - 8, 16, 16, cls="pm-socket-signal"),
+        path(f"M {target_left-17} {bracket_y+19} V {bracket_y} H {target_left+2} M {target_right-2} {bracket_y} H {target_right+17} V {bracket_y+19}", cls="pm-focus-corner"),
+        text(target_x, bracket_y - 15, f"R{top + 1:02d} / {format_num(items[top]['value'])}", cls="pm-address pm-address-signal", anchor="middle", size=10),
     ]
     return ChartArtwork(
-        svg="\n".join(parts),
-        presentation=DirectCanvas(foreground_svg="\n".join(overlay), lock_delay=1160, lock_delay_brief=700, lock_delay_story=2250, compiled_motion=True),
+        svg="\n".join(field_parts),
+        presentation=DirectCanvas(
+            foreground_svg="\n".join(lock_parts),
+            plot_svg="\n".join(plot_parts),
+            lock_delay=1080,
+            lock_delay_brief=700,
+            lock_delay_story=1500,
+            compiled_motion=True,
+        ),
     )
 
 

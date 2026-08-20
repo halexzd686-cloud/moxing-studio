@@ -22,7 +22,7 @@ const directA1 = new Set([
   "c10-decision-interface.html",
 ]);
 const exemplars = {
-  "c01-structural-rank.html": { family: "rail-rise", cue: "rail-rise", animation: "pm-field-enter", direct: true },
+  "c01-structural-rank.html": { family: "rail-rise", cue: "rail-rise", animation: "pm-field-enter", direct: true, directLayers: 3 },
   "c02-ranked-rail.html": { family: "ranked-rail", cue: "rail-slide", animation: "pm-field-enter", direct: true },
   "c03-signal-trend.html": { family: "path-trace", cue: "trace", animation: "pi-field-enter", precision: true },
   "c04-composition-field.html": { family: "field-aggregation", cue: "field-seat", animation: "pm-field-enter", direct: true },
@@ -268,14 +268,15 @@ for (const file of directA1) {
         p95: ordered[Math.floor(ordered.length * .95)],
         over28: gaps.filter((gap) => gap > 28).length,
         running: document.getAnimations().filter((item) => item.playState === "running").length,
-        layers: document.querySelectorAll('.pm-data-field-layer,.pm-target-lock').length,
+        layers: document.querySelectorAll('.pm-data-field-layer,.pm-plot-layer,.pm-target-lock').length,
         legacy: [...document.querySelectorAll('[data-motion]')].filter((item) => getComputedStyle(item).animationName !== "none").length,
       });
     };
     requestAnimationFrame(sample);
   }));
   const scope = `direct-performance:${file}`;
-  if (frameState.carrier !== "svg" && frameState.carrier !== "SVG" || frameState.p95 > 28 || frameState.over28 > 3 || frameState.running > 2 || frameState.layers !== 2 || frameState.legacy) fail(scope, JSON.stringify(frameState));
+  const expectedLayers = file === "c01-structural-rank.html" ? 3 : 2;
+  if (frameState.carrier !== "svg" && frameState.carrier !== "SVG" || frameState.p95 > 28 || frameState.over28 > 3 || frameState.running > expectedLayers || frameState.layers !== expectedLayers || frameState.legacy) fail(scope, JSON.stringify(frameState));
   else pass(scope, `direct carrier p95 ${frameState.p95.toFixed(1)}ms; ${frameState.layers} layers; legacy idle`);
   await context.close();
 }
@@ -305,7 +306,7 @@ for (const [file, expected] of Object.entries(exemplars)) {
         lockDelay: lock ? (precision || direct ? Number.parseFloat(lockStyle.animationDelay) * 1000 : Number.parseFloat(lock.style.getPropertyValue("--active-delay"))) : null,
         animation: style?.animationName,
         running: document.getAnimations().filter((item) => item.playState === "running").length,
-        layers: document.querySelectorAll(direct ? ".pm-data-field-layer,.pm-target-lock" : ".pi-data-field,.pi-evidence-bay,.pi-bay-terminal,.pi-lock-ring,.pi-focus-corner").length,
+        layers: document.querySelectorAll(direct ? ".pm-data-field-layer,.pm-plot-layer,.pm-target-lock" : ".pi-data-field,.pi-evidence-bay,.pi-bay-terminal,.pi-lock-ring,.pi-focus-corner").length,
         legacy: [...document.querySelectorAll("[data-motion]")].filter((item) => getComputedStyle(item).animationName !== "none").length,
       };
     }, { cue: expected.cue, precision: Boolean(expected.precision), direct: Boolean(expected.direct) });
@@ -318,7 +319,8 @@ for (const [file, expected] of Object.entries(exemplars)) {
     if (state.duration < minimum || state.duration > maximum) fail(scope, `${profile} duration ${state.duration}`);
     if (state.animation !== expected.animation) fail(scope, `${profile} animation ${state.animation}`);
     if (!expected.direct && state.running < 3) fail(scope, `${profile} only ${state.running} active animations`);
-    if (expected.direct && (state.running !== 2 || state.layers !== 2 || state.legacy)) fail(scope, `${profile} direct layers ${state.running}/${state.layers}; legacy=${state.legacy}`);
+    const directLayers = expected.directLayers || 2;
+    if (expected.direct && (state.running !== directLayers || state.layers !== directLayers || state.legacy)) fail(scope, `${profile} direct layers ${state.running}/${state.layers}; legacy=${state.legacy}`);
     if (expected.precision && (state.running > 4 || state.layers !== 4)) fail(scope, `${profile} precision layers ${state.running}/${state.layers}`);
   }
   const briefRatio = observed.brief.delay / observed.standard.delay;
