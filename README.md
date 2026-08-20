@@ -134,6 +134,8 @@ node scripts/export-motion.mjs output/c13-pareto.html output/c13-pareto.webm sta
 ```powershell
 python -m pip install -r requirements-dev.txt
 python scripts/validate_skill.py
+python scripts/validate_presentation_modes.py
+python scripts/validate_presentation_carriers.py
 python scripts/test_boundaries.py
 
 npm install
@@ -141,7 +143,7 @@ npx playwright install chromium
 node scripts/validate.mjs .
 ```
 
-当前基线：边界渲染 `103/103`，浏览器、静态降级、动效与布局检查 `206/206`。其中包含 24 张图的“结论铭牌—关键图形”碰撞扫描，以及浅色/深色双表面的填充数据标签对比度检查；GitHub Actions 会在每次推送和 Pull Request 中重新执行这些检查。
+当前基线：展示模式映射 `13/13`、三载体架构 `11/11`、边界渲染 `103/103`，浏览器、静态降级、动效与布局检查 `232/232`。其中包含 24 张图的“结论铭牌—关键图形”碰撞扫描，以及浅色/深色双表面的填充数据标签对比度检查；GitHub Actions 会在每次推送和 Pull Request 中重新执行这些检查。
 
 ## Contributing
 

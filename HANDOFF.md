@@ -4,7 +4,7 @@
 >
 > Branch: `codex/v2.1-production-rollout`
 >
-> Status: A/B/C presentation architecture approved; production templates still contain the earlier partial full-bay rollout and await bounded migration
+> Status: I0 three-carrier architecture complete; production templates retain their previous geometry and await A1 bounded migration
 >
 > Visual review: C1 Direct Canvas, C14 Embedded Evidence, and C6 Evidence Interface approved on 2026-08-20
 
@@ -43,6 +43,8 @@ scripts/
 ├── subset_fonts.py
 ├── export_examples.py
 ├── validate_skill.py
+├── validate_presentation_modes.py
+├── validate_presentation_carriers.py
 ├── test_boundaries.py
 └── validate.mjs
 examples/data/       generated C1–C24 copyable JSON inputs
@@ -54,6 +56,8 @@ examples/data/       generated C1–C24 copyable JSON inputs
 ```powershell
 python scripts/build_templates.py
 python scripts/build_gallery.py
+python scripts/validate_presentation_modes.py
+python scripts/validate_presentation_carriers.py
 python scripts/test_boundaries.py
 node scripts/validate.mjs .
 ```
@@ -64,6 +68,8 @@ If Playwright is installed outside the project, set `MOXING_PLAYWRIGHT_PATH`. Se
 
 - 103 boundary render cases pass.
 - 232 browser/static/motion/layout/readability/gallery-scheduling/frame-pacing checks pass; see `docs/previews/qa-report.json`.
+- The presentation mapping passes 13 checks and the I0 carrier architecture passes 11 checks.
+- Thirteen signature locked-frame PNG hashes are byte-identical to the pre-I0 baseline.
 - The approved four-chart Precision Interface Lab passes 17 focused layout, motion-layer, and narrow-viewport checks.
 - All 24 templates render with and without JavaScript.
 - Reduced-motion mode settles immediately.
@@ -78,8 +84,8 @@ The reusable data contracts, numerical formatting, boundary cases, browser detec
 
 ## Next maintenance steps
 
-1. Implement explicit `direct | embedded | interface` carriers without changing chart geometry or final static states.
-2. Migrate A1 C1/C2/C4/C5/C7/C9/C10, then A2 C11/C12/C20.
+1. Migrate A1 C1/C2/C4/C5/C7/C9/C10 from their current interface carrier to Direct Canvas.
+2. Migrate A2 C11/C12/C20 while preserving their existing full-width geometry.
 3. Migrate B1 C13/C14/C16, then B2 C17/C18/C19/C21/C23/C24; verify every local evidence anchor against critical geometry.
 4. Consolidate batch C1 (C3/C6/C8/C15/C22) on the shared full-interface carrier without changing their approved compositions.
-5. Run `python scripts/validate_presentation_modes.py` plus boundary, browser, and Lab QA before each batch is accepted.
+5. Run presentation-mode, carrier, boundary, browser, and Lab QA before each batch is accepted.

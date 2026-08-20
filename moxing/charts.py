@@ -9,7 +9,9 @@ from .core import (
     W,
     ChartArtwork,
     ChartPage,
-    PrecisionInterface,
+    DirectCanvas,
+    EvidenceInterface,
+    PRESENTATION_TARGETS,
     circle,
     cut_rect_path,
     evidence_plate,
@@ -313,7 +315,7 @@ def build_c1(data: Any) -> str | ChartArtwork:
     ]
     return ChartArtwork(
         svg="\n".join(parts),
-        precision=PrecisionInterface("E01", "0 64 230 114", 260, 1160, evidence, "\n".join(overlay)),
+        presentation=EvidenceInterface("E01", "0 64 230 114", 260, 1160, evidence, "\n".join(overlay)),
     )
 
 
@@ -361,7 +363,7 @@ def build_c2(data: Any) -> str | ChartArtwork:
     ]
     return ChartArtwork(
         svg="\n".join(parts),
-        precision=PrecisionInterface("E02", "0 64 230 114", 0, 1120, evidence, "\n".join(overlay)),
+        presentation=EvidenceInterface("E02", "0 64 230 114", 0, 1120, evidence, "\n".join(overlay)),
     )
 
 
@@ -418,7 +420,7 @@ def build_c3(data: Any) -> str | ChartArtwork:
     ])
     return ChartArtwork(
         svg="\n".join(parts),
-        precision=PrecisionInterface("E03", "0 64 230 114", 248, 1280, evidence, foreground),
+        presentation=EvidenceInterface("E03", "0 64 230 114", 248, 1280, evidence, foreground),
     )
 
 
@@ -477,7 +479,7 @@ def build_c4(data: Any) -> str | ChartArtwork:
     ])
     return ChartArtwork(
         svg="\n".join(parts),
-        precision=PrecisionInterface("E04", "0 64 230 114", 260, 1080, evidence, foreground),
+        presentation=EvidenceInterface("E04", "0 64 230 114", 260, 1080, evidence, foreground),
     )
 
 
@@ -535,7 +537,7 @@ def build_c5(data: Any) -> str | ChartArtwork:
     ]
     return ChartArtwork(
         svg="\n".join(parts),
-        precision=PrecisionInterface("E05", "0 64 230 114", 260, 1160, evidence, "\n".join(overlay)),
+        presentation=EvidenceInterface("E05", "0 64 230 114", 260, 1160, evidence, "\n".join(overlay)),
     )
 
 
@@ -600,7 +602,7 @@ def build_c6(data: Any) -> str | ChartArtwork:
     ]
     return ChartArtwork(
         svg="\n".join(parts),
-        precision=PrecisionInterface("E06", "0 64 230 114", 260, 1160, evidence, "\n".join(overlay)),
+        presentation=EvidenceInterface("E06", "0 64 230 114", 260, 1160, evidence, "\n".join(overlay)),
     )
 
 
@@ -665,7 +667,7 @@ def build_c7(data: Any) -> str | ChartArtwork:
     ]
     return ChartArtwork(
         svg="\n".join(parts),
-        precision=PrecisionInterface("E07", "0 64 230 114", 230, 1140, evidence, "\n".join(overlay)),
+        presentation=EvidenceInterface("E07", "0 64 230 114", 230, 1140, evidence, "\n".join(overlay)),
     )
 
 
@@ -731,7 +733,7 @@ def build_c8(data: Any) -> str | ChartArtwork:
     ]
     return ChartArtwork(
         svg="\n".join(parts),
-        precision=PrecisionInterface("E08", "0 64 230 114", 280, 1180, evidence, "\n".join(overlay)),
+        presentation=EvidenceInterface("E08", "0 64 230 114", 280, 1180, evidence, "\n".join(overlay)),
     )
 
 
@@ -783,7 +785,7 @@ def build_c9(data: Any) -> str | ChartArtwork:
     ])
     return ChartArtwork(
         svg="\n".join(parts),
-        precision=PrecisionInterface("E09", "0 64 230 114", 0, 1060, evidence, foreground, 1172),
+        presentation=EvidenceInterface("E09", "0 64 230 114", 0, 1060, evidence, foreground, 1172),
     )
 
 
@@ -848,7 +850,7 @@ def build_c10(data: Any) -> str | ChartArtwork:
     ]
     return ChartArtwork(
         svg="\n".join(parts),
-        precision=PrecisionInterface("E10", "0 64 230 114", 0, 1120, evidence, "\n".join(overlay)),
+        presentation=EvidenceInterface("E10", "0 64 230 114", 0, 1120, evidence, "\n".join(overlay)),
     )
 
 
@@ -1095,7 +1097,7 @@ def build_c15(data: Any) -> str | ChartArtwork:
     ]
     return ChartArtwork(
         svg="\n".join(parts),
-        precision=PrecisionInterface("E15", "0 76 200 114", 250, 1100, evidence, "\n".join(overlay)),
+        presentation=EvidenceInterface("E15", "0 76 200 114", 250, 1100, evidence, "\n".join(overlay)),
     )
 
 
@@ -1342,7 +1344,7 @@ def build_c22(data: Any) -> str | ChartArtwork:
     ]
     return ChartArtwork(
         svg="\n".join(parts),
-        precision=PrecisionInterface("E22", "0 336 230 114", 255, 980, evidence, "\n".join(overlay)),
+        presentation=EvidenceInterface("E22", "0 336 230 114", 255, 980, evidence, "\n".join(overlay)),
     )
 
 
@@ -1467,7 +1469,7 @@ def render_chart(
     source = DEFAULTS[key] if data is None else data
     artwork = BUILDERS[key](source)
     svg = artwork.svg if isinstance(artwork, ChartArtwork) else artwork
-    precision = artwork.precision if isinstance(artwork, ChartArtwork) else None
+    presentation = artwork.presentation if isinstance(artwork, ChartArtwork) else DirectCanvas()
     page = ChartPage(
         chart_id=key,
         slug=meta["slug"],
@@ -1485,6 +1487,7 @@ def render_chart(
         choreography=CHOREOGRAPHIES.get(key, "structural"),
         surface=surface if surface in {"light", "dark"} else "light",
         mode=mode if mode in {"brief", "editorial"} else "editorial",
-        precision=precision,
+        presentation=presentation,
+        presentation_target=PRESENTATION_TARGETS[key],
     )
     return html_page(page, embed_fonts=embed_fonts)

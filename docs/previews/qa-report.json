@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T06:15:08.972Z",
+  "generatedAt": "2026-08-20T07:11:42.530Z",
   "status": "passed",
   "checks": [
     {
@@ -520,7 +520,7 @@
     },
     {
       "scope": "precision-performance:c02-ranked-rail.html",
-      "message": "precision carrier p95 16.8ms; 4 layers; legacy idle"
+      "message": "precision carrier p95 16.7ms; 4 layers; legacy idle"
     },
     {
       "scope": "precision-performance:c03-signal-trend.html",
@@ -528,7 +528,7 @@
     },
     {
       "scope": "precision-performance:c04-composition-field.html",
-      "message": "precision carrier p95 16.7ms; 4 layers; legacy idle"
+      "message": "precision carrier p95 16.8ms; 4 layers; legacy idle"
     },
     {
       "scope": "precision-performance:c05-composition-bands.html",
@@ -548,7 +548,7 @@
     },
     {
       "scope": "precision-performance:c09-metric-lockup.html",
-      "message": "precision carrier p95 16.8ms; 4 layers; legacy idle"
+      "message": "precision carrier p95 16.7ms; 4 layers; legacy idle"
     },
     {
       "scope": "precision-performance:c10-decision-interface.html",
@@ -556,7 +556,7 @@
     },
     {
       "scope": "precision-performance:c15-commerce-flow.html",
-      "message": "precision carrier p95 16.8ms; 4 layers; legacy idle"
+      "message": "precision carrier p95 16.7ms; 4 layers; legacy idle"
     },
     {
       "scope": "precision-performance:c22-correlation-matrix.html",

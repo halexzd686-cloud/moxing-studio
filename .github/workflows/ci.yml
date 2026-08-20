@@ -27,6 +27,8 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: python scripts/validate_skill.py
+      - run: python scripts/validate_presentation_modes.py
+      - run: python scripts/validate_presentation_carriers.py
       - run: python scripts/export_examples.py
       - run: git diff --exit-code -- examples/data
       - run: python scripts/test_boundaries.py

@@ -11,6 +11,11 @@ from typing import Any, Iterable
 
 ROOT = Path(__file__).resolve().parents[1]
 TOKENS = json.loads((ROOT / "tokens" / "system.json").read_text(encoding="utf-8"))
+PRESENTATION_CONTRACT = json.loads((ROOT / "tokens" / "presentation-modes.json").read_text(encoding="utf-8"))
+PRESENTATION_TARGETS = {
+    item["id"]: {"A": "direct", "B": "embedded", "C": "interface"}[item["mode"]]
+    for item in PRESENTATION_CONTRACT["charts"]
+}
 W, H = TOKENS["geometry"]["viewbox"]
 
 
@@ -218,9 +223,29 @@ def no_data(message: str = "暂无可用数据") -> str:
     )
 
 
-@dataclass
-class PrecisionInterface:
-    """Approved precision-interface shell for production chart artwork."""
+@dataclass(frozen=True)
+class DirectCanvas:
+    """Full-width chart carrier with no detached evidence container."""
+
+    foreground_svg: str = ""
+    lock_delay: int = 980
+    mode: str = field(init=False, default="direct")
+
+
+@dataclass(frozen=True)
+class EmbeddedEvidence:
+    """Full-width chart carrier with evidence anchored in natural whitespace."""
+
+    evidence_id: str
+    evidence_svg: str
+    foreground_svg: str
+    lock_delay: int = 980
+    mode: str = field(init=False, default="embedded")
+
+
+@dataclass(frozen=True)
+class EvidenceInterface:
+    """Split chart carrier with a reserved evidence bay and terminal."""
 
     evidence_id: str
     evidence_viewbox: str
@@ -229,14 +254,27 @@ class PrecisionInterface:
     evidence_svg: str
     foreground_svg: str
     plot_right: float = W
+    mode: str = field(init=False, default="interface")
+
+
+# Backward-compatible builder name. New work should use EvidenceInterface.
+PrecisionInterface = EvidenceInterface
+PresentationCarrier = DirectCanvas | EmbeddedEvidence | EvidenceInterface
 
 
 @dataclass
 class ChartArtwork:
-    """Chart geometry plus an optional precision-interface presentation."""
+    """Chart geometry plus an explicit presentation carrier."""
 
     svg: str
-    precision: PrecisionInterface | None = None
+    presentation: PresentationCarrier | None = None
+    precision: EvidenceInterface | None = field(default=None, repr=False)
+
+    def __post_init__(self) -> None:
+        if self.presentation is not None and self.precision is not None:
+            raise ValueError("use presentation or legacy precision, not both")
+        if self.presentation is None:
+            self.presentation = self.precision or DirectCanvas()
 
 
 @dataclass
@@ -257,7 +295,8 @@ class ChartPage:
     choreography: str = "structural"
     surface: str = "light"
     mode: str = "editorial"
-    precision: PrecisionInterface | None = None
+    presentation: PresentationCarrier = field(default_factory=DirectCanvas)
+    presentation_target: str = "direct"
 
 
 def _surface_css(name: str, values: dict[str, Any]) -> str:
@@ -305,22 +344,30 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
     font_css = _font_face_css(embed_fonts)
     display_code = f"C{int(page.chart_id[1:]):02d}" if page.chart_id[1:].isdigit() else page.chart_id
     header_ticks = "<i></i>" * 16
-    precision = page.precision
-    motion_system = "precision-v2.1" if precision else "legacy"
-    html_interface = ' data-interface="precision-v2.1"' if precision else ""
-    root_interface = ' data-interface="precision-v2.1"' if precision else ""
-    if precision:
-        plot_width = precision.plot_right - precision.plot_x
+    presentation = page.presentation
+    carrier_name = presentation.mode
+    interface = presentation if isinstance(presentation, EvidenceInterface) else None
+    embedded = presentation if isinstance(presentation, EmbeddedEvidence) else None
+    motion_system = "precision-v2.1" if interface else "legacy"
+    html_interface = ' data-interface="precision-v2.1"' if interface else ""
+    root_interface = ' data-interface="precision-v2.1"' if interface else ""
+    if interface:
+        plot_width = interface.plot_right - interface.plot_x
         body_markup = f'''<section class="chart-body pi-split-body">
-    <aside class="pi-evidence-bay" aria-label="{esc(precision.evidence_id)} evidence bay" style="--pi-terminal-delay:{max(0, precision.lock_delay - 120)}ms">
+    <aside class="pi-evidence-bay" aria-label="{esc(interface.evidence_id)} evidence bay" style="--pi-terminal-delay:{max(0, interface.lock_delay - 120)}ms">
       <span class="pi-evidence-bay__label">EVIDENCE / BAY</span>
-      <svg class="pi-evidence-svg" viewBox="{esc(precision.evidence_viewbox)}" aria-hidden="true">{precision.evidence_svg}</svg>
-      <div class="pi-bay-terminal"><span>{esc(precision.evidence_id)}</span><i></i><b></b></div>
+      <svg class="pi-evidence-svg" viewBox="{esc(interface.evidence_viewbox)}" aria-hidden="true">{interface.evidence_svg}</svg>
+      <div class="pi-bay-terminal"><span>{esc(interface.evidence_id)}</span><i></i><b></b></div>
     </aside>
-    <svg class="pi-data-field" viewBox="{fmt(precision.plot_x)} 0 {fmt(plot_width)} {H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="{esc(page.title)}" style="--pi-lock-delay:{precision.lock_delay}ms">{page.svg}<g class="pi-overlay pi-overlay--foreground">{precision.foreground_svg}</g></svg>
+    <svg class="pi-data-field" viewBox="{fmt(interface.plot_x)} 0 {fmt(plot_width)} {H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="{esc(page.title)}" style="--pi-lock-delay:{interface.lock_delay}ms">{page.svg}<g class="pi-overlay pi-overlay--foreground">{interface.foreground_svg}</g></svg>
+  </section>'''
+    elif embedded:
+        body_markup = f'''<section class="chart-body pm-embedded-body">
+    <svg class="pm-data-field" viewBox="0 0 {W} {H}" role="img" aria-label="{esc(page.title)}" style="--pm-lock-delay:{embedded.lock_delay}ms">{page.svg}<g class="pm-local-evidence" aria-label="{esc(embedded.evidence_id)} local evidence">{embedded.evidence_svg}</g><g class="pm-target-lock">{embedded.foreground_svg}</g></svg>
   </section>'''
     else:
-        body_markup = f'<section class="chart-body"><svg viewBox="0 0 {W} {H}" role="img" aria-label="{esc(page.title)}">{page.svg}</svg></section>'
+        foreground = f'<g class="pm-target-lock">{presentation.foreground_svg}</g>' if presentation.foreground_svg else ""
+        body_markup = f'<section class="chart-body pm-direct-body"><svg class="pm-direct-field" viewBox="0 0 {W} {H}" role="img" aria-label="{esc(page.title)}">{page.svg}{foreground}</svg></section>'
     return f"""<!DOCTYPE html>
 <html lang=\"zh-CN\" data-surface=\"{esc(page.surface)}\"{html_interface}>
 <head>
@@ -451,7 +498,7 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
 </style>
 </head>
 <body>
-<main class=\"chart-container\" id=\"moxing-chart\" data-total=\"{page.total_ms}\" data-total-brief=\"{page.profile_totals.get('brief', round(page.total_ms * .68))}\" data-total-standard=\"{page.profile_totals.get('standard', page.total_ms)}\" data-total-story=\"{page.profile_totals.get('story', round(page.total_ms * 1.8))}\" data-mode=\"{esc(page.mode)}\" data-choreography=\"{esc(page.choreography)}\" data-motion-system=\"{esc(motion_system)}\"{root_interface}>
+<main class=\"chart-container\" id=\"moxing-chart\" data-total=\"{page.total_ms}\" data-total-brief=\"{page.profile_totals.get('brief', round(page.total_ms * .68))}\" data-total-standard=\"{page.profile_totals.get('standard', page.total_ms)}\" data-total-story=\"{page.profile_totals.get('story', round(page.total_ms * 1.8))}\" data-mode=\"{esc(page.mode)}\" data-choreography=\"{esc(page.choreography)}\" data-motion-system=\"{esc(motion_system)}\" data-presentation-carrier=\"{esc(carrier_name)}\" data-presentation-target=\"{esc(page.presentation_target)}\"{root_interface}>
   <header class=\"chart-header\">
     <div class=\"chart-code\"><div class=\"mx-code\"><div class=\"mx-code__top\"><strong>{esc(display_code)}</strong><span>SYS / 21</span></div><div class=\"mx-code__name\">{esc(page.public_name.upper())}</div><div class=\"mx-code__state\"><span class=\"mx-dots\" aria-hidden=\"true\"><i></i><i></i><i></i><i></i><i></i><i></i></span>{esc(page.interface_state)}</div></div></div>
     <div><h1 class=\"chart-title\">{esc(page.title)}</h1><div class=\"chart-subtitle\">{esc(page.subtitle)}</div><div class=\"mx-meta\"><span>FAMILY / {esc(page.family)}</span><span>DATA / {esc(page.data_signature)}</span><span data-state>STATE / READY</span></div></div>
