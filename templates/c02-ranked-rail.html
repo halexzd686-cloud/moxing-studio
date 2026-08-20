@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-surface="light" data-interface="precision-v2.1">
+<html lang="zh-CN" data-surface="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -130,6 +130,22 @@
   svg .pi-address { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }
   svg .pi-address-signal { fill:var(--signal); }
   svg .pi-focus-corner { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
+  svg .pm-socket { fill:var(--bg); stroke:var(--ink); stroke-width:1.5; vector-effect:non-scaling-stroke; }
+  svg .pm-socket-signal { fill:var(--signal); stroke:var(--on-signal); stroke-width:1; vector-effect:non-scaling-stroke; }
+  svg .pm-lock-ring { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
+  svg .pm-lock-cross { fill:none; stroke:var(--signal); stroke-width:1; vector-effect:non-scaling-stroke; }
+  svg .pm-address { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }
+  svg .pm-address-signal { fill:var(--signal); }
+  svg .pm-focus-corner { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
+  [data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] [data-motion] { animation:none!important; }
+  @keyframes pm-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
+  @keyframes pm-lock-settle { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:scale(1); } }
+  .pm-data-field-layer,.pm-target-lock { transform-box:fill-box; transform-origin:center; }
+  .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer { animation:pm-field-enter var(--pm-field-duration,680ms) cubic-bezier(.22,.72,.18,1) var(--pm-field-delay,40ms) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,980ms)) both; will-change:transform,opacity; }
+  .motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation-play-state:paused!important; }
+  .is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { will-change:auto; }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:none!important; } }
   [data-interface="precision-v2.1"] [data-motion] { animation:none!important; }
   @keyframes pi-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pi-evidence-enter { from { opacity:0; transform:translate3d(-5px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
@@ -145,25 +161,13 @@
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1100" data-total-standard="1800" data-total-story="3400" data-mode="editorial" data-choreography="ranked-rail" data-motion-system="precision-v2.1" data-presentation-carrier="interface" data-presentation-target="direct" data-interface="precision-v2.1">
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1100" data-total-standard="1800" data-total-story="3400" data-mode="editorial" data-choreography="ranked-rail" data-motion-system="presentation-v2.1" data-presentation-carrier="direct" data-presentation-target="direct">
   <header class="chart-header">
     <div class="chart-code"><div class="mx-code"><div class="mx-code__top"><strong>C02</strong><span>SYS / 21</span></div><div class="mx-code__name">RANKED RAIL</div><div class="mx-code__state"><span class="mx-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>TOP.LOCK</div></div></div>
     <div><h1 class="chart-title">华东服务评分居首，区域差距仍可控</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / RANK</span><span>DATA / 06I</span><span data-state>STATE / READY</span></div></div>
     <span class="mx-header-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </header>
-  <section class="chart-body pi-split-body">
-    <aside class="pi-evidence-bay" aria-label="E02 evidence bay" style="--pi-terminal-delay:1000ms">
-      <span class="pi-evidence-bay__label">EVIDENCE / BAY</span>
-      <svg class="pi-evidence-svg" viewBox="0 64 230 114" aria-hidden="true"><g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1500ms;--dx:-8px;--dy:0px;--delay-brief:900ms;--delay-story:2960ms">
-<path d="M 0 74 H 222 L 230 82 V 168 H 8 L 0 160 Z" class="panel-stroke" />
-<text x="14" y="95" class="index muted" text-anchor="start" font-size="12" >R-01</text>
-<text x="216" y="95" class="index signal-text" text-anchor="end" font-size="12" >TOP</text>
-<text x="14" y="129" class="value" text-anchor="start" font-size="28" font-weight="650" >94</text>
-<text x="14" y="151" class="muted" text-anchor="start" font-size="13" >华东客户服务中心</text>
-</g></svg>
-      <div class="pi-bay-terminal"><span>E02</span><i></i><b></b></div>
-    </aside>
-    <svg class="pi-data-field" viewBox="0 0 1172 500" preserveAspectRatio="xMidYMid meet" role="img" aria-label="华东服务评分居首，区域差距仍可控" style="--pi-lock-delay:1120ms"><g class="rank-heading" data-motion="lock" data-choreo="readout" style="--delay:120ms;--dx:0px;--dy:0px;--delay-brief:60ms;--delay-story:200ms">
+  <section class="chart-body pm-direct-body"><svg class="pm-direct-field" viewBox="0 0 1172 500" role="img" aria-label="华东服务评分居首，区域差距仍可控" style="--pm-lock-delay:1120ms;--pm-lock-delay-brief:680ms;--pm-lock-delay-story:2100ms"><g class="pm-data-field-layer"><g class="rank-heading" data-motion="lock" data-choreo="readout" style="--delay:120ms;--dx:0px;--dy:0px;--delay-brief:60ms;--delay-story:200ms">
 <text x="0" y="138" class="index muted" text-anchor="start" font-size="12" >01</text>
 <text x="44" y="138" class="label" text-anchor="start" font-size="14" font-weight="600" >华东客户服务中心</text>
 </g>
@@ -210,16 +214,15 @@
 <line x1="330" y1="422" x2="1116" y2="422" class="grid" pathLength="1" data-motion="align" style="--delay:255ms;--dx:0px;--dy:0px;--delay-brief:125ms;--delay-story:445ms"/>
 <path d="M 330 410 H 868.51 L 873.51 415 V 434 H 335 L 330 429 Z" class="data-fill" data-motion="dock" data-choreo="rail-slide" style="--delay:655ms;--dx:-32px;--dy:0px;--duration:420ms;--delay-brief:350ms;--delay-story:1250ms;--duration-brief:280ms;--duration-story:620ms"/>
 <line x1="873.51" y1="405" x2="873.51" y2="440" class="rail" data-motion="align" style="--delay:1005ms;--dx:0px;--dy:0px;--delay-brief:580ms;--delay-story:1790ms"/>
-<text x="885.51" y="428" class="value" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:1015ms;--dx:0px;--dy:0px;--delay-brief:585ms;--delay-story:1800ms">65</text><g class="pi-overlay pi-overlay--foreground"><rect x="326" y="128" width="8" height="8" rx="0" class="pi-socket-signal" />
-<rect x="326" y="186" width="8" height="8" rx="0" class="pi-socket" />
-<rect x="326" y="244" width="8" height="8" rx="0" class="pi-socket" />
-<rect x="326" y="302" width="8" height="8" rx="0" class="pi-socket" />
-<rect x="326" y="360" width="8" height="8" rx="0" class="pi-socket" />
-<rect x="326" y="418" width="8" height="8" rx="0" class="pi-socket" />
-<circle cx="1116" cy="102" r="13" class="pi-lock-ring" />
-<path d="M 1116.0 115 V 127" class="pi-lock-cross" />
-<text x="1098" y="84" class="pi-address pi-address-signal" text-anchor="end" font-size="10" >E02 / R01</text></g></svg>
-  </section>
+<text x="885.51" y="428" class="value" text-anchor="start" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:1015ms;--dx:0px;--dy:0px;--delay-brief:585ms;--delay-story:1800ms">65</text></g><g class="pm-target-lock"><rect x="326" y="128" width="8" height="8" rx="0" class="pm-socket-signal" />
+<rect x="326" y="186" width="8" height="8" rx="0" class="pm-socket" />
+<rect x="326" y="244" width="8" height="8" rx="0" class="pm-socket" />
+<rect x="326" y="302" width="8" height="8" rx="0" class="pm-socket" />
+<rect x="326" y="360" width="8" height="8" rx="0" class="pm-socket" />
+<rect x="326" y="418" width="8" height="8" rx="0" class="pm-socket" />
+<circle cx="1116" cy="102" r="13" class="pm-lock-ring" />
+<path d="M 1116.0 115 V 127" class="pm-lock-cross" />
+<text x="1098" y="84" class="pm-address pm-address-signal" text-anchor="end" font-size="10" >R01 / TOP</text></g></svg></section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" data-code="R" title="重播">↻</button><button type="button" data-action="pause" data-code="H" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" data-code="S" title="切换明暗">◐</button></nav>
 </main>
@@ -233,6 +236,17 @@
   const profile=['brief','standard','story'].includes(requestedProfile)?requestedProfile:'standard';
   const scales={brief:0.72,standard:1.0,story:1.8};
   const scale=scales[profile]||1;
+  const macroProfiles={brief:{fieldDelay:25,fieldDuration:420,lockDuration:220},standard:{fieldDelay:40,fieldDuration:680,lockDuration:260},story:{fieldDelay:60,fieldDuration:900,lockDuration:320}};
+  const macro=macroProfiles[profile]||macroProfiles.standard;
+  root.style.setProperty('--pm-field-delay',macro.fieldDelay+'ms');
+  root.style.setProperty('--pm-field-duration',macro.fieldDuration+'ms');
+  root.style.setProperty('--pm-lock-duration',macro.lockDuration+'ms');
+  const directField=root.querySelector('.pm-direct-field');
+  if(directField){
+    const profileLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay-'+profile));
+    const standardLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay'))||980;
+    root.style.setProperty('--pm-active-lock-delay',(Number.isFinite(profileLock)?profileLock:standardLock)+'ms');
+  }
   const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);
   const total=Number(root.dataset[profileKey]||root.dataset.total||1800);
   const baseDuration={align:220,dock:620,route:520,lock:280};

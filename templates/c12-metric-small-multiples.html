@@ -130,6 +130,22 @@
   svg .pi-address { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }
   svg .pi-address-signal { fill:var(--signal); }
   svg .pi-focus-corner { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
+  svg .pm-socket { fill:var(--bg); stroke:var(--ink); stroke-width:1.5; vector-effect:non-scaling-stroke; }
+  svg .pm-socket-signal { fill:var(--signal); stroke:var(--on-signal); stroke-width:1; vector-effect:non-scaling-stroke; }
+  svg .pm-lock-ring { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
+  svg .pm-lock-cross { fill:none; stroke:var(--signal); stroke-width:1; vector-effect:non-scaling-stroke; }
+  svg .pm-address { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }
+  svg .pm-address-signal { fill:var(--signal); }
+  svg .pm-focus-corner { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
+  [data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] [data-motion] { animation:none!important; }
+  @keyframes pm-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
+  @keyframes pm-lock-settle { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:scale(1); } }
+  .pm-data-field-layer,.pm-target-lock { transform-box:fill-box; transform-origin:center; }
+  .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer { animation:pm-field-enter var(--pm-field-duration,680ms) cubic-bezier(.22,.72,.18,1) var(--pm-field-delay,40ms) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,980ms)) both; will-change:transform,opacity; }
+  .motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation-play-state:paused!important; }
+  .is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { will-change:auto; }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:none!important; } }
   [data-interface="precision-v2.1"] [data-motion] { animation:none!important; }
   @keyframes pi-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pi-evidence-enter { from { opacity:0; transform:translate3d(-5px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
@@ -151,7 +167,7 @@
     <div><h1 class="chart-title">增长质量同步改善，规模提升并未推高退款率</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / METRIC</span><span>DATA / 06T · 04S</span><span data-state>STATE / READY</span></div></div>
     <span class="mx-header-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </header>
-  <section class="chart-body pm-direct-body"><svg class="pm-direct-field" viewBox="0 0 1172 500" role="img" aria-label="增长质量同步改善，规模提升并未推高退款率"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >12 / METRIC SMALL MULTIPLES</text>
+  <section class="chart-body pm-direct-body"><svg class="pm-direct-field" viewBox="0 0 1172 500" role="img" aria-label="增长质量同步改善，规模提升并未推高退款率" style="--pm-lock-delay:980ms;--pm-lock-delay-brief:608ms;--pm-lock-delay-story:1764ms"><g class="pm-data-field-layer"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >12 / METRIC SMALL MULTIPLES</text>
 <path d="M 0 62 H 538 L 548 72 V 250 H 10 L 0 240 Z" class="panel-stroke" data-motion="dock" data-choreo="field-seat" style="--delay:150ms;--dx:0px;--dy:18px;--delay-brief:70ms;--delay-story:260ms"/>
 <text x="22" y="92" class="index muted" text-anchor="start" font-size="12" >01 / GMV</text>
 <text x="526" y="93" class="index signal-text" text-anchor="end" font-size="12" data-motion="lock" data-choreo="alarm" style="--delay:1380ms;--dx:0px;--dy:0px;--delay-brief:800ms;--delay-story:2640ms">+660.0 万元</text>
@@ -183,7 +199,7 @@
 <path d="M 608.00 357.85 L 708.00 370.78 L 808.00 365.61 L 908.00 388.88 L 1008.00 399.22 L 1108.00 412.15" class="data-stroke" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:770ms;--dx:0px;--dy:0px;--delay-brief:400ms;--delay-story:1520ms"/>
 <text x="608" y="456" class="index muted" text-anchor="start" font-size="12" >1月</text>
 <text x="1108" y="456" class="index muted" text-anchor="end" font-size="12" >6月</text>
-<text x="1108" y="402.15" class="value" text-anchor="end" font-size="16" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:1190ms;--dx:0px;--dy:0px;--delay-brief:670ms;--delay-story:2340ms">6.3</text></svg></section>
+<text x="1108" y="402.15" class="value" text-anchor="end" font-size="16" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:1190ms;--dx:0px;--dy:0px;--delay-brief:670ms;--delay-story:2340ms">6.3</text></g></svg></section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" data-code="R" title="重播">↻</button><button type="button" data-action="pause" data-code="H" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" data-code="S" title="切换明暗">◐</button></nav>
 </main>
@@ -197,6 +213,17 @@
   const profile=['brief','standard','story'].includes(requestedProfile)?requestedProfile:'standard';
   const scales={brief:0.72,standard:1.0,story:1.8};
   const scale=scales[profile]||1;
+  const macroProfiles={brief:{fieldDelay:25,fieldDuration:420,lockDuration:220},standard:{fieldDelay:40,fieldDuration:680,lockDuration:260},story:{fieldDelay:60,fieldDuration:900,lockDuration:320}};
+  const macro=macroProfiles[profile]||macroProfiles.standard;
+  root.style.setProperty('--pm-field-delay',macro.fieldDelay+'ms');
+  root.style.setProperty('--pm-field-duration',macro.fieldDuration+'ms');
+  root.style.setProperty('--pm-lock-duration',macro.lockDuration+'ms');
+  const directField=root.querySelector('.pm-direct-field');
+  if(directField){
+    const profileLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay-'+profile));
+    const standardLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay'))||980;
+    root.style.setProperty('--pm-active-lock-delay',(Number.isFinite(profileLock)?profileLock:standardLock)+'ms');
+  }
   const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);
   const total=Number(root.dataset[profileKey]||root.dataset.total||1800);
   const baseDuration={align:220,dock:620,route:520,lock:280};

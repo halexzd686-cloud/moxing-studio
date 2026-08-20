@@ -229,6 +229,9 @@ class DirectCanvas:
 
     foreground_svg: str = ""
     lock_delay: int = 980
+    lock_delay_brief: int | None = None
+    lock_delay_story: int | None = None
+    compiled_motion: bool = False
     mode: str = field(init=False, default="direct")
 
 
@@ -348,7 +351,9 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
     carrier_name = presentation.mode
     interface = presentation if isinstance(presentation, EvidenceInterface) else None
     embedded = presentation if isinstance(presentation, EmbeddedEvidence) else None
-    motion_system = "precision-v2.1" if interface else "legacy"
+    direct = presentation if isinstance(presentation, DirectCanvas) else None
+    compiled_direct = bool(direct and direct.compiled_motion)
+    motion_system = "presentation-v2.1" if compiled_direct else ("precision-v2.1" if interface else "legacy")
     html_interface = ' data-interface="precision-v2.1"' if interface else ""
     root_interface = ' data-interface="precision-v2.1"' if interface else ""
     if interface:
@@ -367,7 +372,12 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   </section>'''
     else:
         foreground = f'<g class="pm-target-lock">{presentation.foreground_svg}</g>' if presentation.foreground_svg else ""
-        body_markup = f'<section class="chart-body pm-direct-body"><svg class="pm-direct-field" viewBox="0 0 {W} {H}" role="img" aria-label="{esc(page.title)}">{page.svg}{foreground}</svg></section>'
+        direct_style = ""
+        if direct:
+            brief_delay = direct.lock_delay_brief if direct.lock_delay_brief is not None else round(direct.lock_delay * .62)
+            story_delay = direct.lock_delay_story if direct.lock_delay_story is not None else round(direct.lock_delay * 1.8)
+            direct_style = f' style="--pm-lock-delay:{direct.lock_delay}ms;--pm-lock-delay-brief:{brief_delay}ms;--pm-lock-delay-story:{story_delay}ms"'
+        body_markup = f'<section class="chart-body pm-direct-body"><svg class="pm-direct-field" viewBox="0 0 {W} {H}" role="img" aria-label="{esc(page.title)}"{direct_style}><g class="pm-data-field-layer">{page.svg}</g>{foreground}</svg></section>'
     return f"""<!DOCTYPE html>
 <html lang=\"zh-CN\" data-surface=\"{esc(page.surface)}\"{html_interface}>
 <head>
@@ -483,6 +493,22 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   svg .pi-address {{ font-family:{index_font}; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }}
   svg .pi-address-signal {{ fill:var(--signal); }}
   svg .pi-focus-corner {{ fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }}
+  svg .pm-socket {{ fill:var(--bg); stroke:var(--ink); stroke-width:1.5; vector-effect:non-scaling-stroke; }}
+  svg .pm-socket-signal {{ fill:var(--signal); stroke:var(--on-signal); stroke-width:1; vector-effect:non-scaling-stroke; }}
+  svg .pm-lock-ring {{ fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }}
+  svg .pm-lock-cross {{ fill:none; stroke:var(--signal); stroke-width:1; vector-effect:non-scaling-stroke; }}
+  svg .pm-address {{ font-family:{index_font}; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }}
+  svg .pm-address-signal {{ fill:var(--signal); }}
+  svg .pm-focus-corner {{ fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }}
+  [data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] [data-motion] {{ animation:none!important; }}
+  @keyframes pm-field-enter {{ from {{ opacity:.18; transform:translate3d(-7px,0,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
+  @keyframes pm-lock-settle {{ from {{ opacity:0; transform:scale(.96); }} to {{ opacity:1; transform:scale(1); }} }}
+  .pm-data-field-layer,.pm-target-lock {{ transform-box:fill-box; transform-origin:center; }}
+  .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer {{ animation:pm-field-enter var(--pm-field-duration,680ms) {precision_motion['ease']} var(--pm-field-delay,40ms) both; will-change:transform,opacity; }}
+  .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,980ms)) both; will-change:transform,opacity; }}
+  .motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ animation-play-state:paused!important; }}
+  .is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ will-change:auto; }}
+  @media (prefers-reduced-motion:reduce) {{ .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ animation:none!important; }} }}
   [data-interface="precision-v2.1"] [data-motion] {{ animation:none!important; }}
   @keyframes pi-field-enter {{ from {{ opacity:.18; transform:translate3d(-7px,0,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
   @keyframes pi-evidence-enter {{ from {{ opacity:0; transform:translate3d(-5px,0,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
@@ -518,6 +544,17 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   const profile=['brief','standard','story'].includes(requestedProfile)?requestedProfile:'standard';
   const scales={{brief:{motion_tokens['profiles']['brief']['fallbackScale']},standard:{motion_tokens['profiles']['standard']['fallbackScale']},story:{motion_tokens['profiles']['story']['fallbackScale']}}};
   const scale=scales[profile]||1;
+  const macroProfiles={{brief:{{fieldDelay:25,fieldDuration:420,lockDuration:220}},standard:{{fieldDelay:40,fieldDuration:680,lockDuration:260}},story:{{fieldDelay:60,fieldDuration:900,lockDuration:320}}}};
+  const macro=macroProfiles[profile]||macroProfiles.standard;
+  root.style.setProperty('--pm-field-delay',macro.fieldDelay+'ms');
+  root.style.setProperty('--pm-field-duration',macro.fieldDuration+'ms');
+  root.style.setProperty('--pm-lock-duration',macro.lockDuration+'ms');
+  const directField=root.querySelector('.pm-direct-field');
+  if(directField){{
+    const profileLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay-'+profile));
+    const standardLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay'))||980;
+    root.style.setProperty('--pm-active-lock-delay',(Number.isFinite(profileLock)?profileLock:standardLock)+'ms');
+  }}
   const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);
   const total=Number(root.dataset[profileKey]||root.dataset.total||1800);
   const baseDuration={{align:{motion_tokens['align']},dock:{motion_tokens['dock']},route:{motion_tokens['route']},lock:{motion_tokens['lock']}}};

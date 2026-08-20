@@ -4,7 +4,7 @@
 >
 > Branch: `codex/v2.1-production-rollout`
 >
-> Status: I0 three-carrier architecture complete; production templates retain their previous geometry and await A1 bounded migration
+> Status: A1 Direct Canvas migration complete for C1/C2/C4/C5/C7/C9/C10; A2 is next
 >
 > Visual review: C1 Direct Canvas, C14 Embedded Evidence, and C6 Evidence Interface approved on 2026-08-20
 
@@ -68,8 +68,9 @@ If Playwright is installed outside the project, set `MOXING_PLAYWRIGHT_PATH`. Se
 
 - 103 boundary render cases pass.
 - 232 browser/static/motion/layout/readability/gallery-scheduling/frame-pacing checks pass; see `docs/previews/qa-report.json`.
-- The presentation mapping passes 13 checks and the I0 carrier architecture passes 11 checks.
-- Thirteen signature locked-frame PNG hashes are byte-identical to the pre-I0 baseline.
+- The presentation mapping passes 13 checks and the carrier/A1 architecture passes 13 checks.
+- C1/C2/C4/C5/C7/C9/C10 contain no side bay or detached evidence card; each compiles playback to `DATA_FIELD → TARGET_LOCK` with two composited layers.
+- Thirteen signature locked-frame PNGs form the current visual baseline; A1 intentionally updates C1/C5/C10 while non-A1 signatures remain structurally unchanged.
 - The approved four-chart Precision Interface Lab passes 17 focused layout, motion-layer, and narrow-viewport checks.
 - All 24 templates render with and without JavaScript.
 - Reduced-motion mode settles immediately.
@@ -84,8 +85,7 @@ The reusable data contracts, numerical formatting, boundary cases, browser detec
 
 ## Next maintenance steps
 
-1. Migrate A1 C1/C2/C4/C5/C7/C9/C10 from their current interface carrier to Direct Canvas.
-2. Migrate A2 C11/C12/C20 while preserving their existing full-width geometry.
-3. Migrate B1 C13/C14/C16, then B2 C17/C18/C19/C21/C23/C24; verify every local evidence anchor against critical geometry.
-4. Consolidate batch C1 (C3/C6/C8/C15/C22) on the shared full-interface carrier without changing their approved compositions.
-5. Run presentation-mode, carrier, boundary, browser, and Lab QA before each batch is accepted.
+1. Migrate A2 C11/C12/C20 while preserving their existing full-width geometry and adding only data-bound local locks.
+2. Migrate B1 C13/C14/C16, then B2 C17/C18/C19/C21/C23/C24; verify every local evidence anchor against critical geometry.
+3. Consolidate batch C1 (C3/C6/C8/C15/C22) on the shared full-interface carrier without changing their approved compositions.
+4. Run presentation-mode, carrier, boundary, browser, and Lab QA before each batch is accepted.

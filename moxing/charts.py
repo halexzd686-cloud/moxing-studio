@@ -281,10 +281,7 @@ def build_c1(data: Any) -> str | ChartArtwork:
         return no_data()
     max_value = max(max(item["value"], 0) for item in items) or 1
     top = max(range(len(items)), key=lambda index: items[index]["value"])
-    total_positive = sum(max(0, item["value"]) for item in items) or 1
-    x0, x1, baseline, top_y = 300, 1134, 426, 88
-    share = items[top]["value"] / total_positive * 100
-    evidence = evidence_plate(0, 74, "E-01", "LEADER", format_num(items[top]["value"]), f"{items[top]['label']} / {share:.1f}%", delay=1460, width=230, brief=880, story=2660, choreo="readout")
+    x0, x1, baseline, top_y = 92, 1128, 426, 88
     parts = [line(x0, baseline, x1, baseline, cls="rail-strong", extra=f'pathLength="1" {motion("align", 80, brief=40, story=120, duration=240, duration_brief=150, duration_story=320)}')]
     centers: list[tuple[float, float]] = []
     for tick in range(6):
@@ -306,16 +303,16 @@ def build_c1(data: Any) -> str | ChartArtwork:
     overlay = []
     for index, (cx, _top_y) in enumerate(centers):
         signal = index == top
-        overlay.append(rect(cx - 4, baseline - 4, 8, 8, cls="pi-socket-signal" if signal else "pi-socket"))
+        overlay.append(rect(cx - 4, baseline - 4, 8, 8, cls="pm-socket-signal" if signal else "pm-socket"))
     target_x, target_y = centers[top]
     overlay += [
-        circle(target_x, target_y, 13, cls="pi-lock-ring"),
-        path(f"M {target_x-18} {target_y} H {target_x-11} M {target_x+11} {target_y} H {target_x+18}", cls="pi-lock-cross"),
-        text(target_x, target_y - 24, f"E01 / R{top + 1:02d}", cls="pi-address pi-address-signal", anchor="middle", size=10),
+        circle(target_x, target_y, 13, cls="pm-lock-ring"),
+        path(f"M {target_x-18} {target_y} H {target_x-11} M {target_x+11} {target_y} H {target_x+18}", cls="pm-lock-cross"),
+        text(target_x, target_y - 24, f"R{top + 1:02d} / TOP", cls="pm-address pm-address-signal", anchor="middle", size=10),
     ]
     return ChartArtwork(
         svg="\n".join(parts),
-        presentation=EvidenceInterface("E01", "0 64 230 114", 260, 1160, evidence, "\n".join(overlay)),
+        presentation=DirectCanvas(foreground_svg="\n".join(overlay), lock_delay=1160, lock_delay_brief=700, lock_delay_story=2250, compiled_motion=True),
     )
 
 
@@ -326,7 +323,6 @@ def build_c2(data: Any) -> str | ChartArtwork:
     maximum = max(max(item["value"], 0) for item in items) or 1
     x0, x1, y0 = 330, 1116, 120
     row = min(58, 306 / max(1, len(items) - 1))
-    evidence = evidence_plate(0, 74, "R-01", "TOP", format_num(items[0]["value"]), items[0]["label"][:12], delay=1500, width=230, brief=900, story=2960, choreo="alarm")
     parts = []
     ends: list[tuple[float, float]] = []
     for index, item in enumerate(items):
@@ -353,17 +349,17 @@ def build_c2(data: Any) -> str | ChartArtwork:
         ]
     overlay = []
     for index, (_end, cy) in enumerate(ends):
-        overlay.append(rect(x0 - 4, cy - 4, 8, 8, cls="pi-socket-signal" if index == 0 else "pi-socket"))
+        overlay.append(rect(x0 - 4, cy - 4, 8, 8, cls="pm-socket-signal" if index == 0 else "pm-socket"))
     target_x, target_y = ends[0]
     lock_y = target_y - 30
     overlay += [
-        circle(target_x, lock_y, 13, cls="pi-lock-ring"),
-        path(f"M {target_x} {lock_y+13} V {target_y-5}", cls="pi-lock-cross"),
-        text(min(x1 - 18, target_x - 18), lock_y - 18, "E02 / R01", cls="pi-address pi-address-signal", anchor="end", size=10),
+        circle(target_x, lock_y, 13, cls="pm-lock-ring"),
+        path(f"M {target_x} {lock_y+13} V {target_y-5}", cls="pm-lock-cross"),
+        text(min(x1 - 18, target_x - 18), lock_y - 18, "R01 / TOP", cls="pm-address pm-address-signal", anchor="end", size=10),
     ]
     return ChartArtwork(
         svg="\n".join(parts),
-        presentation=EvidenceInterface("E02", "0 64 230 114", 0, 1120, evidence, "\n".join(overlay)),
+        presentation=DirectCanvas(foreground_svg="\n".join(overlay), lock_delay=1120, lock_delay_brief=680, lock_delay_story=2100, compiled_motion=True),
     )
 
 
@@ -436,9 +432,8 @@ def build_c4(data: Any) -> str | ChartArtwork:
     for index in sorted(range(len(items)), key=lambda i: raw[i] - counts[i], reverse=True)[: units - sum(counts)]:
         counts[index] += 1
     largest = max(range(len(items)), key=lambda i: items[i]["value"])
-    evidence = evidence_plate(0, 74, "F-01", "SHARE", f"{shares[largest]*100:.0f}%", items[largest]["label"], delay=1500, width=230, brief=900, story=3060, choreo="alarm")
     parts = []
-    start_x, start_y, cell_w, cell_h, gap = 310, 116, 34, 48, 6
+    start_x, start_y, cell_w, cell_h, gap = 92, 116, 34, 48, 6
     cumulative = []
     for idx, count in enumerate(counts):
         cumulative.extend([idx] * count)
@@ -449,7 +444,7 @@ def build_c4(data: Any) -> str | ChartArtwork:
         cls = "signal-fill" if category == largest else f"cat-{category % 4 + 1}"
         parts.append(path(cut_rect_path(x, y, cell_w, cell_h, 5), cls=cls, extra=motion("dock", 240 + index * 18, dy=18, brief=120 + index * 10, story=400 + index * 35, duration=360, duration_brief=240, duration_story=520, choreo="field-seat")))
         parts.append(line(x + cell_w / 2, y + cell_h, x + cell_w / 2, y + cell_h + 5, cls="grid", extra=motion("align", 500 + index * 10, brief=300 + index * 5, story=850 + index * 20)))
-    legend_x = 770
+    legend_x = 688
     for index, item in enumerate(items):
         y = 108 + index * 58
         cls = "signal-fill" if index == largest else f"cat-{index % 4 + 1}"
@@ -473,13 +468,13 @@ def build_c4(data: Any) -> str | ChartArtwork:
         f"M {left+arm} {bottom} H {left} V {bottom-arm}"
     )
     foreground = "\n".join([
-        rect(start_x - 4, 378, 8, 8, cls="pi-socket"),
-        path(focus_path, cls="pi-focus-corner"),
-        text(730, 410, f"E04 / F{counts[largest]:02d}", cls="pi-address pi-address-signal", size=10, anchor="end"),
+        rect(start_x - 4, 378, 8, 8, cls="pm-socket"),
+        path(focus_path, cls="pm-focus-corner"),
+        text(legend_x - 38, 410, f"F{counts[largest]:02d} / LEADER", cls="pm-address pm-address-signal", size=10, anchor="end"),
     ])
     return ChartArtwork(
         svg="\n".join(parts),
-        presentation=EvidenceInterface("E04", "0 64 230 114", 260, 1080, evidence, foreground),
+        presentation=DirectCanvas(foreground_svg=foreground, lock_delay=1080, lock_delay_brief=650, lock_delay_story=2050, compiled_motion=True),
     )
 
 
@@ -496,13 +491,8 @@ def build_c5(data: Any) -> str | ChartArtwork:
     standard_step = min(130, 900 / category_span)
     brief_step = min(70, 450 / category_span)
     story_step = min(240, 1600 / category_span)
-    last_standard = 280 + standard_step * (len(categories) - 1) + 70 * (len(series) - 1)
-    last_brief = 150 + brief_step * (len(categories) - 1) + 40 * (len(series) - 1)
-    last_story = 700 + story_step * (len(categories) - 1) + 120 * (len(series) - 1)
-    latest_share = series[0]["values"][-1] / max(1, totals[-1]) * 100
-    evidence = evidence_plate(0, 74, "B-01", "MIX", f"{latest_share:.0f}%", f"{series[0].get('name','主系列')} / 最新", delay=round(max(1450, last_standard + 440)), width=230, brief=round(max(900, last_brief + 300)), story=round(max(3000, last_story + 650)), choreo="alarm")
     parts = []
-    x0, x1, y0 = 318, 1122, 95
+    x0, x1, y0 = 156, 1122, 95
     row = min(78, 320 / max(1, len(categories)))
     for cat_index, category in enumerate(categories):
         y = y0 + cat_index * row
@@ -530,14 +520,14 @@ def build_c5(data: Any) -> str | ChartArtwork:
     overlay = []
     for index in range(len(categories)):
         cy = y0 + index * row + 21
-        overlay.append(rect(x0 - 4, cy - 4, 8, 8, cls="pi-socket-signal" if index == len(categories) - 1 else "pi-socket"))
+        overlay.append(rect(x0 - 4, cy - 4, 8, 8, cls="pm-socket-signal" if index == len(categories) - 1 else "pm-socket"))
     overlay += [
-        circle(primary_end, latest_y + 21, 13, cls="pi-lock-ring"),
-        text(primary_end, latest_y - 3, f"E05 / Q{len(categories):02d}", cls="pi-address pi-address-signal", anchor="middle", size=10),
+        circle(primary_end, latest_y + 21, 13, cls="pm-lock-ring"),
+        text(primary_end, latest_y - 3, f"Q{len(categories):02d} / LATEST MIX", cls="pm-address pm-address-signal", anchor="middle", size=10),
     ]
     return ChartArtwork(
         svg="\n".join(parts),
-        presentation=EvidenceInterface("E05", "0 64 230 114", 260, 1160, evidence, "\n".join(overlay)),
+        presentation=DirectCanvas(foreground_svg="\n".join(overlay), lock_delay=1160, lock_delay_brief=700, lock_delay_story=2400, compiled_motion=True),
     )
 
 
@@ -636,9 +626,7 @@ def build_c7(data: Any) -> str | ChartArtwork:
     x0, x1, y0 = 330, 1128, 136
     row = min(62, 300 / max(1, len(items) - 1))
     pos = lambda dt: x0 + (x1 - x0) * (dt - minimum).days / span
-    extra_rows = max(0, len(items) - 5)
     active_indices = [index for index, item in enumerate(items) if 0 < item["progress"] < 100]
-    evidence = evidence_plate(0, 74, "M-01", "ACTIVE", f"{len(active_indices)}", "进行中的任务", delay=1650 + extra_rows * 40, width=230, brief=950 + extra_rows * 26, story=3200 + extra_rows * 80, choreo="alarm")
     parts = [line(x0, 110, x1, 110, cls="rail-strong", extra=f'pathLength="1" {motion("align", 80, brief=35, story=120)}')]
     progress_points: list[tuple[float, float]] = []
     for tick in range(6):
@@ -660,14 +648,14 @@ def build_c7(data: Any) -> str | ChartArtwork:
     for index, item in enumerate(items):
         socket_x = pos(item["_start"])
         socket_y = y0 + index * row + 13
-        overlay.append(rect(socket_x - 4, socket_y - 4, 8, 8, cls="pi-socket-signal" if index == focus_index else "pi-socket"))
+        overlay.append(rect(socket_x - 4, socket_y - 4, 8, 8, cls="pm-socket-signal" if index == focus_index else "pm-socket"))
     overlay += [
-        circle(target_x, target_y, 13, cls="pi-lock-ring"),
-        text(target_x, target_y - 22, f"E07 / M{focus_index + 1:02d}", cls="pi-address pi-address-signal", anchor="middle", size=10),
+        circle(target_x, target_y, 13, cls="pm-lock-ring"),
+        text(target_x, target_y - 22, f"M{focus_index + 1:02d} / ACTIVE", cls="pm-address pm-address-signal", anchor="middle", size=10),
     ]
     return ChartArtwork(
         svg="\n".join(parts),
-        presentation=EvidenceInterface("E07", "0 64 230 114", 230, 1140, evidence, "\n".join(overlay)),
+        presentation=DirectCanvas(foreground_svg="\n".join(overlay), lock_delay=1140, lock_delay_brief=680, lock_delay_story=2300, compiled_motion=True),
     )
 
 
@@ -770,22 +758,19 @@ def build_c9(data: Any) -> str | ChartArtwork:
         ]
     parts.append(group(context, cls="metric-context"))
     if completion is not None:
-        evidence = evidence_plate(0, 74, "K-02", "TARGET", f"{completion:.1f}%", f"目标 {format_num(target)}", delay=1280, width=230, brief=760, story=2450, choreo="readout")
         lock_code = "TGT"
     elif is_number(yoy):
-        evidence = evidence_plate(0, 74, "K-01", "YOY", f"{yoy:+.1f}%", "同比变化", delay=1100, width=230, brief=650, story=2050, choreo="alarm")
         lock_code = "YOY"
     else:
-        evidence = evidence_plate(0, 74, "K-00", "VALUE", format_num(value), str(data.get("label", "核心指标"))[:12], delay=1100, width=230, brief=650, story=2050, choreo="readout")
         lock_code = "VAL"
     foreground = "\n".join([
-        rect(34, 322, 8, 8, cls="pi-socket"),
-        circle(target_x, 326, 13, cls="pi-lock-ring"),
-        text(target_x, 300, f"E09 / {lock_code}", cls="pi-address pi-address-signal", anchor="middle", size=10),
+        rect(34, 322, 8, 8, cls="pm-socket"),
+        circle(target_x, 326, 13, cls="pm-lock-ring"),
+        text(target_x, 300, f"KPI / {lock_code}", cls="pm-address pm-address-signal", anchor="middle", size=10),
     ])
     return ChartArtwork(
         svg="\n".join(parts),
-        presentation=EvidenceInterface("E09", "0 64 230 114", 0, 1060, evidence, foreground, 1172),
+        presentation=DirectCanvas(foreground_svg=foreground, lock_delay=1060, lock_delay_brief=620, lock_delay_story=1950, compiled_motion=True),
     )
 
 
@@ -832,25 +817,22 @@ def build_c10(data: Any) -> str | ChartArtwork:
         parts += [row_heading, line(x0 + 42, y + 30, x1, y + 30, cls="grid", extra=f'pathLength="1" {motion("align", row_standard, brief=row_brief, story=row_story)}'), path(cut_rect_path(x0 + 42, y + 19, max(6, (x1-x0-42)*ratio), 22, 5), cls="signal-fill" if is_risk else "data-fill", extra=motion("dock", 760 + index * 190, dx=-28, brief=450 + index * 100, story=1650 + index * 320, duration=440, duration_brief=280, duration_story=620, choreo="interlock")), text(x1, y + 61, f"YOY {item.get('yoy'):+.1f}%" if is_number(item.get("yoy")) else "YOY —", cls="signal-text index" if is_risk else "muted index", anchor="end", size=12, extra=motion("lock", 1080 + index * 135, brief=700 + index * 70, story=2320 + index * 270, choreo="alarm" if is_risk else "readout"))]
     if risks:
         focus_index = risks[0]
-        risk = items[focus_index]
-        evidence = evidence_plate(0, 74, "D-01", "RISK", f"{risk.get('yoy'):+.1f}%", f"{risk['label']} / 同比", delay=1480, width=230, brief=900, story=2860, choreo="alarm")
         target_x, target_y = row_targets.get(focus_index, (474, 340))
         lock_code = f"R{focus_index + 1:02d}"
     else:
         focus_index = hero
-        evidence = evidence_plate(0, 74, "D-00", "LEADER", format_num(items[hero]["value"]), items[hero]["label"], delay=1280, width=230, brief=760, story=2450, choreo="readout")
         target_x, target_y = 474, 340
         lock_code = f"L{hero + 1:02d}"
     overlay = []
     for original_index, (px, py) in row_targets.items():
-        overlay.append(rect(x0 + 38, py - 4, 8, 8, cls="pi-socket-signal" if original_index == focus_index else "pi-socket"))
+        overlay.append(rect(x0 + 38, py - 4, 8, 8, cls="pm-socket-signal" if original_index == focus_index else "pm-socket"))
     overlay += [
-        circle(target_x, target_y, 13, cls="pi-lock-ring"),
-        text(target_x, target_y - 18, f"E10 / {lock_code}", cls="pi-address pi-address-signal", anchor="middle", size=10),
+        circle(target_x, target_y, 13, cls="pm-lock-ring"),
+        text(target_x, target_y - 18, f"DECISION / {lock_code}", cls="pm-address pm-address-signal", anchor="middle", size=10),
     ]
     return ChartArtwork(
         svg="\n".join(parts),
-        presentation=EvidenceInterface("E10", "0 64 230 114", 0, 1120, evidence, "\n".join(overlay)),
+        presentation=DirectCanvas(foreground_svg="\n".join(overlay), lock_delay=1120, lock_delay_brief=680, lock_delay_story=2200, compiled_motion=True),
     )
 
 

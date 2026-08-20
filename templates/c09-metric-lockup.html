@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-surface="light" data-interface="precision-v2.1">
+<html lang="zh-CN" data-surface="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -130,6 +130,22 @@
   svg .pi-address { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }
   svg .pi-address-signal { fill:var(--signal); }
   svg .pi-focus-corner { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
+  svg .pm-socket { fill:var(--bg); stroke:var(--ink); stroke-width:1.5; vector-effect:non-scaling-stroke; }
+  svg .pm-socket-signal { fill:var(--signal); stroke:var(--on-signal); stroke-width:1; vector-effect:non-scaling-stroke; }
+  svg .pm-lock-ring { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
+  svg .pm-lock-cross { fill:none; stroke:var(--signal); stroke-width:1; vector-effect:non-scaling-stroke; }
+  svg .pm-address { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }
+  svg .pm-address-signal { fill:var(--signal); }
+  svg .pm-focus-corner { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
+  [data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] [data-motion] { animation:none!important; }
+  @keyframes pm-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
+  @keyframes pm-lock-settle { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:scale(1); } }
+  .pm-data-field-layer,.pm-target-lock { transform-box:fill-box; transform-origin:center; }
+  .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer { animation:pm-field-enter var(--pm-field-duration,680ms) cubic-bezier(.22,.72,.18,1) var(--pm-field-delay,40ms) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,980ms)) both; will-change:transform,opacity; }
+  .motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation-play-state:paused!important; }
+  .is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { will-change:auto; }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:none!important; } }
   [data-interface="precision-v2.1"] [data-motion] { animation:none!important; }
   @keyframes pi-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pi-evidence-enter { from { opacity:0; transform:translate3d(-5px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
@@ -145,25 +161,13 @@
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1100" data-total-standard="1800" data-total-story="3000" data-mode="editorial" data-choreography="metric-readout" data-motion-system="precision-v2.1" data-presentation-carrier="interface" data-presentation-target="direct" data-interface="precision-v2.1">
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1100" data-total-standard="1800" data-total-story="3000" data-mode="editorial" data-choreography="metric-readout" data-motion-system="presentation-v2.1" data-presentation-carrier="direct" data-presentation-target="direct">
   <header class="chart-header">
     <div class="chart-code"><div class="mx-code"><div class="mx-code__top"><strong>C09</strong><span>SYS / 21</span></div><div class="mx-code__name">METRIC LOCKUP</div><div class="mx-code__state"><span class="mx-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>TARGET.LOCK</div></div></div>
     <div><h1 class="chart-title">经常性收入同比增长 23.8%，完成目标 85.7%</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / METRIC</span><span>DATA / 06F</span><span data-state>STATE / READY</span></div></div>
     <span class="mx-header-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </header>
-  <section class="chart-body pi-split-body">
-    <aside class="pi-evidence-bay" aria-label="E09 evidence bay" style="--pi-terminal-delay:940ms">
-      <span class="pi-evidence-bay__label">EVIDENCE / BAY</span>
-      <svg class="pi-evidence-svg" viewBox="0 64 230 114" aria-hidden="true"><g class="evidence-plate" data-motion="lock" data-choreo="readout" style="--delay:1280ms;--dx:-8px;--dy:0px;--delay-brief:760ms;--delay-story:2450ms">
-<path d="M 0 74 H 222 L 230 82 V 168 H 8 L 0 160 Z" class="panel-stroke" />
-<text x="14" y="95" class="index muted" text-anchor="start" font-size="12" >K-02</text>
-<text x="216" y="95" class="index signal-text" text-anchor="end" font-size="12" >TARGET</text>
-<text x="14" y="129" class="value" text-anchor="start" font-size="28" font-weight="650" >85.7%</text>
-<text x="14" y="151" class="muted" text-anchor="start" font-size="13" >目标 1.5亿</text>
-</g></svg>
-      <div class="pi-bay-terminal"><span>E09</span><i></i><b></b></div>
-    </aside>
-    <svg class="pi-data-field" viewBox="0 0 1172 500" preserveAspectRatio="xMidYMid meet" role="img" aria-label="经常性收入同比增长 23.8%，完成目标 85.7%" style="--pi-lock-delay:1060ms"><path d="M 0 74 H 666 L 680 88 V 410 H 14 L 0 396 Z" class="panel-stroke" data-motion="dock" data-choreo="interlock" style="--delay:180ms;--dx:-22px;--dy:0px;--duration:460ms;--delay-brief:70ms;--delay-story:250ms;--duration-brief:300ms;--duration-story:620ms"/>
+  <section class="chart-body pm-direct-body"><svg class="pm-direct-field" viewBox="0 0 1172 500" role="img" aria-label="经常性收入同比增长 23.8%，完成目标 85.7%" style="--pm-lock-delay:1060ms;--pm-lock-delay-brief:620ms;--pm-lock-delay-story:1950ms"><g class="pm-data-field-layer"><path d="M 0 74 H 666 L 680 88 V 410 H 14 L 0 396 Z" class="panel-stroke" data-motion="dock" data-choreo="interlock" style="--delay:180ms;--dx:-22px;--dy:0px;--duration:460ms;--delay-brief:70ms;--delay-story:250ms;--duration-brief:300ms;--duration-story:620ms"/>
 <g class="metric-meta" data-motion="lock" data-choreo="readout" style="--delay:400ms;--dx:0px;--dy:0px;--delay-brief:200ms;--delay-story:600ms">
 <text x="34" y="122" class="muted" text-anchor="start" font-size="16" >年度经常性收入</text>
 <text x="38" y="275" class="muted" text-anchor="start" font-size="18" >元</text>
@@ -184,10 +188,9 @@
 <text x="732" y="300" class="index muted" text-anchor="start" font-size="12" >03 / TARGET</text>
 <text x="1128" y="332" class="value" text-anchor="end" font-size="26" font-weight="650" >1.5亿</text>
 <line x1="732" y1="348" x2="1128" y2="348" class="grid" />
-</g><g class="pi-overlay pi-overlay--foreground"><rect x="34" y="322" width="8" height="8" rx="0" class="pi-socket" />
-<circle cx="538.68" cy="326" r="13" class="pi-lock-ring" />
-<text x="538.68" y="300" class="pi-address pi-address-signal" text-anchor="middle" font-size="10" >E09 / TGT</text></g></svg>
-  </section>
+</g></g><g class="pm-target-lock"><rect x="34" y="322" width="8" height="8" rx="0" class="pm-socket" />
+<circle cx="538.68" cy="326" r="13" class="pm-lock-ring" />
+<text x="538.68" y="300" class="pm-address pm-address-signal" text-anchor="middle" font-size="10" >KPI / TGT</text></g></svg></section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" data-code="R" title="重播">↻</button><button type="button" data-action="pause" data-code="H" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" data-code="S" title="切换明暗">◐</button></nav>
 </main>
@@ -201,6 +204,17 @@
   const profile=['brief','standard','story'].includes(requestedProfile)?requestedProfile:'standard';
   const scales={brief:0.72,standard:1.0,story:1.8};
   const scale=scales[profile]||1;
+  const macroProfiles={brief:{fieldDelay:25,fieldDuration:420,lockDuration:220},standard:{fieldDelay:40,fieldDuration:680,lockDuration:260},story:{fieldDelay:60,fieldDuration:900,lockDuration:320}};
+  const macro=macroProfiles[profile]||macroProfiles.standard;
+  root.style.setProperty('--pm-field-delay',macro.fieldDelay+'ms');
+  root.style.setProperty('--pm-field-duration',macro.fieldDuration+'ms');
+  root.style.setProperty('--pm-lock-duration',macro.lockDuration+'ms');
+  const directField=root.querySelector('.pm-direct-field');
+  if(directField){
+    const profileLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay-'+profile));
+    const standardLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay'))||980;
+    root.style.setProperty('--pm-active-lock-delay',(Number.isFinite(profileLock)?profileLock:standardLock)+'ms');
+  }
   const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);
   const total=Number(root.dataset[profileKey]||root.dataset.total||1800);
   const baseDuration={align:220,dock:620,route:520,lock:280};

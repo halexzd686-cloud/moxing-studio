@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-surface="light" data-interface="precision-v2.1">
+<html lang="zh-CN" data-surface="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -130,6 +130,22 @@
   svg .pi-address { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }
   svg .pi-address-signal { fill:var(--signal); }
   svg .pi-focus-corner { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
+  svg .pm-socket { fill:var(--bg); stroke:var(--ink); stroke-width:1.5; vector-effect:non-scaling-stroke; }
+  svg .pm-socket-signal { fill:var(--signal); stroke:var(--on-signal); stroke-width:1; vector-effect:non-scaling-stroke; }
+  svg .pm-lock-ring { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
+  svg .pm-lock-cross { fill:none; stroke:var(--signal); stroke-width:1; vector-effect:non-scaling-stroke; }
+  svg .pm-address { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }
+  svg .pm-address-signal { fill:var(--signal); }
+  svg .pm-focus-corner { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
+  [data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] [data-motion] { animation:none!important; }
+  @keyframes pm-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
+  @keyframes pm-lock-settle { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:scale(1); } }
+  .pm-data-field-layer,.pm-target-lock { transform-box:fill-box; transform-origin:center; }
+  .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer { animation:pm-field-enter var(--pm-field-duration,680ms) cubic-bezier(.22,.72,.18,1) var(--pm-field-delay,40ms) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,980ms)) both; will-change:transform,opacity; }
+  .motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation-play-state:paused!important; }
+  .is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { will-change:auto; }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:none!important; } }
   [data-interface="precision-v2.1"] [data-motion] { animation:none!important; }
   @keyframes pi-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pi-evidence-enter { from { opacity:0; transform:translate3d(-5px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
@@ -145,74 +161,61 @@
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1200" data-total-standard="2200" data-total-story="4000" data-mode="editorial" data-choreography="band-routing" data-motion-system="precision-v2.1" data-presentation-carrier="interface" data-presentation-target="direct" data-interface="precision-v2.1">
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1200" data-total-standard="2200" data-total-story="4000" data-mode="editorial" data-choreography="band-routing" data-motion-system="presentation-v2.1" data-presentation-carrier="direct" data-presentation-target="direct">
   <header class="chart-header">
     <div class="chart-code"><div class="mx-code"><div class="mx-code__top"><strong>C05</strong><span>SYS / 21</span></div><div class="mx-code__name">COMPOSITION BANDS</div><div class="mx-code__state"><span class="mx-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>MIX.LOCK</div></div></div>
     <div><h1 class="chart-title">产品 A 持续扩张，结构集中度提高</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / BAND</span><span>DATA / 04T · 03S</span><span data-state>STATE / READY</span></div></div>
     <span class="mx-header-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </header>
-  <section class="chart-body pi-split-body">
-    <aside class="pi-evidence-bay" aria-label="E05 evidence bay" style="--pi-terminal-delay:1040ms">
-      <span class="pi-evidence-bay__label">EVIDENCE / BAY</span>
-      <svg class="pi-evidence-svg" viewBox="0 64 230 114" aria-hidden="true"><g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1450ms;--dx:-8px;--dy:0px;--delay-brief:900ms;--delay-story:3000ms">
-<path d="M 0 74 H 222 L 230 82 V 168 H 8 L 0 160 Z" class="panel-stroke" />
-<text x="14" y="95" class="index muted" text-anchor="start" font-size="12" >B-01</text>
-<text x="216" y="95" class="index signal-text" text-anchor="end" font-size="12" >MIX</text>
-<text x="14" y="129" class="value" text-anchor="start" font-size="28" font-weight="650" >52%</text>
-<text x="14" y="151" class="muted" text-anchor="start" font-size="13" >产品 A / 最新</text>
-</g></svg>
-      <div class="pi-bay-terminal"><span>E05</span><i></i><b></b></div>
-    </aside>
-    <svg class="pi-data-field" viewBox="260 0 912 500" preserveAspectRatio="xMidYMid meet" role="img" aria-label="产品 A 持续扩张，结构集中度提高" style="--pi-lock-delay:1160ms"><text x="298" y="118" class="muted" text-anchor="end" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:120ms;--dx:0px;--dy:0px;--delay-brief:55ms;--delay-story:180ms">Q1</text>
-<line x1="318" y1="126" x2="1122" y2="126" class="grid" pathLength="1" data-motion="align" style="--delay:120ms;--dx:0px;--dy:0px;--delay-brief:55ms;--delay-story:180ms"/>
-<path d="M 318 95 H 646.68 L 651.68 100 V 137 H 323 L 318 132 Z" class="signal-fill" data-motion="dock" data-choreo="band-fill" style="--delay:280ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:150ms;--delay-story:700ms;--duration-brief:280ms;--duration-story:620ms"/>
-<text x="486.84" y="121" class="index on-signal" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:580ms;--dx:0px;--dy:0px;--delay-brief:340ms;--delay-story:1170ms">42%</text>
-<path d="M 655.68 95 H 895.92 L 900.92 100 V 137 H 660.68 L 655.68 132 Z" class="cat-2" data-motion="dock" data-choreo="band-fill" style="--delay:350ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:190ms;--delay-story:820ms;--duration-brief:280ms;--duration-story:620ms"/>
-<text x="780.3" y="121" class="index on-fill" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:650ms;--dx:0px;--dy:0px;--delay-brief:380ms;--delay-story:1290ms">31%</text>
-<path d="M 904.92 95 H 1113 L 1118 100 V 137 H 909.92 L 904.92 132 Z" class="cat-3" data-motion="dock" data-choreo="band-fill" style="--delay:420ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:230ms;--delay-story:940ms;--duration-brief:280ms;--duration-story:620ms"/>
-<text x="1013.46" y="121" class="index on-fill" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:720ms;--dx:0px;--dy:0px;--delay-brief:420ms;--delay-story:1410ms">27%</text>
-<text x="298" y="196" class="muted" text-anchor="end" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:192ms;--dx:0px;--dy:0px;--delay-brief:86ms;--delay-story:312ms">Q2</text>
-<line x1="318" y1="204" x2="1122" y2="204" class="grid" pathLength="1" data-motion="align" style="--delay:192ms;--dx:0px;--dy:0px;--delay-brief:86ms;--delay-story:312ms"/>
-<path d="M 318 173 H 678.84 L 683.84 178 V 215 H 323 L 318 210 Z" class="signal-fill" data-motion="dock" data-choreo="band-fill" style="--delay:410ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:220ms;--delay-story:940ms;--duration-brief:280ms;--duration-story:620ms"/>
-<text x="502.92" y="199" class="index on-signal" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:710ms;--dx:0px;--dy:0px;--delay-brief:410ms;--delay-story:1410ms">46%</text>
-<path d="M 687.84 173 H 920.04 L 925.04 178 V 215 H 692.84 L 687.84 210 Z" class="cat-2" data-motion="dock" data-choreo="band-fill" style="--delay:480ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:260ms;--delay-story:1060ms;--duration-brief:280ms;--duration-story:620ms"/>
-<text x="808.44" y="199" class="index on-fill" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:780ms;--dx:0px;--dy:0px;--delay-brief:450ms;--delay-story:1530ms">30%</text>
-<path d="M 929.04 173 H 1113 L 1118 178 V 215 H 934.04 L 929.04 210 Z" class="cat-3" data-motion="dock" data-choreo="band-fill" style="--delay:550ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:300ms;--delay-story:1180ms;--duration-brief:280ms;--duration-story:620ms"/>
-<text x="1025.52" y="199" class="index on-fill" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:850ms;--dx:0px;--dy:0px;--delay-brief:490ms;--delay-story:1650ms">24%</text>
-<text x="298" y="274" class="muted" text-anchor="end" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:263ms;--dx:0px;--dy:0px;--delay-brief:118ms;--delay-story:444ms">Q3</text>
-<line x1="318" y1="282" x2="1122" y2="282" class="grid" pathLength="1" data-motion="align" style="--delay:263ms;--dx:0px;--dy:0px;--delay-brief:118ms;--delay-story:444ms"/>
-<path d="M 318 251 H 702.96 L 707.96 256 V 293 H 323 L 318 288 Z" class="signal-fill" data-motion="dock" data-choreo="band-fill" style="--delay:540ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:290ms;--delay-story:1180ms;--duration-brief:280ms;--duration-story:620ms"/>
-<text x="514.98" y="277" class="index on-signal" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:840ms;--dx:0px;--dy:0px;--delay-brief:480ms;--delay-story:1650ms">49%</text>
-<path d="M 711.96 251 H 936.12 L 941.12 256 V 293 H 716.96 L 711.96 288 Z" class="cat-2" data-motion="dock" data-choreo="band-fill" style="--delay:610ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:330ms;--delay-story:1300ms;--duration-brief:280ms;--duration-story:620ms"/>
-<text x="828.54" y="277" class="index on-fill" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:910ms;--dx:0px;--dy:0px;--delay-brief:520ms;--delay-story:1770ms">29%</text>
-<path d="M 945.12 251 H 1113 L 1118 256 V 293 H 950.12 L 945.12 288 Z" class="cat-3" data-motion="dock" data-choreo="band-fill" style="--delay:680ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:370ms;--delay-story:1420ms;--duration-brief:280ms;--duration-story:620ms"/>
-<text x="1033.56" y="277" class="index on-fill" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:980ms;--dx:0px;--dy:0px;--delay-brief:560ms;--delay-story:1890ms">22%</text>
-<text x="298" y="352" class="muted" text-anchor="end" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:334ms;--dx:0px;--dy:0px;--delay-brief:150ms;--delay-story:576ms">Q4</text>
-<line x1="318" y1="360" x2="1122" y2="360" class="grid" pathLength="1" data-motion="align" style="--delay:334ms;--dx:0px;--dy:0px;--delay-brief:150ms;--delay-story:576ms"/>
-<path d="M 318 329 H 727.08 L 732.08 334 V 371 H 323 L 318 366 Z" class="signal-fill" data-motion="dock" data-choreo="band-fill" style="--delay:670ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:360ms;--delay-story:1420ms;--duration-brief:280ms;--duration-story:620ms"/>
-<text x="527.04" y="355" class="index on-signal" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:970ms;--dx:0px;--dy:0px;--delay-brief:550ms;--delay-story:1890ms">52%</text>
-<path d="M 736.08 329 H 944.16 L 949.16 334 V 371 H 741.08 L 736.08 366 Z" class="cat-2" data-motion="dock" data-choreo="band-fill" style="--delay:740ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:400ms;--delay-story:1540ms;--duration-brief:280ms;--duration-story:620ms"/>
-<text x="844.62" y="355" class="index on-fill" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:1040ms;--dx:0px;--dy:0px;--delay-brief:590ms;--delay-story:2010ms">27%</text>
-<path d="M 953.16 329 H 1113 L 1118 334 V 371 H 958.16 L 953.16 366 Z" class="cat-3" data-motion="dock" data-choreo="band-fill" style="--delay:810ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:440ms;--delay-story:1660ms;--duration-brief:280ms;--duration-story:620ms"/>
-<text x="1037.58" y="355" class="index on-fill" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:1110ms;--dx:0px;--dy:0px;--delay-brief:630ms;--delay-story:2130ms">21%</text>
+  <section class="chart-body pm-direct-body"><svg class="pm-direct-field" viewBox="0 0 1172 500" role="img" aria-label="产品 A 持续扩张，结构集中度提高" style="--pm-lock-delay:1160ms;--pm-lock-delay-brief:700ms;--pm-lock-delay-story:2400ms"><g class="pm-data-field-layer"><text x="136" y="118" class="muted" text-anchor="end" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:120ms;--dx:0px;--dy:0px;--delay-brief:55ms;--delay-story:180ms">Q1</text>
+<line x1="156" y1="126" x2="1122" y2="126" class="grid" pathLength="1" data-motion="align" style="--delay:120ms;--dx:0px;--dy:0px;--delay-brief:55ms;--delay-story:180ms"/>
+<path d="M 156 95 H 552.72 L 557.72 100 V 137 H 161 L 156 132 Z" class="signal-fill" data-motion="dock" data-choreo="band-fill" style="--delay:280ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:150ms;--delay-story:700ms;--duration-brief:280ms;--duration-story:620ms"/>
+<text x="358.86" y="121" class="index on-signal" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:580ms;--dx:0px;--dy:0px;--delay-brief:340ms;--delay-story:1170ms">42%</text>
+<path d="M 561.72 95 H 852.18 L 857.18 100 V 137 H 566.72 L 561.72 132 Z" class="cat-2" data-motion="dock" data-choreo="band-fill" style="--delay:350ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:190ms;--delay-story:820ms;--duration-brief:280ms;--duration-story:620ms"/>
+<text x="711.45" y="121" class="index on-fill" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:650ms;--dx:0px;--dy:0px;--delay-brief:380ms;--delay-story:1290ms">31%</text>
+<path d="M 861.18 95 H 1113 L 1118 100 V 137 H 866.18 L 861.18 132 Z" class="cat-3" data-motion="dock" data-choreo="band-fill" style="--delay:420ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:230ms;--delay-story:940ms;--duration-brief:280ms;--duration-story:620ms"/>
+<text x="991.59" y="121" class="index on-fill" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:720ms;--dx:0px;--dy:0px;--delay-brief:420ms;--delay-story:1410ms">27%</text>
+<text x="136" y="196" class="muted" text-anchor="end" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:192ms;--dx:0px;--dy:0px;--delay-brief:86ms;--delay-story:312ms">Q2</text>
+<line x1="156" y1="204" x2="1122" y2="204" class="grid" pathLength="1" data-motion="align" style="--delay:192ms;--dx:0px;--dy:0px;--delay-brief:86ms;--delay-story:312ms"/>
+<path d="M 156 173 H 591.36 L 596.36 178 V 215 H 161 L 156 210 Z" class="signal-fill" data-motion="dock" data-choreo="band-fill" style="--delay:410ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:220ms;--delay-story:940ms;--duration-brief:280ms;--duration-story:620ms"/>
+<text x="378.18" y="199" class="index on-signal" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:710ms;--dx:0px;--dy:0px;--delay-brief:410ms;--delay-story:1410ms">46%</text>
+<path d="M 600.36 173 H 881.16 L 886.16 178 V 215 H 605.36 L 600.36 210 Z" class="cat-2" data-motion="dock" data-choreo="band-fill" style="--delay:480ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:260ms;--delay-story:1060ms;--duration-brief:280ms;--duration-story:620ms"/>
+<text x="745.26" y="199" class="index on-fill" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:780ms;--dx:0px;--dy:0px;--delay-brief:450ms;--delay-story:1530ms">30%</text>
+<path d="M 890.16 173 H 1113 L 1118 178 V 215 H 895.16 L 890.16 210 Z" class="cat-3" data-motion="dock" data-choreo="band-fill" style="--delay:550ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:300ms;--delay-story:1180ms;--duration-brief:280ms;--duration-story:620ms"/>
+<text x="1006.08" y="199" class="index on-fill" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:850ms;--dx:0px;--dy:0px;--delay-brief:490ms;--delay-story:1650ms">24%</text>
+<text x="136" y="274" class="muted" text-anchor="end" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:263ms;--dx:0px;--dy:0px;--delay-brief:118ms;--delay-story:444ms">Q3</text>
+<line x1="156" y1="282" x2="1122" y2="282" class="grid" pathLength="1" data-motion="align" style="--delay:263ms;--dx:0px;--dy:0px;--delay-brief:118ms;--delay-story:444ms"/>
+<path d="M 156 251 H 620.34 L 625.34 256 V 293 H 161 L 156 288 Z" class="signal-fill" data-motion="dock" data-choreo="band-fill" style="--delay:540ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:290ms;--delay-story:1180ms;--duration-brief:280ms;--duration-story:620ms"/>
+<text x="392.67" y="277" class="index on-signal" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:840ms;--dx:0px;--dy:0px;--delay-brief:480ms;--delay-story:1650ms">49%</text>
+<path d="M 629.34 251 H 900.48 L 905.48 256 V 293 H 634.34 L 629.34 288 Z" class="cat-2" data-motion="dock" data-choreo="band-fill" style="--delay:610ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:330ms;--delay-story:1300ms;--duration-brief:280ms;--duration-story:620ms"/>
+<text x="769.41" y="277" class="index on-fill" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:910ms;--dx:0px;--dy:0px;--delay-brief:520ms;--delay-story:1770ms">29%</text>
+<path d="M 909.48 251 H 1113 L 1118 256 V 293 H 914.48 L 909.48 288 Z" class="cat-3" data-motion="dock" data-choreo="band-fill" style="--delay:680ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:370ms;--delay-story:1420ms;--duration-brief:280ms;--duration-story:620ms"/>
+<text x="1015.74" y="277" class="index on-fill" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:980ms;--dx:0px;--dy:0px;--delay-brief:560ms;--delay-story:1890ms">22%</text>
+<text x="136" y="352" class="muted" text-anchor="end" font-size="13" data-motion="lock" data-choreo="readout" style="--delay:334ms;--dx:0px;--dy:0px;--delay-brief:150ms;--delay-story:576ms">Q4</text>
+<line x1="156" y1="360" x2="1122" y2="360" class="grid" pathLength="1" data-motion="align" style="--delay:334ms;--dx:0px;--dy:0px;--delay-brief:150ms;--delay-story:576ms"/>
+<path d="M 156 329 H 649.32 L 654.32 334 V 371 H 161 L 156 366 Z" class="signal-fill" data-motion="dock" data-choreo="band-fill" style="--delay:670ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:360ms;--delay-story:1420ms;--duration-brief:280ms;--duration-story:620ms"/>
+<text x="407.16" y="355" class="index on-signal" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:970ms;--dx:0px;--dy:0px;--delay-brief:550ms;--delay-story:1890ms">52%</text>
+<path d="M 658.32 329 H 910.14 L 915.14 334 V 371 H 663.32 L 658.32 366 Z" class="cat-2" data-motion="dock" data-choreo="band-fill" style="--delay:740ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:400ms;--delay-story:1540ms;--duration-brief:280ms;--duration-story:620ms"/>
+<text x="788.73" y="355" class="index on-fill" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:1040ms;--dx:0px;--dy:0px;--delay-brief:590ms;--delay-story:2010ms">27%</text>
+<path d="M 919.14 329 H 1113 L 1118 334 V 371 H 924.14 L 919.14 366 Z" class="cat-3" data-motion="dock" data-choreo="band-fill" style="--delay:810ms;--dx:-18px;--dy:0px;--duration:420ms;--delay-brief:440ms;--delay-story:1660ms;--duration-brief:280ms;--duration-story:620ms"/>
+<text x="1020.57" y="355" class="index on-fill" text-anchor="middle" font-size="12" font-weight="700" data-motion="lock" data-choreo="readout" style="--delay:1110ms;--dx:0px;--dy:0px;--delay-brief:630ms;--delay-story:2130ms">21%</text>
 <g class="band-legend" data-motion="lock" data-choreo="readout" style="--delay:1180ms;--dx:0px;--dy:0px;--delay-brief:700ms;--delay-story:2500ms">
-<rect x="318" y="442" width="12" height="12" rx="0" class="signal-fill" />
-<text x="340" y="453" class="muted" text-anchor="start" font-size="12" >产品 A</text>
+<rect x="156" y="442" width="12" height="12" rx="0" class="signal-fill" />
+<text x="178" y="453" class="muted" text-anchor="start" font-size="12" >产品 A</text>
 </g>
 <g class="band-legend" data-motion="lock" data-choreo="readout" style="--delay:1250ms;--dx:0px;--dy:0px;--delay-brief:740ms;--delay-story:2640ms">
-<rect x="508" y="442" width="12" height="12" rx="0" class="cat-2" />
-<text x="530" y="453" class="muted" text-anchor="start" font-size="12" >产品 B</text>
+<rect x="346" y="442" width="12" height="12" rx="0" class="cat-2" />
+<text x="368" y="453" class="muted" text-anchor="start" font-size="12" >产品 B</text>
 </g>
 <g class="band-legend" data-motion="lock" data-choreo="readout" style="--delay:1320ms;--dx:0px;--dy:0px;--delay-brief:780ms;--delay-story:2780ms">
-<rect x="698" y="442" width="12" height="12" rx="0" class="cat-3" />
-<text x="720" y="453" class="muted" text-anchor="start" font-size="12" >其他</text>
-</g><g class="pi-overlay pi-overlay--foreground"><rect x="314" y="112" width="8" height="8" rx="0" class="pi-socket" />
-<rect x="314" y="190" width="8" height="8" rx="0" class="pi-socket" />
-<rect x="314" y="268" width="8" height="8" rx="0" class="pi-socket" />
-<rect x="314" y="346" width="8" height="8" rx="0" class="pi-socket-signal" />
-<circle cx="736.08" cy="350" r="13" class="pi-lock-ring" />
-<text x="736.08" y="326" class="pi-address pi-address-signal" text-anchor="middle" font-size="10" >E05 / Q04</text></g></svg>
-  </section>
+<rect x="536" y="442" width="12" height="12" rx="0" class="cat-3" />
+<text x="558" y="453" class="muted" text-anchor="start" font-size="12" >其他</text>
+</g></g><g class="pm-target-lock"><rect x="152" y="112" width="8" height="8" rx="0" class="pm-socket" />
+<rect x="152" y="190" width="8" height="8" rx="0" class="pm-socket" />
+<rect x="152" y="268" width="8" height="8" rx="0" class="pm-socket" />
+<rect x="152" y="346" width="8" height="8" rx="0" class="pm-socket-signal" />
+<circle cx="658.32" cy="350" r="13" class="pm-lock-ring" />
+<text x="658.32" y="326" class="pm-address pm-address-signal" text-anchor="middle" font-size="10" >Q04 / LATEST MIX</text></g></svg></section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" data-code="R" title="重播">↻</button><button type="button" data-action="pause" data-code="H" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" data-code="S" title="切换明暗">◐</button></nav>
 </main>
@@ -226,6 +229,17 @@
   const profile=['brief','standard','story'].includes(requestedProfile)?requestedProfile:'standard';
   const scales={brief:0.72,standard:1.0,story:1.8};
   const scale=scales[profile]||1;
+  const macroProfiles={brief:{fieldDelay:25,fieldDuration:420,lockDuration:220},standard:{fieldDelay:40,fieldDuration:680,lockDuration:260},story:{fieldDelay:60,fieldDuration:900,lockDuration:320}};
+  const macro=macroProfiles[profile]||macroProfiles.standard;
+  root.style.setProperty('--pm-field-delay',macro.fieldDelay+'ms');
+  root.style.setProperty('--pm-field-duration',macro.fieldDuration+'ms');
+  root.style.setProperty('--pm-lock-duration',macro.lockDuration+'ms');
+  const directField=root.querySelector('.pm-direct-field');
+  if(directField){
+    const profileLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay-'+profile));
+    const standardLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay'))||980;
+    root.style.setProperty('--pm-active-lock-delay',(Number.isFinite(profileLock)?profileLock:standardLock)+'ms');
+  }
   const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);
   const total=Number(root.dataset[profileKey]||root.dataset.total||1800);
   const baseDuration={align:220,dock:620,route:520,lock:280};

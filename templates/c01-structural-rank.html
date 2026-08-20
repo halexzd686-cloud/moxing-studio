@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-surface="light" data-interface="precision-v2.1">
+<html lang="zh-CN" data-surface="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -130,6 +130,22 @@
   svg .pi-address { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }
   svg .pi-address-signal { fill:var(--signal); }
   svg .pi-focus-corner { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
+  svg .pm-socket { fill:var(--bg); stroke:var(--ink); stroke-width:1.5; vector-effect:non-scaling-stroke; }
+  svg .pm-socket-signal { fill:var(--signal); stroke:var(--on-signal); stroke-width:1; vector-effect:non-scaling-stroke; }
+  svg .pm-lock-ring { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
+  svg .pm-lock-cross { fill:none; stroke:var(--signal); stroke-width:1; vector-effect:non-scaling-stroke; }
+  svg .pm-address { font-family:'Doto','IBM Plex Mono','Cascadia Mono',monospace; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }
+  svg .pm-address-signal { fill:var(--signal); }
+  svg .pm-focus-corner { fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }
+  [data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] [data-motion] { animation:none!important; }
+  @keyframes pm-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
+  @keyframes pm-lock-settle { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:scale(1); } }
+  .pm-data-field-layer,.pm-target-lock { transform-box:fill-box; transform-origin:center; }
+  .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer { animation:pm-field-enter var(--pm-field-duration,680ms) cubic-bezier(.22,.72,.18,1) var(--pm-field-delay,40ms) both; will-change:transform,opacity; }
+  .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,980ms)) both; will-change:transform,opacity; }
+  .motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation-play-state:paused!important; }
+  .is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { will-change:auto; }
+  @media (prefers-reduced-motion:reduce) { .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock { animation:none!important; } }
   [data-interface="precision-v2.1"] [data-motion] { animation:none!important; }
   @keyframes pi-field-enter { from { opacity:.18; transform:translate3d(-7px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
   @keyframes pi-evidence-enter { from { opacity:0; transform:translate3d(-5px,0,0); } to { opacity:1; transform:translate3d(0,0,0); } }
@@ -145,66 +161,53 @@
 </style>
 </head>
 <body>
-<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1100" data-total-standard="1750" data-total-story="3000" data-mode="editorial" data-choreography="rail-rise" data-motion-system="precision-v2.1" data-presentation-carrier="interface" data-presentation-target="direct" data-interface="precision-v2.1">
+<main class="chart-container" id="moxing-chart" data-total="1750" data-total-brief="1100" data-total-standard="1750" data-total-story="3000" data-mode="editorial" data-choreography="rail-rise" data-motion-system="presentation-v2.1" data-presentation-carrier="direct" data-presentation-target="direct">
   <header class="chart-header">
     <div class="chart-code"><div class="mx-code"><div class="mx-code__top"><strong>C01</strong><span>SYS / 21</span></div><div class="mx-code__name">STRUCTURAL RANK</div><div class="mx-code__state"><span class="mx-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>LEADER.LOCK</div></div></div>
     <div><h1 class="chart-title">华东规模领先，优势来自稳定增长</h1><div class="chart-subtitle">单位与时间范围见图内标注 · v2 editorial mode</div><div class="mx-meta"><span>FAMILY / RANK</span><span>DATA / 05I</span><span data-state>STATE / READY</span></div></div>
     <span class="mx-header-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </header>
-  <section class="chart-body pi-split-body">
-    <aside class="pi-evidence-bay" aria-label="E01 evidence bay" style="--pi-terminal-delay:1040ms">
-      <span class="pi-evidence-bay__label">EVIDENCE / BAY</span>
-      <svg class="pi-evidence-svg" viewBox="0 64 230 114" aria-hidden="true"><g class="evidence-plate" data-motion="lock" data-choreo="readout" style="--delay:1460ms;--dx:-8px;--dy:0px;--delay-brief:880ms;--delay-story:2660ms">
-<path d="M 0 74 H 222 L 230 82 V 168 H 8 L 0 160 Z" class="panel-stroke" />
-<text x="14" y="95" class="index muted" text-anchor="start" font-size="12" >E-01</text>
-<text x="216" y="95" class="index signal-text" text-anchor="end" font-size="12" >LEADER</text>
-<text x="14" y="129" class="value" text-anchor="start" font-size="28" font-weight="650" >4,280</text>
-<text x="14" y="151" class="muted" text-anchor="start" font-size="13" >华东 / 30.2%</text>
-</g></svg>
-      <div class="pi-bay-terminal"><span>E01</span><i></i><b></b></div>
-    </aside>
-    <svg class="pi-data-field" viewBox="260 0 912 500" preserveAspectRatio="xMidYMid meet" role="img" aria-label="华东规模领先，优势来自稳定增长" style="--pi-lock-delay:1160ms"><line x1="300" y1="426" x2="1134" y2="426" class="rail-strong" pathLength="1" data-motion="align" style="--delay:80ms;--dx:0px;--dy:0px;--duration:240ms;--delay-brief:40ms;--delay-story:120ms;--duration-brief:150ms;--duration-story:320ms"/>
-<line x1="300" y1="418" x2="300" y2="434" class="rail" data-motion="align" style="--delay:120ms;--dx:0px;--dy:0px;--delay-brief:70ms;--delay-story:180ms"/>
-<text x="300" y="466" class="muted index" text-anchor="middle" font-size="12" >0</text>
-<line x1="466.8" y1="418" x2="466.8" y2="434" class="rail" data-motion="align" style="--delay:155ms;--dx:0px;--dy:0px;--delay-brief:88ms;--delay-story:228ms"/>
-<text x="466.8" y="466" class="muted index" text-anchor="middle" font-size="12" >856</text>
-<line x1="633.6" y1="418" x2="633.6" y2="434" class="rail" data-motion="align" style="--delay:190ms;--dx:0px;--dy:0px;--delay-brief:106ms;--delay-story:276ms"/>
-<text x="633.6" y="466" class="muted index" text-anchor="middle" font-size="12" >1,712</text>
-<line x1="800.4" y1="418" x2="800.4" y2="434" class="rail" data-motion="align" style="--delay:225ms;--dx:0px;--dy:0px;--delay-brief:124ms;--delay-story:324ms"/>
-<text x="800.4" y="466" class="muted index" text-anchor="middle" font-size="12" >2,568</text>
-<line x1="967.2" y1="418" x2="967.2" y2="434" class="rail" data-motion="align" style="--delay:260ms;--dx:0px;--dy:0px;--delay-brief:142ms;--delay-story:372ms"/>
-<text x="967.2" y="466" class="muted index" text-anchor="middle" font-size="12" >3,424</text>
-<line x1="1134" y1="418" x2="1134" y2="434" class="rail" data-motion="align" style="--delay:295ms;--dx:0px;--dy:0px;--delay-brief:160ms;--delay-story:420ms"/>
-<text x="1134" y="466" class="muted index" text-anchor="middle" font-size="12" >4,280</text>
-<path d="M 344.4 88 H 415.4 L 422.4 95 V 426 H 351.4 L 344.4 419 Z" class="signal-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:320ms;--dx:0px;--dy:42px;--duration:520ms;--delay-brief:170ms;--delay-story:520ms;--duration-brief:340ms;--duration-story:760ms"/>
-<line x1="383.4" y1="426" x2="383.4" y2="437" class="rail" data-motion="align" style="--delay:590ms;--dx:0px;--dy:0px;--delay-brief:360ms;--delay-story:1080ms"/>
-<text x="383.4" y="75" class="value" text-anchor="middle" font-size="15" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:930ms;--dx:0px;--dy:0px;--delay-brief:520ms;--delay-story:1540ms">4,280</text>
-<text x="383.4" y="456" class="muted" text-anchor="middle" font-size="13" >华东</text>
-<path d="M 337.4 106.0 V 81.0 H 362.4" class="signal-stroke" pathLength="1" data-motion="lock" data-choreo="alarm" style="--delay:1240ms;--dx:0px;--dy:0px;--delay-brief:700ms;--delay-story:2250ms"/>
-<path d="M 511.2 137.75 H 582.2 L 589.2 144.75 V 426 H 518.2 L 511.2 419 Z" class="data-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:415ms;--dx:0px;--dy:42px;--duration:520ms;--delay-brief:222ms;--delay-story:680ms;--duration-brief:340ms;--duration-story:760ms"/>
-<line x1="550.2" y1="426" x2="550.2" y2="437" class="rail" data-motion="align" style="--delay:645ms;--dx:0px;--dy:0px;--delay-brief:390ms;--delay-story:1200ms"/>
-<text x="550.2" y="124.75" class="value" text-anchor="middle" font-size="15" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:982ms;--dx:0px;--dy:0px;--delay-brief:552ms;--delay-story:1658ms">3,650</text>
-<text x="550.2" y="456" class="muted" text-anchor="middle" font-size="13" >华南</text>
-<path d="M 678 190.66 H 749 L 756 197.66 V 426 H 685 L 678 419 Z" class="data-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:510ms;--dx:0px;--dy:42px;--duration:520ms;--delay-brief:274ms;--delay-story:840ms;--duration-brief:340ms;--duration-story:760ms"/>
-<line x1="717" y1="426" x2="717" y2="437" class="rail" data-motion="align" style="--delay:700ms;--dx:0px;--dy:0px;--delay-brief:420ms;--delay-story:1320ms"/>
-<text x="717" y="177.66" class="value" text-anchor="middle" font-size="15" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:1034ms;--dx:0px;--dy:0px;--delay-brief:584ms;--delay-story:1776ms">2,980</text>
-<text x="717" y="456" class="muted" text-anchor="middle" font-size="13" >华北</text>
-<path d="M 844.8 282.27 H 915.8 L 922.8 289.27 V 426 H 851.8 L 844.8 419 Z" class="secondary-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:605ms;--dx:0px;--dy:42px;--duration:520ms;--delay-brief:326ms;--delay-story:1000ms;--duration-brief:340ms;--duration-story:760ms"/>
-<line x1="883.8" y1="426" x2="883.8" y2="437" class="rail" data-motion="align" style="--delay:755ms;--dx:0px;--dy:0px;--delay-brief:450ms;--delay-story:1440ms"/>
-<text x="883.8" y="269.27" class="value" text-anchor="middle" font-size="15" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:1086ms;--dx:0px;--dy:0px;--delay-brief:616ms;--delay-story:1894ms">1,820</text>
-<text x="883.8" y="456" class="muted" text-anchor="middle" font-size="13" >西南</text>
-<path d="M 1011.6 311.49 H 1082.6 L 1089.6 318.49 V 426 H 1018.6 L 1011.6 419 Z" class="secondary-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:700ms;--dx:0px;--dy:42px;--duration:520ms;--delay-brief:378ms;--delay-story:1160ms;--duration-brief:340ms;--duration-story:760ms"/>
-<line x1="1050.6" y1="426" x2="1050.6" y2="437" class="rail" data-motion="align" style="--delay:810ms;--dx:0px;--dy:0px;--delay-brief:480ms;--delay-story:1560ms"/>
-<text x="1050.6" y="298.49" class="value" text-anchor="middle" font-size="15" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:1138ms;--dx:0px;--dy:0px;--delay-brief:648ms;--delay-story:2012ms">1,450</text>
-<text x="1050.6" y="456" class="muted" text-anchor="middle" font-size="13" >华中</text><g class="pi-overlay pi-overlay--foreground"><rect x="379.4" y="422" width="8" height="8" rx="0" class="pi-socket-signal" />
-<rect x="546.2" y="422" width="8" height="8" rx="0" class="pi-socket" />
-<rect x="713" y="422" width="8" height="8" rx="0" class="pi-socket" />
-<rect x="879.8" y="422" width="8" height="8" rx="0" class="pi-socket" />
-<rect x="1046.6" y="422" width="8" height="8" rx="0" class="pi-socket" />
-<circle cx="383.4" cy="88" r="13" class="pi-lock-ring" />
-<path d="M 365.4 88.0 H 372.4 M 394.4 88.0 H 401.4" class="pi-lock-cross" />
-<text x="383.4" y="64" class="pi-address pi-address-signal" text-anchor="middle" font-size="10" >E01 / R01</text></g></svg>
-  </section>
+  <section class="chart-body pm-direct-body"><svg class="pm-direct-field" viewBox="0 0 1172 500" role="img" aria-label="华东规模领先，优势来自稳定增长" style="--pm-lock-delay:1160ms;--pm-lock-delay-brief:700ms;--pm-lock-delay-story:2250ms"><g class="pm-data-field-layer"><line x1="92" y1="426" x2="1128" y2="426" class="rail-strong" pathLength="1" data-motion="align" style="--delay:80ms;--dx:0px;--dy:0px;--duration:240ms;--delay-brief:40ms;--delay-story:120ms;--duration-brief:150ms;--duration-story:320ms"/>
+<line x1="92" y1="418" x2="92" y2="434" class="rail" data-motion="align" style="--delay:120ms;--dx:0px;--dy:0px;--delay-brief:70ms;--delay-story:180ms"/>
+<text x="92" y="466" class="muted index" text-anchor="middle" font-size="12" >0</text>
+<line x1="299.2" y1="418" x2="299.2" y2="434" class="rail" data-motion="align" style="--delay:155ms;--dx:0px;--dy:0px;--delay-brief:88ms;--delay-story:228ms"/>
+<text x="299.2" y="466" class="muted index" text-anchor="middle" font-size="12" >856</text>
+<line x1="506.4" y1="418" x2="506.4" y2="434" class="rail" data-motion="align" style="--delay:190ms;--dx:0px;--dy:0px;--delay-brief:106ms;--delay-story:276ms"/>
+<text x="506.4" y="466" class="muted index" text-anchor="middle" font-size="12" >1,712</text>
+<line x1="713.6" y1="418" x2="713.6" y2="434" class="rail" data-motion="align" style="--delay:225ms;--dx:0px;--dy:0px;--delay-brief:124ms;--delay-story:324ms"/>
+<text x="713.6" y="466" class="muted index" text-anchor="middle" font-size="12" >2,568</text>
+<line x1="920.8" y1="418" x2="920.8" y2="434" class="rail" data-motion="align" style="--delay:260ms;--dx:0px;--dy:0px;--delay-brief:142ms;--delay-story:372ms"/>
+<text x="920.8" y="466" class="muted index" text-anchor="middle" font-size="12" >3,424</text>
+<line x1="1128" y1="418" x2="1128" y2="434" class="rail" data-motion="align" style="--delay:295ms;--dx:0px;--dy:0px;--delay-brief:160ms;--delay-story:420ms"/>
+<text x="1128" y="466" class="muted index" text-anchor="middle" font-size="12" >4,280</text>
+<path d="M 156.6 88 H 227.6 L 234.6 95 V 426 H 163.6 L 156.6 419 Z" class="signal-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:320ms;--dx:0px;--dy:42px;--duration:520ms;--delay-brief:170ms;--delay-story:520ms;--duration-brief:340ms;--duration-story:760ms"/>
+<line x1="195.6" y1="426" x2="195.6" y2="437" class="rail" data-motion="align" style="--delay:590ms;--dx:0px;--dy:0px;--delay-brief:360ms;--delay-story:1080ms"/>
+<text x="195.6" y="75" class="value" text-anchor="middle" font-size="15" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:930ms;--dx:0px;--dy:0px;--delay-brief:520ms;--delay-story:1540ms">4,280</text>
+<text x="195.6" y="456" class="muted" text-anchor="middle" font-size="13" >华东</text>
+<path d="M 149.6 106.0 V 81.0 H 174.6" class="signal-stroke" pathLength="1" data-motion="lock" data-choreo="alarm" style="--delay:1240ms;--dx:0px;--dy:0px;--delay-brief:700ms;--delay-story:2250ms"/>
+<path d="M 363.8 137.75 H 434.8 L 441.8 144.75 V 426 H 370.8 L 363.8 419 Z" class="data-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:415ms;--dx:0px;--dy:42px;--duration:520ms;--delay-brief:222ms;--delay-story:680ms;--duration-brief:340ms;--duration-story:760ms"/>
+<line x1="402.8" y1="426" x2="402.8" y2="437" class="rail" data-motion="align" style="--delay:645ms;--dx:0px;--dy:0px;--delay-brief:390ms;--delay-story:1200ms"/>
+<text x="402.8" y="124.75" class="value" text-anchor="middle" font-size="15" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:982ms;--dx:0px;--dy:0px;--delay-brief:552ms;--delay-story:1658ms">3,650</text>
+<text x="402.8" y="456" class="muted" text-anchor="middle" font-size="13" >华南</text>
+<path d="M 571 190.66 H 642 L 649 197.66 V 426 H 578 L 571 419 Z" class="data-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:510ms;--dx:0px;--dy:42px;--duration:520ms;--delay-brief:274ms;--delay-story:840ms;--duration-brief:340ms;--duration-story:760ms"/>
+<line x1="610" y1="426" x2="610" y2="437" class="rail" data-motion="align" style="--delay:700ms;--dx:0px;--dy:0px;--delay-brief:420ms;--delay-story:1320ms"/>
+<text x="610" y="177.66" class="value" text-anchor="middle" font-size="15" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:1034ms;--dx:0px;--dy:0px;--delay-brief:584ms;--delay-story:1776ms">2,980</text>
+<text x="610" y="456" class="muted" text-anchor="middle" font-size="13" >华北</text>
+<path d="M 778.2 282.27 H 849.2 L 856.2 289.27 V 426 H 785.2 L 778.2 419 Z" class="secondary-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:605ms;--dx:0px;--dy:42px;--duration:520ms;--delay-brief:326ms;--delay-story:1000ms;--duration-brief:340ms;--duration-story:760ms"/>
+<line x1="817.2" y1="426" x2="817.2" y2="437" class="rail" data-motion="align" style="--delay:755ms;--dx:0px;--dy:0px;--delay-brief:450ms;--delay-story:1440ms"/>
+<text x="817.2" y="269.27" class="value" text-anchor="middle" font-size="15" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:1086ms;--dx:0px;--dy:0px;--delay-brief:616ms;--delay-story:1894ms">1,820</text>
+<text x="817.2" y="456" class="muted" text-anchor="middle" font-size="13" >西南</text>
+<path d="M 985.4 311.49 H 1056.4 L 1063.4 318.49 V 426 H 992.4 L 985.4 419 Z" class="secondary-fill" data-motion="dock" data-choreo="rail-rise" style="--delay:700ms;--dx:0px;--dy:42px;--duration:520ms;--delay-brief:378ms;--delay-story:1160ms;--duration-brief:340ms;--duration-story:760ms"/>
+<line x1="1024.4" y1="426" x2="1024.4" y2="437" class="rail" data-motion="align" style="--delay:810ms;--dx:0px;--dy:0px;--delay-brief:480ms;--delay-story:1560ms"/>
+<text x="1024.4" y="298.49" class="value" text-anchor="middle" font-size="15" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:1138ms;--dx:0px;--dy:0px;--delay-brief:648ms;--delay-story:2012ms">1,450</text>
+<text x="1024.4" y="456" class="muted" text-anchor="middle" font-size="13" >华中</text></g><g class="pm-target-lock"><rect x="191.6" y="422" width="8" height="8" rx="0" class="pm-socket-signal" />
+<rect x="398.8" y="422" width="8" height="8" rx="0" class="pm-socket" />
+<rect x="606" y="422" width="8" height="8" rx="0" class="pm-socket" />
+<rect x="813.2" y="422" width="8" height="8" rx="0" class="pm-socket" />
+<rect x="1020.4" y="422" width="8" height="8" rx="0" class="pm-socket" />
+<circle cx="195.6" cy="88" r="13" class="pm-lock-ring" />
+<path d="M 177.6 88.0 H 184.6 M 206.6 88.0 H 213.6" class="pm-lock-cross" />
+<text x="195.6" y="64" class="pm-address pm-address-signal" text-anchor="middle" font-size="10" >R01 / TOP</text></g></svg></section>
   <footer class="chart-footer"><span>数据来源：Moxing 示例数据 · 口径：演示</span><span class="mark">MOXING / STRUCTURAL INTERFACE</span></footer>
   <nav class="motion-controls" aria-label="动画控制"><button type="button" data-action="replay" data-code="R" title="重播">↻</button><button type="button" data-action="pause" data-code="H" title="暂停或继续">Ⅱ</button><button type="button" data-action="surface" data-code="S" title="切换明暗">◐</button></nav>
 </main>
@@ -218,6 +221,17 @@
   const profile=['brief','standard','story'].includes(requestedProfile)?requestedProfile:'standard';
   const scales={brief:0.72,standard:1.0,story:1.8};
   const scale=scales[profile]||1;
+  const macroProfiles={brief:{fieldDelay:25,fieldDuration:420,lockDuration:220},standard:{fieldDelay:40,fieldDuration:680,lockDuration:260},story:{fieldDelay:60,fieldDuration:900,lockDuration:320}};
+  const macro=macroProfiles[profile]||macroProfiles.standard;
+  root.style.setProperty('--pm-field-delay',macro.fieldDelay+'ms');
+  root.style.setProperty('--pm-field-duration',macro.fieldDuration+'ms');
+  root.style.setProperty('--pm-lock-duration',macro.lockDuration+'ms');
+  const directField=root.querySelector('.pm-direct-field');
+  if(directField){
+    const profileLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay-'+profile));
+    const standardLock=parseFloat(directField.style.getPropertyValue('--pm-lock-delay'))||980;
+    root.style.setProperty('--pm-active-lock-delay',(Number.isFinite(profileLock)?profileLock:standardLock)+'ms');
+  }
   const profileKey='total'+profile[0].toUpperCase()+profile.slice(1);
   const total=Number(root.dataset[profileKey]||root.dataset.total||1800);
   const baseDuration={align:220,dock:620,route:520,lock:280};

@@ -10,30 +10,28 @@ const templatesDir = path.join(root, "templates");
 const previewDir = path.join(root, "docs", "previews");
 const chartFiles = fs.readdirSync(templatesDir).filter((file) => /^c\d{2}-.*\.html$/.test(file)).sort();
 const precisionSpecs = {
-  "c01-structural-rank.html": { evidence: "E01", plotX: 260 },
-  "c02-ranked-rail.html": { evidence: "E02", plotX: 0 },
   "c03-signal-trend.html": { evidence: "E03", plotX: 248 },
-  "c04-composition-field.html": { evidence: "E04", plotX: 260 },
-  "c05-composition-bands.html": { evidence: "E05", plotX: 260 },
   "c06-ledger-steps.html": { evidence: "E06", plotX: 260 },
-  "c07-milestone-lanes.html": { evidence: "E07", plotX: 230 },
   "c08-stage-channel.html": { evidence: "E08", plotX: 280 },
-  "c09-metric-lockup.html": { evidence: "E09", plotX: 0 },
-  "c10-decision-interface.html": { evidence: "E10", plotX: 0 },
   "c15-commerce-flow.html": { evidence: "E15", plotX: 250 },
   "c22-correlation-matrix.html": { evidence: "E22", plotX: 255 },
 };
+const directA1 = new Set([
+  "c01-structural-rank.html", "c02-ranked-rail.html", "c04-composition-field.html",
+  "c05-composition-bands.html", "c07-milestone-lanes.html", "c09-metric-lockup.html",
+  "c10-decision-interface.html",
+]);
 const exemplars = {
-  "c01-structural-rank.html": { family: "rail-rise", cue: "rail-rise", animation: "pi-field-enter", precision: true },
-  "c02-ranked-rail.html": { family: "ranked-rail", cue: "rail-slide", animation: "pi-field-enter", precision: true },
+  "c01-structural-rank.html": { family: "rail-rise", cue: "rail-rise", animation: "pm-field-enter", direct: true },
+  "c02-ranked-rail.html": { family: "ranked-rail", cue: "rail-slide", animation: "pm-field-enter", direct: true },
   "c03-signal-trend.html": { family: "path-trace", cue: "trace", animation: "pi-field-enter", precision: true },
-  "c04-composition-field.html": { family: "field-aggregation", cue: "field-seat", animation: "pi-field-enter", precision: true },
-  "c05-composition-bands.html": { family: "band-routing", cue: "band-fill", animation: "pi-field-enter", precision: true },
+  "c04-composition-field.html": { family: "field-aggregation", cue: "field-seat", animation: "pm-field-enter", direct: true },
+  "c05-composition-bands.html": { family: "band-routing", cue: "band-fill", animation: "pm-field-enter", direct: true },
   "c06-ledger-steps.html": { family: "ledger-interlock", cue: "field-seat", animation: "pi-field-enter", precision: true },
-  "c07-milestone-lanes.html": { family: "milestone-routing", cue: "interlock", animation: "pi-field-enter", precision: true },
+  "c07-milestone-lanes.html": { family: "milestone-routing", cue: "interlock", animation: "pm-field-enter", direct: true },
   "c08-stage-channel.html": { family: "stage-interlock", cue: "interlock", animation: "pi-field-enter", precision: true },
-  "c09-metric-lockup.html": { family: "metric-readout", cue: "readout", animation: "pi-field-enter", precision: true },
-  "c10-decision-interface.html": { family: "decision-readout", cue: "readout", animation: "pi-field-enter", precision: true },
+  "c09-metric-lockup.html": { family: "metric-readout", cue: "readout", animation: "pm-field-enter", direct: true },
+  "c10-decision-interface.html": { family: "decision-readout", cue: "readout", animation: "pm-field-enter", direct: true },
   "c11-sector-lock.html": { family: "sector-lock", cue: "field-seat", animation: "mx-field-seat" },
   "c12-metric-small-multiples.html": { family: "metric-pulse", cue: "trace", animation: "mx-route" },
   "c13-pareto-contribution.html": { family: "pareto-routing", cue: "rail-rise", animation: "mx-rail-rise" },
@@ -114,9 +112,19 @@ for (const [file, expected] of Object.entries(exemplars)) {
   if (!source.includes(`data-choreography="${expected.family}"`)) fail(scope, `missing ${expected.family} family`);
   if (!source.includes(`data-choreo="${expected.cue}"`)) fail(scope, `missing ${expected.cue} cue`);
   if (expected.precision && (!source.includes('data-motion-system="precision-v2.1"') || !source.includes('class="chart-body pi-split-body"') || !source.includes('class="pi-evidence-bay"') || !source.includes('class="pi-data-field"') || !source.includes('class="pi-bay-terminal"') || !source.includes('pi-overlay--foreground'))) fail(scope, "approved precision-interface contract incomplete");
+  if (expected.direct && (!source.includes('data-motion-system="presentation-v2.1"') || !source.includes('data-presentation-carrier="direct"') || !source.includes('class="pm-data-field-layer"') || !source.includes('class="pm-target-lock"') || source.includes('class="pi-evidence-bay"'))) fail(scope, "approved direct-canvas contract incomplete");
   const explicit = source.match(new RegExp(`data-choreo="${expected.cue}"[^>]*style="([^"]+)"`))?.[1] || "";
   if (!explicit.includes("--delay-brief:") || !explicit.includes("--delay-story:")) fail(scope, "cue lacks independent profile timing");
   if (!failures.some((item) => item.scope === scope)) pass(scope, `${expected.family} with independent profile timing`);
+}
+
+for (const file of directA1) {
+  const source = fs.readFileSync(path.join(templatesDir, file), "utf8");
+  const scope = `direct:${file}`;
+  if (!source.includes('data-presentation-carrier="direct"') || !source.includes('data-presentation-target="direct"')) fail(scope, "direct carrier/target mismatch");
+  if (!source.includes('class="pm-target-lock"') || !source.includes('pm-address-signal')) fail(scope, "missing local target lock");
+  if (source.includes("evidence bay") || source.includes('class="evidence-plate"') || source.includes('class="pm-local-evidence"')) fail(scope, "detached evidence remains");
+  if (!failures.some((item) => item.scope === scope)) pass(scope, "full-width field with local target lock");
 }
 
 for (const [file, expected] of Object.entries(precisionSpecs)) {
@@ -242,6 +250,36 @@ for (const file of Object.keys(precisionSpecs)) {
   await context.close();
 }
 
+for (const file of directA1) {
+  const context = await browser.newContext({ viewport: { width: 1280, height: 720 }, reducedMotion: "no-preference" });
+  const page = await context.newPage();
+  await page.goto(`${pathToFileURL(path.join(templatesDir, file)).href}?motion=brief&autoplay=off`, { waitUntil: "load" });
+  const frameState = await page.evaluate(() => new Promise((resolve) => {
+    window.Moxing.replay();
+    const gaps = [];
+    let previous = performance.now();
+    const sample = (now) => {
+      gaps.push(now - previous);
+      previous = now;
+      if (gaps.length < 50) { requestAnimationFrame(sample); return; }
+      const ordered = [...gaps].sort((a, b) => a - b);
+      resolve({
+        carrier: document.querySelector('.pm-direct-field')?.tagName,
+        p95: ordered[Math.floor(ordered.length * .95)],
+        over28: gaps.filter((gap) => gap > 28).length,
+        running: document.getAnimations().filter((item) => item.playState === "running").length,
+        layers: document.querySelectorAll('.pm-data-field-layer,.pm-target-lock').length,
+        legacy: [...document.querySelectorAll('[data-motion]')].filter((item) => getComputedStyle(item).animationName !== "none").length,
+      });
+    };
+    requestAnimationFrame(sample);
+  }));
+  const scope = `direct-performance:${file}`;
+  if (frameState.carrier !== "svg" && frameState.carrier !== "SVG" || frameState.p95 > 28 || frameState.over28 > 3 || frameState.running > 2 || frameState.layers !== 2 || frameState.legacy) fail(scope, JSON.stringify(frameState));
+  else pass(scope, `direct carrier p95 ${frameState.p95.toFixed(1)}ms; ${frameState.layers} layers; legacy idle`);
+  await context.close();
+}
+
 const profileRanges = {
   brief: [900, 1200],
   standard: [1400, 2200],
@@ -255,21 +293,22 @@ for (const [file, expected] of Object.entries(exemplars)) {
     await page.goto(`${pathToFileURL(path.join(templatesDir, file)).href}?motion=${profile}`, { waitUntil: "load" });
     await page.evaluate(() => window.Moxing.replay());
     await page.waitForTimeout(50);
-    observed[profile] = await page.evaluate(({ cue, precision }) => {
-      const element = document.querySelector(precision ? '.pi-data-field' : `[data-choreo="${cue}"]`);
-      const lock = document.querySelector(precision ? '.pi-lock-ring,.pi-focus-corner' : '[data-choreo="alarm"]');
+    observed[profile] = await page.evaluate(({ cue, precision, direct }) => {
+      const element = document.querySelector(precision ? '.pi-data-field' : direct ? '.pm-data-field-layer' : `[data-choreo="${cue}"]`);
+      const lock = document.querySelector(precision ? '.pi-lock-ring,.pi-focus-corner' : direct ? '.pm-target-lock' : '[data-choreo="alarm"]');
       const style = element ? getComputedStyle(element) : null;
       const lockStyle = lock ? getComputedStyle(lock) : null;
       return {
         profile: window.Moxing?.profile,
         duration: window.Moxing?.duration,
-        delay: element ? (precision ? Number.parseFloat(style.animationDelay) * 1000 : Number.parseFloat(element.style.getPropertyValue("--active-delay"))) : null,
-        lockDelay: lock ? (precision ? Number.parseFloat(lockStyle.animationDelay) * 1000 : Number.parseFloat(lock.style.getPropertyValue("--active-delay"))) : null,
+        delay: element ? (precision || direct ? Number.parseFloat(style.animationDelay) * 1000 : Number.parseFloat(element.style.getPropertyValue("--active-delay"))) : null,
+        lockDelay: lock ? (precision || direct ? Number.parseFloat(lockStyle.animationDelay) * 1000 : Number.parseFloat(lock.style.getPropertyValue("--active-delay"))) : null,
         animation: style?.animationName,
         running: document.getAnimations().filter((item) => item.playState === "running").length,
-        layers: document.querySelectorAll(".pi-data-field,.pi-evidence-bay,.pi-bay-terminal,.pi-lock-ring,.pi-focus-corner").length,
+        layers: document.querySelectorAll(direct ? ".pm-data-field-layer,.pm-target-lock" : ".pi-data-field,.pi-evidence-bay,.pi-bay-terminal,.pi-lock-ring,.pi-focus-corner").length,
+        legacy: [...document.querySelectorAll("[data-motion]")].filter((item) => getComputedStyle(item).animationName !== "none").length,
       };
-    }, { cue: expected.cue, precision: Boolean(expected.precision) });
+    }, { cue: expected.cue, precision: Boolean(expected.precision), direct: Boolean(expected.direct) });
     await page.evaluate(() => window.Moxing.settle());
   }
   const scope = `profiles:${file}`;
@@ -278,7 +317,8 @@ for (const [file, expected] of Object.entries(exemplars)) {
     if (state.profile !== profile) fail(scope, `${profile} runtime reported ${state.profile}`);
     if (state.duration < minimum || state.duration > maximum) fail(scope, `${profile} duration ${state.duration}`);
     if (state.animation !== expected.animation) fail(scope, `${profile} animation ${state.animation}`);
-    if (state.running < 3) fail(scope, `${profile} only ${state.running} active animations`);
+    if (!expected.direct && state.running < 3) fail(scope, `${profile} only ${state.running} active animations`);
+    if (expected.direct && (state.running !== 2 || state.layers !== 2 || state.legacy)) fail(scope, `${profile} direct layers ${state.running}/${state.layers}; legacy=${state.legacy}`);
     if (expected.precision && (state.running > 4 || state.layers !== 4)) fail(scope, `${profile} precision layers ${state.running}/${state.layers}`);
   }
   const briefRatio = observed.brief.delay / observed.standard.delay;
@@ -298,14 +338,14 @@ for (const [file, headingSelector] of Object.entries({
   await page.goto(`${pathToFileURL(path.join(templatesDir, file)).href}?motion=off`, { waitUntil: "load" });
   const overlap = await page.evaluate((selector) => {
     const plate = document.querySelector(".evidence-plate")?.getBoundingClientRect();
-    if (!plate) return true;
+    if (!plate) return false;
     return [...document.querySelectorAll(selector)].some((element) => {
       const box = element.getBoundingClientRect();
       return plate.left < box.right && plate.right > box.left && plate.top < box.bottom && plate.bottom > box.top;
     });
   }, headingSelector);
-  if (overlap) fail(`layout:${file}`, "evidence plate overlaps row heading");
-  else pass(`layout:${file}`, "evidence plate clears row headings");
+  if (overlap) fail(`layout:${file}`, "supporting evidence overlaps row heading");
+  else pass(`layout:${file}`, "supporting evidence clears row headings");
   await context.close();
 }
 
