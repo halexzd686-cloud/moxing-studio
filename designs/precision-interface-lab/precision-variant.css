@@ -1,0 +1,49 @@
+html[data-precision="lab"] .chart-container{grid-template-rows:132px 1fr 28px}
+html[data-precision="lab"] .chart-header{grid-template-columns:170px minmax(0,1fr);column-gap:30px;position:relative;padding-top:10px}
+html[data-precision="lab"] .chart-code{align-self:start}
+
+.pi-code{height:84px;display:grid;grid-template-rows:20px 1fr 18px;border-left:2px solid var(--ink);padding-left:12px;position:relative}
+.pi-code::after{content:"";position:absolute;left:-2px;bottom:0;width:18px;height:2px;background:var(--signal)}
+.pi-code__top,.pi-code__state{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11px;color:var(--matrix-strong);font-weight:700}
+.pi-code__top strong{font-size:14px;color:var(--matrix-strong);font-weight:720}
+.pi-code__name{align-self:center;font-size:12px;line-height:1.2;color:var(--matrix-strong);max-width:138px}
+.pi-code__state{justify-content:flex-start;color:var(--signal);font-weight:700}
+.pi-dots{display:grid;grid-template-columns:repeat(3,3px);grid-auto-rows:3px;gap:2px;margin-right:3px}
+.pi-dots i{display:block;width:3px;height:3px;background:var(--matrix-quiet)}
+.pi-dots i:last-child{background:var(--signal)}
+
+.pi-meta{margin-top:7px;display:flex;align-items:center;gap:18px;font-family:'Doto','Cascadia Mono',monospace;font-size:11px;font-weight:700;font-variation-settings:'ROND' 0,'wght' 700;letter-spacing:.075em;color:var(--matrix-strong)}
+.pi-meta span{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.pi-meta span::before{content:"";width:5px;height:5px;border:1px solid currentColor;display:block}
+.pi-meta span[data-state]::before{background:var(--signal);border-color:var(--signal)}
+.pi-header-ticks{position:absolute;right:123px;top:-1px;height:7px;display:flex;align-items:start;gap:5px}
+.pi-header-ticks i{display:block;width:1px;height:4px;background:var(--rail)}
+.pi-header-ticks i:nth-child(4n){height:7px;background:var(--signal)}
+
+html[data-precision="lab"] .motion-controls{right:54px;top:48px;display:grid;grid-template-columns:repeat(3,38px);gap:0;border:1px solid var(--rail);clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px));background:var(--bg)}
+html[data-precision="lab"] .motion-controls::before{content:"CTRL / 03";position:absolute;right:0;top:-16px;font-family:'Doto','Cascadia Mono',monospace;font-size:9px;letter-spacing:.08em;color:var(--matrix-quiet)}
+html[data-precision="lab"] .motion-controls button{width:38px;height:36px;border:0;border-left:1px solid var(--rail);position:relative;font-size:14px}
+html[data-precision="lab"] .motion-controls button:first-child{border-left:0}
+html[data-precision="lab"] .motion-controls button::after{content:attr(data-code);position:absolute;right:3px;bottom:1px;font-size:7px;color:var(--matrix-quiet);font-family:'Doto','Cascadia Mono',monospace;letter-spacing:.04em}
+html[data-output="export"] .motion-controls{display:none!important}
+
+html[data-precision="lab"] .evidence-plate .panel-stroke{stroke:var(--ink);stroke-width:1.2}
+html[data-precision="lab"] .evidence-plate::selection{background:transparent}
+svg .pi-evidence-route{fill:none;stroke:var(--rail);stroke-width:1.25;vector-effect:non-scaling-stroke}
+svg .pi-evidence-route-accent{fill:none;stroke:var(--signal);stroke-width:2;vector-effect:non-scaling-stroke}
+svg .pi-socket{fill:var(--bg);stroke:var(--ink);stroke-width:1.5;vector-effect:non-scaling-stroke}
+svg .pi-socket-signal{fill:var(--signal);stroke:var(--on-signal);stroke-width:1;vector-effect:non-scaling-stroke}
+svg .pi-lock-ring{fill:none;stroke:var(--signal);stroke-width:2;vector-effect:non-scaling-stroke}
+svg .pi-lock-cross{fill:none;stroke:var(--signal);stroke-width:1;vector-effect:non-scaling-stroke}
+svg .pi-address{font-family:'Doto','Cascadia Mono',monospace;fill:var(--matrix-strong);font-weight:700;font-variation-settings:'ROND' 0,'wght' 700;letter-spacing:.06em}
+svg .pi-address-signal{fill:var(--signal)}
+svg .pi-focus-corner{fill:none;stroke:var(--signal);stroke-width:2;vector-effect:non-scaling-stroke}
+
+@keyframes pi-route-grow{from{opacity:0;stroke-dashoffset:1}to{opacity:1;stroke-dashoffset:0}}
+@keyframes pi-socket-seat{0%{opacity:0;transform:scale(.3)}72%{opacity:1;transform:scale(1.15)}100%{opacity:1;transform:scale(1)}}
+@keyframes pi-lock-pulse{0%{opacity:0;transform:scale(.45)}70%{opacity:1;transform:scale(1.12)}100%{opacity:1;transform:scale(1)}}
+.motion-enabled.is-playing .pi-evidence-route{stroke-dasharray:1;animation:pi-route-grow 420ms linear 1260ms both}
+.motion-enabled.is-playing .pi-evidence-route-accent{stroke-dasharray:1;animation:pi-route-grow 260ms linear 1560ms both}
+.motion-enabled.is-playing .pi-socket{animation:pi-socket-seat 240ms cubic-bezier(.22,.78,.22,1) var(--pi-delay,180ms) both;transform-box:fill-box;transform-origin:center}
+.motion-enabled.is-playing .pi-socket-signal,.motion-enabled.is-playing .pi-lock-ring,.motion-enabled.is-playing .pi-focus-corner{animation:pi-lock-pulse 280ms cubic-bezier(.22,.78,.22,1) 1540ms both;transform-box:fill-box;transform-origin:center}
+@media (prefers-reduced-motion:reduce){.motion-enabled.is-playing .pi-evidence-route,.motion-enabled.is-playing .pi-evidence-route-accent,.motion-enabled.is-playing .pi-socket,.motion-enabled.is-playing .pi-socket-signal,.motion-enabled.is-playing .pi-lock-ring,.motion-enabled.is-playing .pi-focus-corner{animation:none!important}}

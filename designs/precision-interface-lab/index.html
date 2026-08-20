@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Moxing Precision Interface Lab</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="lab.css">
+</head>
+<body data-view="focus" data-active="c08">
+  <header class="lab-toolbar">
+    <div class="lab-brand" aria-label="Moxing Precision Interface Lab">
+      <span class="lab-brand__index">MX / PI-01</span>
+      <strong>Precision Interface Lab</strong>
+      <span class="lab-status"><i></i> BRANCH PREVIEW</span>
+    </div>
+
+    <nav class="lab-tabs" aria-label="原型选择">
+      <button type="button" data-chart="c03">C03</button>
+      <button type="button" data-chart="c08" aria-current="page">C08</button>
+      <button type="button" data-chart="c15">C15</button>
+      <button type="button" data-chart="c22">C22</button>
+    </nav>
+
+    <div class="lab-actions" aria-label="实验控制">
+      <button type="button" data-lab-action="view">VIEW / FOCUS</button>
+      <button type="button" data-lab-action="surface">SURFACE / LIGHT</button>
+      <button type="button" data-lab-action="output">OUTPUT / UI</button>
+      <button type="button" data-lab-action="replay">REPLAY</button>
+    </div>
+  </header>
+
+  <main class="lab-workspace">
+    <section class="prototype" data-prototype="c03" data-screen-label="C03 Signal Route">
+      <header class="prototype-caption">
+        <span>01 / SIGNAL ROUTE</span>
+        <p>起点校准、路径追踪、终点锁定、证据回连</p>
+      </header>
+      <div class="frame-viewport">
+        <div class="frame-stage"><iframe title="C03 趋势信号原型" src="../../templates/c03-signal-trend.html?motion=standard&amp;precision=lab"></iframe></div>
+      </div>
+    </section>
+
+    <section class="prototype" data-prototype="c08" data-screen-label="C08 Stage Rail">
+      <header class="prototype-caption">
+        <span>02 / STAGE RAIL</span>
+        <p>阶段模块安装到承重导轨，瓶颈在接口处锁定</p>
+      </header>
+      <div class="frame-viewport">
+        <div class="frame-stage"><iframe title="C08 阶段导轨原型" src="../../templates/c08-stage-channel.html?motion=standard&amp;precision=lab"></iframe></div>
+      </div>
+    </section>
+
+    <section class="prototype" data-prototype="c15" data-screen-label="C15 Commerce Ports">
+      <header class="prototype-caption">
+        <span>03 / COMMERCE PORTS</span>
+        <p>流量节点具备输入输出端口，最弱通道成为锁点</p>
+      </header>
+      <div class="frame-viewport">
+        <div class="frame-stage"><iframe title="C15 商业流端口原型" src="../../templates/c15-commerce-flow.html?motion=standard&amp;precision=lab"></iframe></div>
+      </div>
+    </section>
+
+    <section class="prototype" data-prototype="c22" data-screen-label="C22 Address Matrix">
+      <header class="prototype-caption">
+        <span>04 / ADDRESS MATRIX</span>
+        <p>矩阵拥有设备地址，关键关系以机械选框确认</p>
+      </header>
+      <div class="frame-viewport">
+        <div class="frame-stage"><iframe title="C22 地址矩阵原型" src="../../templates/c22-correlation-matrix.html?motion=standard&amp;precision=lab"></iframe></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="lab-footer">
+    <span>REVIEW SCOPE / C03 · C08 · C15 · C22</span>
+    <span>NO PRODUCTION TEMPLATE OVERRIDES</span>
+  </footer>
+  <script src="lab.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+{
+  "url": "http://127.0.0.1:4400/designs/precision-interface-lab/index.html",
+  "generatedAt": "2026-08-20T03:19:23.107Z",
+  "checks": [
+    {
+      "name": "c03 instrument contract",
+      "pass": true,
+      "details": "{\"ready\":\"true\",\"precision\":\"lab\",\"code\":\"C03SYS / 21SIGNAL / TRENDTRACE.LOCK\",\"meta\":3,\"overlay\":2,\"route\":2,\"controls\":3}"
+    },
+    {
+      "name": "c03 focus selection",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "c08 instrument contract",
+      "pass": true,
+      "details": "{\"ready\":\"true\",\"precision\":\"lab\",\"code\":\"C08SYS / 21STAGE / CHANNELBOTTLENECK\",\"meta\":3,\"overlay\":2,\"route\":2,\"controls\":3}"
+    },
+    {
+      "name": "c08 focus selection",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "c15 instrument contract",
+      "pass": true,
+      "details": "{\"ready\":\"true\",\"precision\":\"lab\",\"code\":\"C15SYS / 21COMMERCE / FLOWLEAK.LOCK\",\"meta\":3,\"overlay\":2,\"route\":2,\"controls\":3}"
+    },
+    {
+      "name": "c15 focus selection",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "c22 instrument contract",
+      "pass": true,
+      "details": "{\"ready\":\"true\",\"precision\":\"lab\",\"code\":\"C22SYS / 21ADDRESS / MATRIXPAIR.LOCK\",\"meta\":3,\"overlay\":2,\"route\":2,\"controls\":3}"
+    },
+    {
+      "name": "c22 focus selection",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "dark surface synchronization",
+      "pass": true,
+      "details": "dark,dark,dark,dark"
+    },
+    {
+      "name": "export-safe controls",
+      "pass": true,
+      "details": "[{\"output\":\"export\",\"display\":\"none\"},{\"output\":\"export\",\"display\":\"none\"},{\"output\":\"export\",\"display\":\"none\"},{\"output\":\"export\",\"display\":\"none\"}]"
+    },
+    {
+      "name": "four-up comparison view",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "precision replay choreography",
+      "pass": true,
+      "details": "[{\"playing\":true,\"routeAnimation\":\"pi-route-grow\"},{\"playing\":true,\"routeAnimation\":\"pi-route-grow\"},{\"playing\":true,\"routeAnimation\":\"pi-route-grow\"},{\"playing\":true,\"routeAnimation\":\"pi-route-grow\"}]"
+    },
+    {
+      "name": "runtime errors",
+      "pass": true,
+      "details": "none"
+    }
+  ],
+  "failures": 0
+}

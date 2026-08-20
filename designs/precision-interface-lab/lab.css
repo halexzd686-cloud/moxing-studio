@@ -1,0 +1,82 @@
+@font-face{font-family:'Doto';src:url('../../assets/fonts/Doto-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Noto Sans SC';src:url('../../assets/fonts/NotoSansSC-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+
+:root{
+  --lab-bg:#111310;
+  --lab-panel:#1A1D19;
+  --lab-line:#3E433B;
+  --lab-ink:#EFF0EA;
+  --lab-muted:#A5AAA1;
+  --lab-signal:#E56B47;
+}
+
+*{box-sizing:border-box}
+html{background:var(--lab-bg)}
+body{margin:0;min-height:100vh;background:var(--lab-bg);color:var(--lab-ink);font-family:'Noto Sans SC','Microsoft YaHei',sans-serif}
+button{font:inherit}
+
+.lab-toolbar{
+  position:sticky;
+  top:0;
+  z-index:10;
+  min-height:64px;
+  padding:10px 24px;
+  display:grid;
+  grid-template-columns:minmax(250px,1fr) auto minmax(440px,1fr);
+  align-items:center;
+  gap:24px;
+  background:rgba(17,19,16,.96);
+  border-bottom:1px solid var(--lab-line);
+}
+
+.lab-brand{display:grid;grid-template-columns:auto 1fr;gap:1px 14px;align-items:center;min-width:0}
+.lab-brand__index,.lab-status,.prototype-caption span,.lab-actions button,.lab-tabs button,.lab-footer{font-family:'Doto','Cascadia Mono',monospace;font-variation-settings:'ROND' 0,'wght' 650;letter-spacing:.08em;text-transform:uppercase}
+.lab-brand__index{grid-row:1 / span 2;color:var(--lab-signal);font-size:12px}
+.lab-brand strong{font-size:15px;letter-spacing:.02em;white-space:nowrap}
+.lab-status{font-size:10px;color:var(--lab-muted);display:flex;align-items:center;gap:7px}
+.lab-status i{width:6px;height:6px;background:var(--lab-signal);display:block}
+
+.lab-tabs,.lab-actions{display:flex;gap:0}
+.lab-tabs{border:1px solid var(--lab-line)}
+.lab-tabs button,.lab-actions button{
+  min-height:34px;
+  border:0;
+  border-left:1px solid var(--lab-line);
+  padding:0 13px;
+  background:transparent;
+  color:var(--lab-muted);
+  font-size:11px;
+  cursor:pointer;
+}
+.lab-tabs button:first-child,.lab-actions button:first-child{border-left:0}
+.lab-tabs button:hover,.lab-actions button:hover{color:var(--lab-ink);background:var(--lab-panel)}
+.lab-tabs button[aria-current="page"],.lab-actions button.is-active{background:var(--lab-signal);color:#151714}
+.lab-actions{justify-self:end;border:1px solid var(--lab-line)}
+
+.lab-workspace{padding:22px 24px 32px;display:grid;gap:26px}
+.prototype{min-width:0}
+.prototype-caption{height:34px;display:flex;justify-content:space-between;align-items:start;border-top:1px solid var(--lab-line);padding-top:7px;color:var(--lab-muted)}
+.prototype-caption span{font-size:11px;color:var(--lab-signal)}
+.prototype-caption p{margin:0;font-size:12px;letter-spacing:.02em}
+.frame-viewport{position:relative;width:100%;overflow:hidden;background:#F2F3EF;border:1px solid var(--lab-line)}
+.frame-stage{width:1280px;height:720px;margin:0 auto;transform-origin:top left}
+.frame-stage iframe{display:block;width:1280px;height:720px;border:0;background:#F2F3EF}
+body[data-surface="dark"] .frame-viewport{background:#151714}
+
+body[data-view="focus"] .prototype{display:none}
+body[data-view="focus"][data-active="c03"] [data-prototype="c03"],
+body[data-view="focus"][data-active="c08"] [data-prototype="c08"],
+body[data-view="focus"][data-active="c15"] [data-prototype="c15"],
+body[data-view="focus"][data-active="c22"] [data-prototype="c22"]{display:block}
+body[data-view="grid"] .lab-workspace{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 18px}
+body[data-view="grid"] .prototype{display:block}
+body[data-view="grid"] .prototype-caption p{display:none}
+
+.lab-footer{height:34px;padding:0 24px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--lab-line);color:var(--lab-muted);font-size:10px}
+
+@media (max-width:1100px){
+  .lab-toolbar{grid-template-columns:1fr auto}.lab-actions{grid-column:1 / -1;justify-self:stretch}.lab-actions button{flex:1}.lab-brand{display:none}
+}
+@media (max-width:760px){
+  .lab-toolbar{position:relative;padding:10px;gap:8px}.lab-tabs{grid-column:1 / -1}.lab-tabs button{flex:1}.lab-actions{overflow:auto}.lab-workspace{padding:12px}.prototype-caption p{display:none}body[data-view="grid"] .lab-workspace{grid-template-columns:1fr}
+}
