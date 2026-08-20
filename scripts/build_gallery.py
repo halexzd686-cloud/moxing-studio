@@ -71,32 +71,34 @@ const mobile=matchMedia('(max-width:900px)');
 let dark=false;
 let activeViewerSource='';
 
-function configuredSource(raw){const path=raw.split('?')[0];return `${path}?motion=${motion.value}&theme=${dark?'dark':'light'}&autoplay=off&build=continuity-v1`}
+function configuredSource(raw){const path=raw.split('?')[0];return `${path}?motion=${motion.value}&theme=${dark?'dark':'light'}&autoplay=off&build=motion-v2`}
 function getApi(frame){try{return frame.contentWindow?.Moxing}catch{return null}}
 function settle(frame){getApi(frame)?.settle()}
-function frameVisible(frame){const box=frame.closest('.card').getBoundingClientRect();return box.bottom>0&&box.top<innerHeight}
-function mount(frame){if(frame.dataset.mounted==='true')return;frame.dataset.mounted='true';frame.src=configuredSource(frame.dataset.src);frame.closest('.frame').classList.remove('is-loaded')}
-function unmount(frame){if(frame.dataset.mounted!=='true')return;settle(frame);frame.src='about:blank';delete frame.dataset.mounted;frame.closest('.frame').classList.remove('is-loaded')}
+function pause(frame){getApi(frame)?.pause?.()}
+function frameVisible(frame){const card=frame.closest('.card');if(!card)return true;const box=card.getBoundingClientRect();return box.bottom>0&&box.top<innerHeight}
+function mount(frame){if(frame.dataset.mounted==='true')return;frame.dataset.mounted='true';frame.dataset.ready='false';frame.src=configuredSource(frame.dataset.src);frame.closest('.frame')?.classList.remove('is-loaded')}
+function unmount(frame){if(frame.dataset.mounted!=='true')return;settle(frame);frame.src='about:blank';delete frame.dataset.mounted;delete frame.dataset.ready;frame.closest('.frame')?.classList.remove('is-loaded')}
 function fitCard(frame){const box=frame.closest('.frame');const scale=box.clientWidth/CANVAS.width;frame.style.transform=`scale(${scale})`}
 function fitCards(){frames.forEach(fitCard)}
 function trimMobilePool(keep){if(!mobile.matches)return;const mounted=frames.filter(frame=>frame.dataset.mounted==='true');const removable=mounted.filter(frame=>frame!==keep&&!frameVisible(frame));while(mounted.length>4&&removable.length){const frame=removable.shift();mounted.splice(mounted.indexOf(frame),1);unmount(frame)}}
-function updateMounted(){frames.filter(frame=>frame.dataset.mounted==='true').forEach(frame=>{frame.src=configuredSource(frame.dataset.src);frame.closest('.frame').classList.remove('is-loaded')});if(activeViewerSource)viewerFrame.src=configuredSource(activeViewerSource)}
-function replay(frame){frames.forEach(item=>{if(item!==frame)settle(item)});mount(frame);const api=getApi(frame);if(api){api.replay();return}frame.addEventListener('load',()=>getApi(frame)?.replay(),{once:true})}
+function updateMounted(){frames.filter(frame=>frame.dataset.mounted==='true').forEach(frame=>{frame.dataset.ready='false';frame.src=configuredSource(frame.dataset.src);frame.closest('.frame')?.classList.remove('is-loaded')});if(activeViewerSource){viewerFrame.dataset.ready='false';viewerFrame.src=configuredSource(activeViewerSource)}}
+async function waitForApi(frame){for(let attempt=0;attempt<75;attempt+=1){const api=getApi(frame);if(api){if(api.ready)try{await api.ready}catch{}return api}await new Promise(resolve=>setTimeout(resolve,40))}return null}
+async function replay(frame,{resetOthers=true}={}){if(resetOthers)frames.forEach(item=>{if(item!==frame)settle(item)});if(frame!==viewerFrame)mount(frame);const api=await waitForApi(frame);api?.replay?.()}
 
-const observer=new IntersectionObserver(entries=>{for(const entry of entries){const frame=entry.target.querySelector('.card-frame');if(entry.isIntersecting){mount(frame);trimMobilePool(frame)}else{settle(frame)}}},{rootMargin:'30% 0px'});
+const observer=new IntersectionObserver(entries=>{for(const entry of entries){const frame=entry.target.querySelector('.card-frame');if(entry.isIntersecting){mount(frame);trimMobilePool(frame)}else{pause(frame)}}},{rootMargin:'30% 0px'});
 function reconcileMode(){if(mobile.matches){cards.forEach(card=>observer.observe(card));trimMobilePool()}else{cards.forEach(card=>observer.unobserve(card));frames.forEach(mount)}fitCards()}
 
-frames.forEach(frame=>frame.addEventListener('load',()=>{if(frame.src==='about:blank')return;frame.closest('.frame').classList.add('is-loaded');settle(frame);fitCard(frame)}));
+frames.forEach(frame=>frame.addEventListener('load',()=>{if(frame.src==='about:blank')return;frame.closest('.frame').classList.add('is-loaded');frame.dataset.ready='true';settle(frame);fitCard(frame)}));
 document.querySelectorAll('[data-replay]').forEach(button=>button.addEventListener('click',()=>replay(button.closest('.card').querySelector('.card-frame'))));
 document.querySelectorAll('[data-open]').forEach(button=>button.addEventListener('click',()=>openViewer(button.closest('.card'))));
 document.querySelectorAll('.frame').forEach(frame=>frame.addEventListener('click',()=>{if(mobile.matches)openViewer(frame.closest('.card'))}));
 
 function fitViewer(){if(!viewer.open)return;const stage=viewer.querySelector('.viewer-stage');const portrait=mobile.matches&&innerHeight>innerWidth;const detail=portrait&&viewer.dataset.detail==='true';const fitScale=Math.min(stage.clientWidth/CANVAS.width,stage.clientHeight/CANVAS.height);const scale=detail?Math.max(fitScale,Math.min(.58,stage.clientHeight/CANVAS.height)):fitScale;stage.classList.toggle('is-pan',detail);viewerCanvas.style.width=`${CANVAS.width*scale}px`;viewerCanvas.style.height=`${CANVAS.height*scale}px`;viewerFrame.style.transform=`scale(${scale})`;viewerFit.textContent=detail?'FIT':'DETAIL';viewerHint.textContent=detail?'SWIPE / 左右滑动 · 横屏最佳':'ROTATE DEVICE / 横屏查看细节';if(!detail)stage.scrollLeft=0}
-function openViewer(card){activeViewerSource=card.querySelector('.card-frame').dataset.src;viewer.dataset.detail=String(mobile.matches&&innerHeight>innerWidth);viewerTitle.textContent=`${card.dataset.chart} / ${card.dataset.name}`;viewerFrame.src=configuredSource(activeViewerSource);document.body.classList.add('viewer-open');if(typeof viewer.showModal==='function')viewer.showModal();else viewer.setAttribute('open','');requestAnimationFrame(fitViewer)}
-function closeViewer(){settle(viewerFrame);viewerFrame.src='about:blank';activeViewerSource='';document.body.classList.remove('viewer-open');if(typeof viewer.close==='function')viewer.close();else viewer.removeAttribute('open')}
-viewerFrame.addEventListener('load',()=>{if(viewerFrame.src!=='about:blank')settle(viewerFrame)});
+function openViewer(card){activeViewerSource=card.querySelector('.card-frame').dataset.src;viewer.dataset.detail=String(mobile.matches&&innerHeight>innerWidth);viewerTitle.textContent=`${card.dataset.chart} / ${card.dataset.name}`;viewerFrame.dataset.ready='false';viewerFrame.src=configuredSource(activeViewerSource);document.body.classList.add('viewer-open');if(typeof viewer.showModal==='function')viewer.showModal();else viewer.setAttribute('open','');requestAnimationFrame(fitViewer)}
+function closeViewer(){settle(viewerFrame);viewerFrame.src='about:blank';delete viewerFrame.dataset.ready;activeViewerSource='';document.body.classList.remove('viewer-open');if(typeof viewer.close==='function')viewer.close();else viewer.removeAttribute('open')}
+viewerFrame.addEventListener('load',()=>{if(viewerFrame.src!=='about:blank'){viewerFrame.dataset.ready='true';settle(viewerFrame)}});
 viewerFit.addEventListener('click',()=>{viewer.dataset.detail=String(viewer.dataset.detail!=='true');fitViewer()});
-viewer.querySelector('[data-viewer-replay]').addEventListener('click',()=>getApi(viewerFrame)?.replay());
+viewer.querySelector('[data-viewer-replay]').addEventListener('click',()=>replay(viewerFrame,{resetOthers:false}));
 viewer.querySelector('[data-viewer-close]').addEventListener('click',closeViewer);
 viewer.addEventListener('cancel',event=>{event.preventDefault();closeViewer()});
 
@@ -120,7 +122,7 @@ def main() -> None:
         cards.append(
             f"""<article class="card" data-chart="{chart_id}" data-name="{meta['name']}" data-domain="{domain}">
   <div class="card-head"><span>{chart_id} / {meta['name']}</span><div class="card-actions"><button type="button" data-replay>REPLAY</button><button type="button" data-open>OPEN</button></div></div>
-  <div class="frame"><div class="frame-placeholder"><b>{chart_id}</b><span>LOCKED PREVIEW</span></div><iframe class="card-frame" title="{meta['name']}" loading="lazy" data-src="{filename}?motion=brief&amp;autoplay=off&amp;build=responsive-v2.1"></iframe></div>
+  <div class="frame"><div class="frame-placeholder"><b>{chart_id}</b><span>LOCKED PREVIEW</span></div><iframe class="card-frame" title="{meta['name']}" loading="lazy" data-src="{filename}?motion=brief&amp;autoplay=off&amp;build=motion-v2"></iframe></div>
 </article>"""
         )
     target = ROOT / "templates" / "gallery.html"

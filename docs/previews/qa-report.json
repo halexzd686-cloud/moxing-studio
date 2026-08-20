@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T14:51:33.280Z",
+  "generatedAt": "2026-08-20T16:34:25.769Z",
   "status": "passed",
   "checks": [
     {
@@ -556,7 +556,7 @@
     },
     {
       "scope": "motion",
-      "message": "4 macro animations with continuous line trace"
+      "message": "11 element animations with a single forward trace"
     },
     {
       "scope": "motion",
@@ -564,103 +564,103 @@
     },
     {
       "scope": "motion-continuity",
-      "message": "replay enters the prepared first frame without exposing the final frame"
+      "message": "replay uses an instant reset followed by one forward timeline"
     },
     {
       "scope": "precision-performance:c03-signal-trend.html",
-      "message": "precision carrier p95 16.8ms; 4 macro layers"
+      "message": "precision carrier p95 16.7ms; 0 terminal layers"
     },
     {
       "scope": "precision-performance:c06-ledger-steps.html",
-      "message": "precision carrier p95 16.8ms; 4 macro layers"
+      "message": "precision carrier p95 16.8ms; 3 terminal layers"
     },
     {
       "scope": "precision-performance:c08-stage-channel.html",
-      "message": "precision carrier p95 16.7ms; 4 macro layers"
+      "message": "precision carrier p95 16.8ms; 3 terminal layers"
     },
     {
       "scope": "precision-performance:c15-commerce-flow.html",
-      "message": "precision carrier p95 16.8ms; 4 macro layers"
+      "message": "precision carrier p95 16.7ms; 3 terminal layers"
     },
     {
       "scope": "precision-performance:c22-correlation-matrix.html",
-      "message": "precision carrier p95 16.7ms; 4 macro layers"
+      "message": "precision carrier p95 16.8ms; 3 terminal layers"
     },
     {
       "scope": "embedded-performance:c13-pareto-contribution.html",
-      "message": "embedded carrier p95 16.8ms; 4 macro layers"
+      "message": "embedded carrier p95 16.8ms; 4 static layers"
     },
     {
       "scope": "embedded-performance:c14-cohort-matrix.html",
-      "message": "embedded carrier p95 16.8ms; 4 macro layers"
+      "message": "embedded carrier p95 16.8ms; 4 static layers"
     },
     {
       "scope": "embedded-performance:c16-decision-bubble-matrix.html",
-      "message": "embedded carrier p95 16.7ms; 3 macro layers"
+      "message": "embedded carrier p95 16.8ms; 3 static layers"
     },
     {
       "scope": "embedded-performance:c17-market-candles.html",
-      "message": "embedded carrier p95 16.7ms; 4 macro layers"
+      "message": "embedded carrier p95 16.7ms; 4 static layers"
     },
     {
       "scope": "embedded-performance:c18-performance-drawdown.html",
-      "message": "embedded carrier p95 16.7ms; 4 macro layers"
+      "message": "embedded carrier p95 16.7ms; 4 static layers"
     },
     {
       "scope": "embedded-performance:c19-yield-curve.html",
-      "message": "embedded carrier p95 16.8ms; 4 macro layers"
+      "message": "embedded carrier p95 16.7ms; 4 static layers"
     },
     {
       "scope": "embedded-performance:c21-distribution-profile.html",
-      "message": "embedded carrier p95 16.8ms; 4 macro layers"
+      "message": "embedded carrier p95 16.8ms; 4 static layers"
     },
     {
       "scope": "embedded-performance:c23-forecast-fan.html",
-      "message": "embedded carrier p95 16.7ms; 4 macro layers"
+      "message": "embedded carrier p95 16.7ms; 4 static layers"
     },
     {
       "scope": "embedded-performance:c24-control-chart.html",
-      "message": "embedded carrier p95 16.8ms; 4 macro layers"
+      "message": "embedded carrier p95 16.7ms; 4 static layers"
     },
     {
       "scope": "direct-performance:c01-structural-rank.html",
-      "message": "direct carrier p95 16.8ms; 3 macro layers"
+      "message": "direct carrier p95 16.8ms; 3 static layers"
     },
     {
       "scope": "direct-performance:c02-ranked-rail.html",
-      "message": "direct carrier p95 16.8ms; 3 macro layers"
+      "message": "direct carrier p95 16.8ms; 3 static layers"
     },
     {
       "scope": "direct-performance:c04-composition-field.html",
-      "message": "direct carrier p95 16.8ms; 2 macro layers"
+      "message": "direct carrier p95 16.8ms; 2 static layers"
     },
     {
       "scope": "direct-performance:c05-composition-bands.html",
-      "message": "direct carrier p95 16.7ms; 2 macro layers"
+      "message": "direct carrier p95 16.7ms; 2 static layers"
     },
     {
       "scope": "direct-performance:c07-milestone-lanes.html",
-      "message": "direct carrier p95 16.8ms; 2 macro layers"
+      "message": "direct carrier p95 16.7ms; 2 static layers"
     },
     {
       "scope": "direct-performance:c09-metric-lockup.html",
-      "message": "direct carrier p95 16.7ms; 2 macro layers"
+      "message": "direct carrier p95 16.7ms; 2 static layers"
     },
     {
       "scope": "direct-performance:c10-decision-interface.html",
-      "message": "direct carrier p95 16.7ms; 3 macro layers"
+      "message": "direct carrier p95 16.7ms; 3 static layers"
     },
     {
       "scope": "direct-performance:c11-sector-lock.html",
-      "message": "direct carrier p95 16.7ms; 2 macro layers"
+      "message": "direct carrier p95 16.8ms; 2 static layers"
     },
     {
       "scope": "direct-performance:c12-metric-small-multiples.html",
-      "message": "direct carrier p95 16.8ms; 2 macro layers"
+      "message": "direct carrier p95 16.8ms; 2 static layers"
     },
     {
       "scope": "direct-performance:c20-sensitivity-matrix.html",
-      "message": "direct carrier p95 16.8ms; 2 macro layers"
+      "message": "direct carrier p95 16.7ms; 2 static layers"
     },
     {
       "scope": "profiles:c01-structural-rank.html",
@@ -1028,7 +1028,7 @@
     },
     {
       "scope": "gallery-replay",
-      "message": "canary replay reuses iframe and stays within precision layer budget"
+      "message": "canary replay reuses iframe and runs element-level cues"
     },
     {
       "scope": "gallery-mobile-list",
@@ -1040,7 +1040,7 @@
     },
     {
       "scope": "gallery-mobile-replay",
-      "message": "only the focused viewer animates within its layer budget"
+      "message": "only the focused viewer animates its element-level cues"
     },
     {
       "scope": "gallery-mobile-fit-toggle",
