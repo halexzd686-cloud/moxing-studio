@@ -17,7 +17,14 @@ from moxing import (  # noqa: E402
     PrecisionInterface,
     render_chart,
 )
-from moxing.core import ChartArtwork, ChartPage, PRESENTATION_TARGETS, html_page  # noqa: E402
+from moxing.core import (  # noqa: E402
+    ChartArtwork,
+    ChartPage,
+    PRESENTATION_LINE_TRACES,
+    PRESENTATION_LOCK_MODES,
+    PRESENTATION_TARGETS,
+    html_page,
+)
 
 
 def main() -> None:
@@ -28,6 +35,14 @@ def main() -> None:
     }
     targets = {
         chart_id: re.search(r'<main[^>]+data-presentation-target="([a-z]+)"', source).group(1)
+        for chart_id, source in rendered.items()
+    }
+    lock_modes = {
+        chart_id: re.search(r'<main[^>]+data-lock-mode="([a-z]+)"', source).group(1)
+        for chart_id, source in rendered.items()
+    }
+    line_traces = {
+        chart_id: re.search(r'<main[^>]+data-line-trace="(true|false)"', source).group(1) == "true"
         for chart_id, source in rendered.items()
     }
     interface_ids = {"C3", "C6", "C8", "C15", "C22"}
@@ -53,6 +68,8 @@ def main() -> None:
     checks = {
         "all charts declare an active carrier": set(active) == set(CHARTS) and set(active.values()) <= {"direct", "embedded", "interface"},
         "all charts declare approved targets": targets == PRESENTATION_TARGETS,
+        "all charts declare approved lock intensity": lock_modes == PRESENTATION_LOCK_MODES,
+        "all charts declare approved line traces": line_traces == PRESENTATION_LINE_TRACES,
         "current rollout leaves only approved C charts on interface": {chart_id for chart_id, mode in active.items() if mode == "interface"} == interface_ids,
         "A group activates direct carrier": {chart_id for chart_id, mode in active.items() if mode == "direct"} == direct_a_ids,
         "B group activates embedded carrier": {chart_id for chart_id, mode in active.items() if mode == "embedded"} == embedded_b_ids,
@@ -61,11 +78,11 @@ def main() -> None:
         "C interface charts keep one evidence identity": all(interface_identity_matches(chart_id, rendered[chart_id]) for chart_id in interface_ids),
         "C interface charts contain no embedded evidence capsule": all('class="pm-local-evidence"' not in rendered[chart_id] for chart_id in interface_ids),
         "direct markup has no split bay": all('<section class="chart-body pi-split-body">' not in rendered[chart_id] and 'class="chart-body pm-direct-body"' in rendered[chart_id] for chart_id in direct_a_ids),
-        "A direct charts use three compiled macro layers": all('data-motion-system="presentation-v2.1"' in rendered[chart_id] and 'class="pm-data-field-layer"' in rendered[chart_id] and 'class="pm-plot-layer"' in rendered[chart_id] and 'class="pm-target-lock"' in rendered[chart_id] for chart_id in direct_a_ids),
+        "A direct charts use two or three compiled macro layers": all('data-motion-system="presentation-v2.1"' in rendered[chart_id] and 'class="pm-data-field-layer"' in rendered[chart_id] and 'class="pm-plot-layer"' in rendered[chart_id] and (('class="pm-target-lock"' not in rendered[chart_id]) if lock_modes[chart_id] == "implicit" else ('class="pm-target-lock"' in rendered[chart_id])) for chart_id in direct_a_ids),
         "A direct charts contain no evidence container": all('evidence bay' not in rendered[chart_id] and 'class="evidence-plate"' not in rendered[chart_id] and 'class="pm-local-evidence"' not in rendered[chart_id] for chart_id in direct_a_ids),
         "embedded carrier renders full-width local evidence": 'class="chart-body pm-embedded-body"' in embedded_html and 'class="pm-local-evidence"' in embedded_html and '<section class="chart-body pi-split-body">' not in embedded_html,
         "embedded positional lock delay remains compatible": EmbeddedEvidence("E14", "", "", 740).lock_delay == 740,
-        "B embedded charts use four compiled macro layers": all('data-motion-system="presentation-v2.1"' in rendered[chart_id] and 'class="pm-data-field-layer"' in rendered[chart_id] and 'class="pm-plot-layer"' in rendered[chart_id] and 'class="pm-local-evidence"' in rendered[chart_id] and 'class="pm-target-lock"' in rendered[chart_id] for chart_id in embedded_b_ids),
+        "B embedded charts use three or four compiled macro layers": all('data-motion-system="presentation-v2.1"' in rendered[chart_id] and 'class="pm-data-field-layer"' in rendered[chart_id] and 'class="pm-plot-layer"' in rendered[chart_id] and 'class="pm-local-evidence"' in rendered[chart_id] and (('class="pm-target-lock"' not in rendered[chart_id]) if lock_modes[chart_id] == "implicit" else ('class="pm-target-lock"' in rendered[chart_id])) for chart_id in embedded_b_ids),
         "B embedded charts contain no detached evidence plate": all('class="pi-evidence-bay"' not in rendered[chart_id] and 'class="evidence-plate"' not in rendered[chart_id] for chart_id in embedded_b_ids),
         "legacy PrecisionInterface name aliases EvidenceInterface": PrecisionInterface is EvidenceInterface,
         "legacy ChartArtwork precision argument resolves to interface carrier": legacy_artwork.presentation is legacy_spec and legacy_artwork.presentation.mode == "interface",

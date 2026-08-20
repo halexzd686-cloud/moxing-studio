@@ -25,11 +25,14 @@
   function replay(stage = activeStage()) {
     if (!stage) return;
     clearTimeout(replayTimer);
-    stages.forEach((item) => item.classList.remove("is-replaying"));
-    requestAnimationFrame(() => requestAnimationFrame(() => {
+    stages.forEach((item) => item.classList.remove("is-replaying", "is-preparing"));
+    stage.classList.add("is-preparing");
+    void stage.offsetWidth;
+    requestAnimationFrame(() => {
       stage.classList.add("is-replaying");
+      stage.classList.remove("is-preparing");
       replayTimer = window.setTimeout(() => stage.classList.remove("is-replaying"), 1700);
-    }));
+    });
   }
 
   function toggleSurface() {

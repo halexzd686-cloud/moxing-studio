@@ -4,7 +4,7 @@
 >
 > Branch: `codex/v2.1-production-rollout`
 >
-> Status: A / Direct Canvas, B / Embedded Evidence, C / Evidence Interface, and responsive desktop/mobile Gallery complete
+> Status: A / Direct Canvas, B / Embedded Evidence, C / Evidence Interface, responsive Gallery, continuous replay, and semantic lock intensity complete
 >
 > Visual review: C1 Direct Canvas, C14 Embedded Evidence, and C6 Evidence Interface approved on 2026-08-20
 
@@ -13,6 +13,8 @@
 - Canonical canvas: 1280×720, responsive scale through SVG/viewer.
 - Final geometry is generated in Python and remains readable without JavaScript.
 - `ALIGN`, `DOCK`, `ROUTE`, and `LOCK` remain authoring semantics; production compiles them into 2–4 macro carriers selected independently from layout mode.
+- `LOCK` resolves to `implicit`, `micro`, or `explicit`; it is a semantic terminal state and no longer requires an ornament on every chart.
+- Replay uses an `is-preparing` first-frame contract plus a single atomic playback handoff. Whole SVG carriers do not translate; C3/C12/C18/C19/C23/C24 use true ordered path traces.
 - A / Direct Canvas preserves the full plot; B / Embedded Evidence uses verified natural whitespace; C / Evidence Interface reserves a 220px side bay and 28px safety gap.
 - Approved mapping: A = C1/C2/C4/C5/C7/C9/C10/C11/C12/C20; B = C13/C14/C16/C17/C18/C19/C21/C23/C24; C = C3/C6/C8/C15/C22.
 - `brief`, `standard`, and `story` timing profiles share one motion grammar.
@@ -68,16 +70,17 @@ If Playwright is installed outside the project, set `MOXING_PLAYWRIGHT_PATH`. Se
 ## Current QA
 
 - 103 boundary render cases pass.
-- 261 browser/static/motion/layout/readability/gallery-scheduling/frame-pacing/mobile-viewer checks pass; see `docs/previews/qa-report.json`.
-- The presentation mapping passes 13 checks and the three-carrier A+B+C architecture passes 19 checks.
-- All ten A charts contain no side bay or detached evidence card; each compiles playback to `DATA_FIELD → RELATIONSHIP → TARGET_LOCK` with three composited layers.
-- All nine B charts use the full-width Embedded Evidence carrier and compile playback to `DATA_FIELD → RELATIONSHIP → LOCAL_EVIDENCE → TARGET_LOCK` with four composited layers.
+- 262 browser/static/motion/layout/readability/gallery-scheduling/frame-pacing/mobile-viewer checks pass; see `docs/previews/qa-report.json`.
+- The presentation mapping passes 14 checks and the three-carrier A+B+C architecture passes 21 checks.
+- All ten A charts contain no side bay or detached evidence card; they compile to `DATA_FIELD → RELATIONSHIP → [TARGET_LOCK]` with 2–3 macro layers.
+- All nine B charts use the full-width Embedded Evidence carrier and compile to `DATA_FIELD → RELATIONSHIP → LOCAL_EVIDENCE → [TARGET_LOCK]` with 3–4 macro layers.
 - Their evidence capsules occupy chart-specific natural whitespace: threshold, triangular matrix void, empty quadrant, chart endpoint, panel gap, or distribution tail. No B chart uses a detached left evidence plate.
 - All five C charts preserve their approved trend, ledger, stage, flow, and matrix compositions on one shared Evidence Interface builder. Each compiles to `DATA_FIELD → EVIDENCE_BAY → TERMINAL → TARGET_LOCK`, and its evidence plate, terminal, and target address share one ID.
 - Thirteen signature locked-frame PNGs form the current visual baseline; all three production groups are represented while the approved C compositions remain geometrically unchanged.
 - The approved four-chart Precision Interface Lab passes 17 focused layout, motion-layer, and narrow-viewport checks.
 - All 24 templates render with and without JavaScript.
 - Reduced-motion mode settles immediately.
+- Replay continuity checks prove the prepared first frame is active before playback and the completed path is never exposed during reset.
 - No external runtime requests.
 - All 24 templates scan detached and embedded evidence against critical plot geometry with zero collisions; line-path checks sample actual SVG geometry instead of relying on broad path bounding boxes.
 - All 24 templates check filled-mark label contrast on both light and dark surfaces.

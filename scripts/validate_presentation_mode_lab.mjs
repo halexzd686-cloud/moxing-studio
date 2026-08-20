@@ -27,7 +27,7 @@ check("maximum four macro layers per mode", Object.values(sections).every((secti
 check("distinct motion grammars", ["assemble", "scan", "route"].every((motion) => html.includes(`data-motion="${motion}"`)));
 check("surface tokens", css.includes('body[data-surface="dark"]') && css.includes("--signal:#d85a36"));
 check("reduced-motion fallback", css.includes("prefers-reduced-motion:reduce"));
-check("two-frame replay restart", js.includes("requestAnimationFrame(() => requestAnimationFrame"));
+check("prepared single-frame replay restart", js.includes('classList.add("is-preparing")') && js.includes("void stage.offsetWidth") && !js.includes("requestAnimationFrame(() => requestAnimationFrame"));
 check("responsive stage scaling", js.includes("viewport.clientWidth / 1280"));
 
 for (const result of checks) console.log(`${result.ok ? "PASS" : "FAIL"} ${result.name}`);

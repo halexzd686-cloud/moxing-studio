@@ -16,6 +16,14 @@ PRESENTATION_TARGETS = {
     item["id"]: {"A": "direct", "B": "embedded", "C": "interface"}[item["mode"]]
     for item in PRESENTATION_CONTRACT["charts"]
 }
+PRESENTATION_LOCK_MODES = {
+    item["id"]: item.get("lockMode", "explicit")
+    for item in PRESENTATION_CONTRACT["charts"]
+}
+PRESENTATION_LINE_TRACES = {
+    item["id"]: bool(item.get("lineTrace", False))
+    for item in PRESENTATION_CONTRACT["charts"]
+}
 W, H = TOKENS["geometry"]["viewbox"]
 
 
@@ -308,6 +316,8 @@ class ChartPage:
     mode: str = "editorial"
     presentation: PresentationCarrier = field(default_factory=DirectCanvas)
     presentation_target: str = "direct"
+    lock_mode: str = "explicit"
+    line_trace: bool = False
 
 
 def _surface_css(name: str, values: dict[str, Any]) -> str:
@@ -357,6 +367,8 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
     header_ticks = "<i></i>" * 16
     presentation = page.presentation
     carrier_name = presentation.mode
+    lock_mode = page.lock_mode if page.lock_mode in {"implicit", "micro", "explicit"} else "explicit"
+    foreground_svg = "" if lock_mode == "implicit" else presentation.foreground_svg
     interface = presentation if isinstance(presentation, EvidenceInterface) else None
     embedded = presentation if isinstance(presentation, EmbeddedEvidence) else None
     direct = presentation if isinstance(presentation, DirectCanvas) else None
@@ -373,7 +385,7 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
       <svg class="pi-evidence-svg" viewBox="{esc(interface.evidence_viewbox)}" aria-hidden="true">{interface.evidence_svg}</svg>
       <div class="pi-bay-terminal"><span>{esc(interface.evidence_id)}</span><i></i><b></b></div>
     </aside>
-    <svg class="pi-data-field" viewBox="{fmt(interface.plot_x)} 0 {fmt(plot_width)} {H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="{esc(page.title)}" style="--pi-lock-delay:{interface.lock_delay}ms">{page.svg}<g class="pi-overlay pi-overlay--foreground">{interface.foreground_svg}</g></svg>
+    <svg class="pi-data-field" viewBox="{fmt(interface.plot_x)} 0 {fmt(plot_width)} {H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="{esc(page.title)}" style="--pi-lock-delay:{interface.lock_delay}ms">{page.svg}<g class="pi-overlay pi-overlay--foreground">{foreground_svg}</g></svg>
   </section>'''
     elif embedded:
         plot_layer = f'<g class="pm-plot-layer">{embedded.plot_svg}</g>' if embedded.plot_svg else ""
@@ -381,11 +393,12 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
         evidence_story = embedded.evidence_delay_story if embedded.evidence_delay_story is not None else round(embedded.evidence_delay * 1.8)
         lock_brief = embedded.lock_delay_brief if embedded.lock_delay_brief is not None else round(embedded.lock_delay * .62)
         lock_story = embedded.lock_delay_story if embedded.lock_delay_story is not None else round(embedded.lock_delay * 1.8)
+        target_layer = f'<g class="pm-target-lock">{foreground_svg}</g>' if foreground_svg else ""
         body_markup = f'''<section class="chart-body pm-embedded-body">
-    <svg class="pm-data-field pm-embedded-field" viewBox="0 0 {W} {H}" role="img" aria-label="{esc(page.title)}" style="--pm-evidence-delay:{embedded.evidence_delay}ms;--pm-evidence-delay-brief:{evidence_brief}ms;--pm-evidence-delay-story:{evidence_story}ms;--pm-lock-delay:{embedded.lock_delay}ms;--pm-lock-delay-brief:{lock_brief}ms;--pm-lock-delay-story:{lock_story}ms"><g class="pm-data-field-layer">{page.svg}</g>{plot_layer}<g class="pm-local-evidence" aria-label="{esc(embedded.evidence_id)} local evidence">{embedded.evidence_svg}</g><g class="pm-target-lock">{embedded.foreground_svg}</g></svg>
+    <svg class="pm-data-field pm-embedded-field" viewBox="0 0 {W} {H}" role="img" aria-label="{esc(page.title)}" style="--pm-evidence-delay:{embedded.evidence_delay}ms;--pm-evidence-delay-brief:{evidence_brief}ms;--pm-evidence-delay-story:{evidence_story}ms;--pm-lock-delay:{embedded.lock_delay}ms;--pm-lock-delay-brief:{lock_brief}ms;--pm-lock-delay-story:{lock_story}ms"><g class="pm-data-field-layer">{page.svg}</g>{plot_layer}<g class="pm-local-evidence" aria-label="{esc(embedded.evidence_id)} local evidence">{embedded.evidence_svg}</g>{target_layer}</svg>
   </section>'''
     else:
-        foreground = f'<g class="pm-target-lock">{presentation.foreground_svg}</g>' if presentation.foreground_svg else ""
+        foreground = f'<g class="pm-target-lock">{foreground_svg}</g>' if foreground_svg else ""
         plot_layer = f'<g class="pm-plot-layer">{presentation.plot_svg}</g>' if direct and direct.plot_svg else ""
         direct_style = ""
         if direct:
@@ -499,7 +512,7 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   .pi-bay-terminal {{ height:18px; display:grid; grid-template-columns:auto minmax(20px,1fr) 7px; align-items:center; gap:7px; font-family:{index_font}; font-size:9px; font-weight:750; font-variation-settings:'ROND' 0,'wght' 750; letter-spacing:.06em; color:var(--signal); }}
   .pi-bay-terminal i {{ height:1px; background:var(--rail); }}
   .pi-bay-terminal b {{ display:block; width:7px; height:7px; border:1.5px solid var(--signal); background:var(--bg); }}
-  .pi-data-field {{ display:block; width:100%!important; height:100%!important; min-width:0; overflow:hidden; contain:layout paint; isolation:isolate; backface-visibility:hidden; transform:translateZ(0); }}
+  .pi-data-field {{ display:block; width:100%!important; height:100%!important; min-width:0; overflow:hidden; contain:layout paint; isolation:isolate; }}
   .pi-evidence-bay .evidence-plate .panel-stroke {{ stroke:var(--ink); stroke-width:1.2; }}
   svg .pi-socket {{ fill:var(--bg); stroke:var(--ink); stroke-width:1.5; vector-effect:non-scaling-stroke; }}
   svg .pi-socket-signal {{ fill:var(--signal); stroke:var(--on-signal); stroke-width:1; vector-effect:non-scaling-stroke; }}
@@ -515,19 +528,48 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   svg .pm-address {{ font-family:{index_font}; fill:var(--matrix-strong); font-weight:700; font-variation-settings:'ROND' 0,'wght' 700; letter-spacing:.06em; }}
   svg .pm-address-signal {{ fill:var(--signal); }}
   svg .pm-focus-corner {{ fill:none; stroke:var(--signal); stroke-width:2; vector-effect:non-scaling-stroke; }}
+  svg .pm-micro-bracket {{ fill:none; stroke:var(--signal); stroke-width:1; vector-effect:non-scaling-stroke; }}
+  [data-lock-mode="micro"] .pm-target-lock .pm-focus-corner,
+  [data-lock-mode="micro"] .pm-target-lock .pm-lock-ring,
+  [data-lock-mode="micro"] .pm-target-lock .pm-lock-cross,
+  [data-lock-mode="micro"] .pi-overlay .pi-focus-corner,
+  [data-lock-mode="micro"] .pi-overlay .pi-lock-cross {{ display:none; }}
+  [data-lock-mode="micro"] .pm-target-lock .pm-socket-signal {{ transform-box:fill-box; transform-origin:center; transform:scale(.56); }}
+  [data-lock-mode="micro"] .pi-overlay .pi-lock-ring {{ r:4px; fill:var(--signal); stroke:none; }}
+  [data-lock-mode="micro"] .pm-address-signal,
+  [data-lock-mode="micro"] .pi-address-signal {{ opacity:.82; }}
   [data-motion-system="presentation-v2.1"] [data-motion] {{ animation:none!important; }}
-  @keyframes pm-field-enter {{ from {{ opacity:.18; transform:translate3d(-7px,0,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
-  @keyframes pm-plot-enter {{ from {{ opacity:0; transform:translate3d(0,10px,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
+  @keyframes pm-field-enter {{ from {{ opacity:.58; }} to {{ opacity:1; }} }}
+  @keyframes pm-plot-enter {{ from {{ opacity:0; }} to {{ opacity:1; }} }}
   @keyframes pm-lock-settle {{ from {{ opacity:0; transform:scale(.96); }} to {{ opacity:1; transform:scale(1); }} }}
-  @keyframes pm-evidence-enter {{ from {{ opacity:0; transform:translate3d(-5px,0,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
+  @keyframes pm-evidence-enter {{ from {{ opacity:0; }} to {{ opacity:1; }} }}
+  @keyframes mx-compiled-trace {{ from {{ stroke-dashoffset:1; }} to {{ stroke-dashoffset:0; }} }}
+  @keyframes mx-compiled-pin {{ from {{ opacity:0; transform:translateY(var(--dy)) scale(.35); }} to {{ opacity:1; transform:translateY(0) scale(1); }} }}
   .pm-data-field-layer,.pm-plot-layer,.pm-local-evidence,.pm-target-lock {{ transform-box:fill-box; transform-origin:center; }}
-  .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer {{ animation:pm-field-enter var(--pm-field-duration,680ms) {precision_motion['ease']} var(--pm-field-delay,40ms) both; will-change:transform,opacity; }}
-  .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer {{ animation:pm-plot-enter var(--pm-plot-duration,620ms) {precision_motion['ease']} var(--pm-plot-delay,320ms) both; will-change:transform,opacity; }}
+  .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer {{ animation:pm-field-enter var(--pm-field-duration,520ms) {precision_motion['ease']} var(--pm-field-delay,0ms) both; will-change:opacity; }}
+  .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer {{ animation:pm-plot-enter var(--pm-plot-duration,560ms) {precision_motion['ease']} var(--pm-plot-delay,140ms) both; will-change:opacity; }}
   .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,980ms)) both; will-change:transform,opacity; }}
-  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer {{ animation:pm-field-enter var(--pm-field-duration,680ms) {precision_motion['ease']} var(--pm-field-delay,40ms) both; will-change:transform,opacity; }}
-  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer {{ animation:pm-plot-enter var(--pm-plot-duration,620ms) {precision_motion['ease']} var(--pm-plot-delay,300ms) both; will-change:transform,opacity; }}
-  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence {{ animation:pm-evidence-enter var(--pm-evidence-duration,360ms) {precision_motion['ease']} var(--pm-active-evidence-delay,var(--pm-evidence-delay,760ms)) both; will-change:transform,opacity; }}
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer {{ animation:pm-field-enter var(--pm-field-duration,520ms) {precision_motion['ease']} var(--pm-field-delay,0ms) both; will-change:opacity; }}
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer {{ animation:pm-plot-enter var(--pm-plot-duration,560ms) {precision_motion['ease']} var(--pm-plot-delay,120ms) both; will-change:opacity; }}
+  .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence {{ animation:pm-evidence-enter var(--pm-evidence-duration,360ms) {precision_motion['ease']} var(--pm-active-evidence-delay,var(--pm-evidence-delay,760ms)) both; will-change:opacity; }}
   .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ animation:pm-lock-settle var(--pm-lock-duration,260ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,1080ms)) both; will-change:transform,opacity; }}
+  .motion-enabled.is-playing[data-line-trace="true"] [data-choreo="trace"] {{ stroke-dasharray:1; animation:mx-compiled-trace var(--active-duration,var(--duration,720ms)) linear var(--active-delay,var(--delay,0ms)) both!important; }}
+  .motion-enabled.is-playing[data-line-trace="true"] [data-choreo="pin"] {{ animation:mx-compiled-pin var(--active-duration,var(--duration,220ms)) {precision_motion['ease']} var(--active-delay,var(--delay,0ms)) both!important; transform-box:fill-box; transform-origin:center; }}
+  .motion-enabled.is-paused[data-line-trace="true"] [data-choreo="trace"],
+  .motion-enabled.is-paused[data-line-trace="true"] [data-choreo="pin"] {{ animation-play-state:paused!important; }}
+  .motion-enabled.is-preparing[data-presentation-carrier="direct"] .pm-data-field-layer,
+  .motion-enabled.is-preparing[data-presentation-carrier="embedded"] .pm-data-field-layer {{ opacity:.58; }}
+  .motion-enabled.is-preparing[data-presentation-carrier="direct"] .pm-plot-layer,
+  .motion-enabled.is-preparing[data-presentation-carrier="direct"] .pm-target-lock,
+  .motion-enabled.is-preparing[data-presentation-carrier="embedded"] .pm-plot-layer,
+  .motion-enabled.is-preparing[data-presentation-carrier="embedded"] .pm-local-evidence,
+  .motion-enabled.is-preparing[data-presentation-carrier="embedded"] .pm-target-lock {{ opacity:0; }}
+  .motion-enabled.is-preparing[data-line-trace="true"] [data-choreo="trace"] {{ stroke-dasharray:1; stroke-dashoffset:1; }}
+  .motion-enabled.is-preparing[data-line-trace="true"] [data-choreo="pin"] {{ opacity:0; }}
+  @media (prefers-reduced-motion:reduce) {{
+    .motion-enabled.is-playing[data-line-trace="true"] [data-choreo="trace"],
+    .motion-enabled.is-playing[data-line-trace="true"] [data-choreo="pin"] {{ animation:none!important; }}
+  }}
   .motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-paused[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ animation-play-state:paused!important; }}
   .motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.motion-enabled.is-paused[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ animation-play-state:paused!important; }}
   .is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.is-complete[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ will-change:auto; }}
@@ -535,21 +577,26 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   @media (prefers-reduced-motion:reduce) {{ .motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-playing[data-presentation-carrier="direct"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ animation:none!important; }} }}
   @media (prefers-reduced-motion:reduce) {{ .motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-data-field-layer,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-plot-layer,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-local-evidence,.motion-enabled.is-playing[data-presentation-carrier="embedded"][data-motion-system="presentation-v2.1"] .pm-target-lock {{ animation:none!important; }} }}
   [data-interface="precision-v2.1"] [data-motion] {{ animation:none!important; }}
-  @keyframes pi-field-enter {{ from {{ opacity:.18; transform:translate3d(-7px,0,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
-  @keyframes pi-evidence-enter {{ from {{ opacity:0; transform:translate3d(-5px,0,0); }} to {{ opacity:1; transform:translate3d(0,0,0); }} }}
+  @keyframes pi-field-enter {{ from {{ opacity:.58; }} to {{ opacity:1; }} }}
+  @keyframes pi-evidence-enter {{ from {{ opacity:0; }} to {{ opacity:1; }} }}
   @keyframes pi-terminal-handshake {{ from {{ opacity:.2; }} to {{ opacity:1; }} }}
   @keyframes pi-lock-settle {{ from {{ opacity:0; }} to {{ opacity:1; }} }}
-  .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-data-field {{ animation:pi-field-enter {precision_motion['field']['duration']}ms {precision_motion['ease']} {precision_motion['field']['delay']}ms both; will-change:transform,opacity; }}
-  .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-evidence-bay {{ animation:pi-evidence-enter {precision_motion['evidence']['duration']}ms {precision_motion['ease']} {precision_motion['evidence']['delay']}ms both; will-change:transform,opacity; backface-visibility:hidden; }}
+  .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-data-field {{ animation:pi-field-enter {precision_motion['field']['duration']}ms {precision_motion['ease']} {precision_motion['field']['delay']}ms both; will-change:opacity; }}
+  .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-evidence-bay {{ animation:pi-evidence-enter {precision_motion['evidence']['duration']}ms {precision_motion['ease']} {precision_motion['evidence']['delay']}ms both; will-change:opacity; }}
   .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-bay-terminal {{ animation:pi-terminal-handshake {precision_motion['terminal']['duration']}ms linear var(--pi-terminal-delay,860ms) both; }}
   .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-lock-ring,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-focus-corner {{ animation:pi-lock-settle {precision_motion['lock']['duration']}ms linear var(--pi-lock-delay,980ms) both; }}
   .motion-enabled.is-paused[data-interface="precision-v2.1"] .pi-data-field,.motion-enabled.is-paused[data-interface="precision-v2.1"] .pi-evidence-bay,.motion-enabled.is-paused[data-interface="precision-v2.1"] .pi-bay-terminal,.motion-enabled.is-paused[data-interface="precision-v2.1"] .pi-lock-ring,.motion-enabled.is-paused[data-interface="precision-v2.1"] .pi-focus-corner {{ animation-play-state:paused!important; }}
+  .motion-enabled.is-preparing[data-interface="precision-v2.1"] .pi-data-field {{ opacity:.58; }}
+  .motion-enabled.is-preparing[data-interface="precision-v2.1"] .pi-evidence-bay {{ opacity:0; }}
+  .motion-enabled.is-preparing[data-interface="precision-v2.1"] .pi-bay-terminal {{ opacity:.2; }}
+  .motion-enabled.is-preparing[data-interface="precision-v2.1"] .pi-lock-ring,
+  .motion-enabled.is-preparing[data-interface="precision-v2.1"] .pi-focus-corner {{ opacity:0; }}
   .is-complete[data-interface="precision-v2.1"] .pi-data-field,.is-complete[data-interface="precision-v2.1"] .pi-evidence-bay {{ will-change:auto; }}
   @media (prefers-reduced-motion:reduce) {{ .motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-data-field,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-evidence-bay,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-bay-terminal,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-lock-ring,.motion-enabled.is-playing[data-interface="precision-v2.1"] .pi-focus-corner {{ animation:none!important; }} }}
 </style>
 </head>
 <body>
-<main class=\"chart-container\" id=\"moxing-chart\" data-total=\"{page.total_ms}\" data-total-brief=\"{page.profile_totals.get('brief', round(page.total_ms * .68))}\" data-total-standard=\"{page.profile_totals.get('standard', page.total_ms)}\" data-total-story=\"{page.profile_totals.get('story', round(page.total_ms * 1.8))}\" data-mode=\"{esc(page.mode)}\" data-choreography=\"{esc(page.choreography)}\" data-motion-system=\"{esc(motion_system)}\" data-presentation-carrier=\"{esc(carrier_name)}\" data-presentation-target=\"{esc(page.presentation_target)}\"{root_interface}>
+<main class=\"chart-container\" id=\"moxing-chart\" data-total=\"{page.total_ms}\" data-total-brief=\"{page.profile_totals.get('brief', round(page.total_ms * .68))}\" data-total-standard=\"{page.profile_totals.get('standard', page.total_ms)}\" data-total-story=\"{page.profile_totals.get('story', round(page.total_ms * 1.8))}\" data-mode=\"{esc(page.mode)}\" data-choreography=\"{esc(page.choreography)}\" data-motion-system=\"{esc(motion_system)}\" data-presentation-carrier=\"{esc(carrier_name)}\" data-presentation-target=\"{esc(page.presentation_target)}\" data-lock-mode=\"{esc(lock_mode)}\" data-line-trace=\"{'true' if page.line_trace else 'false'}\"{root_interface}>
   <header class=\"chart-header\">
     <div class=\"chart-code\"><div class=\"mx-code\"><div class=\"mx-code__top\"><strong>{esc(display_code)}</strong><span>SYS / 21</span></div><div class=\"mx-code__name\">{esc(page.public_name.upper())}</div><div class=\"mx-code__state\"><span class=\"mx-dots\" aria-hidden=\"true\"><i></i><i></i><i></i><i></i><i></i><i></i></span>{esc(page.interface_state)}</div></div></div>
     <div><h1 class=\"chart-title\">{esc(page.title)}</h1><div class=\"chart-subtitle\">{esc(page.subtitle)}</div><div class=\"mx-meta\"><span>FAMILY / {esc(page.family)}</span><span>DATA / {esc(page.data_signature)}</span><span data-state>STATE / READY</span></div></div>
@@ -606,12 +653,13 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
     el.style.setProperty('--active-duration',Math.round(Number.isFinite(profileDuration)?profileDuration:rawDuration*scale)+'ms');
   }});
   let timer=0,frame=0;
-  const settle=()=>{{ clearTimeout(timer); cancelAnimationFrame(frame); root.classList.remove('is-playing','is-paused'); root.classList.add('is-complete'); const b=root.querySelector('[data-action=pause]'); if(b)b.textContent='Ⅱ'; }};
+  const settle=()=>{{ clearTimeout(timer); cancelAnimationFrame(frame); root.classList.remove('is-playing','is-paused','is-preparing'); root.classList.add('is-complete'); const b=root.querySelector('[data-action=pause]'); if(b)b.textContent='Ⅱ'; }};
   const replay=()=>{{
     clearTimeout(timer); cancelAnimationFrame(frame); root.classList.remove('is-playing','is-complete','is-paused');
     if(reduce){{settle();return;}}
-    root.style.setProperty('--motion-scale',scale); root.classList.add('motion-enabled');
-    frame=requestAnimationFrame(()=>{{frame=requestAnimationFrame(()=>{{root.classList.add('is-playing');timer=setTimeout(settle,total+120);}});}});
+    root.style.setProperty('--motion-scale',scale); root.classList.add('motion-enabled','is-preparing');
+    void root.offsetWidth;
+    frame=requestAnimationFrame(()=>{{root.classList.add('is-playing');root.classList.remove('is-preparing');timer=setTimeout(settle,total+120);}});
   }};
   const pause=()=>{{ root.classList.toggle('is-paused'); const b=root.querySelector('[data-action=pause]'); b.textContent=root.classList.contains('is-paused')?'▶':'Ⅱ'; }};
   root.querySelector('[data-action=replay]').addEventListener('click',replay);

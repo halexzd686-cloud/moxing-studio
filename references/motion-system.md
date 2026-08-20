@@ -15,11 +15,13 @@ These primitives are authoring semantics, not a requirement to animate every mar
 
 Production playback is selected from the chart's presentation mode, not from visual preference:
 
-- **A / Direct Canvas:** `DATA_FIELD → RELATIONSHIP → TARGET_LOCK`, exactly 3 macro layers.
-- **B / Embedded Evidence:** `DATA_FIELD → RELATIONSHIP → LOCAL_EVIDENCE → TARGET_LOCK`, exactly 4 compiled macro layers in production.
-- **C / Evidence Interface:** `DATA_FIELD → EVIDENCE_BAY → TERMINAL → TARGET_LOCK`, maximum 4 macro layers.
+- **A / Direct Canvas:** `DATA_FIELD → RELATIONSHIP → [TARGET_LOCK]`, 2–3 macro layers.
+- **B / Embedded Evidence:** `DATA_FIELD → RELATIONSHIP → LOCAL_EVIDENCE → [TARGET_LOCK]`, 3–4 macro layers.
+- **C / Evidence Interface:** `DATA_FIELD → EVIDENCE_BAY → TERMINAL → [TARGET_LOCK]`, maximum 4 macro layers.
 
-The complete plot enters as one composited `DATA_FIELD` layer. It absorbs `ALIGN`, `DOCK`, and ordinary repeated marks. A separate relationship carrier is allowed only for a genuine trace, route, or matrix address. Do not animate individual bars, cells, candles, glyphs, labels, or repeated nodes.
+The static field enters without spatial translation, so axes, labels, and long vector strokes never jump between rasterised layers. It absorbs `ALIGN`, `DOCK`, and ordinary repeated marks. A separate relationship carrier is allowed only for a genuine trace, route, or matrix address. Ordered line families may additionally draw a small number of `pathLength="1"` traces and endpoint pins; do not animate individual bars, cells, candles, glyphs, labels, or repeated nodes.
+
+`LOCK` is a semantic terminal state, not a mandatory ornament. Resolve it as `implicit` when colour/position already identifies the conclusion, `micro` for a compact endpoint/address, and `explicit` only when the target remains ambiguous or must connect to evidence.
 
 Only C mode uses the cropped split body. Its evidence plate belongs to an independent SVG in the 220px side bay; only ports, addresses, and the target lock remain in the plot foreground. B mode keeps the full plot and docks one local capsule in verified natural whitespace. A mode keeps the full plot and adds no evidence container.
 
@@ -68,7 +70,7 @@ Do not apply a family because its movement looks attractive. Select it from the 
 - Without JavaScript, the final locked state is immediately visible.
 - A standalone chart may play on first viewport entry. Controls provide replay and pause/resume.
 - A gallery must disable iframe autoplay and remain completely static until the user requests replay. Replay settles every other iframe and calls the existing runtime without reloading the selected iframe.
-- Replay restarts on consecutive animation frames; do not force synchronous layout with `offsetWidth`.
+- Replay first enters `is-preparing`, which applies the visible first frame, then forces one layout boundary and atomically swaps to `is-playing` on the next frame. Never expose the completed frame between reset and playback.
 - Honour `prefers-reduced-motion`; show the final state without staged motion.
 - Use deterministic delays. Do not use random motion, bounce, elastic easing, or endless loops.
 - Animation ends in a readable still frame suitable for SVG/PNG export.
@@ -78,6 +80,6 @@ Do not apply a family because its movement looks attractive. Select it from the 
 - `ALIGN`: short line draw or 4–8 px fade/shift; 140–260 ms.
 - `DOCK`: 12–32 px translation toward a datum with decisive cubic easing; 420–850 ms.
 - `ROUTE`: path draw or sequential activation in the true data direction; 320–700 ms.
-- `LOCK`: 4–8% scale settle plus signal reveal; 180–340 ms.
+- `LOCK`: implicit signal hold, compact endpoint reveal, or 4–8% explicit focus settle; 180–340 ms when visible.
 
 Only elements with real semantic relationships should route or pulse. Decorative scanning is not a default primitive.

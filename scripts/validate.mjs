@@ -31,23 +31,23 @@ const exemplars = {
   "c01-structural-rank.html": { family: "rail-rise", cue: "rail-rise", animation: "pm-field-enter", direct: true, directLayers: 3 },
   "c02-ranked-rail.html": { family: "ranked-rail", cue: "rail-slide", animation: "pm-field-enter", direct: true, directLayers: 3 },
   "c03-signal-trend.html": { family: "path-trace", cue: "trace", animation: "pi-field-enter", precision: true },
-  "c04-composition-field.html": { family: "field-aggregation", cue: "field-seat", animation: "pm-field-enter", direct: true, directLayers: 3 },
-  "c05-composition-bands.html": { family: "band-routing", cue: "band-fill", animation: "pm-field-enter", direct: true, directLayers: 3 },
+  "c04-composition-field.html": { family: "field-aggregation", cue: "field-seat", animation: "pm-field-enter", direct: true, directLayers: 2 },
+  "c05-composition-bands.html": { family: "band-routing", cue: "band-fill", animation: "pm-field-enter", direct: true, directLayers: 2 },
   "c06-ledger-steps.html": { family: "ledger-interlock", cue: "field-seat", animation: "pi-field-enter", precision: true },
-  "c07-milestone-lanes.html": { family: "milestone-routing", cue: "interlock", animation: "pm-field-enter", direct: true, directLayers: 3 },
+  "c07-milestone-lanes.html": { family: "milestone-routing", cue: "interlock", animation: "pm-field-enter", direct: true, directLayers: 2 },
   "c08-stage-channel.html": { family: "stage-interlock", cue: "interlock", animation: "pi-field-enter", precision: true },
-  "c09-metric-lockup.html": { family: "metric-readout", cue: "readout", animation: "pm-field-enter", direct: true, directLayers: 3 },
+  "c09-metric-lockup.html": { family: "metric-readout", cue: "readout", animation: "pm-field-enter", direct: true, directLayers: 2 },
   "c10-decision-interface.html": { family: "decision-readout", cue: "readout", animation: "pm-field-enter", direct: true, directLayers: 3 },
-  "c11-sector-lock.html": { family: "sector-lock", cue: "field-seat", animation: "pm-field-enter", direct: true, directLayers: 3 },
-  "c12-metric-small-multiples.html": { family: "metric-pulse", cue: "trace", animation: "pm-field-enter", direct: true, directLayers: 3 },
+  "c11-sector-lock.html": { family: "sector-lock", cue: "field-seat", animation: "pm-field-enter", direct: true, directLayers: 2 },
+  "c12-metric-small-multiples.html": { family: "metric-pulse", cue: "trace", animation: "pm-field-enter", direct: true, directLayers: 2 },
   "c13-pareto-contribution.html": { family: "pareto-routing", cue: "rail-rise", animation: "pm-field-enter", embedded: true, embeddedLayers: 4 },
   "c14-cohort-matrix.html": { family: "cohort-seating", cue: "field-seat", animation: "pm-field-enter", embedded: true, embeddedLayers: 4 },
   "c15-commerce-flow.html": { family: "flow-routing", cue: "trace", animation: "pi-field-enter", precision: true },
-  "c16-decision-bubble-matrix.html": { family: "quadrant-lock", cue: "pin", animation: "pm-field-enter", embedded: true, embeddedLayers: 4 },
+  "c16-decision-bubble-matrix.html": { family: "quadrant-lock", cue: "pin", animation: "pm-field-enter", embedded: true, embeddedLayers: 3 },
   "c17-market-candles.html": { family: "market-build", cue: "field-seat", animation: "pm-field-enter", embedded: true, embeddedLayers: 4 },
   "c18-performance-drawdown.html": { family: "drawdown-routing", cue: "trace", animation: "pm-field-enter", embedded: true, embeddedLayers: 4 },
   "c19-yield-curve.html": { family: "curve-routing", cue: "trace", animation: "pm-field-enter", embedded: true, embeddedLayers: 4 },
-  "c20-sensitivity-matrix.html": { family: "matrix-seating", cue: "field-seat", animation: "pm-field-enter", direct: true, directLayers: 3 },
+  "c20-sensitivity-matrix.html": { family: "matrix-seating", cue: "field-seat", animation: "pm-field-enter", direct: true, directLayers: 2 },
   "c21-distribution-profile.html": { family: "distribution-build", cue: "rail-rise", animation: "pm-field-enter", embedded: true, embeddedLayers: 4 },
   "c22-correlation-matrix.html": { family: "matrix-seating", cue: "field-seat", animation: "pi-field-enter", precision: true },
   "c23-forecast-fan.html": { family: "forecast-routing", cue: "trace", animation: "pm-field-enter", embedded: true, embeddedLayers: 4 },
@@ -101,6 +101,7 @@ for (const file of chartFiles) {
   if (/class="[^"]*index[^"]*"[^>]*font-size="11"/.test(source)) fail(scope, "dot-matrix text below 12px");
   if (!source.includes('data-motion="align"') || !source.includes('data-motion="dock"') || !source.includes('data-motion="lock"')) fail(scope, "missing motion primitives");
   if (!source.includes('data-total-brief="') || !source.includes('data-total-standard="') || !source.includes('data-total-story="')) fail(scope, "missing profile totals");
+  if (!/data-lock-mode="(?:implicit|micro|explicit)"/.test(source) || !/data-line-trace="(?:true|false)"/.test(source)) fail(scope, "missing lock or line-trace contract");
   if (!source.includes("prefers-reduced-motion") || !source.includes("window.Moxing")) fail(scope, "missing motion accessibility/runtime API");
   if (/<canvas\b/i.test(source)) fail(scope, "canvas is not allowed");
   if (/(?:src|href)\s*=\s*["']https?:\/\//i.test(source) || /url\(\s*["']?https?:\/\//i.test(source)) fail(scope, "external runtime URL");
@@ -118,8 +119,8 @@ for (const [file, expected] of Object.entries(exemplars)) {
   if (!source.includes(`data-choreography="${expected.family}"`)) fail(scope, `missing ${expected.family} family`);
   if (!source.includes(`data-choreo="${expected.cue}"`)) fail(scope, `missing ${expected.cue} cue`);
   if (expected.precision && (!source.includes('data-motion-system="precision-v2.1"') || !source.includes('class="chart-body pi-split-body"') || !source.includes('class="pi-evidence-bay"') || !source.includes('class="pi-data-field"') || !source.includes('class="pi-bay-terminal"') || !source.includes('pi-overlay--foreground'))) fail(scope, "approved precision-interface contract incomplete");
-  if (expected.direct && (!source.includes('data-motion-system="presentation-v2.1"') || !source.includes('data-presentation-carrier="direct"') || !source.includes('class="pm-data-field-layer"') || !source.includes('class="pm-plot-layer"') || !source.includes('class="pm-target-lock"') || source.includes('class="pi-evidence-bay"'))) fail(scope, "approved direct-canvas contract incomplete");
-  if (expected.embedded && (!source.includes('data-motion-system="presentation-v2.1"') || !source.includes('data-presentation-carrier="embedded"') || !source.includes('class="pm-data-field-layer"') || !source.includes('class="pm-plot-layer"') || !source.includes('class="pm-local-evidence"') || !source.includes('class="pm-target-lock"') || source.includes('class="pi-evidence-bay"'))) fail(scope, "approved embedded-evidence contract incomplete");
+  if (expected.direct && (!source.includes('data-motion-system="presentation-v2.1"') || !source.includes('data-presentation-carrier="direct"') || !source.includes('class="pm-data-field-layer"') || !source.includes('class="pm-plot-layer"') || source.includes('class="pi-evidence-bay"'))) fail(scope, "approved direct-canvas contract incomplete");
+  if (expected.embedded && (!source.includes('data-motion-system="presentation-v2.1"') || !source.includes('data-presentation-carrier="embedded"') || !source.includes('class="pm-data-field-layer"') || !source.includes('class="pm-plot-layer"') || !source.includes('class="pm-local-evidence"') || source.includes('class="pi-evidence-bay"'))) fail(scope, "approved embedded-evidence contract incomplete");
   const explicit = source.match(new RegExp(`data-choreo="${expected.cue}"[^>]*style="([^"]+)"`))?.[1] || "";
   if (!explicit.includes("--delay-brief:") || !explicit.includes("--delay-story:")) fail(scope, "cue lacks independent profile timing");
   if (!failures.some((item) => item.scope === scope)) pass(scope, `${expected.family} with independent profile timing`);
@@ -129,18 +130,23 @@ for (const file of directA) {
   const source = fs.readFileSync(path.join(templatesDir, file), "utf8");
   const scope = `direct:${file}`;
   if (!source.includes('data-presentation-carrier="direct"') || !source.includes('data-presentation-target="direct"')) fail(scope, "direct carrier/target mismatch");
-  if (!source.includes('class="pm-target-lock"') || !source.includes('pm-address-signal')) fail(scope, "missing local target lock");
+  const lockMode = source.match(/<main[^>]+data-lock-mode="([a-z]+)"/)?.[1];
+  if (lockMode === "implicit" && source.includes('class="pm-target-lock"')) fail(scope, "implicit target rendered an extra lock ornament");
+  if (lockMode !== "implicit" && (!source.includes('class="pm-target-lock"') || !source.includes('pm-address-signal'))) fail(scope, "visible target lock missing");
   if (source.includes("evidence bay") || source.includes('class="evidence-plate"') || source.includes('class="pm-local-evidence"')) fail(scope, "detached evidence remains");
-  if (!failures.some((item) => item.scope === scope)) pass(scope, "full-width field with local target lock");
+  if (!failures.some((item) => item.scope === scope)) pass(scope, `full-width field with ${lockMode} target`);
 }
 
 for (const file of embeddedB) {
   const source = fs.readFileSync(path.join(templatesDir, file), "utf8");
   const scope = `embedded:${file}`;
   if (!source.includes('data-presentation-carrier="embedded"') || !source.includes('data-presentation-target="embedded"')) fail(scope, "embedded carrier/target mismatch");
-  if (!source.includes('class="pm-local-evidence"') || !source.includes('class="pm-target-lock"') || !source.includes('pm-address-signal')) fail(scope, "local evidence or target lock missing");
+  const lockMode = source.match(/<main[^>]+data-lock-mode="([a-z]+)"/)?.[1];
+  if (!source.includes('class="pm-local-evidence"')) fail(scope, "local evidence missing");
+  if (lockMode === "implicit" && source.includes('class="pm-target-lock"')) fail(scope, "implicit target rendered an extra lock ornament");
+  if (lockMode !== "implicit" && (!source.includes('class="pm-target-lock"') || !source.includes('pm-address-signal'))) fail(scope, "visible target lock missing");
   if (source.includes('class="pi-evidence-bay"') || source.includes('class="evidence-plate"')) fail(scope, "detached evidence container remains");
-  if (!failures.some((item) => item.scope === scope)) pass(scope, "full-width field with embedded local evidence");
+  if (!failures.some((item) => item.scope === scope)) pass(scope, `full-width field with embedded evidence and ${lockMode} target`);
 }
 
 for (const [file, expected] of Object.entries(precisionSpecs)) {
@@ -223,17 +229,45 @@ const motionPage = await motionContext.newPage();
 await motionPage.goto(pathToFileURL(path.join(templatesDir, "c03-signal-trend.html")).href, { waitUntil: "load" });
 await motionPage.evaluate(() => window.Moxing.replay());
 await motionPage.waitForTimeout(100);
-const activeMotion = await motionPage.evaluate(() => ({
-  running: document.getAnimations().filter((item) => item.playState === "running").length,
-  layers: document.querySelectorAll(".pi-data-field,.pi-evidence-bay,.pi-bay-terminal,.pi-lock-ring,.pi-focus-corner").length,
-  legacy: [...document.querySelectorAll("[data-motion]")].filter((item) => getComputedStyle(item).animationName !== "none").length,
-}));
-if (activeMotion.running < 3 || activeMotion.running > 4 || activeMotion.layers !== 4 || activeMotion.legacy) fail("motion", JSON.stringify(activeMotion));
-else pass("motion", `${activeMotion.running} approved precision animations active; legacy marks idle`);
+const activeMotion = await motionPage.evaluate(() => {
+  const running = document.getAnimations().filter((item) => item.playState === "running");
+  const macroSelector = ".pi-data-field,.pi-evidence-bay,.pi-bay-terminal,.pi-lock-ring,.pi-focus-corner";
+  const activeMarks = [...document.querySelectorAll("[data-motion]")].filter((item) => getComputedStyle(item).animationName !== "none");
+  return {
+    macroRunning: running.filter((item) => item.effect?.target?.matches?.(macroSelector)).length,
+    layers: document.querySelectorAll(macroSelector).length,
+    traceMarks: activeMarks.filter((item) => ["trace", "pin"].includes(item.dataset.choreo)).length,
+    unexpectedMarks: activeMarks.filter((item) => !["trace", "pin"].includes(item.dataset.choreo)).length,
+  };
+});
+if (activeMotion.macroRunning < 3 || activeMotion.macroRunning > 4 || activeMotion.layers !== 4 || !activeMotion.traceMarks || activeMotion.unexpectedMarks) fail("motion", JSON.stringify(activeMotion));
+else pass("motion", `${activeMotion.macroRunning} macro animations with continuous line trace`);
 await motionPage.evaluate(() => window.Moxing.setSurface("dark"));
 const darkSurface = await motionPage.evaluate(() => document.documentElement.dataset.surface);
 if (darkSurface !== "dark") fail("motion", "dark surface toggle failed");
 else pass("motion", "dark surface toggle");
+const replayContinuity = await motionPage.evaluate(() => new Promise((resolve) => {
+  window.Moxing.settle();
+  const root = document.querySelector('.chart-container');
+  const field = document.querySelector('.pi-data-field');
+  const trace = document.querySelector('[data-choreo="trace"]');
+  const read = () => ({
+    preparing: root.classList.contains('is-preparing'),
+    playing: root.classList.contains('is-playing'),
+    complete: root.classList.contains('is-complete'),
+    fieldOpacity: Number.parseFloat(getComputedStyle(field).opacity),
+    fieldTransform: getComputedStyle(field).transform,
+    traceOffset: Number.parseFloat(getComputedStyle(trace).strokeDashoffset),
+  });
+  window.Moxing.replay();
+  const immediate = read();
+  requestAnimationFrame(() => {
+    const firstFrame = read();
+    requestAnimationFrame(() => resolve({ immediate, firstFrame }));
+  });
+}));
+if (!replayContinuity.immediate.preparing || replayContinuity.immediate.complete || replayContinuity.immediate.fieldOpacity > .7 || replayContinuity.immediate.traceOffset < .9 || !replayContinuity.firstFrame.playing || replayContinuity.firstFrame.preparing || replayContinuity.firstFrame.fieldTransform !== "none") fail("motion-continuity", JSON.stringify(replayContinuity));
+else pass("motion-continuity", "replay enters the prepared first frame without exposing the final frame");
 await motionContext.close();
 
 for (const file of Object.keys(precisionSpecs)) {
@@ -250,19 +284,22 @@ for (const file of Object.keys(precisionSpecs)) {
       if (gaps.length < 50) { requestAnimationFrame(sample); return; }
       const ordered = [...gaps].sort((a, b) => a - b);
       const field = document.querySelector('.pi-data-field');
+      const running = document.getAnimations().filter((item) => item.playState === "running");
+      const macroSelector = '.pi-data-field,.pi-evidence-bay,.pi-bay-terminal,.pi-lock-ring,.pi-focus-corner';
+      const activeMarks = [...document.querySelectorAll('[data-motion]')].filter((item) => getComputedStyle(item).animationName !== "none");
       resolve({
         carrier: field?.tagName,
         p95: ordered[Math.floor(ordered.length * .95)],
         over28: gaps.filter((gap) => gap > 28).length,
-        running: document.getAnimations().filter((item) => item.playState === "running").length,
-        legacy: [...document.querySelectorAll('[data-motion]')].filter((item) => getComputedStyle(item).animationName !== "none").length,
+        macroRunning: running.filter((item) => item.effect?.target?.matches?.(macroSelector)).length,
+        unexpectedMarks: activeMarks.filter((item) => document.querySelector('.chart-container')?.dataset.lineTrace !== 'true' || !['trace','pin'].includes(item.dataset.choreo)).length,
       });
     };
     requestAnimationFrame(sample);
   }));
   const scope = `precision-performance:${file}`;
-  if (frameState.carrier !== "svg" && frameState.carrier !== "SVG" || frameState.p95 > 28 || frameState.over28 > 3 || frameState.running > 4 || frameState.legacy) fail(scope, JSON.stringify(frameState));
-  else pass(scope, `precision carrier p95 ${frameState.p95.toFixed(1)}ms; ${frameState.running} layers; legacy idle`);
+  if (frameState.carrier !== "svg" && frameState.carrier !== "SVG" || frameState.p95 > 28 || frameState.over28 > 3 || frameState.macroRunning > 4 || frameState.unexpectedMarks) fail(scope, JSON.stringify(frameState));
+  else pass(scope, `precision carrier p95 ${frameState.p95.toFixed(1)}ms; ${frameState.macroRunning} macro layers`);
   await context.close();
 }
 
@@ -279,21 +316,24 @@ for (const file of embeddedB) {
       previous = now;
       if (gaps.length < 50) { requestAnimationFrame(sample); return; }
       const ordered = [...gaps].sort((a, b) => a - b);
+      const running = document.getAnimations().filter((item) => item.playState === "running");
+      const macroSelector = '.pm-data-field-layer,.pm-plot-layer,.pm-local-evidence,.pm-target-lock';
+      const activeMarks = [...document.querySelectorAll('[data-motion]')].filter((item) => getComputedStyle(item).animationName !== "none");
       resolve({
         carrier: document.querySelector('.pm-embedded-field')?.tagName,
         p95: ordered[Math.floor(ordered.length * .95)],
         over28: gaps.filter((gap) => gap > 28).length,
-        running: document.getAnimations().filter((item) => item.playState === "running").length,
+        macroRunning: running.filter((item) => item.effect?.target?.matches?.(macroSelector)).length,
         layers: document.querySelectorAll('.pm-data-field-layer,.pm-plot-layer,.pm-local-evidence,.pm-target-lock').length,
-        legacy: [...document.querySelectorAll('[data-motion]')].filter((item) => getComputedStyle(item).animationName !== "none").length,
+        unexpectedMarks: activeMarks.filter((item) => document.querySelector('.chart-container')?.dataset.lineTrace !== 'true' || !['trace','pin'].includes(item.dataset.choreo)).length,
       });
     };
     requestAnimationFrame(sample);
   }));
   const scope = `embedded-performance:${file}`;
-  const expectedLayers = 4;
-  if (frameState.carrier !== "svg" && frameState.carrier !== "SVG" || frameState.p95 > 28 || frameState.over28 > 3 || frameState.running > expectedLayers || frameState.layers !== expectedLayers || frameState.legacy) fail(scope, JSON.stringify(frameState));
-  else pass(scope, `embedded carrier p95 ${frameState.p95.toFixed(1)}ms; ${frameState.layers} layers; legacy idle`);
+  const expectedLayers = file === "c16-decision-bubble-matrix.html" ? 3 : 4;
+  if (frameState.carrier !== "svg" && frameState.carrier !== "SVG" || frameState.p95 > 28 || frameState.over28 > 3 || frameState.macroRunning > expectedLayers || frameState.layers !== expectedLayers || frameState.unexpectedMarks) fail(scope, JSON.stringify(frameState));
+  else pass(scope, `embedded carrier p95 ${frameState.p95.toFixed(1)}ms; ${frameState.layers} macro layers`);
   await context.close();
 }
 
@@ -310,21 +350,24 @@ for (const file of directA) {
       previous = now;
       if (gaps.length < 50) { requestAnimationFrame(sample); return; }
       const ordered = [...gaps].sort((a, b) => a - b);
+      const running = document.getAnimations().filter((item) => item.playState === "running");
+      const macroSelector = '.pm-data-field-layer,.pm-plot-layer,.pm-target-lock';
+      const activeMarks = [...document.querySelectorAll('[data-motion]')].filter((item) => getComputedStyle(item).animationName !== "none");
       resolve({
         carrier: document.querySelector('.pm-direct-field')?.tagName,
         p95: ordered[Math.floor(ordered.length * .95)],
         over28: gaps.filter((gap) => gap > 28).length,
-        running: document.getAnimations().filter((item) => item.playState === "running").length,
+        macroRunning: running.filter((item) => item.effect?.target?.matches?.(macroSelector)).length,
         layers: document.querySelectorAll('.pm-data-field-layer,.pm-plot-layer,.pm-target-lock').length,
-        legacy: [...document.querySelectorAll('[data-motion]')].filter((item) => getComputedStyle(item).animationName !== "none").length,
+        unexpectedMarks: activeMarks.filter((item) => document.querySelector('.chart-container')?.dataset.lineTrace !== 'true' || !['trace','pin'].includes(item.dataset.choreo)).length,
       });
     };
     requestAnimationFrame(sample);
   }));
   const scope = `direct-performance:${file}`;
-  const expectedLayers = 3;
-  if (frameState.carrier !== "svg" && frameState.carrier !== "SVG" || frameState.p95 > 28 || frameState.over28 > 3 || frameState.running > expectedLayers || frameState.layers !== expectedLayers || frameState.legacy) fail(scope, JSON.stringify(frameState));
-  else pass(scope, `direct carrier p95 ${frameState.p95.toFixed(1)}ms; ${frameState.layers} layers; legacy idle`);
+  const expectedLayers = ["c04-composition-field.html","c05-composition-bands.html","c07-milestone-lanes.html","c09-metric-lockup.html","c11-sector-lock.html","c12-metric-small-multiples.html","c20-sensitivity-matrix.html"].includes(file) ? 2 : 3;
+  if (frameState.carrier !== "svg" && frameState.carrier !== "SVG" || frameState.p95 > 28 || frameState.over28 > 3 || frameState.macroRunning > expectedLayers || frameState.layers !== expectedLayers || frameState.unexpectedMarks) fail(scope, JSON.stringify(frameState));
+  else pass(scope, `direct carrier p95 ${frameState.p95.toFixed(1)}ms; ${frameState.layers} macro layers`);
   await context.close();
 }
 
@@ -347,15 +390,18 @@ for (const [file, expected] of Object.entries(exemplars)) {
       const lock = document.querySelector(precision ? '.pi-lock-ring,.pi-focus-corner' : compiled ? '.pm-target-lock' : '[data-choreo="alarm"]');
       const style = element ? getComputedStyle(element) : null;
       const lockStyle = lock ? getComputedStyle(lock) : null;
+      const macroSelector = direct ? ".pm-data-field-layer,.pm-plot-layer,.pm-target-lock" : embedded ? ".pm-data-field-layer,.pm-plot-layer,.pm-local-evidence,.pm-target-lock" : ".pi-data-field,.pi-evidence-bay,.pi-bay-terminal,.pi-lock-ring,.pi-focus-corner";
+      const running = document.getAnimations().filter((item) => item.playState === "running");
+      const activeMarks = [...document.querySelectorAll("[data-motion]")].filter((item) => getComputedStyle(item).animationName !== "none");
       return {
         profile: window.Moxing?.profile,
         duration: window.Moxing?.duration,
         delay: element ? (precision || compiled ? Number.parseFloat(style.animationDelay) * 1000 : Number.parseFloat(element.style.getPropertyValue("--active-delay"))) : null,
         lockDelay: lock ? (precision || compiled ? Number.parseFloat(lockStyle.animationDelay) * 1000 : Number.parseFloat(lock.style.getPropertyValue("--active-delay"))) : null,
         animation: style?.animationName,
-        running: document.getAnimations().filter((item) => item.playState === "running").length,
-        layers: document.querySelectorAll(direct ? ".pm-data-field-layer,.pm-plot-layer,.pm-target-lock" : embedded ? ".pm-data-field-layer,.pm-plot-layer,.pm-local-evidence,.pm-target-lock" : ".pi-data-field,.pi-evidence-bay,.pi-bay-terminal,.pi-lock-ring,.pi-focus-corner").length,
-        legacy: [...document.querySelectorAll("[data-motion]")].filter((item) => getComputedStyle(item).animationName !== "none").length,
+        macroRunning: running.filter((item) => item.effect?.target?.matches?.(macroSelector)).length,
+        layers: document.querySelectorAll(macroSelector).length,
+        unexpectedMarks: activeMarks.filter((item) => document.querySelector('.chart-container')?.dataset.lineTrace !== 'true' || !['trace','pin'].includes(item.dataset.choreo)).length,
       };
     }, { cue: expected.cue, precision: Boolean(expected.precision), direct: Boolean(expected.direct), embedded: Boolean(expected.embedded) });
     await page.evaluate(() => window.Moxing.settle());
@@ -366,17 +412,17 @@ for (const [file, expected] of Object.entries(exemplars)) {
     if (state.profile !== profile) fail(scope, `${profile} runtime reported ${state.profile}`);
     if (state.duration < minimum || state.duration > maximum) fail(scope, `${profile} duration ${state.duration}`);
     if (state.animation !== expected.animation) fail(scope, `${profile} animation ${state.animation}`);
-    if (!expected.direct && !expected.embedded && state.running < 3) fail(scope, `${profile} only ${state.running} active animations`);
+    if (!expected.direct && !expected.embedded && state.macroRunning < 3) fail(scope, `${profile} only ${state.macroRunning} active macro animations`);
     const directLayers = expected.directLayers || 2;
-    if (expected.direct && (state.running !== directLayers || state.layers !== directLayers || state.legacy)) fail(scope, `${profile} direct layers ${state.running}/${state.layers}; legacy=${state.legacy}`);
+    if (expected.direct && (state.macroRunning !== directLayers || state.layers !== directLayers || state.unexpectedMarks)) fail(scope, `${profile} direct layers ${state.macroRunning}/${state.layers}; unexpected=${state.unexpectedMarks}`);
     const embeddedLayers = expected.embeddedLayers || 4;
-    if (expected.embedded && (state.running !== embeddedLayers || state.layers !== embeddedLayers || state.legacy)) fail(scope, `${profile} embedded layers ${state.running}/${state.layers}; legacy=${state.legacy}`);
-    if (expected.precision && (state.running > 4 || state.layers !== 4)) fail(scope, `${profile} precision layers ${state.running}/${state.layers}`);
+    if (expected.embedded && (state.macroRunning !== embeddedLayers || state.layers !== embeddedLayers || state.unexpectedMarks)) fail(scope, `${profile} embedded layers ${state.macroRunning}/${state.layers}; unexpected=${state.unexpectedMarks}`);
+    if (expected.precision && (state.macroRunning > 4 || state.layers !== 4 || state.unexpectedMarks)) fail(scope, `${profile} precision layers ${state.macroRunning}/${state.layers}; unexpected=${state.unexpectedMarks}`);
   }
   const briefRatio = observed.brief.delay / observed.standard.delay;
   const storyRatio = observed.story.delay / observed.standard.delay;
   if (Math.abs(briefRatio - 0.72) < 0.01 && Math.abs(storyRatio - 1.8) < 0.01) fail(scope, "profiles are uniform speed multipliers");
-  if (!(observed.standard.delay < observed.standard.lockDelay)) fail(scope, `primary cue ${observed.standard.delay} does not precede lock ${observed.standard.lockDelay}`);
+  if (observed.standard.lockDelay !== null && !(observed.standard.delay < observed.standard.lockDelay)) fail(scope, `primary cue ${observed.standard.delay} does not precede lock ${observed.standard.lockDelay}`);
   if (!failures.some((item) => item.scope === scope)) pass(scope, `${expected.family} brief/standard/story choreography`);
   await context.close();
 }
@@ -580,7 +626,7 @@ const beforeReplay = await canaryFrame.getAttribute("src");
 await galleryPage.locator('[data-chart="C3"] [data-replay]').evaluate((button) => button.click());
 await galleryPage.waitForTimeout(80);
 const afterReplay = await canaryFrame.getAttribute("src");
-const canaryRunning = await canaryFrame.evaluate((frame) => frame.contentDocument?.getAnimations().filter((item) => item.playState === "running").length || 0);
+const canaryRunning = await canaryFrame.evaluate((frame) => frame.contentDocument?.getAnimations().filter((item) => item.playState === "running" && item.effect?.target?.matches?.('.pi-data-field,.pi-evidence-bay,.pi-bay-terminal,.pi-lock-ring,.pi-focus-corner')).length || 0);
 if (beforeReplay !== afterReplay || canaryRunning < 3 || canaryRunning > 4) fail("gallery-replay", JSON.stringify({ beforeReplay, afterReplay, canaryRunning }));
 else pass("gallery-replay", "canary replay reuses iframe and stays within precision layer budget");
 await galleryContext.close();
@@ -633,7 +679,7 @@ await mobileGalleryPage.screenshot({ path: path.join(previewDir, "gallery-mobile
 await mobileGalleryPage.locator("[data-viewer-replay]").click();
 await mobileGalleryPage.waitForTimeout(80);
 const mobileReplayState = await mobileGalleryPage.evaluate(() => ({
-  viewer: document.querySelector(".viewer-frame").contentDocument?.getAnimations().filter((animation) => animation.playState === "running").length || 0,
+  viewer: document.querySelector(".viewer-frame").contentDocument?.getAnimations().filter((animation) => animation.playState === "running" && animation.effect?.target?.matches?.('.pi-data-field,.pi-evidence-bay,.pi-bay-terminal,.pi-lock-ring,.pi-focus-corner')).length || 0,
   cards: [...document.querySelectorAll(".card-frame")].reduce((total, frame) => total + (frame.contentDocument?.getAnimations().filter((animation) => animation.playState === "running").length || 0), 0),
 }));
 if (mobileReplayState.viewer < 3 || mobileReplayState.viewer > 4 || mobileReplayState.cards) fail("gallery-mobile-replay", JSON.stringify(mobileReplayState));

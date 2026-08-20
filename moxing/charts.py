@@ -12,6 +12,8 @@ from .core import (
     DirectCanvas,
     EmbeddedEvidence,
     EvidenceInterface,
+    PRESENTATION_LINE_TRACES,
+    PRESENTATION_LOCK_MODES,
     PRESENTATION_TARGETS,
     circle,
     cut_rect_path,
@@ -1754,7 +1756,7 @@ def build_c23(data: Any) -> str | ChartArtwork:
     evidence_parts = [_local_evidence(evidence_x, evidence_y, 206, "E23 / RANGE", "WIDTH", format_num(uncertainty), "末期预测区间")]
     lock_parts = [
         path(f"M {target_x+5} {target_y} H {evidence_x}", cls="pm-lock-cross"),
-        path(f"M {target_x} {upper_points[-1][1]} V {lower_points[-1][1]}", cls="pm-lock-cross"),
+        path(f"M {target_x} {upper_points[-1][1]} V {lower_points[-1][1]}", cls="pm-micro-bracket"),
         rect(target_x - 5, target_y - 5, 10, 10, cls="pm-socket-signal"),
         text(target_x, lower_points[-1][1] + 20, "F10 / RANGE", cls="pm-address pm-address-signal", anchor="end", size=10),
     ]
@@ -1875,5 +1877,7 @@ def render_chart(
         mode=mode if mode in {"brief", "editorial"} else "editorial",
         presentation=presentation,
         presentation_target=PRESENTATION_TARGETS[key],
+        lock_mode=PRESENTATION_LOCK_MODES[key],
+        line_trace=PRESENTATION_LINE_TRACES[key],
     )
     return html_page(page, embed_fonts=embed_fonts)

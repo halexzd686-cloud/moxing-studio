@@ -8,8 +8,8 @@
         {
           "path": "index.html",
           "createdAt": "2026-08-20T06:45:57.143Z",
-          "status": "approved",
-          "subtitle": "A/B/C presentation mode review",
+          "status": "needs-review",
+          "subtitle": "A/B/C presentation mode review with continuous replay",
           "viewport": {
             "width": 1280,
             "height": 720
@@ -20,5 +20,5 @@
     }
   },
   "createdAt": "2026-08-20T06:45:57.145Z",
-  "updatedAt": "2026-08-20T06:48:41.704Z"
+  "updatedAt": "2026-08-20T14:48:22.831Z"
 }
