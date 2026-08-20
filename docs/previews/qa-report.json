@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T09:05:52.918Z",
+  "generatedAt": "2026-08-20T09:42:17.953Z",
   "status": "passed",
   "checks": [
     {
@@ -580,15 +580,15 @@
     },
     {
       "scope": "precision-performance:c22-correlation-matrix.html",
-      "message": "precision carrier p95 16.8ms; 4 layers; legacy idle"
+      "message": "precision carrier p95 16.7ms; 4 layers; legacy idle"
     },
     {
       "scope": "embedded-performance:c13-pareto-contribution.html",
-      "message": "embedded carrier p95 16.7ms; 4 layers; legacy idle"
+      "message": "embedded carrier p95 16.8ms; 4 layers; legacy idle"
     },
     {
       "scope": "embedded-performance:c14-cohort-matrix.html",
-      "message": "embedded carrier p95 16.8ms; 4 layers; legacy idle"
+      "message": "embedded carrier p95 16.7ms; 4 layers; legacy idle"
     },
     {
       "scope": "embedded-performance:c16-decision-bubble-matrix.html",
@@ -596,7 +596,7 @@
     },
     {
       "scope": "embedded-performance:c17-market-candles.html",
-      "message": "embedded carrier p95 16.8ms; 4 layers; legacy idle"
+      "message": "embedded carrier p95 16.7ms; 4 layers; legacy idle"
     },
     {
       "scope": "embedded-performance:c18-performance-drawdown.html",
@@ -648,7 +648,7 @@
     },
     {
       "scope": "direct-performance:c11-sector-lock.html",
-      "message": "direct carrier p95 16.8ms; 3 layers; legacy idle"
+      "message": "direct carrier p95 16.7ms; 3 layers; legacy idle"
     },
     {
       "scope": "direct-performance:c12-metric-small-multiples.html",
@@ -656,7 +656,7 @@
     },
     {
       "scope": "direct-performance:c20-sensitivity-matrix.html",
-      "message": "direct carrier p95 16.8ms; 3 layers; legacy idle"
+      "message": "direct carrier p95 16.7ms; 3 layers; legacy idle"
     },
     {
       "scope": "profiles:c01-structural-rank.html",
@@ -1025,6 +1025,26 @@
     {
       "scope": "gallery-replay",
       "message": "canary replay reuses iframe and stays within precision layer budget"
+    },
+    {
+      "scope": "gallery-mobile-list",
+      "message": "single column, 4 mounted previews, 44px targets"
+    },
+    {
+      "scope": "gallery-mobile-portrait-viewer",
+      "message": "readable detail canvas pans horizontally and offers fit mode"
+    },
+    {
+      "scope": "gallery-mobile-replay",
+      "message": "only the focused viewer animates within its layer budget"
+    },
+    {
+      "scope": "gallery-mobile-fit-toggle",
+      "message": "detail and full-frame views switch without reloading"
+    },
+    {
+      "scope": "gallery-mobile-landscape-viewer",
+      "message": "16:9 canvas fills the safe landscape stage"
     }
   ],
   "failures": []

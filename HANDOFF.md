@@ -4,7 +4,7 @@
 >
 > Branch: `codex/v2.1-production-rollout`
 >
-> Status: A / Direct Canvas, B / Embedded Evidence, and C / Evidence Interface production groups complete
+> Status: A / Direct Canvas, B / Embedded Evidence, C / Evidence Interface, and responsive desktop/mobile Gallery complete
 >
 > Visual review: C1 Direct Canvas, C14 Embedded Evidence, and C6 Evidence Interface approved on 2026-08-20
 
@@ -19,6 +19,7 @@
 - Light/dark surfaces share one structural identity.
 - All chart contracts share the approved zero-padded device address, live data-shape metadata, calibration ticks, and coded control dock.
 - Repository templates link local fonts; custom deliverables embed fonts by default.
+- Gallery keeps the desktop two-column review surface while mobile uses a one-column four-frame pool and one isolated full-screen Viewer. Portrait supports readable horizontal detail panning plus `FIT`; landscape preserves the canonical 16:9 stage.
 
 ## Architecture
 
@@ -67,7 +68,7 @@ If Playwright is installed outside the project, set `MOXING_PLAYWRIGHT_PATH`. Se
 ## Current QA
 
 - 103 boundary render cases pass.
-- 256 browser/static/motion/layout/readability/gallery-scheduling/frame-pacing checks pass; see `docs/previews/qa-report.json`.
+- 261 browser/static/motion/layout/readability/gallery-scheduling/frame-pacing/mobile-viewer checks pass; see `docs/previews/qa-report.json`.
 - The presentation mapping passes 13 checks and the three-carrier A+B+C architecture passes 19 checks.
 - All ten A charts contain no side bay or detached evidence card; each compiles playback to `DATA_FIELD → RELATIONSHIP → TARGET_LOCK` with three composited layers.
 - All nine B charts use the full-width Embedded Evidence carrier and compile playback to `DATA_FIELD → RELATIONSHIP → LOCAL_EVIDENCE → TARGET_LOCK` with four composited layers.
@@ -81,6 +82,7 @@ If Playwright is installed outside the project, set `MOXING_PLAYWRIGHT_PATH`. Se
 - All 24 templates scan detached and embedded evidence against critical plot geometry with zero collisions; line-path checks sample actual SVG geometry instead of relying on broad path bounding boxes.
 - All 24 templates check filled-mark label contrast on both light and dark surfaces.
 - Signature locked-frame previews cover foundation, commerce, finance, and analysis contracts.
+- Mobile Gallery checks cover 390×844 portrait list/detail/FIT/replay states and the 844×390 landscape safe stage. Offscreen mobile cards are settled and the mounted iframe pool is capped at four.
 
 ## v1 migration
 
@@ -88,6 +90,6 @@ The reusable data contracts, numerical formatting, boundary cases, browser detec
 
 ## Next maintenance steps
 
-1. Complete the final repository documentation and release review for all three approved production groups.
-2. Review Gallery motion at native and scaled widths, then freeze the release candidate visual baseline.
-3. Merge the rollout branch only after the final Gallery review is accepted.
+1. Review the responsive Gallery on a physical phone through the same-Wi-Fi preview URL.
+2. Freeze the release candidate visual baseline after desktop and phone review.
+3. Merge and push the rollout branch so GitHub Pages publishes the permanent mobile/desktop URL.

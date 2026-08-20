@@ -584,6 +584,94 @@ const canaryRunning = await canaryFrame.evaluate((frame) => frame.contentDocumen
 if (beforeReplay !== afterReplay || canaryRunning < 3 || canaryRunning > 4) fail("gallery-replay", JSON.stringify({ beforeReplay, afterReplay, canaryRunning }));
 else pass("gallery-replay", "canary replay reuses iframe and stays within precision layer budget");
 await galleryContext.close();
+
+const mobileGalleryContext = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: "no-preference" });
+const mobileGalleryPage = await mobileGalleryContext.newPage();
+await mobileGalleryPage.goto(`http://127.0.0.1:${galleryPort}/gallery.html`, { waitUntil: "load" });
+await mobileGalleryPage.waitForTimeout(250);
+const mobileListState = await mobileGalleryPage.evaluate(() => {
+  const cards = [...document.querySelectorAll(".card:not([hidden])")];
+  const openButtons = [...document.querySelectorAll("[data-open]")];
+  const mounted = [...document.querySelectorAll(".card-frame[data-mounted='true']")];
+  const columns = getComputedStyle(document.querySelector(".gallery")).gridTemplateColumns.split(" ").filter(Boolean);
+  return {
+    columns: columns.length,
+    overflow: document.documentElement.scrollWidth - innerWidth,
+    minTarget: Math.min(...openButtons.map((button) => button.getBoundingClientRect().height)),
+    mounted: mounted.length,
+    cards: cards.length,
+  };
+});
+if (mobileListState.columns !== 1 || mobileListState.overflow > 1 || mobileListState.minTarget < 44 || mobileListState.mounted > 4 || mobileListState.cards !== 24) fail("gallery-mobile-list", JSON.stringify(mobileListState));
+else pass("gallery-mobile-list", `single column, ${mobileListState.mounted} mounted previews, ${mobileListState.minTarget}px targets`);
+await mobileGalleryPage.screenshot({ path: path.join(previewDir, "gallery-mobile-list.png"), fullPage: false });
+
+await mobileGalleryPage.locator('[data-chart="C3"] [data-open]').click();
+await mobileGalleryPage.waitForFunction(() => Boolean(document.querySelector(".viewer-frame")?.contentWindow?.Moxing));
+await mobileGalleryPage.waitForTimeout(80);
+const portraitViewerState = await mobileGalleryPage.evaluate(() => {
+  const viewer = document.getElementById("viewer");
+  const canvas = document.querySelector(".viewer-canvas").getBoundingClientRect();
+  const stage = document.querySelector(".viewer-stage");
+  const hint = getComputedStyle(document.querySelector(".orientation-hint"));
+  const runningCards = [...document.querySelectorAll(".card-frame")].reduce((total, frame) => total + (frame.contentDocument?.getAnimations().filter((animation) => animation.playState === "running").length || 0), 0);
+  return {
+    open: viewer.open,
+    lockedBody: document.body.classList.contains("viewer-open"),
+    detail: document.getElementById("viewer").dataset.detail,
+    horizontalPan: stage.scrollWidth > stage.clientWidth * 1.5 && getComputedStyle(stage).overflowX === "auto",
+    canvasHeightInside: canvas.height <= stage.clientHeight + 1,
+    ratio: canvas.width / canvas.height,
+    hint: hint.display !== "none",
+    fitLabel: document.querySelector("[data-viewer-fit]").textContent,
+    runningCards,
+  };
+});
+if (!portraitViewerState.open || !portraitViewerState.lockedBody || portraitViewerState.detail !== "true" || !portraitViewerState.horizontalPan || !portraitViewerState.canvasHeightInside || Math.abs(portraitViewerState.ratio - 16 / 9) > .02 || !portraitViewerState.hint || portraitViewerState.fitLabel !== "FIT" || portraitViewerState.runningCards) fail("gallery-mobile-portrait-viewer", JSON.stringify(portraitViewerState));
+else pass("gallery-mobile-portrait-viewer", "readable detail canvas pans horizontally and offers fit mode");
+await mobileGalleryPage.screenshot({ path: path.join(previewDir, "gallery-mobile-portrait.png"), fullPage: false });
+await mobileGalleryPage.locator("[data-viewer-replay]").click();
+await mobileGalleryPage.waitForTimeout(80);
+const mobileReplayState = await mobileGalleryPage.evaluate(() => ({
+  viewer: document.querySelector(".viewer-frame").contentDocument?.getAnimations().filter((animation) => animation.playState === "running").length || 0,
+  cards: [...document.querySelectorAll(".card-frame")].reduce((total, frame) => total + (frame.contentDocument?.getAnimations().filter((animation) => animation.playState === "running").length || 0), 0),
+}));
+if (mobileReplayState.viewer < 3 || mobileReplayState.viewer > 4 || mobileReplayState.cards) fail("gallery-mobile-replay", JSON.stringify(mobileReplayState));
+else pass("gallery-mobile-replay", "only the focused viewer animates within its layer budget");
+await mobileGalleryPage.locator("[data-viewer-fit]").click();
+const fitToggleState = await mobileGalleryPage.evaluate(() => {
+  const canvas = document.querySelector(".viewer-canvas").getBoundingClientRect();
+  return {
+    detail: document.getElementById("viewer").dataset.detail,
+    canvasInside: canvas.left >= -1 && canvas.right <= innerWidth + 1 && canvas.top >= -1 && canvas.bottom <= innerHeight + 1,
+    label: document.querySelector("[data-viewer-fit]").textContent,
+  };
+});
+if (fitToggleState.detail !== "false" || !fitToggleState.canvasInside || fitToggleState.label !== "DETAIL") fail("gallery-mobile-fit-toggle", JSON.stringify(fitToggleState));
+else pass("gallery-mobile-fit-toggle", "detail and full-frame views switch without reloading");
+await mobileGalleryPage.locator("[data-viewer-close]").click();
+
+await mobileGalleryPage.setViewportSize({ width: 844, height: 390 });
+await mobileGalleryPage.locator('[data-chart="C8"] [data-open]').click();
+await mobileGalleryPage.waitForFunction(() => Boolean(document.querySelector(".viewer-frame")?.contentWindow?.Moxing));
+await mobileGalleryPage.waitForTimeout(80);
+const landscapeViewerState = await mobileGalleryPage.evaluate(() => {
+  const canvas = document.querySelector(".viewer-canvas").getBoundingClientRect();
+  const stage = document.querySelector(".viewer-stage").getBoundingClientRect();
+  const hint = getComputedStyle(document.querySelector(".orientation-hint"));
+  return {
+    open: document.getElementById("viewer").open,
+    canvasInside: canvas.left >= stage.left - 1 && canvas.right <= stage.right + 1 && canvas.top >= stage.top - 1 && canvas.bottom <= stage.bottom + 1,
+    ratio: canvas.width / canvas.height,
+    fillsStage: canvas.height >= stage.height * .96 || canvas.width >= stage.width * .96,
+    hint: hint.display,
+    overflow: document.documentElement.scrollWidth - innerWidth,
+  };
+});
+if (!landscapeViewerState.open || !landscapeViewerState.canvasInside || Math.abs(landscapeViewerState.ratio - 16 / 9) > .02 || !landscapeViewerState.fillsStage || landscapeViewerState.hint !== "none" || landscapeViewerState.overflow > 1) fail("gallery-mobile-landscape-viewer", JSON.stringify(landscapeViewerState));
+else pass("gallery-mobile-landscape-viewer", "16:9 canvas fills the safe landscape stage");
+await mobileGalleryPage.screenshot({ path: path.join(previewDir, "gallery-mobile-landscape.png"), fullPage: false });
+await mobileGalleryContext.close();
 await new Promise((resolve) => galleryServer.close(resolve));
 await browser.close();
 

@@ -100,7 +100,19 @@ python scripts/build_templates.py
 python scripts/build_gallery.py
 ```
 
-打开 `templates/gallery.html` 即可离线查看全部图表。24 份可复制数据位于 [`examples/data/`](examples/data/)，可用 `scripts/export_examples.py` 随默认数据重新生成。
+打开 `templates/gallery.html` 即可离线查看全部图表。桌面端使用双列 Gallery；900px 以下自动切换为单列锁定帧，最多保留 4 个邻近 iframe。点击 `OPEN` 后进入单图 Viewer：竖屏默认提供可左右滑动的细节视图，并可用 `FIT` 查看全图；横屏自动将 1280×720 画布铺满安全区域。任何时候只有聚焦图表会播放动画。
+
+本机通过 HTTP 预览：
+
+```powershell
+python -m http.server 4400 --bind 127.0.0.1
+```
+
+然后打开 `http://127.0.0.1:4400/templates/gallery.html`。同一 Wi-Fi 下临时使用手机验收时，可将绑定地址改为 `0.0.0.0`，并用手机访问电脑局域网 IP；Windows 防火墙可能需要允许 Python 监听专用网络。不要把这一方式直接暴露到公网。
+
+仓库的 GitHub Pages 工作流会在远程 `main` 更新后发布 `templates/` 与 `assets/`，永久入口为 `https://halexzd686-cloud.github.io/moxing-studio/`。分支中的改动在合并并推送前不会出现在该地址。
+
+24 份可复制数据位于 [`examples/data/`](examples/data/)，可用 `scripts/export_examples.py` 随默认数据重新生成。
 
 ## Export PNG and motion
 
@@ -143,7 +155,7 @@ npx playwright install chromium
 node scripts/validate.mjs .
 ```
 
-当前基线：展示模式映射 `13/13`、三载体与 A+B+C 组迁移 `19/19`、边界渲染 `103/103`，浏览器、静态降级、动效与布局检查 `256/256`。其中包含 10 张 Direct Canvas 的三宏层帧预算、9 张 Embedded Evidence 的四宏层帧预算、5 张 Evidence Interface 的四宏层帧预算与证据 ID 一致性检查、24 张图的证据—关键图形碰撞扫描，以及浅色/深色双表面的填充数据标签对比度检查；GitHub Actions 会在每次推送和 Pull Request 中重新执行这些检查。
+当前基线：展示模式映射 `13/13`、三载体与 A+B+C 组迁移 `19/19`、边界渲染 `103/103`，浏览器、静态降级、动效与布局检查 `261/261`。其中包含 10 张 Direct Canvas 的三宏层帧预算、9 张 Embedded Evidence 的四宏层帧预算、5 张 Evidence Interface 的四宏层帧预算与证据 ID 一致性检查、24 张图的证据—关键图形碰撞扫描、浅色/深色双表面的填充数据标签对比度，以及 390×844 竖屏列表/细节/FIT/单图播放和 844×390 横屏 Viewer 检查；GitHub Actions 会在每次推送和 Pull Request 中重新执行这些检查。
 
 ## Contributing
 
