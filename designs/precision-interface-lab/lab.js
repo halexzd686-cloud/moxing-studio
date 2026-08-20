@@ -110,6 +110,17 @@
     doc.documentElement.style.setProperty("--pi-lock-delay", `${specs[key].evidence.lockDelay}ms`);
   }
 
+  function sinkStageRails(svg) {
+    [...svg.querySelectorAll("line.rail")]
+      .filter((line) => line.getAttribute("x1") === line.getAttribute("x2"))
+      .forEach((line) => {
+        const stage = line.previousElementSibling;
+        if (!stage?.classList.contains("stage-module")) return;
+        line.classList.add("pi-stage-axis");
+        line.parentNode.insertBefore(line, stage);
+      });
+  }
+
   function instrument(frame) {
     const card = frame.closest(".prototype");
     const key = card.dataset.prototype;
@@ -149,6 +160,7 @@
     controls.querySelectorAll("button").forEach((button) => { button.dataset.code = controlCodes[button.dataset.action]; });
 
     buildEvidenceBay(doc, svg, spec, key);
+    if (key === "c08") sinkStageRails(svg);
     optimizeMotion(doc, key);
     const foreground = svgGroup(doc, "pi-overlay pi-overlay--foreground", spec.foreground);
     svg.append(foreground);

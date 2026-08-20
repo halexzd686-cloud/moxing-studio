@@ -54,10 +54,12 @@ for (const chartId of chartIds) {
       legacyMotion: doc?.querySelectorAll("[data-motion]").length,
       motionLayers: doc?.querySelectorAll("[data-pi-motion]").length,
       dataViewBoxX: Number.parseFloat(doc?.querySelector(".pi-data-field")?.getAttribute("viewBox") || "0"),
+      stageAxesBehind: id === "c08" ? [...doc.querySelectorAll(".pi-stage-axis")].filter((axis) => axis.nextElementSibling?.classList.contains("stage-module")).length : null,
       controls: doc?.querySelectorAll(".motion-controls button").length,
     };
   }, chartId);
-  if (state.ready === "true" && state.precision === "lab" && state.code?.includes(chartId.toUpperCase()) && state.meta === 3 && state.overlay === 1 && state.evidenceBay === 1 && state.bayPlate === 1 && state.plateInDataField === 0 && state.terminal === 1 && state.targetLock >= 1 && state.legacyMotion === 0 && state.motionLayers <= 24 && state.dataViewBoxX > 0 && state.controls === 3) {
+  const stageStackingValid = chartId !== "c08" || state.stageAxesBehind === 5;
+  if (state.ready === "true" && state.precision === "lab" && state.code?.includes(chartId.toUpperCase()) && state.meta === 3 && state.overlay === 1 && state.evidenceBay === 1 && state.bayPlate === 1 && state.plateInDataField === 0 && state.terminal === 1 && state.targetLock >= 1 && state.legacyMotion === 0 && state.motionLayers <= 24 && state.dataViewBoxX > 0 && state.controls === 3 && stageStackingValid) {
     pass(`${chartId} instrument contract`, JSON.stringify(state));
   } else {
     fail(`${chartId} instrument contract`, JSON.stringify(state));

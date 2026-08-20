@@ -1,11 +1,11 @@
 {
   "url": "http://127.0.0.1:4400/designs/precision-interface-lab/index.html",
-  "generatedAt": "2026-08-20T03:53:23.182Z",
+  "generatedAt": "2026-08-20T04:01:25.345Z",
   "checks": [
     {
       "name": "c03 instrument contract",
       "pass": true,
-      "details": "{\"ready\":\"true\",\"precision\":\"lab\",\"code\":\"C03SYS / 21SIGNAL / TRENDTRACE.LOCK\",\"meta\":3,\"overlay\":1,\"evidenceBay\":1,\"bayPlate\":1,\"plateInDataField\":0,\"terminal\":1,\"targetLock\":1,\"legacyMotion\":0,\"motionLayers\":0,\"dataViewBoxX\":248,\"controls\":3}"
+      "details": "{\"ready\":\"true\",\"precision\":\"lab\",\"code\":\"C03SYS / 21SIGNAL / TRENDTRACE.LOCK\",\"meta\":3,\"overlay\":1,\"evidenceBay\":1,\"bayPlate\":1,\"plateInDataField\":0,\"terminal\":1,\"targetLock\":1,\"legacyMotion\":0,\"motionLayers\":0,\"dataViewBoxX\":248,\"stageAxesBehind\":null,\"controls\":3}"
     },
     {
       "name": "c03 focus selection",
@@ -15,7 +15,7 @@
     {
       "name": "c08 instrument contract",
       "pass": true,
-      "details": "{\"ready\":\"true\",\"precision\":\"lab\",\"code\":\"C08SYS / 21STAGE / CHANNELBOTTLENECK\",\"meta\":3,\"overlay\":1,\"evidenceBay\":1,\"bayPlate\":1,\"plateInDataField\":0,\"terminal\":1,\"targetLock\":1,\"legacyMotion\":0,\"motionLayers\":0,\"dataViewBoxX\":280,\"controls\":3}"
+      "details": "{\"ready\":\"true\",\"precision\":\"lab\",\"code\":\"C08SYS / 21STAGE / CHANNELBOTTLENECK\",\"meta\":3,\"overlay\":1,\"evidenceBay\":1,\"bayPlate\":1,\"plateInDataField\":0,\"terminal\":1,\"targetLock\":1,\"legacyMotion\":0,\"motionLayers\":0,\"dataViewBoxX\":280,\"stageAxesBehind\":5,\"controls\":3}"
     },
     {
       "name": "c08 focus selection",
@@ -25,7 +25,7 @@
     {
       "name": "c15 instrument contract",
       "pass": true,
-      "details": "{\"ready\":\"true\",\"precision\":\"lab\",\"code\":\"C15SYS / 21COMMERCE / FLOWLEAK.LOCK\",\"meta\":3,\"overlay\":1,\"evidenceBay\":1,\"bayPlate\":1,\"plateInDataField\":0,\"terminal\":1,\"targetLock\":1,\"legacyMotion\":0,\"motionLayers\":0,\"dataViewBoxX\":250,\"controls\":3}"
+      "details": "{\"ready\":\"true\",\"precision\":\"lab\",\"code\":\"C15SYS / 21COMMERCE / FLOWLEAK.LOCK\",\"meta\":3,\"overlay\":1,\"evidenceBay\":1,\"bayPlate\":1,\"plateInDataField\":0,\"terminal\":1,\"targetLock\":1,\"legacyMotion\":0,\"motionLayers\":0,\"dataViewBoxX\":250,\"stageAxesBehind\":null,\"controls\":3}"
     },
     {
       "name": "c15 focus selection",
@@ -35,7 +35,7 @@
     {
       "name": "c22 instrument contract",
       "pass": true,
-      "details": "{\"ready\":\"true\",\"precision\":\"lab\",\"code\":\"C22SYS / 21ADDRESS / MATRIXPAIR.LOCK\",\"meta\":3,\"overlay\":1,\"evidenceBay\":1,\"bayPlate\":1,\"plateInDataField\":0,\"terminal\":1,\"targetLock\":1,\"legacyMotion\":0,\"motionLayers\":0,\"dataViewBoxX\":255,\"controls\":3}"
+      "details": "{\"ready\":\"true\",\"precision\":\"lab\",\"code\":\"C22SYS / 21ADDRESS / MATRIXPAIR.LOCK\",\"meta\":3,\"overlay\":1,\"evidenceBay\":1,\"bayPlate\":1,\"plateInDataField\":0,\"terminal\":1,\"targetLock\":1,\"legacyMotion\":0,\"motionLayers\":0,\"dataViewBoxX\":255,\"stageAxesBehind\":null,\"controls\":3}"
     },
     {
       "name": "c22 focus selection",
@@ -75,12 +75,12 @@
     {
       "name": "replay motion-layer budget",
       "pass": true,
-      "details": "{\"frames\":210,\"runningAnimations\":4,\"medianMs\":7,\"p95Ms\":7.3,\"longFrames\":0}"
+      "details": "{\"frames\":210,\"runningAnimations\":4,\"medianMs\":6.9,\"p95Ms\":7.3,\"longFrames\":0}"
     },
     {
       "name": "narrow replay cadence",
       "pass": true,
-      "details": "{\"frames\":210,\"runningAnimations\":4,\"medianMs\":7,\"p95Ms\":7.3,\"longFrames\":0}"
+      "details": "{\"frames\":210,\"runningAnimations\":4,\"medianMs\":6.9,\"p95Ms\":7.3,\"longFrames\":0}"
     },
     {
       "name": "runtime errors",
