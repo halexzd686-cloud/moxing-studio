@@ -16,24 +16,25 @@ const precisionSpecs = {
   "c15-commerce-flow.html": { evidence: "E15", plotX: 250 },
   "c22-correlation-matrix.html": { evidence: "E22", plotX: 255 },
 };
-const directA1 = new Set([
+const directA = new Set([
   "c01-structural-rank.html", "c02-ranked-rail.html", "c04-composition-field.html",
   "c05-composition-bands.html", "c07-milestone-lanes.html", "c09-metric-lockup.html",
-  "c10-decision-interface.html",
+  "c10-decision-interface.html", "c11-sector-lock.html", "c12-metric-small-multiples.html",
+  "c20-sensitivity-matrix.html",
 ]);
 const exemplars = {
   "c01-structural-rank.html": { family: "rail-rise", cue: "rail-rise", animation: "pm-field-enter", direct: true, directLayers: 3 },
-  "c02-ranked-rail.html": { family: "ranked-rail", cue: "rail-slide", animation: "pm-field-enter", direct: true },
+  "c02-ranked-rail.html": { family: "ranked-rail", cue: "rail-slide", animation: "pm-field-enter", direct: true, directLayers: 3 },
   "c03-signal-trend.html": { family: "path-trace", cue: "trace", animation: "pi-field-enter", precision: true },
-  "c04-composition-field.html": { family: "field-aggregation", cue: "field-seat", animation: "pm-field-enter", direct: true },
-  "c05-composition-bands.html": { family: "band-routing", cue: "band-fill", animation: "pm-field-enter", direct: true },
+  "c04-composition-field.html": { family: "field-aggregation", cue: "field-seat", animation: "pm-field-enter", direct: true, directLayers: 3 },
+  "c05-composition-bands.html": { family: "band-routing", cue: "band-fill", animation: "pm-field-enter", direct: true, directLayers: 3 },
   "c06-ledger-steps.html": { family: "ledger-interlock", cue: "field-seat", animation: "pi-field-enter", precision: true },
-  "c07-milestone-lanes.html": { family: "milestone-routing", cue: "interlock", animation: "pm-field-enter", direct: true },
+  "c07-milestone-lanes.html": { family: "milestone-routing", cue: "interlock", animation: "pm-field-enter", direct: true, directLayers: 3 },
   "c08-stage-channel.html": { family: "stage-interlock", cue: "interlock", animation: "pi-field-enter", precision: true },
-  "c09-metric-lockup.html": { family: "metric-readout", cue: "readout", animation: "pm-field-enter", direct: true },
-  "c10-decision-interface.html": { family: "decision-readout", cue: "readout", animation: "pm-field-enter", direct: true },
-  "c11-sector-lock.html": { family: "sector-lock", cue: "field-seat", animation: "mx-field-seat" },
-  "c12-metric-small-multiples.html": { family: "metric-pulse", cue: "trace", animation: "mx-route" },
+  "c09-metric-lockup.html": { family: "metric-readout", cue: "readout", animation: "pm-field-enter", direct: true, directLayers: 3 },
+  "c10-decision-interface.html": { family: "decision-readout", cue: "readout", animation: "pm-field-enter", direct: true, directLayers: 3 },
+  "c11-sector-lock.html": { family: "sector-lock", cue: "field-seat", animation: "pm-field-enter", direct: true, directLayers: 3 },
+  "c12-metric-small-multiples.html": { family: "metric-pulse", cue: "trace", animation: "pm-field-enter", direct: true, directLayers: 3 },
   "c13-pareto-contribution.html": { family: "pareto-routing", cue: "rail-rise", animation: "mx-rail-rise" },
   "c14-cohort-matrix.html": { family: "cohort-seating", cue: "field-seat", animation: "mx-field-seat" },
   "c15-commerce-flow.html": { family: "flow-routing", cue: "trace", animation: "pi-field-enter", precision: true },
@@ -41,7 +42,7 @@ const exemplars = {
   "c17-market-candles.html": { family: "market-build", cue: "field-seat", animation: "mx-field-seat" },
   "c18-performance-drawdown.html": { family: "drawdown-routing", cue: "trace", animation: "mx-route" },
   "c19-yield-curve.html": { family: "curve-routing", cue: "trace", animation: "mx-route" },
-  "c20-sensitivity-matrix.html": { family: "matrix-seating", cue: "field-seat", animation: "mx-field-seat" },
+  "c20-sensitivity-matrix.html": { family: "matrix-seating", cue: "field-seat", animation: "pm-field-enter", direct: true, directLayers: 3 },
   "c21-distribution-profile.html": { family: "distribution-build", cue: "rail-rise", animation: "mx-rail-rise" },
   "c22-correlation-matrix.html": { family: "matrix-seating", cue: "field-seat", animation: "pi-field-enter", precision: true },
   "c23-forecast-fan.html": { family: "forecast-routing", cue: "trace", animation: "mx-route" },
@@ -112,13 +113,13 @@ for (const [file, expected] of Object.entries(exemplars)) {
   if (!source.includes(`data-choreography="${expected.family}"`)) fail(scope, `missing ${expected.family} family`);
   if (!source.includes(`data-choreo="${expected.cue}"`)) fail(scope, `missing ${expected.cue} cue`);
   if (expected.precision && (!source.includes('data-motion-system="precision-v2.1"') || !source.includes('class="chart-body pi-split-body"') || !source.includes('class="pi-evidence-bay"') || !source.includes('class="pi-data-field"') || !source.includes('class="pi-bay-terminal"') || !source.includes('pi-overlay--foreground'))) fail(scope, "approved precision-interface contract incomplete");
-  if (expected.direct && (!source.includes('data-motion-system="presentation-v2.1"') || !source.includes('data-presentation-carrier="direct"') || !source.includes('class="pm-data-field-layer"') || !source.includes('class="pm-target-lock"') || source.includes('class="pi-evidence-bay"'))) fail(scope, "approved direct-canvas contract incomplete");
+  if (expected.direct && (!source.includes('data-motion-system="presentation-v2.1"') || !source.includes('data-presentation-carrier="direct"') || !source.includes('class="pm-data-field-layer"') || !source.includes('class="pm-plot-layer"') || !source.includes('class="pm-target-lock"') || source.includes('class="pi-evidence-bay"'))) fail(scope, "approved direct-canvas contract incomplete");
   const explicit = source.match(new RegExp(`data-choreo="${expected.cue}"[^>]*style="([^"]+)"`))?.[1] || "";
   if (!explicit.includes("--delay-brief:") || !explicit.includes("--delay-story:")) fail(scope, "cue lacks independent profile timing");
   if (!failures.some((item) => item.scope === scope)) pass(scope, `${expected.family} with independent profile timing`);
 }
 
-for (const file of directA1) {
+for (const file of directA) {
   const source = fs.readFileSync(path.join(templatesDir, file), "utf8");
   const scope = `direct:${file}`;
   if (!source.includes('data-presentation-carrier="direct"') || !source.includes('data-presentation-target="direct"')) fail(scope, "direct carrier/target mismatch");
@@ -250,7 +251,7 @@ for (const file of Object.keys(precisionSpecs)) {
   await context.close();
 }
 
-for (const file of directA1) {
+for (const file of directA) {
   const context = await browser.newContext({ viewport: { width: 1280, height: 720 }, reducedMotion: "no-preference" });
   const page = await context.newPage();
   await page.goto(`${pathToFileURL(path.join(templatesDir, file)).href}?motion=brief&autoplay=off`, { waitUntil: "load" });
@@ -275,7 +276,7 @@ for (const file of directA1) {
     requestAnimationFrame(sample);
   }));
   const scope = `direct-performance:${file}`;
-  const expectedLayers = file === "c01-structural-rank.html" ? 3 : 2;
+  const expectedLayers = 3;
   if (frameState.carrier !== "svg" && frameState.carrier !== "SVG" || frameState.p95 > 28 || frameState.over28 > 3 || frameState.running > expectedLayers || frameState.layers !== expectedLayers || frameState.legacy) fail(scope, JSON.stringify(frameState));
   else pass(scope, `direct carrier p95 ${frameState.p95.toFixed(1)}ms; ${frameState.layers} layers; legacy idle`);
   await context.close();

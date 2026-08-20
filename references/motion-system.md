@@ -15,7 +15,7 @@ These primitives are authoring semantics, not a requirement to animate every mar
 
 Production playback is selected from the chart's presentation mode, not from visual preference:
 
-- **A / Direct Canvas:** `DATA_FIELD → TARGET_LOCK`, normally 2–3 macro layers.
+- **A / Direct Canvas:** `DATA_FIELD → RELATIONSHIP → TARGET_LOCK`, exactly 3 macro layers.
 - **B / Embedded Evidence:** `DATA_FIELD → RELATIONSHIP → LOCAL_EVIDENCE → TARGET_LOCK`, maximum 4 macro layers.
 - **C / Evidence Interface:** `DATA_FIELD → EVIDENCE_BAY → TERMINAL → TARGET_LOCK`, maximum 4 macro layers.
 

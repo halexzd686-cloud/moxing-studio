@@ -4,7 +4,7 @@
 >
 > Branch: `codex/v2.1-production-rollout`
 >
-> Status: A1 Direct Canvas migration complete for C1/C2/C4/C5/C7/C9/C10; A2 is next
+> Status: A / Direct Canvas group complete for C1/C2/C4/C5/C7/C9/C10/C11/C12/C20; B group is next
 >
 > Visual review: C1 Direct Canvas, C14 Embedded Evidence, and C6 Evidence Interface approved on 2026-08-20
 
@@ -67,10 +67,10 @@ If Playwright is installed outside the project, set `MOXING_PLAYWRIGHT_PATH`. Se
 ## Current QA
 
 - 103 boundary render cases pass.
-- 232 browser/static/motion/layout/readability/gallery-scheduling/frame-pacing checks pass; see `docs/previews/qa-report.json`.
-- The presentation mapping passes 13 checks and the carrier/A1 architecture passes 13 checks.
-- C1/C2/C4/C5/C7/C9/C10 contain no side bay or detached evidence card; each compiles playback to `DATA_FIELD → TARGET_LOCK` with two composited layers.
-- Thirteen signature locked-frame PNGs form the current visual baseline; A1 intentionally updates C1/C5/C10 while non-A1 signatures remain structurally unchanged.
+- 238 browser/static/motion/layout/readability/gallery-scheduling/frame-pacing checks pass; see `docs/previews/qa-report.json`.
+- The presentation mapping passes 13 checks and the carrier/A-group architecture passes 13 checks.
+- All ten A charts contain no side bay or detached evidence card; each compiles playback to `DATA_FIELD → RELATIONSHIP → TARGET_LOCK` with three composited layers.
+- Thirteen signature locked-frame PNGs form the current visual baseline; the A group intentionally updates C1/C5/C10/C11/C20 signatures while B/C signatures remain structurally unchanged.
 - The approved four-chart Precision Interface Lab passes 17 focused layout, motion-layer, and narrow-viewport checks.
 - All 24 templates render with and without JavaScript.
 - Reduced-motion mode settles immediately.
@@ -85,7 +85,6 @@ The reusable data contracts, numerical formatting, boundary cases, browser detec
 
 ## Next maintenance steps
 
-1. Migrate A2 C11/C12/C20 while preserving their existing full-width geometry and adding only data-bound local locks.
-2. Migrate B1 C13/C14/C16, then B2 C17/C18/C19/C21/C23/C24; verify every local evidence anchor against critical geometry.
-3. Consolidate batch C1 (C3/C6/C8/C15/C22) on the shared full-interface carrier without changing their approved compositions.
-4. Run presentation-mode, carrier, boundary, browser, and Lab QA before each batch is accepted.
+1. Migrate the full B group C13/C14/C16/C17/C18/C19/C21/C23/C24 in one batch; verify every local evidence anchor against critical geometry.
+2. Consolidate the full C group C3/C6/C8/C15/C22 on the shared full-interface carrier without changing their approved compositions.
+3. Run presentation-mode, carrier, boundary, browser, and Lab QA before each group is accepted.

@@ -275,6 +275,29 @@ def _valid_series(data: Any, label_key: str = "label") -> list[dict[str, Any]]:
     return [item for item in data if isinstance(item, dict) and is_number(item.get("value")) and str(item.get(label_key, "")).strip()]
 
 
+def _direct_artwork(
+    field_parts: list[str],
+    plot_parts: list[str],
+    lock_parts: list[str],
+    *,
+    lock_delay: int,
+    lock_delay_brief: int,
+    lock_delay_story: int,
+) -> ChartArtwork:
+    """Compile an A-mode chart into the shared field/relationship/lock carrier."""
+    return ChartArtwork(
+        svg="\n".join(field_parts),
+        presentation=DirectCanvas(
+            foreground_svg="\n".join(lock_parts),
+            plot_svg="\n".join(plot_parts),
+            lock_delay=lock_delay,
+            lock_delay_brief=lock_delay_brief,
+            lock_delay_story=lock_delay_story,
+            compiled_motion=True,
+        ),
+    )
+
+
 def build_c1(data: Any) -> str | ChartArtwork:
     items = _valid_series(data)[:10]
     if not items:
@@ -339,16 +362,13 @@ def build_c1(data: Any) -> str | ChartArtwork:
         path(f"M {target_left-17} {bracket_y+19} V {bracket_y} H {target_left+2} M {target_right-2} {bracket_y} H {target_right+17} V {bracket_y+19}", cls="pm-focus-corner"),
         text(target_x, bracket_y - 15, f"R{top + 1:02d} / {format_num(items[top]['value'])}", cls="pm-address pm-address-signal", anchor="middle", size=10),
     ]
-    return ChartArtwork(
-        svg="\n".join(field_parts),
-        presentation=DirectCanvas(
-            foreground_svg="\n".join(lock_parts),
-            plot_svg="\n".join(plot_parts),
-            lock_delay=1080,
-            lock_delay_brief=700,
-            lock_delay_story=1500,
-            compiled_motion=True,
-        ),
+    return _direct_artwork(
+        field_parts,
+        plot_parts,
+        lock_parts,
+        lock_delay=1080,
+        lock_delay_brief=700,
+        lock_delay_story=1500,
     )
 
 
@@ -359,7 +379,8 @@ def build_c2(data: Any) -> str | ChartArtwork:
     maximum = max(max(item["value"], 0) for item in items) or 1
     x0, x1, y0 = 330, 1116, 120
     row = min(58, 306 / max(1, len(items) - 1))
-    parts = []
+    field_parts = [text(0, 28, "02 / DIRECT RANK RAIL", cls="index muted", size=12)]
+    plot_parts: list[str] = []
     ends: list[tuple[float, float]] = []
     for index, item in enumerate(items):
         y = y0 + index * row
@@ -376,26 +397,31 @@ def build_c2(data: Any) -> str | ChartArtwork:
         bar_standard = 280 + index * 75
         bar_brief = 150 + index * 40
         bar_story = 500 + index * 150
-        parts += [
+        value_x = end - 20 if index == 0 and end - x0 > 64 else min(x1 - 2, end + 12)
+        value_cls = "value on-signal" if index == 0 and end - x0 > 64 else "value"
+        value_anchor = "end" if index == 0 and end - x0 > 64 else "start"
+        field_parts += [
             heading,
             line(x0, y + 12, x1, y + 12, cls="grid", extra=f'pathLength="1" {motion("align", 80 + index * 35, brief=35 + index * 18, story=120 + index * 65)}'),
+        ]
+        plot_parts += [
             path(cut_rect_path(x0, y, max(4, end - x0), 24, 5), cls="signal-fill" if index == 0 else "data-fill", extra=motion("dock", bar_standard, dx=-32, brief=bar_brief, story=bar_story, duration=420, duration_brief=280, duration_story=620, choreo="rail-slide")),
             line(end, y - 5, end, y + 30, cls="rail", extra=motion("align", bar_standard + 350, brief=bar_brief + 230, story=bar_story + 540)),
-            text(min(x1 - 2, end + 12), y + 18, format_num(item["value"]), cls="value", size=14, weight=650, extra=motion("lock", bar_standard + 360, brief=bar_brief + 235, story=bar_story + 550, choreo="readout")),
+            text(value_x, y + 18, format_num(item["value"]), cls=value_cls, anchor=value_anchor, size=14, weight=650, extra=motion("lock", bar_standard + 360, brief=bar_brief + 235, story=bar_story + 550, choreo="readout")),
         ]
-    overlay = []
-    for index, (_end, cy) in enumerate(ends):
-        overlay.append(rect(x0 - 4, cy - 4, 8, 8, cls="pm-socket-signal" if index == 0 else "pm-socket"))
     target_x, target_y = ends[0]
-    lock_y = target_y - 30
-    overlay += [
-        circle(target_x, lock_y, 13, cls="pm-lock-ring"),
-        path(f"M {target_x} {lock_y+13} V {target_y-5}", cls="pm-lock-cross"),
-        text(min(x1 - 18, target_x - 18), lock_y - 18, "R01 / TOP", cls="pm-address pm-address-signal", anchor="end", size=10),
+    lock_parts = [
+        rect(target_x - 8, target_y - 8, 16, 16, cls="pm-socket-signal"),
+        path(f"M {target_x-24} {target_y-18} V {target_y-32} H {target_x-8} M {target_x+8} {target_y-32} H {target_x+24} V {target_y-18}", cls="pm-focus-corner"),
+        text(min(x1 - 18, target_x), target_y - 45, f"R01 / {format_num(items[0]['value'])}", cls="pm-address pm-address-signal", anchor="middle", size=10),
     ]
-    return ChartArtwork(
-        svg="\n".join(parts),
-        presentation=DirectCanvas(foreground_svg="\n".join(overlay), lock_delay=1120, lock_delay_brief=680, lock_delay_story=2100, compiled_motion=True),
+    return _direct_artwork(
+        field_parts,
+        plot_parts,
+        lock_parts,
+        lock_delay=1120,
+        lock_delay_brief=680,
+        lock_delay_story=2100,
     )
 
 
@@ -468,7 +494,8 @@ def build_c4(data: Any) -> str | ChartArtwork:
     for index in sorted(range(len(items)), key=lambda i: raw[i] - counts[i], reverse=True)[: units - sum(counts)]:
         counts[index] += 1
     largest = max(range(len(items)), key=lambda i: items[i]["value"])
-    parts = []
+    field_parts = [text(0, 28, "04 / DIRECT COMPOSITION FIELD", cls="index muted", size=12)]
+    plot_parts: list[str] = []
     start_x, start_y, cell_w, cell_h, gap = 92, 116, 34, 48, 6
     cumulative = []
     for idx, count in enumerate(counts):
@@ -478,19 +505,22 @@ def build_c4(data: Any) -> str | ChartArtwork:
         x, y = start_x + col * (cell_w + gap), start_y + row * (cell_h + gap)
         category = cumulative[index]
         cls = "signal-fill" if category == largest else f"cat-{category % 4 + 1}"
-        parts.append(path(cut_rect_path(x, y, cell_w, cell_h, 5), cls=cls, extra=motion("dock", 240 + index * 18, dy=18, brief=120 + index * 10, story=400 + index * 35, duration=360, duration_brief=240, duration_story=520, choreo="field-seat")))
-        parts.append(line(x + cell_w / 2, y + cell_h, x + cell_w / 2, y + cell_h + 5, cls="grid", extra=motion("align", 500 + index * 10, brief=300 + index * 5, story=850 + index * 20)))
+        plot_parts.append(path(cut_rect_path(x, y, cell_w, cell_h, 5), cls=cls, extra=motion("dock", 240 + index * 18, dy=18, brief=120 + index * 10, story=400 + index * 35, duration=360, duration_brief=240, duration_story=520, choreo="field-seat")))
     legend_x = 688
     for index, item in enumerate(items):
         y = 108 + index * 58
         cls = "signal-fill" if index == largest else f"cat-{index % 4 + 1}"
+        field_parts += [
+            text(legend_x + 28, y + 15, item["label"], size=14),
+            line(legend_x + 28, y + 31, 1118, y + 31, cls="grid"),
+        ]
         legend = group(
-            [rect(legend_x, y, 12, 24, cls=cls), text(legend_x + 28, y + 15, item["label"], size=14), text(1118, y + 15, f"{shares[index]*100:.1f}%", cls="value index", anchor="end", size=14, weight=650)],
+            [rect(legend_x, y, 12, 24, cls=cls), text(1118, y + 15, f"{shares[index]*100:.1f}%", cls="value index", anchor="end", size=14, weight=650)],
             cls="field-legend",
             extra=motion("lock", 980 + index * 80, brief=600 + index * 45, story=2080 + index * 150, choreo="readout"),
         )
-        parts.append(legend)
-    parts += [line(start_x, 382, start_x + 394, 382, cls="rail-strong", extra=f'pathLength="1" {motion("align", 100, brief=45, story=140)}'), text(start_x, 410, "40 MODULES / EACH = 2.5%", cls="index muted", size=12)]
+        plot_parts.append(legend)
+    field_parts += [line(start_x, 382, start_x + 394, 382, cls="rail-strong", extra=f'pathLength="1" {motion("align", 100, brief=45, story=140)}'), text(start_x, 410, "40 MODULES / EACH = 2.5%", cls="index muted", size=12)]
     last_dominant = max(0, sum(counts[:largest + 1]) - 1)
     focus_row, focus_col = divmod(last_dominant, 10)
     focus_x = start_x + focus_col * (cell_w + gap)
@@ -503,14 +533,18 @@ def build_c4(data: Any) -> str | ChartArtwork:
         f"M {right} {bottom-arm} V {bottom} H {right-arm} "
         f"M {left+arm} {bottom} H {left} V {bottom-arm}"
     )
-    foreground = "\n".join([
-        rect(start_x - 4, 378, 8, 8, cls="pm-socket"),
+    lock_parts = [
         path(focus_path, cls="pm-focus-corner"),
-        text(legend_x - 38, 410, f"F{counts[largest]:02d} / LEADER", cls="pm-address pm-address-signal", size=10, anchor="end"),
-    ])
-    return ChartArtwork(
-        svg="\n".join(parts),
-        presentation=DirectCanvas(foreground_svg=foreground, lock_delay=1080, lock_delay_brief=650, lock_delay_story=2050, compiled_motion=True),
+        rect(focus_x + cell_w - 8, focus_y + cell_h - 8, 16, 16, cls="pm-socket-signal"),
+        text(520, focus_y + cell_h * .58, f"F{counts[largest]:02d} / LEADER", cls="pm-address pm-address-signal", size=10),
+    ]
+    return _direct_artwork(
+        field_parts,
+        plot_parts,
+        lock_parts,
+        lock_delay=1080,
+        lock_delay_brief=650,
+        lock_delay_story=2050,
     )
 
 
@@ -527,16 +561,18 @@ def build_c5(data: Any) -> str | ChartArtwork:
     standard_step = min(130, 900 / category_span)
     brief_step = min(70, 450 / category_span)
     story_step = min(240, 1600 / category_span)
-    parts = []
+    field_parts = [text(0, 28, "05 / DIRECT COMPOSITION BANDS", cls="index muted", size=12)]
+    plot_parts: list[str] = []
     x0, x1, y0 = 156, 1122, 95
     row = min(78, 320 / max(1, len(categories)))
+    bar_h = min(42, max(20, row * .68))
     for cat_index, category in enumerate(categories):
         y = y0 + cat_index * row
         total = totals[cat_index] or 1
         row_standard = round(120 + cat_index * standard_step * .55)
         row_brief = round(55 + cat_index * brief_step * .45)
         row_story = round(180 + cat_index * story_step * .55)
-        parts += [text(x0 - 20, y + 23, category, cls="muted", anchor="end", size=13, extra=motion("lock", row_standard, brief=row_brief, story=row_story, choreo="readout")), line(x0, y + 31, x1, y + 31, cls="grid", extra=f'pathLength="1" {motion("align", row_standard, brief=row_brief, story=row_story)}')]
+        field_parts += [text(x0 - 20, y + bar_h * .58, category, cls="muted", anchor="end", size=13, extra=motion("lock", row_standard, brief=row_brief, story=row_story, choreo="readout")), line(x0, y + bar_h / 2, x1, y + bar_h / 2, cls="grid", extra=f'pathLength="1" {motion("align", row_standard, brief=row_brief, story=row_story)}')]
         cursor = x0
         for series_index, item in enumerate(series):
             width = (x1 - x0) * item["values"][cat_index] / total
@@ -544,26 +580,28 @@ def build_c5(data: Any) -> str | ChartArtwork:
             segment_standard = round(280 + cat_index * standard_step + series_index * 70)
             segment_brief = round(150 + cat_index * brief_step + series_index * 40)
             segment_story = round(700 + cat_index * story_step + series_index * 120)
-            parts.append(path(cut_rect_path(cursor, y, max(1, width - 4), 42, 5), cls=cls, extra=motion("dock", segment_standard, dx=-18, brief=segment_brief, story=segment_story, duration=420, duration_brief=280, duration_story=620, choreo="band-fill")))
-            if width > 74:
-                parts.append(text(cursor + width / 2, y + 26, f"{item['values'][cat_index]/total*100:.0f}%", cls=f"index {_contrast_text_class(cls)}", anchor="middle", size=12, weight=700, extra=motion("lock", segment_standard + 300, brief=segment_brief + 190, story=segment_story + 470, choreo="readout")))
+            plot_parts.append(path(cut_rect_path(cursor, y, max(1, width - 4), bar_h, 5), cls=cls, extra=motion("dock", segment_standard, dx=-18, brief=segment_brief, story=segment_story, duration=420, duration_brief=280, duration_story=620, choreo="band-fill")))
+            if width > 74 and bar_h >= 28:
+                plot_parts.append(text(cursor + width / 2, y + bar_h * .62, f"{item['values'][cat_index]/total*100:.0f}%", cls=f"index {_contrast_text_class(cls)}", anchor="middle", size=12, weight=700, extra=motion("lock", segment_standard + 300, brief=segment_brief + 190, story=segment_story + 470, choreo="readout")))
             cursor += width
     for index, item in enumerate(series):
         x = x0 + index * 190
-        parts.append(group([rect(x, 442, 12, 12, cls="signal-fill" if index == 0 else f"cat-{index+1}"), text(x + 22, 453, item.get("name", f"系列{index+1}"), cls="muted", size=12)], cls="band-legend", extra=motion("lock", 1180 + index * 70, brief=700 + index * 40, story=2500 + index * 140, choreo="readout")))
+        plot_parts.append(group([rect(x, 442, 12, 12, cls="signal-fill" if index == 0 else f"cat-{index+1}"), text(x + 22, 453, item.get("name", f"系列{index+1}"), cls="muted", size=12)], cls="band-legend", extra=motion("lock", 1180 + index * 70, brief=700 + index * 40, story=2500 + index * 140, choreo="readout")))
     latest_y = y0 + (len(categories) - 1) * row
     primary_end = x0 + (x1 - x0) * series[0]["values"][-1] / max(1, totals[-1])
-    overlay = []
-    for index in range(len(categories)):
-        cy = y0 + index * row + 21
-        overlay.append(rect(x0 - 4, cy - 4, 8, 8, cls="pm-socket-signal" if index == len(categories) - 1 else "pm-socket"))
-    overlay += [
-        circle(primary_end, latest_y + 21, 13, cls="pm-lock-ring"),
-        text(primary_end, latest_y - 3, f"Q{len(categories):02d} / LATEST MIX", cls="pm-address pm-address-signal", anchor="middle", size=10),
+    lock_y = latest_y + bar_h / 2
+    lock_parts = [
+        line(x0, latest_y + bar_h + 8, x1, latest_y + bar_h + 8, cls="pm-focus-corner"),
+        rect(primary_end - 8, lock_y - 8, 16, 16, cls="pm-socket-signal"),
+        text(primary_end, latest_y - 15, f"Q{len(categories):02d} / LATEST MIX", cls="pm-address pm-address-signal", anchor="middle", size=10),
     ]
-    return ChartArtwork(
-        svg="\n".join(parts),
-        presentation=DirectCanvas(foreground_svg="\n".join(overlay), lock_delay=1160, lock_delay_brief=700, lock_delay_story=2400, compiled_motion=True),
+    return _direct_artwork(
+        field_parts,
+        plot_parts,
+        lock_parts,
+        lock_delay=1160,
+        lock_delay_brief=700,
+        lock_delay_story=2400,
     )
 
 
@@ -663,11 +701,15 @@ def build_c7(data: Any) -> str | ChartArtwork:
     row = min(62, 300 / max(1, len(items) - 1))
     pos = lambda dt: x0 + (x1 - x0) * (dt - minimum).days / span
     active_indices = [index for index, item in enumerate(items) if 0 < item["progress"] < 100]
-    parts = [line(x0, 110, x1, 110, cls="rail-strong", extra=f'pathLength="1" {motion("align", 80, brief=35, story=120)}')]
+    field_parts = [
+        text(0, 28, "07 / DIRECT MILESTONE LANES", cls="index muted", size=12),
+        line(x0, 110, x1, 110, cls="rail-strong", extra=f'pathLength="1" {motion("align", 80, brief=35, story=120)}'),
+    ]
+    plot_parts: list[str] = []
     progress_points: list[tuple[float, float]] = []
     for tick in range(6):
         x = x0 + (x1 - x0) * tick / 5
-        parts += [line(x, 103, x, 460, cls="grid", extra=f'pathLength="1" {motion("align", 100 + tick * 35, brief=45 + tick * 18, story=160 + tick * 55)}'), text(x, 95, f"D+{round(span* tick/5)}", cls="index muted", anchor="middle", size=12)]
+        field_parts += [line(x, 103, x, 460, cls="grid", extra=f'pathLength="1" {motion("align", 100 + tick * 35, brief=45 + tick * 18, story=160 + tick * 55)}'), text(x, 95, f"D+{round(span* tick/5)}", cls="index muted", anchor="middle", size=12)]
     for index, item in enumerate(items):
         y = y0 + index * row
         start, end = pos(item["_start"]), pos(item["_end"])
@@ -677,21 +719,22 @@ def build_c7(data: Any) -> str | ChartArtwork:
         task_story = 700 + index * 210
         progress_points.append((start + width * item["progress"] / 100, y + 13))
         heading = group([text(244, y + 19, f"{index+1:02d}", cls="index muted", anchor="end", size=12), text(258, y + 19, item.get("task", "任务"), size=14), text(x1, y + 19, f"{item['progress']:.0f}%", cls="index muted", anchor="end", size=12)], cls="milestone-heading", extra=motion("lock", 240 + index * 50, brief=120 + index * 25, story=420 + index * 95, choreo="readout"))
-        parts += [heading, line(x0, y + 12, x1, y + 12, cls="grid", extra=motion("align", 140 + index * 35, brief=70 + index * 18, story=220 + index * 70)), path(cut_rect_path(start, y, width, 26, 5), cls="panel-stroke", extra=motion("dock", task_standard, dx=-24, brief=task_brief, story=task_story, duration=350, duration_brief=220, duration_story=540, choreo="interlock")), rect(start, y, width * item["progress"] / 100, 26, cls="signal-fill" if 0 < item["progress"] < 100 else "data-fill", extra=motion("route", task_standard + 250, brief=task_brief + 150, story=task_story + 390, duration=320, duration_brief=220, duration_story=600, choreo="band-fill")), line(end, y - 5, end, y + 34, cls="rail", extra=motion("lock", task_standard + 500, brief=task_brief + 300, story=task_story + 780, choreo="readout"))]
+        field_parts += [heading, line(x0, y + 12, x1, y + 12, cls="grid", extra=motion("align", 140 + index * 35, brief=70 + index * 18, story=220 + index * 70))]
+        plot_parts += [path(cut_rect_path(start, y, width, 26, 5), cls="panel-stroke", extra=motion("dock", task_standard, dx=-24, brief=task_brief, story=task_story, duration=350, duration_brief=220, duration_story=540, choreo="interlock")), rect(start, y, width * item["progress"] / 100, 26, cls="signal-fill" if 0 < item["progress"] < 100 else "data-fill", extra=motion("route", task_standard + 250, brief=task_brief + 150, story=task_story + 390, duration=320, duration_brief=220, duration_story=600, choreo="band-fill")), line(end, y - 5, end, y + 34, cls="rail", extra=motion("lock", task_standard + 500, brief=task_brief + 300, story=task_story + 780, choreo="readout"))]
     focus_index = min(active_indices, key=lambda index: abs(items[index]["progress"] - 50)) if active_indices else max(0, len(items) - 1)
     target_x, target_y = progress_points[focus_index]
-    overlay = []
-    for index, item in enumerate(items):
-        socket_x = pos(item["_start"])
-        socket_y = y0 + index * row + 13
-        overlay.append(rect(socket_x - 4, socket_y - 4, 8, 8, cls="pm-socket-signal" if index == focus_index else "pm-socket"))
-    overlay += [
-        circle(target_x, target_y, 13, cls="pm-lock-ring"),
-        text(target_x, target_y - 22, f"M{focus_index + 1:02d} / ACTIVE", cls="pm-address pm-address-signal", anchor="middle", size=10),
+    lock_parts = [
+        rect(target_x - 8, target_y - 8, 16, 16, cls="pm-socket-signal"),
+        path(f"M {target_x} {target_y-8} V {target_y-25}", cls="pm-lock-cross"),
+        text(target_x, target_y - 36, f"M{focus_index + 1:02d} / ACTIVE", cls="pm-address pm-address-signal", anchor="middle", size=10),
     ]
-    return ChartArtwork(
-        svg="\n".join(parts),
-        presentation=DirectCanvas(foreground_svg="\n".join(overlay), lock_delay=1140, lock_delay_brief=680, lock_delay_story=2300, compiled_motion=True),
+    return _direct_artwork(
+        field_parts,
+        plot_parts,
+        lock_parts,
+        lock_delay=1140,
+        lock_delay_brief=680,
+        lock_delay_story=2300,
     )
 
 
@@ -768,45 +811,54 @@ def build_c9(data: Any) -> str | ChartArtwork:
     completion = value / target * 100 if target else None
     yoy = data.get("yoy")
     metric_meta = group([text(34, 122, data.get("label", "核心指标"), cls="muted", size=16), text(38, 275, data.get("unit", ""), cls="muted", size=18)], cls="metric-meta", extra=motion("lock", 400, brief=200, story=600, choreo="readout"))
-    parts = [
-        path(cut_rect_path(0, 74, 680, 336, 14), cls="panel-stroke", extra=motion("dock", 180, dx=-22, brief=70, story=250, duration=460, duration_brief=300, duration_story=620, choreo="interlock")),
+    field_parts = [
+        text(0, 28, "09 / DIRECT METRIC LOCKUP", cls="index muted", size=12),
+        line(0, 74, 680, 74, cls="rail-strong", extra=f'pathLength="1" {motion("align", 80, brief=35, story=120)}'),
+        line(0, 74, 0, 410, cls="rail", extra=f'pathLength="1" {motion("align", 100, brief=45, story=150)}'),
         metric_meta,
-        text(34, 235, format_num(value), cls="value title-font", size=84, weight=700, extra=motion("lock", 650, brief=330, story=900, duration=320, duration_brief=220, duration_story=440, choreo="readout")),
         line(38, 326, 622, 326, cls="rail-strong", extra=f'pathLength="1" {motion("align", 120, brief=45, story=170)}'),
+    ]
+    plot_parts = [
+        text(34, 235, format_num(value), cls="value title-font", size=84, weight=700, extra=motion("lock", 650, brief=330, story=900, duration=320, duration_brief=220, duration_story=440, choreo="readout")),
     ]
     target_x = 622
     if target:
         ratio = min(1, max(0, value / target))
         target_x = 38 + 584 * ratio
-        parts += [line(38, 326, target_x, 326, cls="signal-stroke", extra=f'pathLength="1" {motion("route", 820, duration=620, brief=480, story=1450, duration_brief=420, duration_story=900, choreo="trace")}'), line(target_x, 313, target_x, 339, cls="signal-stroke", extra=motion("lock", 1240, brief=850, story=2380, choreo="readout")), text(622, 355, f"TARGET {format_num(target)}", cls="index muted", anchor="end", size=12)]
+        plot_parts += [line(38, 326, target_x, 326, cls="signal-stroke", extra=f'pathLength="1" {motion("route", 820, duration=620, brief=480, story=1450, duration_brief=420, duration_story=900, choreo="trace")}'), line(target_x, 313, target_x, 339, cls="signal-stroke", extra=motion("lock", 1240, brief=850, story=2380, choreo="readout")), text(622, 355, f"TARGET {format_num(target)}", cls="index muted", anchor="end", size=12)]
     context_rows = [
         ("YOY", f"{yoy:+.1f}%" if is_number(yoy) else "—"),
         ("MOM", f"{data.get('mom'):+.1f}%" if is_number(data.get("mom")) else "—"),
         ("TARGET", format_num(target) if target else "—"),
     ]
-    context = [line(732, 84, 1128, 84, cls="rail-strong")]
+    context_field = [line(732, 84, 1128, 84, cls="rail-strong")]
+    context_plot: list[str] = []
     for index, (label, rendered) in enumerate(context_rows):
         cy = 124 + index * 88
-        context += [
+        context_field += [
             text(732, cy, f"0{index + 1} / {label}", cls="index muted", size=12),
-            text(1128, cy + 32, rendered, cls="value", anchor="end", size=26, weight=650),
             line(732, cy + 48, 1128, cy + 48, cls="grid"),
         ]
-    parts.append(group(context, cls="metric-context"))
+        context_plot.append(text(1128, cy + 32, rendered, cls="value", anchor="end", size=26, weight=650))
+    field_parts.append(group(context_field, cls="metric-context"))
+    plot_parts.append(group(context_plot, cls="metric-context-values", extra=motion("lock", 520, brief=280, story=850, choreo="readout")))
     if completion is not None:
         lock_code = "TGT"
     elif is_number(yoy):
         lock_code = "YOY"
     else:
         lock_code = "VAL"
-    foreground = "\n".join([
-        rect(34, 322, 8, 8, cls="pm-socket"),
-        circle(target_x, 326, 13, cls="pm-lock-ring"),
+    lock_parts = [
+        rect(target_x - 8, 318, 16, 16, cls="pm-socket-signal"),
         text(target_x, 300, f"KPI / {lock_code}", cls="pm-address pm-address-signal", anchor="middle", size=10),
-    ])
-    return ChartArtwork(
-        svg="\n".join(parts),
-        presentation=DirectCanvas(foreground_svg=foreground, lock_delay=1060, lock_delay_brief=620, lock_delay_story=1950, compiled_motion=True),
+    ]
+    return _direct_artwork(
+        field_parts,
+        plot_parts,
+        lock_parts,
+        lock_delay=1060,
+        lock_delay_brief=620,
+        lock_delay_story=1950,
     )
 
 
@@ -825,9 +877,16 @@ def build_c10(data: Any) -> str | ChartArtwork:
         cls="decision-hero-meta",
         extra=motion("lock", 420, brief=210, story=620, choreo="readout"),
     )
-    parts = [path(cut_rect_path(0, 66, 520, 356, 14), cls="panel-stroke", extra=motion("dock", 200, dx=-24, brief=80, story=260, duration=460, duration_brief=300, duration_story=620, choreo="interlock")), hero_meta, text(36, 265, format_num(items[hero]["value"]), cls="value title-font", size=74, weight=700, extra=motion("lock", 660, brief=320, story=850, duration=320, duration_brief=220, duration_story=440, choreo="readout")), line(36, 340, 474, 340, cls="rail-strong", extra=f'pathLength="1" {motion("align", 120, brief=45, story=180)}')]
+    field_parts = [
+        text(0, 28, "10 / DIRECT DECISION COMPARISON", cls="index muted", size=12),
+        line(0, 66, 520, 66, cls="rail-strong", extra=f'pathLength="1" {motion("align", 80, brief=35, story=120)}'),
+        line(0, 66, 0, 422, cls="rail", extra=f'pathLength="1" {motion("align", 110, brief=50, story=160)}'),
+        hero_meta,
+        line(36, 340, 474, 340, cls="rail-strong", extra=f'pathLength="1" {motion("align", 120, brief=45, story=180)}'),
+    ]
+    plot_parts = [text(36, 265, format_num(items[hero]["value"]), cls="value title-font", size=74, weight=700, extra=motion("lock", 660, brief=320, story=850, duration=320, duration_brief=220, duration_story=440, choreo="readout"))]
     if is_number(items[hero].get("yoy")):
-        parts += [text(36, 382, f"YOY {items[hero]['yoy']:+.1f}%", cls="index signal-text", size=14, weight=650, extra=motion("lock", 930, brief=520, story=1320, choreo="readout")), path("M 24 78 V 56 H 46", cls="signal-stroke", extra=f'pathLength="1" {motion("lock", 850, brief=460, story=1200, choreo="readout")}')]
+        plot_parts.append(text(36, 382, f"YOY {items[hero]['yoy']:+.1f}%", cls="index signal-text" if items[hero]["yoy"] < 0 else "index muted", size=14, weight=650, extra=motion("lock", 930, brief=520, story=1320, choreo="readout")))
     x0, x1, y0 = 586, 1130, 78
     other_indices = [index for index in range(len(items)) if index != hero]
     others = [items[index] for index in other_indices]
@@ -850,7 +909,8 @@ def build_c10(data: Any) -> str | ChartArtwork:
             extra=motion("lock", row_standard, brief=row_brief, story=row_story, choreo="readout"),
         )
         row_targets[other_indices[index]] = (x0 + 42 + max(6, (x1-x0-42)*ratio), y + 30)
-        parts += [row_heading, line(x0 + 42, y + 30, x1, y + 30, cls="grid", extra=f'pathLength="1" {motion("align", row_standard, brief=row_brief, story=row_story)}'), path(cut_rect_path(x0 + 42, y + 19, max(6, (x1-x0-42)*ratio), 22, 5), cls="signal-fill" if is_risk else "data-fill", extra=motion("dock", 760 + index * 190, dx=-28, brief=450 + index * 100, story=1650 + index * 320, duration=440, duration_brief=280, duration_story=620, choreo="interlock")), text(x1, y + 61, f"YOY {item.get('yoy'):+.1f}%" if is_number(item.get("yoy")) else "YOY —", cls="signal-text index" if is_risk else "muted index", anchor="end", size=12, extra=motion("lock", 1080 + index * 135, brief=700 + index * 70, story=2320 + index * 270, choreo="alarm" if is_risk else "readout"))]
+        field_parts += [row_heading, line(x0 + 42, y + 30, x1, y + 30, cls="grid", extra=f'pathLength="1" {motion("align", row_standard, brief=row_brief, story=row_story)}')]
+        plot_parts += [path(cut_rect_path(x0 + 42, y + 19, max(6, (x1-x0-42)*ratio), 22, 5), cls="signal-fill" if is_risk else "data-fill", extra=motion("dock", 760 + index * 190, dx=-28, brief=450 + index * 100, story=1650 + index * 320, duration=440, duration_brief=280, duration_story=620, choreo="interlock")), text(x1, y + 61, f"YOY {item.get('yoy'):+.1f}%" if is_number(item.get("yoy")) else "YOY —", cls="signal-text index" if is_risk else "muted index", anchor="end", size=12, extra=motion("lock", 1080 + index * 135, brief=700 + index * 70, story=2320 + index * 270, choreo="alarm" if is_risk else "readout"))]
     if risks:
         focus_index = risks[0]
         target_x, target_y = row_targets.get(focus_index, (474, 340))
@@ -859,16 +919,18 @@ def build_c10(data: Any) -> str | ChartArtwork:
         focus_index = hero
         target_x, target_y = 474, 340
         lock_code = f"L{hero + 1:02d}"
-    overlay = []
-    for original_index, (px, py) in row_targets.items():
-        overlay.append(rect(x0 + 38, py - 4, 8, 8, cls="pm-socket-signal" if original_index == focus_index else "pm-socket"))
-    overlay += [
-        circle(target_x, target_y, 13, cls="pm-lock-ring"),
-        text(target_x, target_y - 18, f"DECISION / {lock_code}", cls="pm-address pm-address-signal", anchor="middle", size=10),
+    lock_parts = [
+        rect(target_x - 8, target_y - 8, 16, 16, cls="pm-socket-signal"),
+        path(f"M {target_x-22} {target_y-18} V {target_y-30} H {target_x-8} M {target_x+8} {target_y-30} H {target_x+22} V {target_y-18}", cls="pm-focus-corner"),
+        text(target_x, target_y - 42, f"DECISION / {lock_code}", cls="pm-address pm-address-signal", anchor="middle", size=10),
     ]
-    return ChartArtwork(
-        svg="\n".join(parts),
-        presentation=DirectCanvas(foreground_svg="\n".join(overlay), lock_delay=1120, lock_delay_brief=680, lock_delay_story=2200, compiled_motion=True),
+    return _direct_artwork(
+        field_parts,
+        plot_parts,
+        lock_parts,
+        lock_delay=1120,
+        lock_delay_brief=680,
+        lock_delay_story=2200,
     )
 
 
@@ -899,7 +961,7 @@ def _arc_band(cx: float, cy: float, inner: float, outer: float, start: float, en
     )
 
 
-def build_c11(data: Any) -> str:
+def build_c11(data: Any) -> str | ChartArtwork:
     variant = str(data.get("variant", "donut")).lower() if isinstance(data, dict) else "donut"
     source = data.get("items", []) if isinstance(data, dict) else data
     items = [item for item in _valid_series(source) if item["value"] > 0][:6]
@@ -908,14 +970,17 @@ def build_c11(data: Any) -> str:
     total = sum(item["value"] for item in items)
     leader = max(range(len(items)), key=lambda index: items[index]["value"])
     cx, cy, inner, outer = 360, 252, 0 if variant == "pie" else 108, 184
-    parts = [
+    field_parts = [
         text(0, 28, "11 / SECTOR LOCK", cls="index muted", size=13),
         circle(cx, cy, outer + 18, cls="hollow", extra=motion("align", 70, brief=30, story=110, duration=260)),
+        line(650, 80, 1118, 80, cls="rail-strong", extra=f'pathLength="1" {motion("align", 90, brief=35, story=140)}'),
     ]
+    plot_parts: list[str] = []
     if inner:
-        parts.append(circle(cx, cy, inner - 14, cls="panel-stroke", extra=motion("dock", 180, brief=80, story=260, choreo="field-seat")))
+        plot_parts.append(circle(cx, cy, inner - 14, cls="panel-stroke", extra=motion("dock", 180, brief=80, story=260, choreo="field-seat")))
     angle = -math.pi / 2
     classes = ["data-fill", "cat-1", "cat-2", "cat-3", "secondary-fill", "cat-4"]
+    leader_angle = angle
     for index, item in enumerate(items):
         sweep = math.tau * item["value"] / total
         gap = min(.025, sweep * .08)
@@ -924,25 +989,44 @@ def build_c11(data: Any) -> str:
             cls="signal-fill" if index == leader else classes[index],
             extra=motion("dock", 260 + index * 95, brief=130 + index * 50, story=480 + index * 170, duration=430, duration_brief=280, duration_story=650, choreo="field-seat"),
         )
-        parts.append(segment)
+        plot_parts.append(segment)
+        if index == leader:
+            leader_angle = angle + sweep / 2
         angle += sweep
     share = items[leader]["value"] / total * 100
-    parts.append(line(650, 80, 1118, 80, cls="rail-strong", extra=f'pathLength="1" {motion("align", 90, brief=35, story=140)}'))
-    if inner:
-        parts += [text(cx, cy - 8, f"{share:.1f}%", cls="value title-font", anchor="middle", size=48, weight=700, extra=motion("lock", 1050, brief=610, story=1950, choreo="readout")), text(cx, cy + 28, items[leader]["label"], cls="muted", anchor="middle", size=15)]
+    if not inner:
+        plot_parts.append(circle(cx, cy, 56, cls="panel-fill", extra=motion("dock", 920, brief=520, story=1720, choreo="field-seat")))
+    plot_parts += [text(cx, cy - 8, format_num(total), cls="value title-font", anchor="middle", size=48, weight=700, extra=motion("lock", 1050, brief=610, story=1950, choreo="readout")), text(cx, cy + 28, "TOTAL", cls="index muted", anchor="middle", size=12)]
     for index, item in enumerate(items):
         y = 118 + index * 54
-        parts += [
-            rect(650, y, 18, 18, cls="signal-fill" if index == leader else classes[index], extra=motion("dock", 440 + index * 70, dx=-16, brief=230 + index * 35, story=820 + index * 120, choreo="interlock")),
+        field_parts += [
             text(686, y + 15, item["label"], size=15, weight=650 if index == leader else None),
-            text(1118, y + 15, f"{item['value'] / total * 100:.1f}%", cls="value index", anchor="end", size=14),
             line(686, y + 28, 1118, y + 28, cls="grid"),
         ]
-    parts.append(evidence_plate(888, 390, "S-11", "LEADER", f"{share:.1f}%", "最大构成占比", delay=1480, width=230, brief=860, story=2820, choreo="alarm"))
-    return "\n".join(parts)
+        plot_parts += [
+            rect(650, y, 18, 18, cls="signal-fill" if index == leader else classes[index], extra=motion("dock", 440 + index * 70, dx=-16, brief=230 + index * 35, story=820 + index * 120, choreo="interlock")),
+            text(1118, y + 15, f"{item['value'] / total * 100:.1f}%", cls="value index", anchor="end", size=14),
+        ]
+    lock_radius = outer + 12
+    lock_x = cx + lock_radius * math.cos(leader_angle)
+    lock_y = cy + lock_radius * math.sin(leader_angle)
+    address_x = lock_x + (28 if math.cos(leader_angle) >= 0 else -28)
+    lock_parts = [
+        rect(lock_x - 8, lock_y - 8, 16, 16, cls="pm-socket-signal"),
+        path(f"M {lock_x:.2f} {lock_y:.2f} L {address_x:.2f} {lock_y:.2f}", cls="pm-lock-cross"),
+        text(address_x + (8 if address_x >= lock_x else -8), lock_y - 9, f"S{leader + 1:02d} / {share:.1f}%", cls="pm-address pm-address-signal", anchor="start" if address_x >= lock_x else "end", size=10),
+    ]
+    return _direct_artwork(
+        field_parts,
+        plot_parts,
+        lock_parts,
+        lock_delay=1120,
+        lock_delay_brief=680,
+        lock_delay_story=2200,
+    )
 
 
-def build_c12(data: Any) -> str:
+def build_c12(data: Any) -> str | ChartArtwork:
     labels = data.get("labels", []) if isinstance(data, dict) else []
     raw = data.get("series", []) if isinstance(data, dict) else []
     series = []
@@ -952,29 +1036,51 @@ def build_c12(data: Any) -> str:
             series.append(item)
     if not labels or not series:
         return no_data()
-    parts = [text(0, 28, "12 / METRIC SMALL MULTIPLES", cls="index muted", size=13)]
-    panel_w, panel_h = 548, 188
+    field_parts = [
+        text(0, 28, "12 / DIRECT METRIC SMALL MULTIPLES", cls="index muted", size=13),
+        line(24, 390, 1148, 390, cls="rail-strong", extra=f'pathLength="1" {motion("align", 80, brief=35, story=120)}'),
+    ]
+    plot_parts: list[str] = []
+    band = 1124 / len(series)
+    endpoints: list[tuple[float, float]] = []
     for index, item in enumerate(series):
-        col, row_i = index % 2, index // 2
-        x, y = col * 584, 62 + row_i * 216
+        x = 24 + index * band
         values = item["values"]
         low, high = min(values), max(values)
         pad = max((high - low) * .15, abs(high) * .03, 1)
-        px0, px1, py0, py1 = x + 24, x + panel_w - 24, y + 54, y + panel_h - 28
+        px0, px1, py0, py1 = x + 12, x + band - 28, 126, 352
         points = [(_scale(i, 0, max(1, len(values) - 1), px0, px1), _scale(value, low - pad, high + pad, py1, py0)) for i, value in enumerate(values)]
+        endpoints.append(points[-1])
         delta = values[-1] - values[0]
         panel_delay = 150 + index * 120
-        parts += [
-            path(cut_rect_path(x, y, panel_w, panel_h, 10), cls="panel-stroke", extra=motion("dock", panel_delay, dy=18, brief=70 + index * 55, story=260 + index * 240, choreo="field-seat")),
-            text(x + 22, y + 30, f"{index + 1:02d} / {item.get('name', '指标')}", cls="index muted", size=12),
-            text(x + panel_w - 22, y + 31, f"{delta:+.1f} {item.get('unit', '')}", cls="index signal-text" if delta >= 0 else "index muted", anchor="end", size=12, extra=motion("lock", 1380 + index * 80, brief=800 + index * 45, story=2640 + index * 160, choreo="alarm" if index == 0 else "readout")),
+        field_parts += [
+            text(px0, 92, f"{index + 1:02d} / {item.get('name', '指标')}", cls="index muted", size=12),
             line(px0, py1, px1, py1, cls="grid", extra=f'pathLength="1" {motion("align", panel_delay + 80, brief=panel_delay // 2, story=panel_delay * 2)}'),
-            path(_polyline(points), cls="signal-stroke" if index == 0 else "data-stroke", extra=f'pathLength="1" {motion("route", panel_delay + 260, brief=160 + index * 80, story=620 + index * 300, choreo="trace")}'),
-            text(px0, py1 + 18, labels[0], cls="index muted", size=12),
-            text(px1, py1 + 18, labels[-1], cls="index muted", anchor="end", size=12),
-            text(px1, points[-1][1] - 10, format_num(values[-1]), cls="value", anchor="end", size=16, weight=650, extra=motion("lock", panel_delay + 680, brief=460 + index * 70, story=1320 + index * 340, choreo="readout")),
+            text(px0, 414, labels[0], cls="index muted", size=12),
+            text(px1, 414, labels[-1], cls="index muted", anchor="end", size=12),
         ]
-    return "\n".join(parts)
+        if index:
+            field_parts.append(line(x, 74, x, 432, cls="grid"))
+        plot_parts += [
+            path(_polyline(points), cls="signal-stroke" if index == 0 else "data-stroke quiet", extra=f'pathLength="1" {motion("route", panel_delay + 260, brief=160 + index * 80, story=620 + index * 300, choreo="trace")}'),
+            text(px1, points[-1][1] - 10, format_num(values[-1]), cls="value", anchor="end", size=16, weight=650, extra=motion("lock", panel_delay + 680, brief=460 + index * 70, story=1320 + index * 340, choreo="readout")),
+            text(px1, 112, f"{delta:+.1f} {item.get('unit', '')}", cls="index signal-text" if index == 0 else "index muted", anchor="end", size=12),
+            circle(px1, points[-1][1], 5 if index == 0 else 4, cls="signal-fill" if index == 0 else "data-fill", extra=motion("dock", panel_delay + 620, brief=420 + index * 65, story=1240 + index * 320, choreo="pin")),
+        ]
+    target_x, target_y = endpoints[0]
+    lock_parts = [
+        rect(target_x - 8, target_y - 8, 16, 16, cls="pm-socket-signal"),
+        path(f"M {target_x} {target_y-8} V {target_y-26}", cls="pm-lock-cross"),
+        text(target_x, target_y + 30, "M01 / KEY END", cls="pm-address pm-address-signal", anchor="middle", size=10),
+    ]
+    return _direct_artwork(
+        field_parts,
+        plot_parts,
+        lock_parts,
+        lock_delay=1100,
+        lock_delay_brief=660,
+        lock_delay_story=2100,
+    )
 
 
 def build_c13(data: Any) -> str:
@@ -1254,29 +1360,58 @@ def _matrix_data(data: Any, row_key: str = "rows") -> tuple[list[str], list[str]
     return [str(value) for value in rows], [str(value) for value in columns], clean
 
 
-def build_c20(data: Any) -> str:
+def build_c20(data: Any) -> str | ChartArtwork:
     rows, columns, values = _matrix_data(data)
     if not rows or len(rows) > 8 or len(columns) > 8:
         return no_data()
     flat = [value for row in values for value in row]
     low, high = min(flat), max(flat)
     best = max((value, row_i, col_i) for row_i, row in enumerate(values) for col_i, value in enumerate(row))
-    x0, y0 = 270, 80
-    cell_w, cell_h = 840 / len(columns), min(62, 330 / len(rows))
-    parts = [text(0, 28, "20 / SENSITIVITY MATRIX", cls="index muted", size=13), line(x0, 58, x0 + cell_w * len(columns), 58, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}')]
+    x0, x1, y0 = 178, 1122, 82
+    cell_w, cell_h = (x1 - x0) / len(columns), min(64, 350 / len(rows))
+    field_parts = [
+        text(0, 28, "20 / DIRECT SENSITIVITY MATRIX", cls="index muted", size=13),
+        line(x0, 58, x1, 58, cls="rail-strong", extra=f'pathLength="1" {motion("align", 70, brief=30, story=110)}'),
+    ]
+    plot_parts: list[str] = []
     for col, label in enumerate(columns):
-        parts.append(text(x0 + cell_w * (col + .5), 48, label, cls="index muted", anchor="middle", size=12))
+        field_parts.append(text(x0 + cell_w * (col + .5), 48, label, cls="index muted", anchor="middle", size=12))
     for row_i, label in enumerate(rows):
         y = y0 + row_i * cell_h
-        parts.append(text(0, y + cell_h * .62, label, cls="index muted", size=12))
+        field_parts += [
+            text(x0 - 18, y + cell_h * .62, label, cls="index muted", anchor="end", size=12),
+            line(x0, y + cell_h, x1, y + cell_h, cls="grid", extra=f'pathLength="1" {motion("align", 110 + row_i * 35, brief=55 + row_i * 18, story=170 + row_i * 60)}'),
+        ]
         for col_i, value in enumerate(values[row_i]):
             x = x0 + col_i * cell_w
             ratio = (value - low) / (high - low or 1)
             cls = "signal-fill" if (value, row_i, col_i) == best else ("data-fill" if ratio > .72 else "cat-1" if ratio > .38 else "panel-stroke")
             delay = 220 + row_i * 80 + col_i * 55
-            parts += [rect(x + 3, y + 3, cell_w - 6, cell_h - 6, cls=cls, extra=motion("dock", delay, dy=12, brief=100 + row_i * 35 + col_i * 24, story=420 + row_i * 150 + col_i * 100, choreo="field-seat")), text(x + cell_w / 2, y + cell_h * .62, format_num(value), cls=_contrast_text_class(cls), anchor="middle", size=14, weight=650, extra=motion("lock", delay + 240, brief=delay // 2 + 150, story=delay * 2 + 300, choreo="readout"))]
-    parts.append(evidence_plate(0, 348, "S-20", "UPSIDE", format_num(best[0]), f"{rows[best[1]]} / {columns[best[2]]}", delay=1780, width=246, brief=1020, story=3400, choreo="alarm"))
-    return "\n".join(parts)
+            plot_parts += [rect(x + 3, y + 3, cell_w - 6, cell_h - 6, cls=cls, extra=motion("dock", delay, dy=12, brief=100 + row_i * 35 + col_i * 24, story=420 + row_i * 150 + col_i * 100, choreo="field-seat")), text(x + cell_w / 2, y + cell_h * .62, format_num(value), cls=_contrast_text_class(cls), anchor="middle", size=14, weight=650, extra=motion("lock", delay + 240, brief=delay // 2 + 150, story=delay * 2 + 300, choreo="readout"))]
+    best_row, best_col = best[1], best[2]
+    best_x, best_y = x0 + best_col * cell_w, y0 + best_row * cell_h
+    left, right = best_x + 1, best_x + cell_w - 1
+    top, bottom = best_y + 1, best_y + cell_h - 1
+    arm = min(14, cell_w * .2, cell_h * .28)
+    focus_path = (
+        f"M {left} {top+arm} V {top} H {left+arm} M {right-arm} {top} H {right} V {top+arm} "
+        f"M {right} {bottom-arm} V {bottom} H {right-arm} M {left+arm} {bottom} H {left} V {bottom-arm}"
+    )
+    lock_parts = [
+        line(x0, top - 4, best_x, top - 4, cls="pm-lock-cross"),
+        line(left - 4, y0, left - 4, best_y, cls="pm-lock-cross"),
+        path(focus_path, cls="pm-focus-corner"),
+        rect(right - 8, top - 8, 16, 16, cls="pm-socket-signal"),
+        text(x1, min(472, y0 + cell_h * len(rows) + 30), f"LOCK / {rows[best_row]} × {columns[best_col]} / {format_num(best[0])}", cls="pm-address pm-address-signal", anchor="end", size=10),
+    ]
+    return _direct_artwork(
+        field_parts,
+        plot_parts,
+        lock_parts,
+        lock_delay=1180,
+        lock_delay_brief=720,
+        lock_delay_story=2350,
+    )
 
 
 def _percentile(values: list[float], ratio: float) -> float:

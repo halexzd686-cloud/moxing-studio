@@ -20,7 +20,7 @@ def main() -> None:
     motions = set(data["motionGrammars"])
     documented_rows = []
     for line in REFERENCE.read_text(encoding="utf-8").splitlines():
-        match = re.match(r"\| (C\d+) \| [^|]+ \| ([ABC]) \| ([a-z]+) \| [^|]+ \| (low|medium|high) \| ([A-C]\d) \|", line)
+        match = re.match(r"\| (C\d+) \| [^|]+ \| ([ABC]) \| ([a-z]+) \| [^|]+ \| (low|medium|high) \| ([ABC]) \|", line)
         if match:
             documented_rows.append(match.groups())
     contract_rows = [(item["id"], item["mode"], item["motion"], item["risk"], item["batch"]) for item in charts]
@@ -36,7 +36,7 @@ def main() -> None:
         "B evidence is embedded": all(item["evidence"].startswith("embedded-") for item in charts if item["mode"] == "B"),
         "C evidence uses side bay": all(item["evidence"].startswith("side-bay-") for item in charts if item["mode"] == "C"),
         "full-interface set is frozen": {item["id"] for item in charts if item["mode"] == "C"} == {"C3", "C6", "C8", "C15", "C22"},
-        "known migration batches": all(item["batch"] in {"A1", "A2", "B1", "B2", "C1"} for item in charts),
+        "group-aligned migration batches": all(item["batch"] == item["mode"] for item in charts),
         "bounded risk values": all(item["risk"] in {"low", "medium", "high"} for item in charts),
         "reference table matches contract": documented_rows == contract_rows,
     }

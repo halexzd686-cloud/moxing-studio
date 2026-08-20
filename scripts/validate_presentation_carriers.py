@@ -31,7 +31,7 @@ def main() -> None:
         for chart_id, source in rendered.items()
     }
     interface_ids = {"C3", "C6", "C8", "C15", "C22"}
-    direct_a1_ids = {"C1", "C2", "C4", "C5", "C7", "C9", "C10"}
+    direct_a_ids = {"C1", "C2", "C4", "C5", "C7", "C9", "C10", "C11", "C12", "C20"}
 
     legacy_spec = PrecisionInterface("E00", "0 0 10 10", 0, 100, "", "")
     legacy_artwork = ChartArtwork("<g></g>", precision=legacy_spec)
@@ -52,13 +52,13 @@ def main() -> None:
     checks = {
         "all charts declare an active carrier": set(active) == set(CHARTS) and set(active.values()) <= {"direct", "embedded", "interface"},
         "all charts declare approved targets": targets == PRESENTATION_TARGETS,
-        "A1 leaves only approved C charts on interface": {chart_id for chart_id, mode in active.items() if mode == "interface"} == interface_ids,
-        "A1 activates direct across the remaining charts": {chart_id for chart_id, mode in active.items() if mode == "direct"} == set(CHARTS) - interface_ids,
-        "A1 activates no embedded production chart": "embedded" not in active.values(),
+        "current rollout leaves only approved C charts on interface": {chart_id for chart_id, mode in active.items() if mode == "interface"} == interface_ids,
+        "current rollout activates direct across the remaining charts": {chart_id for chart_id, mode in active.items() if mode == "direct"} == set(CHARTS) - interface_ids,
+        "current rollout activates no embedded production chart": "embedded" not in active.values(),
         "interface markup remains compatible": all('data-interface="precision-v2.1"' in rendered[chart_id] and 'class="chart-body pi-split-body"' in rendered[chart_id] for chart_id in interface_ids),
         "direct markup has no split bay": all('<section class="chart-body pi-split-body">' not in rendered[chart_id] and 'class="chart-body pm-direct-body"' in rendered[chart_id] for chart_id in set(CHARTS) - interface_ids),
-        "A1 direct charts use compiled macro motion": all('data-motion-system="presentation-v2.1"' in rendered[chart_id] and 'class="pm-data-field-layer"' in rendered[chart_id] and 'class="pm-target-lock"' in rendered[chart_id] for chart_id in direct_a1_ids) and 'class="pm-plot-layer"' in rendered["C1"],
-        "A1 direct charts contain no evidence container": all('evidence bay' not in rendered[chart_id] and 'class="evidence-plate"' not in rendered[chart_id] and 'class="pm-local-evidence"' not in rendered[chart_id] for chart_id in direct_a1_ids),
+        "A direct charts use three compiled macro layers": all('data-motion-system="presentation-v2.1"' in rendered[chart_id] and 'class="pm-data-field-layer"' in rendered[chart_id] and 'class="pm-plot-layer"' in rendered[chart_id] and 'class="pm-target-lock"' in rendered[chart_id] for chart_id in direct_a_ids),
+        "A direct charts contain no evidence container": all('evidence bay' not in rendered[chart_id] and 'class="evidence-plate"' not in rendered[chart_id] and 'class="pm-local-evidence"' not in rendered[chart_id] for chart_id in direct_a_ids),
         "embedded carrier renders full-width local evidence": 'class="chart-body pm-embedded-body"' in embedded_html and 'class="pm-local-evidence"' in embedded_html and '<section class="chart-body pi-split-body">' not in embedded_html,
         "legacy PrecisionInterface name aliases EvidenceInterface": PrecisionInterface is EvidenceInterface,
         "legacy ChartArtwork precision argument resolves to interface carrier": legacy_artwork.presentation is legacy_spec and legacy_artwork.presentation.mode == "interface",

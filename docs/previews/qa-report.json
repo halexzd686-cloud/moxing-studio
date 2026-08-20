@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T07:56:47.251Z",
+  "generatedAt": "2026-08-20T08:20:38.403Z",
   "status": "passed",
   "checks": [
     {
@@ -295,6 +295,18 @@
       "message": "full-width field with local target lock"
     },
     {
+      "scope": "direct:c11-sector-lock.html",
+      "message": "full-width field with local target lock"
+    },
+    {
+      "scope": "direct:c12-metric-small-multiples.html",
+      "message": "full-width field with local target lock"
+    },
+    {
+      "scope": "direct:c20-sensitivity-matrix.html",
+      "message": "full-width field with local target lock"
+    },
+    {
       "scope": "precision:c03-signal-trend.html",
       "message": "E03 production parity contract"
     },
@@ -516,11 +528,11 @@
     },
     {
       "scope": "precision-performance:c03-signal-trend.html",
-      "message": "precision carrier p95 16.8ms; 4 layers; legacy idle"
+      "message": "precision carrier p95 16.7ms; 4 layers; legacy idle"
     },
     {
       "scope": "precision-performance:c06-ledger-steps.html",
-      "message": "precision carrier p95 16.7ms; 4 layers; legacy idle"
+      "message": "precision carrier p95 16.8ms; 4 layers; legacy idle"
     },
     {
       "scope": "precision-performance:c08-stage-channel.html",
@@ -528,39 +540,51 @@
     },
     {
       "scope": "precision-performance:c15-commerce-flow.html",
-      "message": "precision carrier p95 16.7ms; 4 layers; legacy idle"
-    },
-    {
-      "scope": "precision-performance:c22-correlation-matrix.html",
       "message": "precision carrier p95 16.8ms; 4 layers; legacy idle"
     },
     {
+      "scope": "precision-performance:c22-correlation-matrix.html",
+      "message": "precision carrier p95 16.7ms; 4 layers; legacy idle"
+    },
+    {
       "scope": "direct-performance:c01-structural-rank.html",
-      "message": "direct carrier p95 16.7ms; 3 layers; legacy idle"
+      "message": "direct carrier p95 16.8ms; 3 layers; legacy idle"
     },
     {
       "scope": "direct-performance:c02-ranked-rail.html",
-      "message": "direct carrier p95 16.8ms; 2 layers; legacy idle"
+      "message": "direct carrier p95 16.7ms; 3 layers; legacy idle"
     },
     {
       "scope": "direct-performance:c04-composition-field.html",
-      "message": "direct carrier p95 16.8ms; 2 layers; legacy idle"
+      "message": "direct carrier p95 16.7ms; 3 layers; legacy idle"
     },
     {
       "scope": "direct-performance:c05-composition-bands.html",
-      "message": "direct carrier p95 16.7ms; 2 layers; legacy idle"
+      "message": "direct carrier p95 16.7ms; 3 layers; legacy idle"
     },
     {
       "scope": "direct-performance:c07-milestone-lanes.html",
-      "message": "direct carrier p95 16.8ms; 2 layers; legacy idle"
+      "message": "direct carrier p95 16.7ms; 3 layers; legacy idle"
     },
     {
       "scope": "direct-performance:c09-metric-lockup.html",
-      "message": "direct carrier p95 16.8ms; 2 layers; legacy idle"
+      "message": "direct carrier p95 16.7ms; 3 layers; legacy idle"
     },
     {
       "scope": "direct-performance:c10-decision-interface.html",
-      "message": "direct carrier p95 16.8ms; 2 layers; legacy idle"
+      "message": "direct carrier p95 16.7ms; 3 layers; legacy idle"
+    },
+    {
+      "scope": "direct-performance:c11-sector-lock.html",
+      "message": "direct carrier p95 16.8ms; 3 layers; legacy idle"
+    },
+    {
+      "scope": "direct-performance:c12-metric-small-multiples.html",
+      "message": "direct carrier p95 16.7ms; 3 layers; legacy idle"
+    },
+    {
+      "scope": "direct-performance:c20-sensitivity-matrix.html",
+      "message": "direct carrier p95 16.7ms; 3 layers; legacy idle"
     },
     {
       "scope": "profiles:c01-structural-rank.html",
