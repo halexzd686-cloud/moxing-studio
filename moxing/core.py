@@ -485,9 +485,9 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   .motion-controls button::after {{ content:attr(data-code); position:absolute; right:3px; bottom:1px; font-size:7px; color:var(--matrix-quiet); letter-spacing:.04em; }}
   .motion-controls button:hover {{ border-color:var(--signal); color:var(--signal); }}
   [data-motion] {{ transform-box:fill-box; transform-origin:center; }}
-  @keyframes mx-align {{ from {{ opacity:0; stroke-dashoffset:1; }} to {{ opacity:1; stroke-dashoffset:0; }} }}
+  @keyframes mx-align {{ from {{ opacity:0; }} to {{ opacity:1; }} }}
   @keyframes mx-dock {{ from {{ opacity:0; transform:translate(var(--dx),var(--dy)); }} to {{ opacity:1; transform:translate(0,0); }} }}
-  @keyframes mx-route {{ from {{ opacity:.25; stroke-dashoffset:1; }} to {{ opacity:1; stroke-dashoffset:0; }} }}
+  @keyframes mx-route {{ from {{ opacity:0; stroke-dashoffset:1; }} to {{ opacity:1; stroke-dashoffset:0; }} }}
   @keyframes mx-lock {{ 0% {{ opacity:0; transform:scale(.92); }} 68% {{ opacity:1; transform:scale(1.025); }} 100% {{ opacity:1; transform:scale(1); }} }}
   @keyframes mx-rail-rise {{ from {{ opacity:0; transform:translateY(var(--dy)) scaleY(.16); }} to {{ opacity:1; transform:translateY(0) scaleY(1); }} }}
   @keyframes mx-rail-slide {{ from {{ opacity:0; transform:translateX(var(--dx)) scaleX(.18); }} to {{ opacity:1; transform:translateX(0) scaleX(1); }} }}
@@ -497,9 +497,10 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   @keyframes mx-interlock {{ from {{ opacity:0; transform:translateX(var(--dx)) scaleX(.82); }} to {{ opacity:1; transform:translateX(0) scaleX(1); }} }}
   @keyframes mx-readout {{ from {{ opacity:0; clip-path:inset(0 100% 0 0); transform:translateY(6px); }} to {{ opacity:1; clip-path:inset(0 0 0 0); transform:translateY(0); }} }}
   @keyframes mx-alarm {{ from {{ opacity:0; transform:translateX(-8px); }} to {{ opacity:1; transform:translateX(0); }} }}
-  .motion-enabled.is-playing [data-motion=\"align\"] {{ stroke-dasharray:1; animation:mx-align var(--active-duration,var(--duration,{motion_tokens['align']}ms)) linear var(--active-delay,var(--delay,0ms)) both; }}
+  .motion-enabled.is-playing [data-motion=\"align\"] {{ animation:mx-align var(--active-duration,var(--duration,{motion_tokens['align']}ms)) linear var(--active-delay,var(--delay,0ms)) both; }}
   .motion-enabled.is-playing [data-motion=\"dock\"] {{ animation:mx-dock var(--active-duration,var(--duration,{motion_tokens['dock']}ms)) {motion_tokens['ease']} var(--active-delay,var(--delay,0ms)) both; }}
-  .motion-enabled.is-playing [data-motion=\"route\"] {{ stroke-dasharray:1; animation:mx-route var(--active-duration,var(--duration,{motion_tokens['route']}ms)) {motion_tokens['ease']} var(--active-delay,var(--delay,0ms)) both; }}
+  .motion-enabled.is-playing [data-motion=\"route\"] {{ animation:mx-route var(--active-duration,var(--duration,{motion_tokens['route']}ms)) {motion_tokens['ease']} var(--active-delay,var(--delay,0ms)) both; }}
+  .motion-enabled.is-playing [data-motion=\"route\"]:not([data-choreo=\"band-fill\"]) {{ stroke-dasharray:1; will-change:stroke-dashoffset,opacity; }}
   .motion-enabled.is-playing [data-motion=\"lock\"] {{ animation:mx-lock var(--active-duration,var(--duration,{motion_tokens['lock']}ms)) {motion_tokens['ease']} var(--active-delay,var(--delay,0ms)) both; }}
   .motion-enabled.is-playing [data-choreo=\"rail-rise\"] {{ animation-name:mx-rail-rise; transform-origin:center bottom; }}
   .motion-enabled.is-playing [data-choreo=\"rail-slide\"] {{ animation-name:mx-rail-slide; transform-origin:left center; }}
@@ -548,8 +549,6 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   [data-lock-mode="micro"] .pi-address-signal {{ opacity:.82; }}
   @keyframes pm-lock-settle {{ from {{ opacity:0; transform:scale(.96); }} to {{ opacity:1; transform:scale(1); }} }}
   @keyframes pm-evidence-enter {{ from {{ opacity:0; transform:translateY(5px); }} to {{ opacity:1; transform:translateY(0); }} }}
-  @keyframes mx-compiled-trace {{ from {{ stroke-dashoffset:1; }} to {{ stroke-dashoffset:0; }} }}
-  @keyframes mx-compiled-pin {{ from {{ opacity:0; transform:translateY(var(--dy)) scale(.35); }} to {{ opacity:1; transform:translateY(0) scale(1); }} }}
   @keyframes pi-evidence-enter {{ from {{ opacity:0; transform:translateX(-8px); }} to {{ opacity:1; transform:translateX(0); }} }}
   @keyframes pi-terminal-handshake {{ from {{ opacity:.2; }} to {{ opacity:1; }} }}
   @keyframes pi-lock-settle {{ from {{ opacity:0; }} to {{ opacity:1; }} }}
@@ -557,12 +556,12 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   [data-motion-revision="motion-v2"] .pm-data-field-layer,
   [data-motion-revision="motion-v2"] .pm-plot-layer {{ opacity:1; animation:none; will-change:auto; }}
   [data-motion-revision="motion-v2"].is-resetting [data-motion] {{ animation:none!important; opacity:0; }}
-  [data-motion-revision="motion-v2"].is-resetting [data-motion="align"],
   [data-motion-revision="motion-v2"].is-resetting [data-motion="route"],
   [data-motion-revision="motion-v2"].is-resetting [data-choreo="trace"] {{ stroke-dasharray:1; stroke-dashoffset:1; }}
   [data-motion-revision="motion-v2"].is-resetting .pm-local-evidence,
   [data-motion-revision="motion-v2"].is-resetting .pm-target-lock {{ opacity:0; }}
-  [data-motion-revision="motion-v2"] [data-choreo="trace"] {{ stroke-dasharray:1; stroke-dashoffset:0; }}
+  [data-motion-revision="motion-v2"] [data-choreo="trace"] {{ stroke-dasharray:1; }}
+  [data-motion-revision="motion-v2"]:not(.is-playing):not(.is-resetting) [data-choreo="trace"] {{ stroke-dashoffset:0; opacity:1; }}
   .motion-enabled.is-playing[data-motion-revision="motion-v2"] .pm-local-evidence {{ animation:pm-evidence-enter var(--pm-evidence-duration,360ms) {precision_motion['ease']} var(--pm-active-evidence-delay,var(--pm-evidence-delay,0ms)) both; will-change:opacity,transform; }}
   .motion-enabled.is-playing[data-motion-revision="motion-v2"][data-presentation-carrier="direct"] .pm-target-lock,
   .motion-enabled.is-playing[data-motion-revision="motion-v2"][data-presentation-carrier="embedded"] .pm-target-lock {{ animation:pm-lock-settle var(--pm-lock-duration,280ms) linear var(--pm-active-lock-delay,var(--pm-lock-delay,0ms)) both; will-change:opacity,transform; }}
@@ -597,7 +596,8 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
     [data-motion-revision="motion-v2"] .pi-evidence-bay,
     [data-motion-revision="motion-v2"] .pi-bay-terminal,
     [data-motion-revision="motion-v2"] .pi-lock-ring,
-    [data-motion-revision="motion-v2"] .pi-focus-corner {{ animation:none!important; opacity:1!important; transform:none; stroke-dasharray:1; stroke-dashoffset:0; }}
+    [data-motion-revision="motion-v2"] .pi-focus-corner {{ animation:none!important; opacity:1!important; transform:none; }}
+    [data-motion-revision="motion-v2"] [data-choreo="trace"] {{ stroke-dasharray:1; stroke-dashoffset:0; }}
   }}
 </style>
 </head>

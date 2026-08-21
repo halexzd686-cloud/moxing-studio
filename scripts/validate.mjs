@@ -103,6 +103,12 @@ for (const file of chartFiles) {
   if (!source.includes('data-total-brief="') || !source.includes('data-total-standard="') || !source.includes('data-total-story="')) fail(scope, "missing profile totals");
   if (!/data-lock-mode="(?:implicit|micro|explicit)"/.test(source) || !/data-line-trace="(?:true|false)"/.test(source)) fail(scope, "missing lock or line-trace contract");
   if (!source.includes("prefers-reduced-motion") || !source.includes("window.Moxing")) fail(scope, "missing motion accessibility/runtime API");
+  if (!source.includes('@keyframes mx-route { from { opacity:0; stroke-dashoffset:1; } to { opacity:1; stroke-dashoffset:0; } }')) fail(scope, "route trace exposes a pre-draw ghost state");
+  if (!source.includes('@keyframes mx-align { from { opacity:0; } to { opacity:1; } }')) fail(scope, "structural lines still use dash drawing");
+  if (!source.includes('.motion-enabled.is-playing [data-motion="route"] { animation:mx-route')) fail(scope, "route timeline base is missing");
+  if (!source.includes('.motion-enabled.is-playing [data-motion="route"]:not([data-choreo="band-fill"])')) fail(scope, "route animation is not isolated from fill bands");
+  if (source.includes('mx-compiled-trace')) fail(scope, "legacy duplicate trace keyframe remains");
+  if (!source.includes('[data-motion-revision="motion-v2"]:not(.is-playing):not(.is-resetting) [data-choreo="trace"]')) fail(scope, "trace final state is not gated by motion state");
   if (/<canvas\b/i.test(source)) fail(scope, "canvas is not allowed");
   if (/(?:src|href)\s*=\s*["']https?:\/\//i.test(source) || /url\(\s*["']?https?:\/\//i.test(source)) fail(scope, "external runtime URL");
   if (/paper|boardroom|mori|dawn/i.test(source)) fail(scope, "legacy theme residue");
@@ -264,6 +270,7 @@ const replayContinuity = await motionPage.evaluate(() => new Promise((resolve) =
     fieldOpacity: Number.parseFloat(getComputedStyle(field).opacity),
     fieldTransform: getComputedStyle(field).transform,
     traceOffset: Number.parseFloat(getComputedStyle(trace).strokeDashoffset),
+    traceOpacity: Number.parseFloat(getComputedStyle(trace).opacity),
   });
   window.Moxing.replay();
   const immediate = read();
@@ -272,7 +279,7 @@ const replayContinuity = await motionPage.evaluate(() => new Promise((resolve) =
     requestAnimationFrame(() => resolve({ immediate, firstFrame }));
   });
 }));
-if (replayContinuity.immediate.complete || !replayContinuity.immediate.resetting || replayContinuity.immediate.playing || replayContinuity.immediate.fieldOpacity < .99 || replayContinuity.immediate.traceOffset < 0 || replayContinuity.immediate.traceOffset > 1 || replayContinuity.firstFrame.complete || !replayContinuity.firstFrame.playing || replayContinuity.firstFrame.fieldOpacity < .99 || replayContinuity.firstFrame.fieldTransform !== "none") fail("motion-continuity", JSON.stringify(replayContinuity));
+if (replayContinuity.immediate.complete || !replayContinuity.immediate.resetting || replayContinuity.immediate.playing || replayContinuity.immediate.fieldOpacity < .99 || replayContinuity.immediate.traceOffset < 0 || replayContinuity.immediate.traceOffset > 1 || replayContinuity.firstFrame.complete || !replayContinuity.firstFrame.playing || replayContinuity.firstFrame.fieldOpacity < .99 || replayContinuity.firstFrame.fieldTransform !== "none" || replayContinuity.firstFrame.traceOpacity > .02) fail("motion-continuity", JSON.stringify(replayContinuity));
 else pass("motion-continuity", "replay uses an instant reset followed by one forward timeline");
 await motionContext.close();
 
