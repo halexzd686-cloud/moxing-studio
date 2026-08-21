@@ -1,8 +1,8 @@
 # Moxing Studio v2.1 — Handoff
 
 > Updated: 2026-08-21
-> Branch: `codex/v2.1-motion-repair`
-> Status: v2.1 release candidate approved on the review branch
+> Branch: `main`
+> Status: v2.1.0 release candidate merged locally; remote push pending
 
 ## Current contract
 
@@ -72,6 +72,6 @@ Reusable data contracts, numerical formatting, boundary cases, browser detection
 
 ## Release handoff
 
-1. Merge `codex/v2.1-motion-repair` into `main` after the final local review.
-2. Create the `v2.1.0` tag from the merged release commit.
-3. Push `main` and the tag when the GitHub Pages publication window is approved.
+1. Create the `v2.1.0` tag from the merged release commit.
+2. Push `main` and the tag when the GitHub Pages publication window is approved.
+3. Verify the published Gallery URL after the Pages workflow completes.
