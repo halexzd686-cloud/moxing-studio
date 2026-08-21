@@ -1546,8 +1546,10 @@ def build_c19(data: Any) -> str | ChartArtwork:
         yy = y1 - (y1 - y0) * tick / 4
         value = low - pad + (high - low + 2 * pad) * tick / 4
         field_parts += [line(x0, yy, x1, yy, cls="grid"), text(x0 - 18, yy + 4, f"{value:.2f}%", cls="index muted", anchor="end", size=12)]
+    endpoint_ys: list[float] = []
     for index, item in enumerate(series):
         points = [(_scale(i, 0, len(labels) - 1, x0, x1), _scale(value, low - pad, high + pad, y1, y0)) for i, value in enumerate(item["values"])]
+        endpoint_ys.append(points[-1][1])
         plot_parts.append(path(_polyline(points), cls="signal-stroke" if index == 0 else "secondary-stroke", extra=f'pathLength="1" {motion("route", 280 + index * 180, brief=140 + index * 100, story=520 + index * 420, duration=650, duration_brief=420, duration_story=980, choreo="trace")}'))
         for point in points:
             plot_parts.append(circle(point[0], point[1], 4 if index == 0 else 3, cls="signal-fill" if index == 0 else "data-fill", extra=motion("dock", 520 + index * 120, brief=290 + index * 70, story=980 + index * 280, choreo="pin")))
@@ -1563,7 +1565,7 @@ def build_c19(data: Any) -> str | ChartArtwork:
     target_y = _scale(series[0]["values"][-1], low - pad, high + pad, y1, y0)
     evidence_x, evidence_y = 946, min(314, max(86, target_y - 38))
     evidence_parts = [_local_evidence(evidence_x, evidence_y, 206, "E19 / LONG", "SLOPE", f"{slope:+.2f}pp", "长端减短端")]
-    endpoint_label_y = min(y1 + 16, target_y + 30)
+    endpoint_label_y = min(y1 + 16, max(endpoint_ys) + 36)
     lock_parts = [
         path(f"M {x1+5} {target_y} H {evidence_x}", cls="pm-lock-cross"),
         rect(x1 - 5, target_y - 5, 10, 10, cls="pm-socket-signal"),
