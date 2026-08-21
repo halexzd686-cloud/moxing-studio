@@ -1567,7 +1567,7 @@ def build_c19(data: Any) -> str | ChartArtwork:
     lock_parts = [
         path(f"M {x1+5} {target_y} H {evidence_x}", cls="pm-lock-cross"),
         rect(x1 - 5, target_y - 5, 10, 10, cls="pm-socket-signal"),
-        text(x1, endpoint_label_y, "L08 / END", cls="pm-address pm-address-signal", anchor="end", size=10),
+        text(x1 - 14, endpoint_label_y, "L08 / END", cls="pm-address pm-address-signal", anchor="end", size=10),
     ]
     return _embedded_artwork(field_parts, plot_parts, evidence_parts, lock_parts, evidence_id="E19", evidence_delay=760, lock_delay=1080, evidence_delay_brief=460, evidence_delay_story=1480, lock_delay_brief=660, lock_delay_story=2100)
 
