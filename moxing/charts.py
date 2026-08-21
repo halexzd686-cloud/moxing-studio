@@ -558,7 +558,7 @@ def build_c3(data: Any) -> str | ChartArtwork:
         rect(x0 - 6, first_y - 6, 12, 12, cls="pi-socket", extra='style="--pi-delay:180ms"'),
         circle(x1, latest_y, 14, cls="pi-lock-ring"),
         path(f"M {x1-20} {latest_y} H {x1-12} M {x1+12} {latest_y} H {x1+20} M {x1} {latest_y-20} V {latest_y-12}", cls="pi-lock-cross"),
-        text(x1 + 8, max(28, latest_y - 24), f"E03 / T{len(labels):02d}", cls="pi-address pi-address-signal", anchor="end", size=10),
+        text(x1 + 8, min(y1 + 16, latest_y + 58), f"E03 / T{len(labels):02d}", cls="pi-address pi-address-signal", anchor="end", size=10),
     ]
     return _interface_artwork(
         parts,
