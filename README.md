@@ -1,4 +1,4 @@
-# Moxing Studio v2.1
+# Moxing Studio v2.1 — Codex Skill
 
 Moxing Studio 把中文商业、金融和分析数据生成具有结构装配动画的离线 HTML/SVG 图表。它不是一组 PPT 主题，而是一套统一的 **Structural Interface / 结构接口**：数据先对齐基准、装配构件、接通关系，最后锁定结论。
 
@@ -10,16 +10,71 @@ Moxing Studio 把中文商业、金融和分析数据生成具有结构装配动
 
 - 建筑秩序主导，东方当代气质来自比例、留白和中文排版。
 - 动画遵循 `ALIGN → DOCK → ROUTE → LOCK`，解释数据关系而非装饰画面。
-- `brief / standard / story` 是三套独立时间轴，不是简单倍速。
+- A / B / C 是三套展示模式；`brief / standard / story` 是三档动画时间轴，不是简单倍速。
 - 无 JavaScript 或启用减少动态效果时，直接显示完整静态终态。
 - 冷白工程纸与深色仪器面板共享同一结构身份。
 - 不依赖 CDN 或在线图表库，字体与许可证随仓库提供。
 
-## Install as a Codex Skill
+## 60 秒开始
+
+你只需要给 Agent 三样东西：**目标、数据、输出要求**。Skill 会先判断数据适合哪个图表契约，再生成可以离线打开的 HTML；如果数据口径不完整，应让 Agent 先提问，不要直接猜数字。
+
+### 1. 安装
+
+在 Codex 中发送下面这句话即可安装：
+
+```text
+使用 $skill-installer 从 https://github.com/halexzd686-cloud/moxing-studio 安装仓库根目录的 moxing-studio Skill。
+安装后读取 SKILL.md，并告诉我它支持的图表契约、输入方式和输出方式。
+```
+
+安装完成后，建议新开一个任务，或明确写出 `$moxing-studio`，避免 Agent 把请求当成普通的 HTML 编码任务。
+
+### 2. 第一次调用
+
+将下面的模板复制给 Agent，再替换方括号中的内容：
+
+```text
+使用 $moxing-studio。
+目标：[我要支持什么业务判断，例如找出销售贡献最高的 SKU]
+数据：[粘贴 CSV、JSON 或表格文本]
+单位/时间范围：[例如：万元 · 2026 年 1–6 月]
+口径/来源：[例如：支付金额 · 商品经营系统]
+输出：[离线 HTML；可选 PNG 或 WebM]
+展示模式/动画：[让 Agent 自动选择；或指定 A/B/C、brief/standard/story]
+
+请先从 C1–C24 中选择最合适的图表契约并说明理由，再生成结果。
+```
+
+### 3. 让 Agent 自动选图表
+
+不确定 ID 时，不要先猜一个模板，直接描述问题：
+
+```text
+使用 $moxing-studio 分析这份经营数据。
+先比较最合适的两个图表契约，说明它们分别强调什么、会隐藏什么，
+然后选择一个生成可离线打开的 HTML。保留单位、时间范围、口径和来源。
+```
+
+需要稳定复用时，再指定契约 ID，例如：
+
+```text
+使用 $moxing-studio，把下面的商品销售额做成 C13 Pareto Contribution。
+标题直接写出前三个 SKU 的贡献结论，输出 HTML，并导出 PNG。
+```
+
+### 4. 你会得到什么
+
+- 一个自包含的离线 HTML/SVG，不依赖 CDN 或在线图表库。
+- 可读的中文标题、单位、时间范围、来源和口径。
+- 与图表结构匹配的 A / B / C 展示模式，以及 `brief / standard / story` 动画时间轴。
+- 需要时可继续请求 Gallery 预览、PNG 静图或 WebM 动画。
+
+## 安装 Skill
 
 [OpenAI 官方资料](https://developers.openai.com/codex/use-cases?category=engineering&task_type=workflow)将 Skill 定义为 Codex 可重复使用的工作流。Moxing Studio 的 `SKILL.md` 位于仓库根目录，安装后可以自动匹配图表任务，也可以用 `$moxing-studio` 显式调用。
 
-### 方法一：让 Codex 安装
+### 方法一：让 Codex 安装（推荐）
 
 在 Codex 中发送：
 
@@ -50,9 +105,30 @@ git clone --branch v2.1.0 --depth 1 `
 git -C (Join-Path $skillHome "moxing-studio") pull --ff-only
 ```
 
-## Use in Codex
+### 安装后验证
 
-可以直接描述目标，让 Codex 自动选择本 Skill；需要明确指定时使用 `$moxing-studio`。
+```text
+检查 moxing-studio 是否已安装；读取它的 SKILL.md；
+先不要生成图表，列出它支持的 24 个图表 ID、适用场景和三种动画模式。
+```
+
+如果 Agent 没有识别 Skill，先在同一条请求中显式写 `$moxing-studio`，再继续给数据。
+
+## 如何调用
+
+### 推荐请求格式
+
+| 字段 | 应该写什么 | 示例 |
+|---|---|---|
+| 目标 | 想做出的业务判断 | 找出贡献最高的 SKU |
+| 数据 | CSV、JSON、表格文本或文件路径 | `SKU-A,286` |
+| 单位/时间范围 | 数字的单位和观察区间 | 万元 · 2026 年 1–6 月 |
+| 口径/来源 | 指标如何计算、来自哪里 | 支付金额 · 商品经营系统 |
+| 输出 | HTML、PNG、WebM 及动画模式 | HTML + PNG，`standard` |
+
+字段越完整，Agent 越不需要猜测；如果数据字段与契约不匹配，请让 Agent 先指出缺口，再决定是否补充数据。默认让 Skill 自动选择展示模式和动画；只有在你有明确的汇报节奏或画面用途时才指定它们。
+
+### 可直接复制的请求
 
 ```text
 使用 $moxing-studio，把下面的商品销售额生成 C13 帕累托图。
@@ -73,7 +149,7 @@ SKU-E 74
 
 Skill 会优先根据数据形状和决策问题选择 C1–C24，并保留单位、时间范围、口径和来源。详细边界见 [Chart Contracts](references/chart-contracts.md)。
 
-## Use from the command line
+## 生成、预览与导出
 
 生成 HTML 只需要 **Python 3.10+**，不需要安装第三方 Python 包。
 
@@ -114,7 +190,18 @@ python -m http.server 4400 --bind 127.0.0.1
 
 24 份可复制数据位于 [`examples/data/`](examples/data/)，可用 `scripts/export_examples.py` 随默认数据重新生成。
 
-## Export PNG and motion
+### 从示例数据开始
+
+如果还没有自己的数据，先复制一个最接近的示例：
+
+```powershell
+Get-ChildItem examples/data
+python scripts/export_examples.py
+```
+
+然后把示例 JSON 的字段替换成自己的数据，并把对应的 Cxx ID 告诉 Agent。每个 ID 的输入边界和必填字段见 [图表数据契约](references/chart-contracts.md)。
+
+### 导出 PNG 和动画
 
 PNG 导出会优先使用 Python Playwright，未安装时自动尝试本机 Chrome 或 Edge：
 
@@ -130,7 +217,48 @@ npx playwright install chromium ffmpeg
 node scripts/export-motion.mjs output/c13-pareto.html output/c13-pareto.webm standard
 ```
 
-支持 `brief / standard / story`。MP4/GIF 还需要系统 `ffmpeg`；未安装时优先交付 WebM。PNG 固定导出为 `2560×1440`。
+支持 `brief / standard / story`。它们控制动画节奏，不改变图表契约。A / B / C 控制信息如何在画面中组织；需要手工指定时，在请求中同时写明两者。MP4/GIF 还需要系统 `ffmpeg`；未安装时优先交付 WebM。PNG 固定导出为 `2560×1440`。
+
+## 按场景快速选图表
+
+| 你要回答的问题 | 优先查看 |
+|---|---|
+| 排名、横向比较、决策结论 | C1、C2、C10 |
+| 时间趋势、阶段变化、项目进度 | C3、C7、C8 |
+| 构成、占比、贡献度 | C4、C5、C11、C13 |
+| 漏斗、留存、商业流向 | C14、C15、C16 |
+| 收益、回撤、利率、敏感性 | C17、C18、C19、C20 |
+| 分布、相关性、预测、不确定性 | C21、C22、C23、C24 |
+
+这张表只用于缩小范围；最终仍以数据形状和决策问题为准。需要精确边界时，直接让 Agent 先读取 [Chart Contracts](references/chart-contracts.md)。
+
+## 常见问题
+
+### Skill 没有自动触发
+
+在请求开头写 `使用 $moxing-studio`。如果仍未触发，先执行“安装后验证”请求，确认 Agent 能读取根目录 `SKILL.md`。
+
+### 图表类型拿不准
+
+要求 Agent 先比较两个契约并说明取舍；不要只说“做一张好看的图”，否则数据关系和标题口径容易被误读。
+
+### 动画需要更快、更慢或关闭
+
+在输出要求中直接写 `brief`、`standard`、`story` 或“关闭动画”。无 JavaScript、浏览器启用减少动态效果时，图表仍会显示完整静态终态。
+
+### 手机看不到 Gallery
+
+不要用 `file://` 直接打开，先在仓库根目录启动 HTTP 服务，再用电脑局域网 IP 访问：
+
+```powershell
+python -m http.server 4400 --bind 0.0.0.0
+```
+
+手机竖屏优先进入单图 Viewer，使用 `FIT` 查看完整画布；横屏会自动铺满安全区域。
+
+### 字体或导出结果不一致
+
+确认输出没有使用 `--linked-fonts`，或把整个输出目录一起移动。默认导出会嵌入仓库提供的字体，适合离线发送。
 
 ## Charts
 
