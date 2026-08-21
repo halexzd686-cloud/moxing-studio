@@ -1,8 +1,8 @@
-# Moxing Studio v2
+# Moxing Studio v2.1
 
 Moxing Studio 把中文商业、金融和分析数据生成具有结构装配动画的离线 HTML/SVG 图表。它不是一组 PPT 主题，而是一套统一的 **Structural Interface / 结构接口**：数据先对齐基准、装配构件、接通关系，最后锁定结论。
 
-[在线查看 24 款动态图表](https://halexzd686-cloud.github.io/moxing-studio/) · [下载 v2.0.2](https://github.com/halexzd686-cloud/moxing-studio/releases/tag/v2.0.2) · [图表数据契约](references/chart-contracts.md)
+[在线查看 24 款动态图表](https://halexzd686-cloud.github.io/moxing-studio/) · [下载 v2.1.0](https://github.com/halexzd686-cloud/moxing-studio/releases/tag/v2.1.0) · [图表数据契约](references/chart-contracts.md)
 
 [![C11 Sector Lock preview](docs/previews/v2-c11.png)](https://halexzd686-cloud.github.io/moxing-studio/)
 
@@ -39,7 +39,7 @@ $skillHome = if ($env:CODEX_HOME) {
 }
 
 New-Item -ItemType Directory -Force -Path $skillHome | Out-Null
-git clone --branch v2.0.2 --depth 1 `
+git clone --branch v2.1.0 --depth 1 `
   https://github.com/halexzd686-cloud/moxing-studio.git `
   (Join-Path $skillHome "moxing-studio")
 ```
@@ -155,7 +155,7 @@ npx playwright install chromium
 node scripts/validate.mjs .
 ```
 
-当前基线：展示模式映射 `13/13`、三载体与 A+B+C 组迁移 `19/19`、边界渲染 `103/103`，浏览器、静态降级、动效与布局检查 `261/261`。其中包含 10 张 Direct Canvas 的三宏层帧预算、9 张 Embedded Evidence 的四宏层帧预算、5 张 Evidence Interface 的四宏层帧预算与证据 ID 一致性检查、24 张图的证据—关键图形碰撞扫描、浅色/深色双表面的填充数据标签对比度，以及 390×844 竖屏列表/细节/FIT/单图播放和 844×390 横屏 Viewer 检查；GitHub Actions 会在每次推送和 Pull Request 中重新执行这些检查。
+当前基线：展示模式映射 `14/14`、三载体契约 `21/21`、边界渲染 `103/103`。24 张图均已重建并通过 Gallery 桌面/移动入口检查，C3 与 C19 的终端标注也已完成缩放安全间距修正；GitHub Actions 会在每次推送和 Pull Request 中重新执行这些检查。
 
 ## Contributing
 

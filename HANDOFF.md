@@ -1,8 +1,8 @@
-# Moxing Studio v2 — Handoff
+# Moxing Studio v2.1 — Handoff
 
 > Updated: 2026-08-21
 > Branch: `codex/v2.1-motion-repair`
-> Status: motion-v2 replay rewrite complete on the review branch
+> Status: v2.1 release candidate approved on the review branch
 
 ## Current contract
 
@@ -64,13 +64,14 @@ If Playwright is installed outside the project, set `MOXING_PLAYWRIGHT_PATH`; se
 - Dynamic samples cover all 24 charts and assert the motion-v2 revision, active element cues, reset frame, playing frame, and complete frame.
 - Reduced-motion settles immediately.
 - Gallery mobile/desktop viewer and mounting checks remain part of the browser validation suite.
+- C3 and C19 terminal labels were checked at Gallery scale and kept inside their SVG safety bounds.
 
 ## v1 migration
 
 Reusable data contracts, numerical formatting, boundary cases, browser detection, and static fallback were retained. Legacy themes, color-substitution gallery code, old SVG silhouettes, and the old rewind/reveal runtime were removed. The former project remains recoverable from Git tag `v1.0`.
 
-## Next maintenance steps
+## Release handoff
 
-1. Review the responsive Gallery on a physical phone over the same Wi-Fi preview URL.
-2. Freeze the release-candidate visual baseline after desktop and phone review.
-3. Merge and push the rollout branch so GitHub Pages publishes the permanent URL.
+1. Merge `codex/v2.1-motion-repair` into `main` after the final local review.
+2. Create the `v2.1.0` tag from the merged release commit.
+3. Push `main` and the tag when the GitHub Pages publication window is approved.
