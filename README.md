@@ -1,74 +1,86 @@
-# Moxing Studio v2.1 — Codex Skill
+# Moxing Studio v2.1 — Structural Charts for AI Agents
 
-Moxing Studio 把中文商业、金融和分析数据生成具有结构装配动画的离线 HTML/SVG 图表。它不是一组 PPT 主题，而是一套统一的 **Structural Interface / 结构接口**：数据先对齐基准、装配构件、接通关系，最后锁定结论。
+把商业、金融和分析数据变成**一页一个判断**的结构动画图表。24 个受测试保护的数据契约，完全离线的 HTML/SVG，以及在静态截图中仍然成立的结论终态。
 
-[在线查看 24 款动态图表](https://halexzd686-cloud.github.io/moxing-studio/) · [下载 v2.1.0](https://github.com/halexzd686-cloud/moxing-studio/releases/tag/v2.1.0) · [图表数据契约](references/chart-contracts.md)
+[在线体验 24 款动态图表](https://halexzd686-cloud.github.io/moxing-studio/) · [60 秒开始](#60-秒开始) · [按场景选图](#按场景快速选图表) · [下载 v2.1.0](https://github.com/halexzd686-cloud/moxing-studio/releases/tag/v2.1.0)
 
-[![C11 Sector Lock preview](docs/previews/v2-c11.png)](https://halexzd686-cloud.github.io/moxing-studio/)
+<table>
+  <tr>
+    <td width="33%"><a href="https://halexzd686-cloud.github.io/moxing-studio/"><img src="docs/previews/v2-c03.png" alt="Signal Trend 趋势图" width="100%"></a></td>
+    <td width="33%"><a href="https://halexzd686-cloud.github.io/moxing-studio/"><img src="docs/previews/v2-c11.png" alt="Sector Lock 构成图" width="100%"></a></td>
+    <td width="33%"><a href="https://halexzd686-cloud.github.io/moxing-studio/"><img src="docs/previews/v2-c14.png" alt="Cohort Matrix 留存矩阵" width="100%"></a></td>
+  </tr>
+  <tr>
+    <td width="33%"><a href="https://halexzd686-cloud.github.io/moxing-studio/"><img src="docs/previews/v2-c17.png" alt="Market Candles 市场图" width="100%"></a></td>
+    <td width="33%"><a href="https://halexzd686-cloud.github.io/moxing-studio/"><img src="docs/previews/v2-c20.png" alt="Sensitivity Matrix 敏感性矩阵" width="100%"></a></td>
+    <td width="33%"><a href="https://halexzd686-cloud.github.io/moxing-studio/"><img src="docs/previews/v2-c23.png" alt="Forecast Fan 预测扇形图" width="100%"></a></td>
+  </tr>
+</table>
 
 ## Why Moxing
 
-- 建筑秩序主导，东方当代气质来自比例、留白和中文排版。
-- 动画遵循 `ALIGN → DOCK → ROUTE → LOCK`，解释数据关系而非装饰画面。
-- A / B / C 是三套展示模式；`brief / standard / story` 是三档动画时间轴，不是简单倍速。
-- 无 JavaScript 或启用减少动态效果时，直接显示完整静态终态。
-- 冷白工程纸与深色仪器面板共享同一结构身份。
-- 不依赖 CDN 或在线图表库，字体与许可证随仓库提供。
+- **结构，而非装饰。** 动画遵循 `ALIGN → DOCK → ROUTE → LOCK`，用装配过程解释数据关系。
+- **契约，而非模板碰运气。** Agent 先判断问题和数据形状，再从 C1–C24 选择不会歪曲结论的表达。
+- **交付，而非只能在线演示。** HTML、字体和图表逻辑自包含，不依赖 CDN 或在线图表库。
+- **终态先成立。** 无 JavaScript、关闭动画或启用减少动态效果时，直接显示完整静态结论。
+- **一套结构身份。** 冷白工程纸与深色仪器面板共享比例、中文排版和信息层级。
+- **可验证。** 边界数据、展示模式、动画状态、桌面与移动 Gallery 都进入自动测试。
+
+Moxing 适合经营复盘、管理层汇报、投研、路演和网页数据故事。它不追求通用 Dashboard 控件、任意拖拽排版或装饰性信息海报；当数据口径不完整时，Agent 应先提问，而不是猜数字。
 
 ## 60 秒开始
 
-你只需要给 Agent 三样东西：**目标、数据、输出要求**。Skill 会先判断数据适合哪个图表契约，再生成可以离线打开的 HTML；如果数据口径不完整，应让 Agent 先提问，不要直接猜数字。
-
-### 1. 安装
-
-在 Codex 中发送下面这句话即可安装：
+### 1. 让 Codex 安装
 
 ```text
-使用 $skill-installer 从 https://github.com/halexzd686-cloud/moxing-studio 安装仓库根目录的 moxing-studio Skill。
-安装后读取 SKILL.md，并告诉我它支持的图表契约、输入方式和输出方式。
+使用 $skill-installer 从 https://github.com/halexzd686-cloud/moxing-studio
+安装仓库根目录的 moxing-studio Skill。安装后读取 SKILL.md。
 ```
 
-安装完成后，建议新开一个任务，或明确写出 `$moxing-studio`，避免 Agent 把请求当成普通的 HTML 编码任务。
-
-### 2. 第一次调用
-
-将下面的模板复制给 Agent，再替换方括号中的内容：
+### 2. 直接描述你要做的判断
 
 ```text
-使用 $moxing-studio。
-目标：[我要支持什么业务判断，例如找出销售贡献最高的 SKU]
-数据：[粘贴 CSV、JSON 或表格文本]
-单位/时间范围：[例如：万元 · 2026 年 1–6 月]
-口径/来源：[例如：支付金额 · 商品经营系统]
-输出：[离线 HTML；可选 PNG 或 WebM]
-展示模式/动画：[让 Agent 自动选择；或指定 A/B/C、brief/standard/story]
-
-请先从 C1–C24 中选择最合适的图表契约并说明理由，再生成结果。
+使用 $moxing-studio，把这份销售数据做成一张适合经营复盘的图表。
+先比较两个最合适的图表契约，说明取舍，再输出可离线发送的 HTML 和 PNG。
+保留单位、时间范围、指标口径和数据来源。
 ```
 
-### 3. 让 Agent 自动选图表
+把 CSV、JSON、表格文本或文件一起交给 Agent 即可。不确定 Cxx ID、A/B/C 展示模式或动画时长时，让 Skill 自动选择。
 
-不确定 ID 时，不要先猜一个模板，直接描述问题：
+### 3. 试试这些请求
 
 ```text
-使用 $moxing-studio 分析这份经营数据。
-先比较最合适的两个图表契约，说明它们分别强调什么、会隐藏什么，
-然后选择一个生成可离线打开的 HTML。保留单位、时间范围、口径和来源。
+比较这几个投资组合的收益和回撤，突出风险收益不匹配的部分。
 ```
 
-需要稳定复用时，再指定契约 ID，例如：
+```text
+把项目里程碑做成一张适合管理层周会展示的动态图，15 秒内能找到延期阶段。
+```
 
 ```text
-使用 $moxing-studio，把下面的商品销售额做成 C13 Pareto Contribution。
-标题直接写出前三个 SKU 的贡献结论，输出 HTML，并导出 PNG。
+分析这份商品数据，找出贡献最高的 SKU，并判断长尾是否值得继续保留。
+```
+
+```text
+我不知道该用哪种图。先比较两个最合适的契约，以及它们各自会强调和隐藏什么。
 ```
 
 ### 4. 你会得到什么
 
-- 一个自包含的离线 HTML/SVG，不依赖 CDN 或在线图表库。
-- 可读的中文标题、单位、时间范围、来源和口径。
-- 与图表结构匹配的 A / B / C 展示模式，以及 `brief / standard / story` 动画时间轴。
-- 需要时可继续请求 Gallery 预览、PNG 静图或 WebM 动画。
+- 自包含的离线 HTML/SVG，以及需要时导出的 PNG 或 WebM。
+- 直接写出判断的中文标题，以及单位、时间范围、来源和口径。
+- 与结论结构匹配的 A / B / C 展示模式和 `brief / standard / story` 动画时间轴。
+- JavaScript 不可用时仍然完整可读的静态终态。
+
+## 三种阅读方式
+
+| 用户需要 | 常见展示方式 | 画面如何组织 |
+|---|---|---|
+| 一眼读取排名、异常或结论 | A · Direct Canvas | 结论直接存在于数据场中，不额外拆出证据面板 |
+| 同时看主图与局部证据 | B · Embedded Evidence | 在图内自然留白中嵌入解释，不牺牲主图宽度 |
+| 看清推导过程与结论锁定 | C · Evidence Interface | 用独立证据仓、终端和目标锁定呈现推导链 |
+
+这是常见映射，不是硬绑定。A / B / C 决定信息如何组织；`brief / standard / story` 决定动画叙述节奏，两者相互独立。
 
 ## 安装 Skill
 
