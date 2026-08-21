@@ -887,10 +887,17 @@ def build_c8(data: Any) -> str | ChartArtwork:
             rect(cx - 4, 416, 8, 8, cls="pi-socket-signal" if signal else "pi-socket", extra="" if signal else f'style="--pi-delay:{180 + index * 120}ms"'),
             text(cx, 443, f"S{index + 1}", cls="pi-address pi-address-signal" if signal else "pi-address", anchor="middle", size=9),
         ]
+    target_label_y = min(
+        472,
+        max(
+            centers[bottleneck][1] + centers[bottleneck][2],
+            centers[bottleneck + 1][1] + centers[bottleneck + 1][2],
+        ) + 20,
+    )
     overlay += [
         circle(target_x, center, 13, cls="pi-lock-ring"),
         path(f"M {target_x-18} {center} H {target_x-11} M {target_x+11} {center} H {target_x+18}", cls="pi-lock-cross"),
-        text(target_x, center + 29, f"E08 / Δ{loss:.0f}", cls="pi-address pi-address-signal", anchor="middle", size=10),
+        text(target_x, target_label_y, f"E08 / Δ{loss:.0f}", cls="pi-address pi-address-signal", anchor="middle", size=10),
     ]
     return _interface_artwork(
         parts,
@@ -899,7 +906,7 @@ def build_c8(data: Any) -> str | ChartArtwork:
         evidence_id="E08",
         evidence_viewbox="0 64 230 114",
         plot_x=280,
-        lock_delay=1180,
+        lock_delay=1500,
     )
 
 
@@ -915,7 +922,6 @@ def build_c9(data: Any) -> str | ChartArtwork:
         line(0, 74, 680, 74, cls="rail-strong", extra=f'pathLength="1" {motion("align", 80, brief=35, story=120)}'),
         line(0, 74, 0, 410, cls="rail", extra=f'pathLength="1" {motion("align", 100, brief=45, story=150)}'),
         metric_meta,
-        line(38, 326, 622, 326, cls="rail-strong", extra=f'pathLength="1" {motion("align", 120, brief=45, story=170)}'),
     ]
     plot_parts = [
         text(34, 235, format_num(value), cls="value title-font", size=84, weight=700, extra=motion("lock", 650, brief=330, story=900, duration=320, duration_brief=220, duration_story=440, choreo="readout")),
@@ -924,7 +930,13 @@ def build_c9(data: Any) -> str | ChartArtwork:
     if target:
         ratio = min(1, max(0, value / target))
         target_x = 38 + 584 * ratio
+        # Keep the static guide on the unfilled side only. Drawing a full rail
+        # underneath the animated signal route makes the two strokes compete
+        # at exactly the same y-coordinate during replay.
+        field_parts.append(line(target_x, 326, 622, 326, cls="rail-strong", extra=f'pathLength="1" {motion("align", 120, brief=45, story=170)}'))
         plot_parts += [line(38, 326, target_x, 326, cls="signal-stroke", extra=f'pathLength="1" {motion("route", 820, duration=620, brief=480, story=1450, duration_brief=420, duration_story=900, choreo="trace")}'), line(target_x, 313, target_x, 339, cls="signal-stroke", extra=motion("lock", 1240, brief=850, story=2380, choreo="readout")), text(622, 355, f"TARGET {format_num(target)}", cls="index muted", anchor="end", size=12)]
+    else:
+        field_parts.append(line(38, 326, 622, 326, cls="rail-strong", extra=f'pathLength="1" {motion("align", 120, brief=45, story=170)}'))
     context_rows = [
         ("YOY", f"{yoy:+.1f}%" if is_number(yoy) else "—"),
         ("MOM", f"{data.get('mom'):+.1f}%" if is_number(data.get("mom")) else "—"),
@@ -1160,9 +1172,15 @@ def build_c12(data: Any) -> str | ChartArtwork:
         ]
         if index:
             field_parts.append(line(x, 74, x, 432, cls="grid"))
+        end_y = points[-1][1]
+        previous_y = points[-2][1] if len(points) > 1 else end_y
+        # A descending terminal segment can run through the value label when the
+        # label is always placed above the endpoint. Move it below the endpoint
+        # only when there is enough breathing room before the shared baseline.
+        value_y = end_y + 24 if previous_y < end_y and end_y < py1 - 30 else end_y - 10
         plot_parts += [
             path(_polyline(points), cls="signal-stroke" if index == 0 else "data-stroke quiet", extra=f'pathLength="1" {motion("route", panel_delay + 260, brief=160 + index * 80, story=620 + index * 300, choreo="trace")}'),
-            text(px1, points[-1][1] - 10, format_num(values[-1]), cls="value", anchor="end", size=16, weight=650, extra=motion("lock", panel_delay + 680, brief=460 + index * 70, story=1320 + index * 340, choreo="readout")),
+            text(px1, value_y, format_num(values[-1]), cls="value", anchor="end", size=16, weight=650, extra=motion("lock", panel_delay + 680, brief=460 + index * 70, story=1320 + index * 340, choreo="readout")),
             text(px1, 112, f"{delta:+.1f} {item.get('unit', '')}", cls="index signal-text" if index == 0 else "index muted", anchor="end", size=12),
             circle(px1, points[-1][1], 5 if index == 0 else 4, cls="signal-fill" if index == 0 else "data-fill", extra=motion("dock", panel_delay + 620, brief=420 + index * 65, story=1240 + index * 320, choreo="pin")),
         ]
@@ -1308,7 +1326,7 @@ def build_c15(data: Any) -> str | ChartArtwork:
         bend = (start[0] + end[0]) / 2
         d = f"M {start[0]} {start[1]} C {bend} {start[1]} {bend} {end[1]} {end[0]} {end[1]}"
         width = 2 + 12 * math.sqrt(item["value"] / link_max)
-        parts.append(path(d, cls="secondary-stroke", extra=f'stroke-width="{width:.1f}" pathLength="1" {motion("route", 320 + index * 120, brief=160 + index * 65, story=620 + index * 240, duration=480, duration_brief=300, duration_story=760, choreo="trace")}'))
+        parts.append(path(d, cls="secondary-stroke", extra=f'stroke-width="{width:.1f}" pathLength="1" {motion("route", 320 + index * 160, brief=140 + index * 150, story=620 + index * 260, duration=420, duration_brief=240, duration_story=620, choreo="trace")}'))
     for index, node in enumerate(nodes):
         x, y, width, height = positions[str(node["id"])]
         fill_cls = "signal-fill" if node["level"] == max(levels) else "data-fill"
@@ -1539,10 +1557,11 @@ def build_c19(data: Any) -> str | ChartArtwork:
     target_y = _scale(series[0]["values"][-1], low - pad, high + pad, y1, y0)
     evidence_x, evidence_y = 946, min(314, max(86, target_y - 38))
     evidence_parts = [_local_evidence(evidence_x, evidence_y, 206, "E19 / LONG", "SLOPE", f"{slope:+.2f}pp", "长端减短端")]
+    endpoint_label_y = min(y1 + 16, target_y + 30)
     lock_parts = [
         path(f"M {x1+5} {target_y} H {evidence_x}", cls="pm-lock-cross"),
         rect(x1 - 5, target_y - 5, 10, 10, cls="pm-socket-signal"),
-        text(x1, target_y + 22, "L08 / END", cls="pm-address pm-address-signal", anchor="end", size=10),
+        text(x1, endpoint_label_y, "L08 / END", cls="pm-address pm-address-signal", anchor="end", size=10),
     ]
     return _embedded_artwork(field_parts, plot_parts, evidence_parts, lock_parts, evidence_id="E19", evidence_delay=760, lock_delay=1080, evidence_delay_brief=460, evidence_delay_story=1480, lock_delay_brief=660, lock_delay_story=2100)
 
@@ -1641,7 +1660,13 @@ def build_c21(data: Any) -> str | ChartArtwork:
     for index, count in enumerate(counts):
         height = count / maximum * (base - top)
         x = x0 + index * band + 3
-        plot_parts += [rect(x, base - height, band - 6, height, cls="signal-fill" if count == maximum else "data-fill", extra=motion("dock", 240 + index * 80, dy=24, brief=120 + index * 42, story=440 + index * 150, choreo="rail-rise")), text(x + (band - 6) / 2, base - height - 10, count, cls="index muted", anchor="middle", size=12)]
+        bar_delay = 240 + index * 80
+        bar_brief = 120 + index * 42
+        bar_story = 440 + index * 150
+        plot_parts += [
+            rect(x, base - height, band - 6, height, cls="signal-fill" if count == maximum else "data-fill", extra=motion("dock", bar_delay, dy=24, brief=bar_brief, story=bar_story, duration=620, duration_brief=220, duration_story=620, choreo="rail-rise")),
+            text(x + (band - 6) / 2, base - height - 10, count, cls="index muted", anchor="middle", size=12, extra=motion("lock", bar_delay + 700, brief=bar_brief + 300, story=bar_story + 700, duration=220, duration_brief=150, duration_story=320, choreo="readout")),
+        ]
     q1, median, q3 = _percentile(values, .25), _percentile(values, .5), _percentile(values, .75)
     pos = lambda value: _scale(value, low, high, x0, x1)
     box_y = 394
@@ -1660,7 +1685,7 @@ def build_c21(data: Any) -> str | ChartArtwork:
     lock_parts = [
         path(f"M {target_x} {target_y-8} L {evidence_x} {evidence_y+38}", cls="pm-lock-cross"),
         rect(target_x - 5, target_y - 5, 10, 10, cls="pm-socket-signal"),
-        text(target_x, target_y - 16, f"B{tail_index+1:02d} / TAIL", cls="pm-address pm-address-signal", anchor="middle", size=10),
+        text(target_x, max(52, target_y - 24), f"B{tail_index+1:02d} / TAIL", cls="pm-address pm-address-signal", anchor="middle", size=10),
     ]
     return _embedded_artwork(field_parts, plot_parts, evidence_parts, lock_parts, evidence_id="E21", evidence_delay=780, lock_delay=1110, evidence_delay_brief=470, evidence_delay_story=1520, lock_delay_brief=680, lock_delay_story=2160)
 
@@ -1682,7 +1707,7 @@ def build_c22(data: Any) -> str | ChartArtwork:
             is_focus = row != col and abs(value) == strongest[0]
             cls = "signal-fill" if is_focus else ("data-fill" if value >= .65 else "cat-1" if value >= 0 else "cat-4")
             delay = 200 + row * 70 + col * 45
-            parts += [rect(x + 3, y + 3, size - 6, size - 6, cls=cls, extra=motion("dock", delay, dy=10, brief=90 + row * 32 + col * 20, story=380 + row * 140 + col * 85, choreo="field-seat")), text(x + size / 2, y + size * .61, f"{value:+.2f}" if value != 1 else "1.00", cls=_contrast_text_class(cls), anchor="middle", size=12, weight=650, extra=motion("lock", delay + 230, brief=delay // 2 + 140, story=delay * 2 + 290, choreo="readout"))]
+            parts += [rect(x + 3, y + 3, size - 6, size - 6, cls=cls, extra=motion("dock", delay, dy=10, brief=90 + row * 32 + col * 20, story=380 + row * 140 + col * 85, choreo="field-seat")), text(x + size / 2, y + size * .61, f"{value:+.2f}" if value != 1 else "1.00", cls=_contrast_text_class(cls), anchor="middle", size=12, weight=650, extra=motion("lock", delay + 230, brief=delay // 2 + 140, story=delay * 2 + 290))]
     evidence = evidence_plate(0, 346, "E22", "STRONG", f"{strongest[1]:+.2f}", f"{labels[strongest[2]]} × {labels[strongest[3]]}", delay=1820, width=230, brief=1030, story=3480, choreo="alarm")
     focus_row, focus_col = strongest[2], strongest[3]
     focus_x, focus_y = x0 + focus_col * size, y0 + focus_row * size
