@@ -1331,11 +1331,17 @@ def build_c15(data: Any) -> str | ChartArtwork:
         x, y, width, height = positions[str(node["id"])]
         fill_cls = "signal-fill" if node["level"] == max(levels) else "data-fill"
         label_cls = _contrast_text_class(fill_cls)
-        parts += [
-            path(cut_rect_path(x, y, width, height, 8), cls=fill_cls, extra=motion("dock", 220 + index * 110, dx=-22, brief=100 + index * 55, story=420 + index * 210, choreo="interlock")),
-            text(x + width / 2, y + height / 2 - 2, node.get("label", node["id"]), cls=label_cls, anchor="middle", size=13, weight=650),
-            text(x + width / 2, y + height / 2 + 20, format_num(node["value"]), cls=f"index {label_cls}", anchor="middle", size=12),
-        ]
+        parts.append(
+            group(
+                [
+                    path(cut_rect_path(x, y, width, height, 8), cls=fill_cls),
+                    text(x + width / 2, y + height / 2 - 2, node.get("label", node["id"]), cls=label_cls, anchor="middle", size=13, weight=650),
+                    text(x + width / 2, y + height / 2 + 20, format_num(node["value"]), cls=f"index {label_cls}", anchor="middle", size=12),
+                ],
+                cls="commerce-node",
+                extra=motion("dock", 220 + index * 110, dx=-22, brief=100 + index * 55, story=420 + index * 210, choreo="interlock"),
+            )
+        )
     if not valid_links:
         return "\n".join(parts)
     weakest_index = min(range(len(valid_links)), key=lambda index: valid_links[index]["value"])
@@ -1369,7 +1375,7 @@ def build_c15(data: Any) -> str | ChartArtwork:
         evidence_id="E15",
         evidence_viewbox="0 76 200 114",
         plot_x=250,
-        lock_delay=1100,
+        lock_delay=1320,
     )
 
 
@@ -1702,12 +1708,32 @@ def build_c22(data: Any) -> str | ChartArtwork:
     for index, label in enumerate(labels):
         parts += [text(x0 + size * (index + .5), 42, label, cls="index muted", anchor="middle", size=12), text(288, y0 + size * (index + .62), label, cls="index muted", anchor="end", size=12)]
     for row, line_values in enumerate(values):
+        row_parts = []
         for col, value in enumerate(line_values):
             x, y = x0 + col * size, y0 + row * size
             is_focus = row != col and abs(value) == strongest[0]
             cls = "signal-fill" if is_focus else ("data-fill" if value >= .65 else "cat-1" if value >= 0 else "cat-4")
-            delay = 200 + row * 70 + col * 45
-            parts += [rect(x + 3, y + 3, size - 6, size - 6, cls=cls, extra=motion("dock", delay, dy=10, brief=90 + row * 32 + col * 20, story=380 + row * 140 + col * 85, choreo="field-seat")), text(x + size / 2, y + size * .61, f"{value:+.2f}" if value != 1 else "1.00", cls=_contrast_text_class(cls), anchor="middle", size=12, weight=650, extra=motion("lock", delay + 230, brief=delay // 2 + 140, story=delay * 2 + 290))]
+            row_parts += [
+                rect(x + 3, y + 3, size - 6, size - 6, cls=cls),
+                text(x + size / 2, y + size * .61, f"{value:+.2f}" if value != 1 else "1.00", cls=_contrast_text_class(cls), anchor="middle", size=12, weight=650),
+            ]
+        parts.append(
+            group(
+                row_parts,
+                cls="matrix-row",
+                extra=motion(
+                    "dock",
+                    180 + row * 130,
+                    dy=10,
+                    brief=90 + row * 100,
+                    story=380 + row * 220,
+                    duration=360,
+                    duration_brief=240,
+                    duration_story=500,
+                    choreo="field-seat",
+                ),
+            )
+        )
     evidence = evidence_plate(0, 346, "E22", "STRONG", f"{strongest[1]:+.2f}", f"{labels[strongest[2]]} × {labels[strongest[3]]}", delay=1820, width=230, brief=1030, story=3480, choreo="alarm")
     focus_row, focus_col = strongest[2], strongest[3]
     focus_x, focus_y = x0 + focus_col * size, y0 + focus_row * size
@@ -1739,7 +1765,7 @@ def build_c22(data: Any) -> str | ChartArtwork:
         evidence_id="E22",
         evidence_viewbox="0 336 230 114",
         plot_x=255,
-        lock_delay=980,
+        lock_delay=1140,
     )
 
 

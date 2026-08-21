@@ -153,14 +153,15 @@
   @keyframes pi-evidence-enter { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:translateX(0); } }
   @keyframes pi-terminal-handshake { from { opacity:.2; } to { opacity:1; } }
   @keyframes pi-lock-settle { from { opacity:0; } to { opacity:1; } }
-  .pm-data-field-layer,.pm-plot-layer,.pm-local-evidence,.pm-target-lock { transform-box:fill-box; transform-origin:center; }
+  .pm-data-field-layer,.pm-plot-layer,.pm-local-evidence,.pm-target-lock,.pi-target-lock { transform-box:fill-box; transform-origin:center; }
   [data-motion-revision="motion-v2"] .pm-data-field-layer,
   [data-motion-revision="motion-v2"] .pm-plot-layer { opacity:1; animation:none; will-change:auto; }
   [data-motion-revision="motion-v2"].is-resetting [data-motion] { animation:none!important; opacity:0; }
   [data-motion-revision="motion-v2"].is-resetting [data-motion="route"],
   [data-motion-revision="motion-v2"].is-resetting [data-choreo="trace"] { stroke-dasharray:1; stroke-dashoffset:1; }
   [data-motion-revision="motion-v2"].is-resetting .pm-local-evidence,
-  [data-motion-revision="motion-v2"].is-resetting .pm-target-lock { opacity:0; }
+  [data-motion-revision="motion-v2"].is-resetting .pm-target-lock,
+  [data-motion-revision="motion-v2"].is-resetting .pi-target-lock { opacity:0; }
   [data-motion-revision="motion-v2"] [data-choreo="trace"] { stroke-dasharray:1; }
   [data-motion-revision="motion-v2"]:not(.is-playing):not(.is-resetting) [data-choreo="trace"] { stroke-dashoffset:0; opacity:1; }
   .motion-enabled.is-playing[data-motion-revision="motion-v2"] .pm-local-evidence { animation:pm-evidence-enter var(--pm-evidence-duration,360ms) cubic-bezier(.22,.72,.18,1) var(--pm-active-evidence-delay,var(--pm-evidence-delay,0ms)) both; will-change:opacity,transform; }
@@ -173,20 +174,17 @@
   [data-motion-revision="motion-v2"] .pi-evidence-bay { opacity:1; transform:translateX(0); animation:none; will-change:auto; }
   [data-motion-revision="motion-v2"].is-resetting .pi-evidence-bay { opacity:0; transform:translateX(-8px); }
   [data-motion-revision="motion-v2"].is-resetting .pi-bay-terminal { opacity:.2; }
-  [data-motion-revision="motion-v2"].is-resetting .pi-lock-ring,
-  [data-motion-revision="motion-v2"].is-resetting .pi-focus-corner { opacity:0; }
   .motion-enabled.is-playing[data-motion-revision="motion-v2"][data-motion-strategy="evidence-interface"] .pi-evidence-bay { animation:pi-evidence-enter 620ms cubic-bezier(.22,.72,.18,1) var(--pi-active-evidence-delay,var(--pi-evidence-delay,0ms)) both; will-change:opacity,transform; }
   .motion-enabled.is-playing[data-motion-revision="motion-v2"][data-motion-strategy="evidence-interface"] .pi-bay-terminal { animation:pi-terminal-handshake 360ms linear var(--pi-active-terminal-delay,var(--pi-terminal-delay,860ms)) both; will-change:opacity; }
-  .motion-enabled.is-playing[data-motion-revision="motion-v2"][data-motion-strategy="evidence-interface"] .pi-lock-ring,
-  .motion-enabled.is-playing[data-motion-revision="motion-v2"][data-motion-strategy="evidence-interface"] .pi-focus-corner { animation:pi-lock-settle 320ms linear var(--pi-active-lock-delay,var(--pi-lock-delay,980ms)) both; will-change:opacity; }
+  .motion-enabled.is-playing[data-motion-revision="motion-v2"][data-motion-strategy="evidence-interface"] .pi-target-lock { animation:pi-lock-settle 320ms linear var(--pi-active-lock-delay,var(--pi-lock-delay,980ms)) both; will-change:opacity; }
   .motion-enabled.is-paused[data-motion-revision="motion-v2"] .pi-evidence-bay,
   .motion-enabled.is-paused[data-motion-revision="motion-v2"] .pi-bay-terminal,
-  .motion-enabled.is-paused[data-motion-revision="motion-v2"] .pi-lock-ring,
-  .motion-enabled.is-paused[data-motion-revision="motion-v2"] .pi-focus-corner { animation-play-state:paused!important; }
+  .motion-enabled.is-paused[data-motion-revision="motion-v2"] .pi-target-lock { animation-play-state:paused!important; }
   .is-complete[data-motion-revision="motion-v2"] .pm-data-field-layer,
   .is-complete[data-motion-revision="motion-v2"] .pm-plot-layer,
   .is-complete[data-motion-revision="motion-v2"] .pm-local-evidence,
   .is-complete[data-motion-revision="motion-v2"] .pm-target-lock,
+  .is-complete[data-motion-revision="motion-v2"] .pi-target-lock,
   .is-complete[data-motion-revision="motion-v2"] .pi-evidence-bay { will-change:auto; }
   @media (prefers-reduced-motion:reduce) {
     [data-motion-revision="motion-v2"] .pm-data-field-layer,
@@ -196,6 +194,7 @@
     [data-motion-revision="motion-v2"] [data-motion],
     [data-motion-revision="motion-v2"] .pi-evidence-bay,
     [data-motion-revision="motion-v2"] .pi-bay-terminal,
+    [data-motion-revision="motion-v2"] .pi-target-lock,
     [data-motion-revision="motion-v2"] .pi-lock-ring,
     [data-motion-revision="motion-v2"] .pi-focus-corner { animation:none!important; opacity:1!important; transform:none; }
     [data-motion-revision="motion-v2"] [data-choreo="trace"] { stroke-dasharray:1; stroke-dashoffset:0; }
@@ -244,7 +243,7 @@
 <line x1="957.5" y1="174.37" x2="1019.17" y2="174.37" class="rail" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:1050ms;--dx:0px;--dy:0px;--duration:190ms;--delay-brief:560ms;--delay-story:1980ms;--duration-brief:140ms;--duration-story:360ms"/>
 <path d="M 1019.17 174.37 H 1089.17 L 1095.17 180.37 V 384.32 H 1025.17 L 1019.17 378.32 Z" class="data-fill" data-motion="dock" data-choreo="field-seat" style="--delay:1220ms;--dx:0px;--dy:26px;--duration:320ms;--delay-brief:670ms;--delay-story:2300ms;--duration-brief:220ms;--duration-story:540ms"/>
 <text x="1057.17" y="162.37" class="value" text-anchor="middle" font-size="14" font-weight="650" data-motion="lock" data-choreo="readout" style="--delay:1480ms;--dx:0px;--dy:0px;--delay-brief:840ms;--delay-story:2730ms">980</text>
-<text x="1057.17" y="452" class="muted" text-anchor="middle" font-size="12" data-motion="lock" data-choreo="readout" style="--delay:1220ms;--dx:0px;--dy:0px;--delay-brief:670ms;--delay-story:2300ms">期末</text><g class="pi-overlay pi-overlay--foreground"><rect x="364.83" y="380.32" width="8" height="8" rx="0" class="pi-socket" />
+<text x="1057.17" y="452" class="muted" text-anchor="middle" font-size="12" data-motion="lock" data-choreo="readout" style="--delay:1220ms;--dx:0px;--dy:0px;--delay-brief:670ms;--delay-story:2300ms">期末</text><g class="pi-overlay pi-overlay--foreground pi-target-lock"><rect x="364.83" y="380.32" width="8" height="8" rx="0" class="pi-socket" />
 <rect x="502.5" y="204.65" width="8" height="8" rx="0" class="pi-socket" />
 <rect x="640.17" y="138.24" width="8" height="8" rx="0" class="pi-socket" />
 <rect x="777.83" y="151.09" width="8" height="8" rx="0" class="pi-socket" />

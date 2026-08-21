@@ -153,14 +153,15 @@
   @keyframes pi-evidence-enter { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:translateX(0); } }
   @keyframes pi-terminal-handshake { from { opacity:.2; } to { opacity:1; } }
   @keyframes pi-lock-settle { from { opacity:0; } to { opacity:1; } }
-  .pm-data-field-layer,.pm-plot-layer,.pm-local-evidence,.pm-target-lock { transform-box:fill-box; transform-origin:center; }
+  .pm-data-field-layer,.pm-plot-layer,.pm-local-evidence,.pm-target-lock,.pi-target-lock { transform-box:fill-box; transform-origin:center; }
   [data-motion-revision="motion-v2"] .pm-data-field-layer,
   [data-motion-revision="motion-v2"] .pm-plot-layer { opacity:1; animation:none; will-change:auto; }
   [data-motion-revision="motion-v2"].is-resetting [data-motion] { animation:none!important; opacity:0; }
   [data-motion-revision="motion-v2"].is-resetting [data-motion="route"],
   [data-motion-revision="motion-v2"].is-resetting [data-choreo="trace"] { stroke-dasharray:1; stroke-dashoffset:1; }
   [data-motion-revision="motion-v2"].is-resetting .pm-local-evidence,
-  [data-motion-revision="motion-v2"].is-resetting .pm-target-lock { opacity:0; }
+  [data-motion-revision="motion-v2"].is-resetting .pm-target-lock,
+  [data-motion-revision="motion-v2"].is-resetting .pi-target-lock { opacity:0; }
   [data-motion-revision="motion-v2"] [data-choreo="trace"] { stroke-dasharray:1; }
   [data-motion-revision="motion-v2"]:not(.is-playing):not(.is-resetting) [data-choreo="trace"] { stroke-dashoffset:0; opacity:1; }
   .motion-enabled.is-playing[data-motion-revision="motion-v2"] .pm-local-evidence { animation:pm-evidence-enter var(--pm-evidence-duration,360ms) cubic-bezier(.22,.72,.18,1) var(--pm-active-evidence-delay,var(--pm-evidence-delay,0ms)) both; will-change:opacity,transform; }
@@ -173,20 +174,17 @@
   [data-motion-revision="motion-v2"] .pi-evidence-bay { opacity:1; transform:translateX(0); animation:none; will-change:auto; }
   [data-motion-revision="motion-v2"].is-resetting .pi-evidence-bay { opacity:0; transform:translateX(-8px); }
   [data-motion-revision="motion-v2"].is-resetting .pi-bay-terminal { opacity:.2; }
-  [data-motion-revision="motion-v2"].is-resetting .pi-lock-ring,
-  [data-motion-revision="motion-v2"].is-resetting .pi-focus-corner { opacity:0; }
   .motion-enabled.is-playing[data-motion-revision="motion-v2"][data-motion-strategy="evidence-interface"] .pi-evidence-bay { animation:pi-evidence-enter 620ms cubic-bezier(.22,.72,.18,1) var(--pi-active-evidence-delay,var(--pi-evidence-delay,0ms)) both; will-change:opacity,transform; }
   .motion-enabled.is-playing[data-motion-revision="motion-v2"][data-motion-strategy="evidence-interface"] .pi-bay-terminal { animation:pi-terminal-handshake 360ms linear var(--pi-active-terminal-delay,var(--pi-terminal-delay,860ms)) both; will-change:opacity; }
-  .motion-enabled.is-playing[data-motion-revision="motion-v2"][data-motion-strategy="evidence-interface"] .pi-lock-ring,
-  .motion-enabled.is-playing[data-motion-revision="motion-v2"][data-motion-strategy="evidence-interface"] .pi-focus-corner { animation:pi-lock-settle 320ms linear var(--pi-active-lock-delay,var(--pi-lock-delay,980ms)) both; will-change:opacity; }
+  .motion-enabled.is-playing[data-motion-revision="motion-v2"][data-motion-strategy="evidence-interface"] .pi-target-lock { animation:pi-lock-settle 320ms linear var(--pi-active-lock-delay,var(--pi-lock-delay,980ms)) both; will-change:opacity; }
   .motion-enabled.is-paused[data-motion-revision="motion-v2"] .pi-evidence-bay,
   .motion-enabled.is-paused[data-motion-revision="motion-v2"] .pi-bay-terminal,
-  .motion-enabled.is-paused[data-motion-revision="motion-v2"] .pi-lock-ring,
-  .motion-enabled.is-paused[data-motion-revision="motion-v2"] .pi-focus-corner { animation-play-state:paused!important; }
+  .motion-enabled.is-paused[data-motion-revision="motion-v2"] .pi-target-lock { animation-play-state:paused!important; }
   .is-complete[data-motion-revision="motion-v2"] .pm-data-field-layer,
   .is-complete[data-motion-revision="motion-v2"] .pm-plot-layer,
   .is-complete[data-motion-revision="motion-v2"] .pm-local-evidence,
   .is-complete[data-motion-revision="motion-v2"] .pm-target-lock,
+  .is-complete[data-motion-revision="motion-v2"] .pi-target-lock,
   .is-complete[data-motion-revision="motion-v2"] .pi-evidence-bay { will-change:auto; }
   @media (prefers-reduced-motion:reduce) {
     [data-motion-revision="motion-v2"] .pm-data-field-layer,
@@ -196,6 +194,7 @@
     [data-motion-revision="motion-v2"] [data-motion],
     [data-motion-revision="motion-v2"] .pi-evidence-bay,
     [data-motion-revision="motion-v2"] .pi-bay-terminal,
+    [data-motion-revision="motion-v2"] .pi-target-lock,
     [data-motion-revision="motion-v2"] .pi-lock-ring,
     [data-motion-revision="motion-v2"] .pi-focus-corner { animation:none!important; opacity:1!important; transform:none; }
     [data-motion-revision="motion-v2"] [data-choreo="trace"] { stroke-dasharray:1; stroke-dashoffset:0; }
@@ -210,7 +209,7 @@
     <span class="mx-header-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </header>
   <section class="chart-body pi-split-body">
-    <aside class="pi-evidence-bay" aria-label="E15 evidence bay" style="--pi-evidence-delay:480ms;--pi-terminal-delay:980ms">
+    <aside class="pi-evidence-bay" aria-label="E15 evidence bay" style="--pi-evidence-delay:480ms;--pi-terminal-delay:1200ms">
       <span class="pi-evidence-bay__label">EVIDENCE / BAY</span>
       <svg class="pi-evidence-svg" viewBox="0 76 200 114" aria-hidden="true"><g class="evidence-plate" data-motion="lock" data-choreo="alarm" style="--delay:1740ms;--dx:-8px;--dy:0px;--delay-brief:980ms;--delay-story:3300ms">
 <path d="M 0 86 H 192 L 200 94 V 180 H 8 L 0 172 Z" class="panel-stroke" />
@@ -221,27 +220,37 @@
 </g></svg>
       <div class="pi-bay-terminal"><span>E15</span><i></i><b></b></div>
     </aside>
-    <svg class="pi-data-field" viewBox="250 0 922 500" preserveAspectRatio="xMidYMid meet" role="img" aria-label="商品详情到加购流失最大，是成交链路首要修复点" style="--pi-lock-delay:1100ms"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >15 / COMMERCE FLOW</text>
+    <svg class="pi-data-field" viewBox="250 0 922 500" preserveAspectRatio="xMidYMid meet" role="img" aria-label="商品详情到加购流失最大，是成交链路首要修复点" style="--pi-lock-delay:1320ms"><text x="0" y="28" class="index muted" text-anchor="start" font-size="13" >15 / COMMERCE FLOW</text>
 <line x1="276" y1="442" x2="1130" y2="442" class="rail-strong" pathLength="1" data-motion="align" style="--delay:70ms;--dx:0px;--dy:0px;--delay-brief:30ms;--delay-story:110ms"/>
 <path d="M 388.0 195.0 C 459.3333333333333 195.0 459.3333333333333 270.0 530.6666666666666 270.0" class="secondary-stroke" stroke-width="14.0" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:320ms;--dx:0px;--dy:0px;--duration:420ms;--delay-brief:140ms;--delay-story:620ms;--duration-brief:240ms;--duration-story:620ms"/>
 <path d="M 388.0 345.0 C 459.3333333333333 345.0 459.3333333333333 270.0 530.6666666666666 270.0" class="secondary-stroke" stroke-width="12.0" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:480ms;--dx:0px;--dy:0px;--duration:420ms;--delay-brief:290ms;--delay-story:880ms;--duration-brief:240ms;--duration-story:620ms"/>
 <path d="M 642.6666666666666 270.0 C 714.0 270.0 714.0 270.0 785.3333333333333 270.0" class="secondary-stroke" stroke-width="12.7" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:640ms;--dx:0px;--dy:0px;--duration:420ms;--delay-brief:440ms;--delay-story:1140ms;--duration-brief:240ms;--duration-story:620ms"/>
 <path d="M 897.3333333333333 270.0 C 968.6666666666666 270.0 968.6666666666666 270.0 1040.0 270.0" class="secondary-stroke" stroke-width="10.3" pathLength="1" data-motion="route" data-choreo="trace" style="--delay:800ms;--dx:0px;--dy:0px;--duration:420ms;--delay-brief:590ms;--delay-story:1400ms;--duration-brief:240ms;--duration-story:620ms"/>
-<path d="M 276 139.84 H 380 L 388 147.84 V 250.16 H 284 L 276 242.16 Z" class="data-fill" data-motion="dock" data-choreo="interlock" style="--delay:220ms;--dx:-22px;--dy:0px;--delay-brief:100ms;--delay-story:420ms"/>
+<g class="commerce-node" data-motion="dock" data-choreo="interlock" style="--delay:220ms;--dx:-22px;--dy:0px;--delay-brief:100ms;--delay-story:420ms">
+<path d="M 276 139.84 H 380 L 388 147.84 V 250.16 H 284 L 276 242.16 Z" class="data-fill" />
 <text x="332" y="193" class="on-fill" text-anchor="middle" font-size="13" font-weight="650" >搜索</text>
 <text x="332" y="215" class="index on-fill" text-anchor="middle" font-size="12" >5,200</text>
-<path d="M 276 294.42 H 380 L 388 302.42 V 395.58 H 284 L 276 387.58 Z" class="data-fill" data-motion="dock" data-choreo="interlock" style="--delay:330ms;--dx:-22px;--dy:0px;--delay-brief:155ms;--delay-story:630ms"/>
+</g>
+<g class="commerce-node" data-motion="dock" data-choreo="interlock" style="--delay:330ms;--dx:-22px;--dy:0px;--delay-brief:155ms;--delay-story:630ms">
+<path d="M 276 294.42 H 380 L 388 302.42 V 395.58 H 284 L 276 387.58 Z" class="data-fill" />
 <text x="332" y="343" class="on-fill" text-anchor="middle" font-size="13" font-weight="650" >内容</text>
 <text x="332" y="365" class="index on-fill" text-anchor="middle" font-size="12" >3,900</text>
-<path d="M 530.67 212 H 634.67 L 642.67 220 V 328 H 538.67 L 530.67 320 Z" class="data-fill" data-motion="dock" data-choreo="interlock" style="--delay:440ms;--dx:-22px;--dy:0px;--delay-brief:210ms;--delay-story:840ms"/>
+</g>
+<g class="commerce-node" data-motion="dock" data-choreo="interlock" style="--delay:440ms;--dx:-22px;--dy:0px;--delay-brief:210ms;--delay-story:840ms">
+<path d="M 530.67 212 H 634.67 L 642.67 220 V 328 H 538.67 L 530.67 320 Z" class="data-fill" />
 <text x="586.67" y="268" class="on-fill" text-anchor="middle" font-size="13" font-weight="650" >商品详情</text>
 <text x="586.67" y="290" class="index on-fill" text-anchor="middle" font-size="12" >6,100</text>
-<path d="M 785.33 223.75 H 889.33 L 897.33 231.75 V 316.25 H 793.33 L 785.33 308.25 Z" class="data-fill" data-motion="dock" data-choreo="interlock" style="--delay:550ms;--dx:-22px;--dy:0px;--delay-brief:265ms;--delay-story:1050ms"/>
+</g>
+<g class="commerce-node" data-motion="dock" data-choreo="interlock" style="--delay:550ms;--dx:-22px;--dy:0px;--delay-brief:265ms;--delay-story:1050ms">
+<path d="M 785.33 223.75 H 889.33 L 897.33 231.75 V 316.25 H 793.33 L 785.33 308.25 Z" class="data-fill" />
 <text x="841.33" y="268" class="on-fill" text-anchor="middle" font-size="13" font-weight="650" >加购</text>
 <text x="841.33" y="290" class="index on-fill" text-anchor="middle" font-size="12" >2,840</text>
-<path d="M 1040 229.41 H 1144 L 1152 237.41 V 310.59 H 1048 L 1040 302.59 Z" class="signal-fill" data-motion="dock" data-choreo="interlock" style="--delay:660ms;--dx:-22px;--dy:0px;--delay-brief:320ms;--delay-story:1260ms"/>
+</g>
+<g class="commerce-node" data-motion="dock" data-choreo="interlock" style="--delay:660ms;--dx:-22px;--dy:0px;--delay-brief:320ms;--delay-story:1260ms">
+<path d="M 1040 229.41 H 1144 L 1152 237.41 V 310.59 H 1048 L 1040 302.59 Z" class="signal-fill" />
 <text x="1096" y="268" class="on-signal" text-anchor="middle" font-size="13" font-weight="650" >成交</text>
-<text x="1096" y="290" class="index on-signal" text-anchor="middle" font-size="12" >1,710</text><g class="pi-overlay pi-overlay--foreground"><rect x="384" y="191" width="8" height="8" rx="0" class="pi-socket" style="--pi-delay:180ms"/>
+<text x="1096" y="290" class="index on-signal" text-anchor="middle" font-size="12" >1,710</text>
+</g><g class="pi-overlay pi-overlay--foreground pi-target-lock"><rect x="384" y="191" width="8" height="8" rx="0" class="pi-socket" style="--pi-delay:180ms"/>
 <rect x="526.67" y="266" width="8" height="8" rx="0" class="pi-socket" style="--pi-delay:280ms"/>
 <rect x="384" y="341" width="8" height="8" rx="0" class="pi-socket" style="--pi-delay:380ms"/>
 <rect x="638.67" y="266" width="8" height="8" rx="0" class="pi-socket" style="--pi-delay:480ms"/>

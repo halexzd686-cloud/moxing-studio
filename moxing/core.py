@@ -393,7 +393,7 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
       <svg class="pi-evidence-svg" viewBox="{esc(interface.evidence_viewbox)}" aria-hidden="true">{interface.evidence_svg}</svg>
       <div class="pi-bay-terminal"><span>{esc(interface.evidence_id)}</span><i></i><b></b></div>
     </aside>
-    <svg class="pi-data-field" viewBox="{fmt(interface.plot_x)} 0 {fmt(plot_width)} {H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="{esc(page.title)}" style="--pi-lock-delay:{interface.lock_delay}ms">{page.svg}<g class="pi-overlay pi-overlay--foreground">{foreground_svg}</g></svg>
+    <svg class="pi-data-field" viewBox="{fmt(interface.plot_x)} 0 {fmt(plot_width)} {H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="{esc(page.title)}" style="--pi-lock-delay:{interface.lock_delay}ms">{page.svg}<g class="pi-overlay pi-overlay--foreground pi-target-lock">{foreground_svg}</g></svg>
   </section>'''
     elif embedded:
         plot_layer = f'<g class="pm-plot-layer">{embedded.plot_svg}</g>' if embedded.plot_svg else ""
@@ -552,14 +552,15 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   @keyframes pi-evidence-enter {{ from {{ opacity:0; transform:translateX(-8px); }} to {{ opacity:1; transform:translateX(0); }} }}
   @keyframes pi-terminal-handshake {{ from {{ opacity:.2; }} to {{ opacity:1; }} }}
   @keyframes pi-lock-settle {{ from {{ opacity:0; }} to {{ opacity:1; }} }}
-  .pm-data-field-layer,.pm-plot-layer,.pm-local-evidence,.pm-target-lock {{ transform-box:fill-box; transform-origin:center; }}
+  .pm-data-field-layer,.pm-plot-layer,.pm-local-evidence,.pm-target-lock,.pi-target-lock {{ transform-box:fill-box; transform-origin:center; }}
   [data-motion-revision="motion-v2"] .pm-data-field-layer,
   [data-motion-revision="motion-v2"] .pm-plot-layer {{ opacity:1; animation:none; will-change:auto; }}
   [data-motion-revision="motion-v2"].is-resetting [data-motion] {{ animation:none!important; opacity:0; }}
   [data-motion-revision="motion-v2"].is-resetting [data-motion="route"],
   [data-motion-revision="motion-v2"].is-resetting [data-choreo="trace"] {{ stroke-dasharray:1; stroke-dashoffset:1; }}
   [data-motion-revision="motion-v2"].is-resetting .pm-local-evidence,
-  [data-motion-revision="motion-v2"].is-resetting .pm-target-lock {{ opacity:0; }}
+  [data-motion-revision="motion-v2"].is-resetting .pm-target-lock,
+  [data-motion-revision="motion-v2"].is-resetting .pi-target-lock {{ opacity:0; }}
   [data-motion-revision="motion-v2"] [data-choreo="trace"] {{ stroke-dasharray:1; }}
   [data-motion-revision="motion-v2"]:not(.is-playing):not(.is-resetting) [data-choreo="trace"] {{ stroke-dashoffset:0; opacity:1; }}
   .motion-enabled.is-playing[data-motion-revision="motion-v2"] .pm-local-evidence {{ animation:pm-evidence-enter var(--pm-evidence-duration,360ms) {precision_motion['ease']} var(--pm-active-evidence-delay,var(--pm-evidence-delay,0ms)) both; will-change:opacity,transform; }}
@@ -572,20 +573,17 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
   [data-motion-revision="motion-v2"] .pi-evidence-bay {{ opacity:1; transform:translateX(0); animation:none; will-change:auto; }}
   [data-motion-revision="motion-v2"].is-resetting .pi-evidence-bay {{ opacity:0; transform:translateX(-8px); }}
   [data-motion-revision="motion-v2"].is-resetting .pi-bay-terminal {{ opacity:.2; }}
-  [data-motion-revision="motion-v2"].is-resetting .pi-lock-ring,
-  [data-motion-revision="motion-v2"].is-resetting .pi-focus-corner {{ opacity:0; }}
   .motion-enabled.is-playing[data-motion-revision="motion-v2"][data-motion-strategy="evidence-interface"] .pi-evidence-bay {{ animation:pi-evidence-enter {precision_motion['evidence']['duration']}ms {precision_motion['ease']} var(--pi-active-evidence-delay,var(--pi-evidence-delay,0ms)) both; will-change:opacity,transform; }}
   .motion-enabled.is-playing[data-motion-revision="motion-v2"][data-motion-strategy="evidence-interface"] .pi-bay-terminal {{ animation:pi-terminal-handshake {precision_motion['terminal']['duration']}ms linear var(--pi-active-terminal-delay,var(--pi-terminal-delay,860ms)) both; will-change:opacity; }}
-  .motion-enabled.is-playing[data-motion-revision="motion-v2"][data-motion-strategy="evidence-interface"] .pi-lock-ring,
-  .motion-enabled.is-playing[data-motion-revision="motion-v2"][data-motion-strategy="evidence-interface"] .pi-focus-corner {{ animation:pi-lock-settle {precision_motion['lock']['duration']}ms linear var(--pi-active-lock-delay,var(--pi-lock-delay,980ms)) both; will-change:opacity; }}
+  .motion-enabled.is-playing[data-motion-revision="motion-v2"][data-motion-strategy="evidence-interface"] .pi-target-lock {{ animation:pi-lock-settle {precision_motion['lock']['duration']}ms linear var(--pi-active-lock-delay,var(--pi-lock-delay,980ms)) both; will-change:opacity; }}
   .motion-enabled.is-paused[data-motion-revision="motion-v2"] .pi-evidence-bay,
   .motion-enabled.is-paused[data-motion-revision="motion-v2"] .pi-bay-terminal,
-  .motion-enabled.is-paused[data-motion-revision="motion-v2"] .pi-lock-ring,
-  .motion-enabled.is-paused[data-motion-revision="motion-v2"] .pi-focus-corner {{ animation-play-state:paused!important; }}
+  .motion-enabled.is-paused[data-motion-revision="motion-v2"] .pi-target-lock {{ animation-play-state:paused!important; }}
   .is-complete[data-motion-revision="motion-v2"] .pm-data-field-layer,
   .is-complete[data-motion-revision="motion-v2"] .pm-plot-layer,
   .is-complete[data-motion-revision="motion-v2"] .pm-local-evidence,
   .is-complete[data-motion-revision="motion-v2"] .pm-target-lock,
+  .is-complete[data-motion-revision="motion-v2"] .pi-target-lock,
   .is-complete[data-motion-revision="motion-v2"] .pi-evidence-bay {{ will-change:auto; }}
   @media (prefers-reduced-motion:reduce) {{
     [data-motion-revision="motion-v2"] .pm-data-field-layer,
@@ -595,6 +593,7 @@ def html_page(page: ChartPage, *, embed_fonts: bool = False) -> str:
     [data-motion-revision="motion-v2"] [data-motion],
     [data-motion-revision="motion-v2"] .pi-evidence-bay,
     [data-motion-revision="motion-v2"] .pi-bay-terminal,
+    [data-motion-revision="motion-v2"] .pi-target-lock,
     [data-motion-revision="motion-v2"] .pi-lock-ring,
     [data-motion-revision="motion-v2"] .pi-focus-corner {{ animation:none!important; opacity:1!important; transform:none; }}
     [data-motion-revision="motion-v2"] [data-choreo="trace"] {{ stroke-dasharray:1; stroke-dashoffset:0; }}
